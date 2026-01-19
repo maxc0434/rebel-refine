@@ -8,6 +8,11 @@ services:
     container_name: dating_php
     volumes:
       - .:/var/www/html:rw
+    ports:
+      - "8000:8000"
+    # Force le démarrage du serveur Symfony au lancement du conteneur
+    command: php -S 0.0.0.0:8000 -t public
+    # -----------------
     environment:
       - APP_ENV=dev
     restart: unless-stopped  
