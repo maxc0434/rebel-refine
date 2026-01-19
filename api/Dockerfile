@@ -27,3 +27,6 @@ WORKDIR /var/www/html
 
 # 6. Gestion des droits
 RUN chmod -R 777 /var/www/html
+
+# On reste en root pour l'installation initiale, on basculera plus tard si besoin
+# USER www-data (Commenté pour éviter les soucis de permissions au build)
