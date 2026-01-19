@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  # --- LE CERVEAU (PHP 8.4 + Symfony CLI + Composer) ---
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dating_php
+    volumes:
+      - .:/var/www/html:rw
+    environment:
+      - APP_ENV=dev
+    restart: unless-stopped  
+    networks:
+      - dating_network
+
+  # --- LA BASE DE DONNÉES (PostgreSQL) ---
+  database:
+    image: postgres:16-alpine
+    container_name: dating_db
+    environment:
+      POSTGRES_DB: dating_db
+      POSTGRES_USER: app_user
+      POSTGRES_PASSWORD: app_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    restart: unless-stopped  
+    networks:
+      - dating_network
+
+  # --- L'INTERFACE BDD (PGAdmin) ---
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: dating_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@dating.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "8080:80"
+    restart: unless-stopped 
+    networks:
+      - dating_network
+
+  # --- LE CACHE (Redis) ---
+  redis:
+    image: redis:alpine
+    container_name: dating_redis
+    restart: unless-stopped  
+    networks:
+      - dating_network
+
+  # --- LE TEST D'EMAILS (Mailhog) ---
+  mailhog:
+    image: mailhog/mailhog
+    container_name: dating_mailhog
+    ports:
+      - "1025:1025" # SMTP
+      - "8025:8025" # Interface Web
+    restart: unless-stopped  
+    networks:
+      - dating_network
+
+networks:
+  dating_network:
+    driver: bridge
+
+volumes:
+  db-data:
