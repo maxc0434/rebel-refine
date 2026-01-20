@@ -19,6 +19,8 @@ security:
             lazy: true
             provider: app_user_provider
 
+        
+
             # Activate different ways to authenticate:
             # https://symfony.com/doc/current/security.html#the-firewall
 
