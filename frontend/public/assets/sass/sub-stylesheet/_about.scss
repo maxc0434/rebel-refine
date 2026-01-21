@@ -1,0 +1,97 @@
+.about {
+    &__item {}
+    &__inner {
+        padding: 60px 30px;
+        @extend %bg-primary;
+        @include add-prefix(transition, (all .3s ease));
+        @include add-prefix(border-radius, (4px));
+        &:hover {
+            @include add-prefix(transform, (translateY(-5px)));
+            box-shadow: 0 10px 20px rgba($shadow-color, $alpha: .3);
+            .about {
+                &__content {
+                    h4 {
+                        @extend %theme-color;
+                    }
+                }
+            }
+        }
+    }
+    &__thumb {
+        @extend %mb-40;
+        img {
+            @include add-prefix(border-radius, (100%));
+            @extend %of-hidden;
+        }
+    }
+    &__content {
+        h4 {
+            @extend %mb-15;
+            @extend %text-1;
+        }
+        h3 {
+            @extend %text-1;
+            .counter {
+                @extend %theme-color;
+            }
+        }
+        p {
+            @extend %mb-0;
+            @extend %text-2;
+        }
+    }
+    
+    &--style3 {
+        margin-top: -50px;
+        position: relative;
+        z-index: 999;
+        .section__wrapper {
+            background: $primary-color !important;
+            @include add-prefix(border-radius, (4px));
+            form {
+                padding: 40px 20px;
+                box-shadow: 0 0 20px rgba(136, 136, 136, .20);
+                @include breakpoint(sm) {
+                    padding: 60px 40px;
+                }
+                label {
+                    @extend %mb-10;
+                }
+                .banner__inputlist {
+                    @extend %mb-10;
+                    background: rgba($white-color, $alpha: .1);
+                    padding-inline: 15px;
+                    border-radius: 3px;
+                    @include breakpoint(sm) {
+                        margin-bottom: 0;
+                    }
+                    input, select {
+                        padding-inline: 0;
+                        border: none;
+                        background: transparent;
+                        option {
+                            background: $primary-color;
+                        }
+                    }
+                }
+                .lab-btn {
+                    @extend %mr-0;
+                    background: $theme-color;
+                    @extend %w-100;
+                    padding-inline: 20px;
+                    @extend %mt-10;
+                    border: none;
+                    @include breakpoint(sm) {
+                        margin-top: 33px;
+                    }
+                    span {
+                        @extend %white-color;
+                    }
+                    &:hover {
+                        box-shadow: none;
+                    }
+                }
+            }
+        }
+    }
+}

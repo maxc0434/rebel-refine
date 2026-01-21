@@ -1,0 +1,61 @@
+
+//Terms page css
+.terms-content {
+    background-color: $primary-color;
+    padding: 2rem 1rem;
+    border-radius: 5px;
+
+    @include breakpoint(md) {
+        padding: 3rem 2rem;
+    }
+}
+
+.terms-header {
+    @extend %mb-25;
+
+    @include breakpoint(md) {
+        margin-bottom: 35px;
+    }
+
+    h4 {
+        @extend %mb-10;
+    }
+}
+
+.terms-text {
+
+    ul,
+    ol {
+        padding-left: 2rem;
+        margin-bottom: 1.5rem;
+
+        li {
+            margin-block: 10px;
+            ul, ol {
+                li {
+                    list-style: circle;
+                }
+            }
+
+            h5 {
+                @extend %mb-15;
+            }
+            p {
+                @extend %mb-30;
+            }
+
+            &::marker {
+                color: $white-color;
+                font-weight: 700;
+            }
+        }
+    }
+
+    ol {
+        list-style: lower-roman;
+    }
+
+    ul {
+        list-style-type: disc;
+    }
+}

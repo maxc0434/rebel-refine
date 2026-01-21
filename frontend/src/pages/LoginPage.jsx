@@ -6,51 +6,92 @@ function LoginPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Tentative de connexion avec :", { email, password });
-    // Ici nous ajouterons l'appel API Axios vers Symfony plus tard
+    console.log("Connexion...", { email, password });
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 flex items-center justify-center p-4">
-      <div className="bg-white/10 backdrop-blur-lg p-8 rounded-2xl shadow-2xl w-full max-w-md border border-white/20">
-        <h2 className="text-3xl font-bold text-white text-center mb-8">Rebel Refine</h2>
-        
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-purple-100 mb-2">Email</label>
-            <input 
-              type="email" 
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
-              placeholder="votre@email.com"
-              required
-            />
+    <div className="login-section d-flex align-items-center justify-content-center" 
+         style={{ 
+           minHeight: '100vh',
+           // Remplace par ton image de fond du template si tu l'as dans /public/assets/images/
+           backgroundImage: 'linear-gradient(rgba(18, 18, 45, 0.7), rgba(18, 18, 45, 0.8)), url("/assets/images/bg-img/01.jpg")', 
+           backgroundSize: 'cover',
+           backgroundPosition: 'center'
+         }}>
+      
+      <div className="container">
+        <div className="row justify-content-center">
+          <div className="col-12 col-sm-10 col-md-7 col-lg-5 col-xl-4">
+            
+            {/* La Carte avec un effet de profondeur */}
+            <div className="card border-0 shadow-lg text-white" 
+                 style={{ 
+                   backgroundColor: 'rgba(45, 45, 91, 0.95)', 
+                   borderRadius: '20px',
+                   backdropFilter: 'blur(10px)'
+                 }}>
+              
+              <div className="card-body p-5">
+                <div className="text-center mb-5">
+                  <h2 className="fw-bold display-6 mb-2">Rebel Refine</h2>
+                  <p style={{ color: '#a5a5cc' }}>Trouvez votre partenaire idéal</p>
+                </div>
+
+                <form onSubmit={handleSubmit}>
+                  <div className="mb-4">
+                    <label className="form-label small text-uppercase fw-bold mb-2" style={{ color: '#f67280' }}>Email</label>
+                    <input 
+                      type="email" 
+                      className="form-control form-control-lg border-0 text-white shadow-none"
+                      style={{ backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: '12px' }}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="votre@email.com"
+                      required
+                    />
+                  </div>
+
+                  <div className="mb-4">
+                    <label className="form-label small text-uppercase fw-bold mb-2" style={{ color: '#f67280' }}>Mot de passe</label>
+                    <input 
+                      type="password" 
+                      className="form-control form-control-lg border-0 text-white shadow-none"
+                      style={{ backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: '12px' }}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••"
+                      required
+                    />
+                  </div>
+
+                  {/* Bouton avec dégradé type Template */}
+                  <button 
+                    type="submit"
+                    className="btn btn-lg w-100 fw-bold py-3 mt-3 text-white border-0"
+                    style={{ 
+                      background: 'linear-gradient(45deg, #f67280, #c06c84)', 
+                      borderRadius: '12px',
+                      boxShadow: '0 10px 20px rgba(246, 114, 128, 0.3)'
+                    }}
+                  >
+                    SE CONNECTER
+                  </button>
+                </form>
+
+                <div className="text-center mt-5">
+                  <p className="mb-0" style={{ color: '#a5a5cc' }}>
+                    Pas encore de compte ? <br/>
+                    <span className="text-white fw-bold text-decoration-none border-bottom border-2 border-danger" 
+                          style={{ cursor: 'pointer' }}>
+                      Créer un compte gratuitement
+                    </span>
+                  </p>
+                </div>
+              </div>
+            </div>
+
           </div>
-
-          <div>
-            <label className="block text-sm font-medium text-purple-100 mb-2">Mot de passe</label>
-            <input 
-              type="password" 
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
-              placeholder="••••••••"
-              required
-            />
-          </div>
-
-          <button 
-            type="submit"
-            className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold py-3 rounded-xl shadow-lg transform transition hover:scale-[1.02] active:scale-95"
-          >
-            Se connecter
-          </button>
-        </form>
-
-        <p className="mt-6 text-center text-purple-200 text-sm">
-          Pas encore de compte ? <span className="text-white font-semibold cursor-pointer hover:underline">S'inscrire</span>
-        </p>
+        </div>
       </div>
     </div>
   );

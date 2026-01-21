@@ -1,0 +1,114 @@
+.popup, .popuplogin {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 99999;
+    width: 100%;
+    background: $body-color;
+    height: 100%;
+    display: none;
+    overflow-y: auto;
+    &__area {
+        @extend %p-abs;
+        top: 50%;
+        left: 50%;
+        width: 95%;
+        transform: translate(-50%, -50%);
+        background: url(../images/bg-2.jpg);
+        background-size: cover;
+        background-position: center;
+        border-radius: 4px;
+        padding: 30px 30px 0;
+        margin-top: 50px;
+        @include breakpoint(xl) {
+            margin-top: 0;
+        }
+        @include breakpoint(xxxl) {
+            width: 70%;
+        }
+        .banner-form {
+            label {
+                margin-bottom: 15px;
+            }
+            input, select {
+                background: rgba($white-color, $alpha: .1);
+                &::placeholder {
+                    color: $white-color;
+                }
+                option {
+                    background: $primary-color !important;
+                }
+            }
+            .input-fild {
+                width: 50%;
+            }
+            .right {
+                gap: 15px;
+            }
+            button {
+                @extend %mb-30;
+            }
+            p {
+                @extend %mb-15;
+                @extend %text-center;
+                a {
+                    color: $theme-color;
+                    text-transform: capitalize;
+                }
+            }
+            h6 {
+                @extend %mb-20;
+                font-weight: 500;
+                @extend %text-center;
+                a {
+                    color: $theme-color;
+                }
+            }
+        }
+    }
+    &__thumb {
+        @include breakpoint(md) {
+            @include breakpoint(max-xl) {
+                display: none;
+            }
+        }
+    }
+    &__close {
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+        color: $white-color;
+        top: 0;
+        right: 0;
+        border-top-right-radius: 4px;
+        @extend %p-abs;
+        @extend %bg-theme;
+        @extend %text-center;
+        @extend %pointer;
+    }
+    &.open {
+        display: block;
+    }
+}
+
+.popuplogin {
+    .right {
+        input {
+            margin-bottom: 20px;
+        }
+    }
+    .form-check {
+        @extend %mb-0;
+        input {
+            padding: 0;
+            outline: none;
+            box-shadow: none;
+            border-radius: 2px;
+            accent-color: $theme-color;
+        }
+        label {
+            margin-bottom: 0;
+        }
+    }
+}

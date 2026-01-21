@@ -1,0 +1,296 @@
+/* @@@@@@@@@@@@@  Banner Section Start Here  @@@@@@@@@@@@@@ */
+.banner-section {
+    // background-image: url(../images/banner/bg.jpg);
+    // background-size: cover;
+    padding-top: 200px;
+    @extend %rel;
+    @extend %hidden;
+
+    @include breakpoint(sm) {
+        padding-top: 270px;
+    }
+    @include breakpoint(lg) {
+        background-position: 60%;
+    }
+    @include breakpoint(xl) {
+        background-position: center;
+    }
+
+    .section-wrapper {
+        .banner-content {
+            .intro-form {
+                max-width: 420px;
+                padding: 40px 30px;
+                @extend %rel;
+                margin-bottom: 125px;
+                @extend %bg-primary;
+                @include border-radius(10px);
+                @include breakpoint(max-lg) {
+                    margin: 0 auto;
+                    margin-bottom: 100px;
+                }
+
+                * {
+                    color: $white-color;
+                    font-family: $font;
+                }
+
+                .intro-form-inner {
+                    h3 {}
+
+                    p {
+                        line-height: 30px;
+                        max-width: 315px;
+                        margin-bottom: 25px;
+
+                    }
+
+
+
+                    .social-list {
+                        @extend %flex;
+                        @extend %justify-between;
+
+                        @include breakpoint(max-sm) {
+                            justify-content: flex-start;
+                            row-gap: 10px;
+                            column-gap: 10px;
+                        }
+
+                        .google {
+
+                            a {
+                                @extend %bg-white;
+                                padding: 13px 30px;
+                                @extend %border-radius-2;
+                                @extend %d-inline-block;
+
+                                @include breakpoint(max-sm) {
+                                    padding: 13px 48px;
+
+                                }
+
+                                span {
+                                    color: $grey-color;
+                                }
+                            }
+
+
+                        }
+
+                        .facebook,
+                        .twitter {
+                            a {
+                                line-height: 50px;
+                                width: 50px;
+                                height: 50px;
+                                @extend %border-radius-2;
+                                @extend %text-center;
+                                @extend %d-inline-block;
+                            }
+                        }
+
+                        .facebook {
+                            background-color: $facebook;
+                        }
+
+                        .twitter {
+                            background-color: $twitter;
+                        }
+
+                        .google,
+                        .facebook,
+                        .twitter {
+                            &:hover {
+                                box-shadow: 0 4px 5px rgba($theme-color, $alpha: .50);
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+
+        .banner-thumb {
+            @extend %rel;
+            z-index: 2;
+        }
+    }
+
+    &.style2 {
+        // background-image: url(../images/bg.jpg);
+        padding-top: 180px;
+        .section-wrapper {
+            .banner-content {
+                .intro-form {
+                    max-width: 520px;
+                    padding: 0;
+                    background: transparent;
+                    margin-bottom: 40px;
+                    @include breakpoint(lg) {
+                        margin-bottom: 125px;
+                    }
+                    h2 {
+                        @include font-size(60px);
+                        line-height: 1.2;
+                        text-transform: capitalize;
+                        margin-bottom: 15px;
+                        span {
+                            text-transform: uppercase;
+                        }
+                    }
+                    ul {
+                        margin-bottom: 40px;
+                        li {
+                            padding-block: 8px;
+                            i {
+                                margin-right: 10px;
+                            }
+                        }
+                    }
+                    
+                    .lab-btn {
+                        background: $white-color;
+                        span {
+                            color: $theme-color;
+                        }
+                        &:hover {
+                            background: $theme-color;
+                            span {
+                                color: $white-color;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    &.style3 {
+        background-image: url(../images/bg.jpg);
+        .section-wrapper {
+            .banner-content {
+                .intro-form {
+                    margin-bottom: 190px;
+                    padding: 0;
+                    background: transparent;
+                    @include breakpoint(md) {
+                        max-width: 65%;
+                    }
+                    @include breakpoint(xl) {
+                        max-width: 100%;
+                    }
+                    h2 {
+                        @include font-size(56px);
+                        line-height: 1.2;
+                        text-transform: capitalize;
+                        margin-bottom: 15px;
+                        span {
+                            text-transform: uppercase;
+                        }
+                    }
+                    p {
+                        @include font-size(18px);
+                        line-height: 30px;
+                        margin-bottom: 30px;
+                    }
+                    .lab-btn {
+                        @extend %bg-theme;
+                    }
+                }
+            }
+        }
+    }
+}
+.banner-slider {
+    @include breakpoint(lg) {
+        padding-top: 147px;
+    }
+    .banner-section {
+        padding-top: 0;
+        .section-wrapper {
+            height: 800px;
+            padding-top: 0;
+            @extend %p-rel;
+            @include breakpoint(xxxl) {
+                height: 900px;
+            }
+            .banner-content {
+                @extend %p-abs;
+                top: calc(50% + 0px);
+                transform: translateY(-50%);
+                width: 50%;
+                .intro-form {
+                    max-width: 100%;
+                    margin-bottom: 0;
+                    p {
+                        @include font-size(18px);
+                        line-height: 30px;
+                        margin-bottom: 30px;
+                        @include breakpoint(sm) {
+                            max-width: 75%;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+.banner-form {
+
+    .gender,
+    .person,
+    .age,
+    .city,
+    .interest {
+        @extend %w-100;
+        @extend %flex;
+        @extend %align-items-center;
+        @extend %justify-between;
+        @extend %mb-20;
+        input,
+        select {
+            border-radius: none;
+            padding: 15px;
+            outline: none;
+            @include border-radius(5px);
+            background: #1a3e86;
+            border: none;
+            option {
+                color: $title-color;
+                background: rgba($body-color, $alpha: .80) !important;
+            }
+        }
+    }
+
+    button {
+        @extend %bg-theme;
+        color: $white-color;
+        border: none;
+        @extend %w-100;
+        padding: 13px;
+        @include border-radius(5px);
+    }
+
+    .age {
+        .right {
+            .custom-select {
+                width: 47%;
+            }
+        }
+    }
+
+    .city {
+        @extend %mb-30;
+    }
+}
+
+//input type text placeholder
+
+input,
+textarea {
+    &::placeholder {
+        color: rgba($white-color, $alpha: .50);
+    }
+
+}
