@@ -14,7 +14,7 @@ function LoginPage() {
          style={{ 
            minHeight: '100vh',
            // Remplace par ton image de fond du template si tu l'as dans /public/assets/images/
-           backgroundImage: 'linear-gradient(rgba(18, 18, 45, 0.7), rgba(18, 18, 45, 0.8)), url("/assets/images/bg-img/01.jpg")', 
+           backgroundImage: 'linear-gradient(rgba(18, 18, 45, 0.7), rgba(18, 18, 45, 0)), url("/assets/images/bg-img/01.jpg")', 
            backgroundSize: 'cover',
            backgroundPosition: 'center'
          }}>
@@ -26,7 +26,7 @@ function LoginPage() {
             {/* La Carte avec un effet de profondeur */}
             <div className="card border-0 shadow-lg text-white" 
                  style={{ 
-                   backgroundColor: 'rgba(45, 45, 91, 0.95)', 
+                   backgroundColor: 'rgba(45, 45, 91, 0.80)', 
                    borderRadius: '20px',
                    backdropFilter: 'blur(10px)'
                  }}>

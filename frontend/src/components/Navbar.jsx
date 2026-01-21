@@ -30,7 +30,7 @@ function Navbar() {
               </ul>
               
               <Link to="/" className="login"><i className="icofont-user"></i> <span>LOG IN</span></Link>
-              <Link to="/signup" className="signup"><i className="icofont-users"></i> <span>SIGN UP</span></Link>
+              <Link to="/register" className="signup"><i className="icofont-users"></i> <span>SIGN UP</span></Link>
 
               <div className="header-bar d-lg-none">
                 <span></span><span></span><span></span>
