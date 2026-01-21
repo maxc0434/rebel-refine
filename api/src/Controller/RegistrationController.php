@@ -20,57 +20,78 @@ class RegistrationController extends AbstractController
 {
     public function __construct(private EmailVerifier $emailVerifier) {}
 
+    // --- LOGIQUE D'INSCRIPTION ---
     #[Route('/register', name: 'api_register', methods: ['POST'])]
-    public function register(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher): JsonResponse {
+    public function register(
+        Request $request, 
+        EntityManagerInterface $em, 
+        UserPasswordHasherInterface $passwordHasher
+    ): JsonResponse {
+        
+        // ÉTAPE 1 : Récupération et décodage des données envoyées par React
         $data = json_decode($request->getContent(), true);
 
+        // ÉTAPE 2 : Validation de la présence des champs obligatoires
         if (!isset($data['email'], $data['password'], $data['nickname'])) {
-            return $this->json(['error' => 'Invalid data'], 400);
+            return $this->json(['error' => 'Données incomplètes'], 400);
         }
 
+        // ÉTAPE 3 : Création de l'objet User et hydratation des données
         $user = new User();
         $user->setEmail($data['email']);
         $user->setNickname($data['nickname']);
-        $user->setPassword($passwordHasher->hashPassword($user, $data['password']));
+        
+        // ÉTAPE 4 : Sécurisation du mot de passe (Hachage)
+        $hashedPassword = $passwordHasher->hashPassword($user, $data['password']);
+        $user->setPassword($hashedPassword);
 
+        // ÉTAPE 5 : Persistance en base de données via Doctrine
         $em->persist($user);
         $em->flush();
 
+        // ÉTAPE 6 : Préparation et envoi de l'email de vérification
         $this->emailVerifier->sendEmailConfirmation(
-            'api_verify_email',
+            'api_verify_email', 
             $user,
             (new TemplatedEmail())
                 ->from(new Address('no-reply@rebel-refine.pro', 'Rebel Bot'))
                 ->to($user->getEmail())
-                ->subject('Confirm your email')
+                ->subject('Veuillez confirmer votre email')
                 ->htmlTemplate('registration/confirmation_email.html.twig')
         );
 
+        // ÉTAPE 7 : Réponse de succès envoyée au Front-end
         return $this->json([
-            'message' => 'User registered. Please check your email.'
+            'message' => 'Utilisateur créé. Veuillez vérifier vos emails.'
         ], 201);
     }
 
+    // --- LOGIQUE DE VÉRIFICATION D'EMAIL ---
     #[Route('/verify/email', name: 'api_verify_email', methods: ['GET'])]
     public function verifyEmail(
         Request $request,
         UserRepository $userRepository
     ): JsonResponse {
+        
+        // ÉTAPE 1 : Identification de l'utilisateur via l'ID dans l'URL
         $id = $request->query->get('id');
         $user = $userRepository->find($id);
 
         if (!$user) {
-            return $this->json(['error' => 'User not found'], 404);
+            return $this->json(['error' => 'Utilisateur introuvable'], 404);
         }
 
+        // ÉTAPE 2 : Tentative de validation de la signature du lien
         try {
             $this->emailVerifier->handleEmailConfirmation($request, $user);
         } catch (VerifyEmailExceptionInterface $e) {
+            // ÉTAPE 3 : Gestion de l'erreur (lien expiré ou modifié)
             return $this->json(['error' => $e->getReason()], 400);
         }
 
+        // ÉTAPE 4 : Confirmation finale du succès de la vérification
         return $this->json([
-            'message' => 'Email verified successfully'
+            'message' => 'Email vérifié avec succès. Vous pouvez vous connecter.'
         ]);
     }
 }
