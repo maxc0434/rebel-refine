@@ -21,22 +21,17 @@ class RegistrationController extends AbstractController
     public function __construct(private EmailVerifier $emailVerifier) {}
 
     #[Route('/register', name: 'api_register', methods: ['POST'])]
-    public function register(
-        Request $request,
-        EntityManagerInterface $em,
-        UserPasswordHasherInterface $passwordHasher
-    ): JsonResponse {
+    public function register(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher): JsonResponse {
         $data = json_decode($request->getContent(), true);
 
-        if (!isset($data['email'], $data['password'])) {
+        if (!isset($data['email'], $data['password'], $data['nickname'])) {
             return $this->json(['error' => 'Invalid data'], 400);
         }
 
         $user = new User();
         $user->setEmail($data['email']);
-        $user->setPassword(
-            $passwordHasher->hashPassword($user, $data['password'])
-        );
+        $user->setNickname($data['nickname']);
+        $user->setPassword($passwordHasher->hashPassword($user, $data['password']));
 
         $em->persist($user);
         $em->flush();

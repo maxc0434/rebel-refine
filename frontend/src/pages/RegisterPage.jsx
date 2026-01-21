@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 function RegisterPage() {
   const [formData, setFormData] = useState({
-    username: '',
+    nickname: '',
     email: '',
     password: '',
     confirmPassword: ''
@@ -46,9 +46,9 @@ function RegisterPage() {
               <div className="form-group">
                 <input 
                   type="text" 
-                  placeholder="User Name" 
-                  name="username" 
-                  value={formData.username}
+                  placeholder="Nickname" 
+                  name="nickname" 
+                  value={formData.nickname}
                   onChange={handleChange}
                   required 
                 />

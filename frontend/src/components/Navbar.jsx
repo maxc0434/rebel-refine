@@ -20,17 +20,13 @@ function Navbar() {
                     <li><Link to="/">Home Page One</Link></li>
                   </ul>
                 </li>
-                <li>
-                   <Link to="#0">Features</Link>
-                   <ul className="submenu">
-                      <li><Link to="/members">All Members</Link></li>
-                   </ul>
-                </li>
-                <li><Link to="/contact">Contact</Link></li>
               </ul>
+
               
               <Link to="/" className="login"><i className="icofont-user"></i> <span>LOG IN</span></Link>
               <Link to="/register" className="signup"><i className="icofont-users"></i> <span>SIGN UP</span></Link>
+
+
 
               <div className="header-bar d-lg-none">
                 <span></span><span></span><span></span>
