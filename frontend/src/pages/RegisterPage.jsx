@@ -65,7 +65,7 @@ function RegisterPage() {
 
       // --- ÉTAPE 4 : Redirection ---
       // On redirige l'utilisateur vers la page de connexion
-      navigate("/login");
+      navigate("/");
       
     } catch (err) {
       // Si une erreur est survenue dans le bloc try, elle est capturée ici
