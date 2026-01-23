@@ -1,26 +1,26 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-
 import { useNavigate } from "react-router-dom"; // Import indispensable pour rediriger
 
 function LoginPage() {
   // --- ÉTAPE 1 : Initialisation des états (States) ---
-  const [email, setEmail] = useState("");      // État pour le champ email
-  const [password, setPassword] = useState("");// État pour le champ mot de passe
-  const [error, setError] = useState("");     // État pour stocker les messages d'erreur
+  const [email, setEmail] = useState(""); // État pour le champ email
+  const [password, setPassword] = useState(""); // État pour le champ mot de passe
+  const [error, setError] = useState(""); // État pour stocker les messages d'erreur
 
   const navigate = useNavigate(); // Initialisation de la fonction de redirection
 
   // --- ÉTAPE 2 : Fonction de soumission du formulaire ---
   const handleSubmit = async (e) => {
     e.preventDefault(); // Empêche le rechargement de la page
-    setError("");       // Réinitialise l'erreur avant chaque tentative
+    setError(""); // Réinitialise l'erreur avant chaque tentative
 
     try {
       // --- ÉTAPE 3 : Requête vers l'API Symfony ---
       const response = await fetch("http://localhost:8000/api/login", {
-        method: "POST", 
+        method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
@@ -44,11 +44,17 @@ function LoginPage() {
       alert("Connexion réussie ✅");
 
       // --- ÉTAPE 6 : Redirection automatique ---
-      // navigate("/members"); A COMPLETER PLUS TARD
-      
+      // On vérifie si le serveur nous a envoyé une URL d'administration 
+      if (data.redirectToAdmin) {
+        // Si oui, on "quitte" React pour charger l'interface PHP d'EasyAdmin
+        window.location.href = data.redirectToAdmin;
+      } else {
+        // Sinon, on redirige vers l'espace membre classique de ton app React
+        navigate("/members");
+      }
     } catch (err) {
       // --- ÉTAPE 7 : Affichage de l'erreur si ETAPE 4 active ---
-      setError(err.message); 
+      setError(err.message);
     }
   };
 

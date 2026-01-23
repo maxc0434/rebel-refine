@@ -3,14 +3,23 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Bundle\SecurityBundle\Security;
+use App\Controller\Admin\DashboardController;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 
 final class ApiLoginController extends AbstractController
 {
+
+public function __construct(
+        private AdminUrlGenerator $adminUrlGenerator,
+        private Security $security
+    ) {}
+
 // Définition de la route : elle écoute sur /api/login et n'accepte que le POST
 // --- ÉTAPE 1 : Configuration de la Route ---
     // On définit l'URL d'accès et on force l'utilisation de la méthode POST pour la sécurité
@@ -30,11 +39,19 @@ final class ApiLoginController extends AbstractController
                 'message' => 'Identifiants manquants ou invalides',
             ], JsonResponse::HTTP_UNAUTHORIZED); // Code 401 : accès refusé
         }
+        // On crée la session pour éviter l'erreur 401 sur l'admin
+        $this->security->login($user, 'security.authenticator.json_login.main', 'main');
 
         // --- ÉTAPE 3 : Génération du Jeton (Token) ---
         // L'utilisateur est valide. On génère une chaîne de caractères cryptée (JWT)
         // qui servira de preuve de connexion pour React.
         $token = $JWTManager->create($user);
+
+        //  On prépare le lien de redirection pour React
+        $adminUrl = null;
+        if (in_array('ROLE_ADMIN', $user->getRoles())) {
+            $adminUrl = $this->adminUrlGenerator->setDashboard(DashboardController::class)->generateUrl();
+        }
 
         // --- ÉTAPE 4 : Construction de la Réponse JSON ---
         // On prépare un "paquet" de données complet pour React.
@@ -44,6 +61,7 @@ final class ApiLoginController extends AbstractController
             'id'        => $user->getId(),
             'email'     => $user->getEmail(),
             'nickname'  => $user->getNickname(),
+            'redirectToAdmin' => $adminUrl,
             
             // --- ÉTAPE 5 : Formatage des données spécifiques ---
             // On transforme les objets complexes (Date) en types simples (String) lisibles par JavaScript
