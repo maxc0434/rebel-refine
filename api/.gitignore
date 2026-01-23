@@ -22,3 +22,7 @@
 ###> lexik/jwt-authentication-bundle ###
 /config/jwt/*.pem
 ###< lexik/jwt-authentication-bundle ###
+
+# Fichiers de référence IDE / Symfony
+reference.php
+.php-config/
