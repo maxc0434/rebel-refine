@@ -14,13 +14,15 @@ final class HomeController extends AbstractController
     #[Route('/api/home', name: 'app_home', methods: ['GET'])]
     public function index(#[CurrentUser] ?User $user, UserRepository $userRepository): JsonResponse
     {
-        
+
         // ÉTAPE 1 : Préparation d'un socle de données communes (visibles par tous)
         $data = [
             'app_name' => 'Rebel Refine API',
             'authenticated' => ($user !== null), // true si le Token est bon
             'total_members' => $userRepository->count([]),
-            
+            'count_females' => $userRepository->count(['gender' => 'female']),
+            'count_males'   => $userRepository->count(['gender' => 'male']),
+
         ];
 
         // ÉTAPE 2 : Personnalisation si l'utilisateur est authentifié

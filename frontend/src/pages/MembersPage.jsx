@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import './MembersPage.css';
 
 function MembersPage() {
     const [members, setMembers] = useState([]);
@@ -12,7 +13,7 @@ function MembersPage() {
     }, []);
 
     return (
-        <section className="member-section padding-tb">
+        <section className="member-section-female padding-tb">
             <div className="container">
                 <div className="section-header">
                     <h2>Toutes nos membres féminines</h2>

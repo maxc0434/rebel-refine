@@ -1,0 +1,50 @@
+/* frontend/src/pages/MembersPage.css */
+
+.member-section-female {
+    /* Un dégradé "Aurora" très tamisé : bleu pétrole, prune et noir */
+    background: linear-gradient(145deg, #0f172a 0%, #1e1b4b 30%, #2e1065 65%, #000000 100%);
+    
+    /* On ajoute une texture de grain très légère pour le côté "Premium" */
+    background-blend-mode: overlay;
+    background-attachment: fixed;
+    min-height: 100vh;
+    padding-bottom: 50px;
+}
+
+/* On peaufine l'en-tête pour qu'il ne soit pas "juste blanc" */
+.member-section-female .section-header h2 {
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    background: linear-gradient(to right, #fff, #fda4af); /* Dégradé discret blanc vers rose */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 40px;
+}
+
+/* Le Glassmorphism des cartes : le secret du look moderne */
+.member-section-female .lab-item {
+    background: rgba(255, 255, 255, 0.05) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    overflow: hidden;
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.member-section-female .lab-item:hover {
+    transform: translateY(-12px); /* Monte un peu plus haut pour marquer le coup */
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(253, 164, 175, 0.4); /* Le rose doux (fda4af) s'allume doucement */
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+}
+
+.member-section-female .lab-content h6 {
+    color: #fff;
+    font-size: 1.2rem;
+}
+
+.member-section-female .lab-content p {
+    color: #fda4af; /* Rose doux pour les intérêts */
+    font-weight: 500;
+}

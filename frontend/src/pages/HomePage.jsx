@@ -197,7 +197,7 @@ function HomePage() {
                     </div>
                     <div className="lab-content">
                       <h2 className="counter">
-                        <CountUp end={14} separator="," duration={3} />
+                        <CountUp end={apiData?.total_members || 0} separator="," duration={3} />
                       </h2>
                       <p>Membres en ligne</p>
                     </div>
@@ -212,7 +212,7 @@ function HomePage() {
                     </div>
                     <div className="lab-content">
                       <h2 className="counter">
-                        <CountUp end={7} separator="," duration={3} />
+                        <CountUp end={apiData?.count_males || 0} separator="," duration={3} />
                       </h2>
                       <p>Hommes en ligne</p>
                     </div>
@@ -227,7 +227,7 @@ function HomePage() {
                     </div>
                     <div className="lab-content">
                       <h2 className="counter">
-                        <CountUp end={7} separator="," duration={3} />
+                        <CountUp end={apiData?.count_females || 0} separator="," duration={3} />
                       </h2>
                       <p>Femmes en ligne</p>
                     </div>

@@ -32,8 +32,8 @@ class UserFixtures extends Fixture
         $admin->setIsVerified(true);
         $manager->persist($admin);
 
-        // --- 5 HOMMES ---
-        for ($i = 0; $i < 5; $i++) {
+        // --- 15 HOMMES ---
+        for ($i = 0; $i < 15; $i++) {
             $user = new User();
             $user->setEmail($faker->unique()->email);
             $user->setNickname($faker->userName);
@@ -46,8 +46,8 @@ class UserFixtures extends Fixture
             $manager->persist($user);
         }
 
-        // --- 5 FEMMES ---
-        for ($i = 0; $i < 5; $i++) {
+        // --- 25 FEMMES ---
+        for ($i = 0; $i < 25; $i++) {
             $user = new User();
             $user->setEmail($faker->unique()->email);
             $user->setNickname($faker->userName);

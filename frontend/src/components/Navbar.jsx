@@ -20,14 +20,17 @@ function Navbar() {
         <div className="container">
           <div className="header-wrapper">
             <div className="logo">
-              <Link to="/">
+              {/* <Link to="/"> */}
                 <img src="/assets/images/logo/rebel_refine_logo_resized.png" alt="logo" style={{ height: '80px', width: 'auto' }} />
-              </Link>
+              {/* </Link> */}
             </div>
             <div className="menu-area">
               <ul className="menu">
                 <li>
-                  <Link to="/home">Home</Link>
+                  <Link to="/home">Accueil</Link>
+                </li>
+                <li>
+                  <Link to="/members/females">Membres</Link>
                 </li>
               </ul>
 

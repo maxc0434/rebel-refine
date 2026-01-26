@@ -11,7 +11,7 @@ function App() {
   return (
     <Router>
       <Navbar/>
-      <div style={{ height: '100px' }}></div>
+      <div style={{ height: '110px' }}></div>
         <Routes>
 
           <Route path="/" element={<LoginPage />} />
