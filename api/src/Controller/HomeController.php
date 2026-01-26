@@ -15,6 +15,29 @@ final class HomeController extends AbstractController
     public function index(#[CurrentUser] ?User $user, UserRepository $userRepository): JsonResponse
     {
 
+    // On récupère les 5 derniers membres inscrits
+    $latestUsers = $userRepository->findBy(['gender' => 'female'], ['id' => 'DESC'], 5);
+    $today = new \DateTime();
+
+    $membersData = [];
+    foreach ($latestUsers as $lastUser) {
+        $age = null;
+        $birthday = $lastUser->getBirthdate();
+
+        if ($birthday) {
+            // Calcul de l'âge
+            $age = $today->diff($birthday)->y;
+        }
+        $membersData[] = [
+            'id' => $lastUser->getId(),
+            'nickname' => $lastUser->getNickname(),
+            'gender' => $lastUser->getGender(),
+            'age' => $age,
+
+             
+        ];
+    }
+
         // ÉTAPE 1 : Préparation d'un socle de données communes (visibles par tous)
         $data = [
             'app_name' => 'Rebel Refine API',
@@ -22,6 +45,7 @@ final class HomeController extends AbstractController
             'total_members' => $userRepository->count([]),
             'count_females' => $userRepository->count(['gender' => 'female']),
             'count_males'   => $userRepository->count(['gender' => 'male']),
+            'last_members' => $membersData,
 
         ];
 

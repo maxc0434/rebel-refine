@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import CountUp from "react-countup";
+
 
 function HomePage() {
   const navigate = useNavigate();
@@ -158,6 +159,52 @@ function HomePage() {
         </div>
       </section>
       {/* ================ Banner Section end Here =============== */}
+
+        {/* ================ Member Section (Derniers inscrits BDD) =============== */}
+            <section className="member-section padding-tb">
+                <div className="container">
+                    <div className="section-header">
+                        <h2>Nos nouveaux membres</h2>
+                        <p>Voici les derniers profils ayant rejoint Rebel Refine. Faites le premier pas !</p>
+                    </div>
+                    <div className="section-wrapper">
+                        <div className="row justify-content-center g-3 g-md-4 row-cols-xl-5 row-cols-md-3 row-cols-1">
+                            
+                            {/* BOUCLE DYNAMIQUE SUR LAST_MEMBERS */}
+                            {apiData?.last_members?.map((member) => (
+                                <div className="col" key={member.id}>
+                                    <div className="lab-item member-item style-1">
+                                        <div className="lab-inner">
+                                            <div className="lab-thumb">
+                                                <Link to={`/profile/${member.id}`}>
+                                                    <img 
+                                                        src={member.gender === 'female' ? "assets/images/member/04.jpg" : "assets/images/member/03.jpg"} 
+                                                        alt={member.nickname} 
+                                                    />
+                                                </Link>
+                                            </div>
+                                            <div className="lab-content">
+                                                <h6>
+                                                    <Link to={`/profile/${member.id}`}>
+                                                        {member.nickname} <i className="icofont-check" title="Vérifié"></i>
+                                                    </Link>
+                                                </h6>
+                                                <p>{member.age} ans</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+
+                        </div>
+                        <div className="member-button-group d-flex flex-wrap justify-content-center">
+                            <Link to="/members" className="lab-btn"><span>Découvrir tous les membres</span></Link>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        {/* ================ Member Section end Here =============== */}
+      
 
       {/* ================ About Section start Here =============== */}
       <section

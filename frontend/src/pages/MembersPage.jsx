@@ -28,7 +28,7 @@ function MembersPage() {
                                     </div>
                                     <div className="lab-content">
                                         <h6>{m.nickname}</h6>
-                                        <p>Interests</p>
+                                        <h6>{m.age} ans</h6>
                                     </div>
                                 </div>
                             </div>
