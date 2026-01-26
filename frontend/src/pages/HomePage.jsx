@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import CountUp from "react-countup";
 
 function HomePage() {
   const navigate = useNavigate();
@@ -157,6 +158,87 @@ function HomePage() {
         </div>
       </section>
       {/* ================ Banner Section end Here =============== */}
+
+      {/* ================ About Section start Here =============== */}
+      <section
+        className="about-section padding-tb bgimg"
+        style={{ backgroundImage: "url(assets/images/bg-img/01.jpg)" }}
+      >
+        <div className="container">
+          <div className="section-header">
+            <h2>Tout commence par une rencontre</h2>
+            <p>
+              Rejoignez une communauté grandissante et accédez à des milliers de
+              profils.
+            </p>
+          </div>
+          <div className="section-wrapper">
+            <div className="row justify-content-center g-4">
+              <div className="col-xl-3 col-lg-4 col-sm-6 col-12">
+                <div className="lab-item about-item">
+                  <div className="lab-inner text-center">
+                    <div className="lab-thumb">
+                      <img src="assets/images/about/01.png" alt="img" />
+                    </div>
+                    <div className="lab-content">
+                      <h2 className="counter">
+                        <CountUp end={apiData?.total_members || 0} separator="," duration={3} />
+                      </h2>
+                      <p>Membres au Total</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="col-xl-3 col-lg-4 col-sm-6 col-12">
+                <div className="lab-item about-item">
+                  <div className="lab-inner text-center">
+                    <div className="lab-thumb">
+                      <img src="assets/images/about/02.png" alt="img" />
+                    </div>
+                    <div className="lab-content">
+                      <h2 className="counter">
+                        <CountUp end={14} separator="," duration={3} />
+                      </h2>
+                      <p>Membres en ligne</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="col-xl-3 col-lg-4 col-sm-6 col-12">
+                <div className="lab-item about-item">
+                  <div className="lab-inner text-center">
+                    <div className="lab-thumb">
+                      <img src="assets/images/about/03.png" alt="img" />
+                    </div>
+                    <div className="lab-content">
+                      <h2 className="counter">
+                        <CountUp end={7} separator="," duration={3} />
+                      </h2>
+                      <p>Hommes en ligne</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="col-xl-3 col-lg-4 col-sm-6 col-12">
+                <div className="lab-item about-item">
+                  <div className="lab-inner text-center">
+                    <div className="lab-thumb">
+                      <img src="assets/images/about/04.png" alt="img" />
+                    </div>
+                    <div className="lab-content">
+                      <h2 className="counter">
+                        <CountUp end={7} separator="," duration={3} />
+                      </h2>
+                      <p>Femmes en ligne</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      {/* ================ About Section end Here =============== */}
     </>
   );
 }
