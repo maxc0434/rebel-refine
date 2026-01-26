@@ -10,14 +10,15 @@ class SecurityController extends AbstractController
     #[Route('/login', name: 'app_login')]
     public function redirectLogin(): RedirectResponse
     {
-        // On redirige l'utilisateur vers ton Front-end React (port 3000) [cite: 2026-01-12]
-        return $this->redirect('http://localhost:3000/login');
+        // On redirige l'utilisateur vers ton Front-end React (port 3000) 
+        return $this->redirect('http://localhost:3000/');
     }
 
     #[Route('/logout', name: 'app_logout')]
     public function logout(): void
     {
-        // Symfony gère l'interception du logout automatiquement [cite: 2026-01-12]
+        // Symfony gère l'interception du logout automatiquement
         throw new \LogicException('Cette méthode peut rester vide.');
     }
+    
 }

@@ -41,7 +41,7 @@ function LoginPage() {
 
       // Sauvegarde sécurisée du Token JWT dans le navigateur
       localStorage.setItem("token", data.token);
-      alert("Connexion réussie ✅");
+      // alert("Connexion réussie ✅");
 
       // --- ÉTAPE 6 : Redirection automatique ---
       // On vérifie si le serveur nous a envoyé une URL d'administration 
@@ -50,7 +50,7 @@ function LoginPage() {
         window.location.href = data.redirectToAdmin;
       } else {
         // Sinon, on redirige vers l'espace membre classique de ton app React
-        navigate("/members");
+        navigate("/home");
       }
     } catch (err) {
       // --- ÉTAPE 7 : Affichage de l'erreur si ETAPE 4 active ---
