@@ -71,19 +71,24 @@ class UserCrudController extends AbstractCrudController
             TextField::new('nickname', 'Pseudo'),
             DateField::new('birthdate', 'Date de naissance'),
             BooleanField::new('isVerified', 'Compte vérifié'),
+            ChoiceField::new('gender')
+            ->setChoices([
+                '♂️ Homme' => 'male',
+                '♀️ Femme' => 'female',
+            ]),
 
             /**
              * ÉTAPE 4 : CONFIGURATION DES RÔLES
-             * Gère le tableau JSON des rôles dans PostgreSQL [cite: 2026-01-12].
+             * Gère le tableau JSON des rôles dans PostgreSQL
              */
-            ChoiceField::new('roles', 'Rôles / Sexe')
+            ChoiceField::new('roles', 'Rôles')
                 ->setChoices([
                     '👑 Administrateur' => 'ROLE_ADMIN',
-                    '♂️ Homme'          => 'ROLE_MALE',
-                    '♀️ Femme'          => 'ROLE_FEMALE',
+                    '♂️ Utilisateur Homme'          => 'ROLE_MALE',
+                    '♀️ Utilisateur Femme'          => 'ROLE_FEMALE',
                 ])
-                ->allowMultipleChoices() // Crucial pour stocker un tableau de rôles [cite: 2026-01-12].
-                ->renderExpanded(),      // Affiche des cases à cocher au lieu d'une liste [cite: 2026-01-12].
+                ->allowMultipleChoices() // Crucial pour stocker un tableau de rôles.
+                ->renderExpanded(),      // Affiche des cases à cocher au lieu d'une liste.
         ];
     }
 
@@ -93,9 +98,9 @@ class UserCrudController extends AbstractCrudController
      */
     public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
-        // On déclenche le hachage avant de sauvegarder [cite: 2026-01-12].
+        // On déclenche le hachage avant de sauvegarder .
         $this->hashPassword($entityInstance);
-        // On appelle le comportement standard du parent pour faire le "INSERT" [cite: 2026-01-12].
+        // On appelle le comportement standard du parent pour faire le "INSERT" .
         parent::persistEntity($entityManager, $entityInstance);
     }
 
@@ -105,9 +110,9 @@ class UserCrudController extends AbstractCrudController
      */
     public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
-        // On déclenche le hachage (sera ignoré si le champ est vide) [cite: 2026-01-12].
+        // On déclenche le hachage (sera ignoré si le champ est vide).
         $this->hashPassword($entityInstance);
-        // On appelle le comportement standard du parent pour faire le "UPDATE" [cite: 2026-01-12].
+        // On appelle le comportement standard du parent pour faire le "UPDATE".
         parent::updateEntity($entityManager, $entityInstance);
     }
 
@@ -117,18 +122,18 @@ class UserCrudController extends AbstractCrudController
      */
     private function hashPassword($entityInstance): void
     {
-        // 1. On intercepte la requête HTTP pour lire manuellement le champ 'password' [cite: 2026-01-12].
+        // 1. On intercepte la requête HTTP pour lire manuellement le champ 'password'.
         $request = $this->getContext()->getRequest();
         $formData = $request->request->all('User');
         $plainPassword = $formData['password'] ?? null;
 
         // 2. Si le mot de passe n'est pas vide (Nouvel utilisateur ou changement voulu) :
         if (!empty($plainPassword)) {
-            // On hache le texte brut pour le sécuriser [cite: 2026-01-12].
+            // On hache le texte brut pour le sécuriser.
             $hashedPassword = $this->passwordHasher->hashPassword($entityInstance, $plainPassword);
-            // On l'injecte "à la main" dans l'entité [cite: 2026-01-12].
+            // On l'injecte "à la main" dans l'entité.
             $entityInstance->setPassword($hashedPassword);
         }
-        // 3. Si c'est vide, on ne fait rien. L'entité garde son ancien mot de passe intact [cite: 2026-01-12].
+        // 3. Si c'est vide, on ne fait rien. L'entité garde son ancien mot de passe intact.
     }
 }

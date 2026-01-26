@@ -37,6 +37,7 @@ class UserFixtures extends Fixture
             $user = new User();
             $user->setEmail($faker->unique()->email);
             $user->setNickname($faker->userName);
+            $user->setGender('male');
             $user->setRoles(['ROLE_MALE']);
             $user->setPassword($this->hasher->hashPassword($user, 'password'));
             $user->setBirthdate($faker->dateTimeBetween('-40 years', '-18 years'));
@@ -50,6 +51,7 @@ class UserFixtures extends Fixture
             $user = new User();
             $user->setEmail($faker->unique()->email);
             $user->setNickname($faker->userName);
+            $user->setGender('female');
             $user->setRoles(['ROLE_FEMALE']);
             $user->setPassword($this->hasher->hashPassword($user, 'password'));
             $user->setBirthdate($faker->dateTimeBetween('-40 years', '-18 years'));

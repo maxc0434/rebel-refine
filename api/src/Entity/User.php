@@ -40,6 +40,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private bool $isVerified = false;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $gender = null;
+
     public function getId(): ?int { return $this->id; }
 
     public function getEmail(): ?string { return $this->email; }
@@ -81,6 +84,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsVerified(bool $isVerified): static
     {
         $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
+    public function getGender(): ?string
+    {
+        return $this->gender;
+    }
+
+    public function setGender(?string $gender): static
+    {
+        $this->gender = $gender;
 
         return $this;
     }
