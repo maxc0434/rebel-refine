@@ -9,18 +9,28 @@ function MembersPage() {
 
   // useEffect s'exécute après le premier rendu du composant
   // Le tableau vide [] en dépendance signifie : "exécute une seule fois au montage"
-  useEffect(() => {
-    // Appel à l'API pour récupérer les membres féminins
-    fetch("http://localhost:8000/api/members/females", {
-      // Ajout du header d'autorisation avec le token JWT
-      // Le token est récupéré depuis le localStorage du navigateur
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+ useEffect(() => {
+  const token = localStorage.getItem("token");
+
+  // Si pas de token, on peut rediriger ou arrêter là
+  if (!token) {
+    window.location.href = "/";
+    return;
+  }
+
+  fetch("http://localhost:8000/api/members/females", {
+    headers: { Authorization: `Bearer ${token}` },
+  })
+    .then((res) => {
+       if(res.status === 401) {
+          // Si le token est invalide, on déconnecte
+          localStorage.removeItem("token");
+          window.location.href = "/";
+       }
+       return res.json();
     })
-      // Première promesse : conversion de la réponse en JSON
-      .then((res) => res.json())
-      // Deuxième promesse : mise à jour de l'état avec les données reçues
-      .then((data) => setMembers(data));
-  }, []); // Tableau de dépendances vide = exécution unique
+    .then((data) => setMembers(data));
+}, []);
 
   return (
     // Section principale avec classes CSS personnalisées
@@ -28,7 +38,7 @@ function MembersPage() {
       <div className="container">
         {/* En-tête de la section */}
         <div className="section-header">
-          <h2>Toutes nos membres féminines</h2>
+          <h2>Tous nos membres féminins</h2>
         </div>
 
         <div className="row justify-content-center g-4 row-cols-xl-4 row-cols-md-3 row-cols-sm-2 row-cols-1">
@@ -80,5 +90,4 @@ function MembersPage() {
   );
 }
 
-// Export du composant pour pouvoir l'utiliser ailleurs dans l'application
 export default MembersPage;
