@@ -5,12 +5,12 @@ namespace App\Controller\Admin;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Vich\UploaderBundle\Form\Type\VichImageType;
-use Symfony\Component\Validator\Constraints\Choice;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\{IdField, EmailField, TextField, DateField, BooleanField, ChoiceField, TextEditorField};
+use App\Form\UserImageType;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 
 /**
  * CLASSE : UserCrudController
@@ -77,13 +77,10 @@ class UserCrudController extends AbstractCrudController
 
             BooleanField::new('isVerified', 'Compte vérifié'),
 
-            TextField::new('imageFile', 'Photo de profil')
-                ->setFormType(VichImageType::class)
-                ->onlyOnForms(), // On ne le montre que dans le formulaire (création/édition)
-            ImageField::new('imageName', 'Photo')
-                ->setBasePath('/uploads/users') // Chemin public pour l'affichage
-                ->onlyOnIndex(), // On ne le montre que dans la liste récapitulative
-
+            CollectionField::new('userImages', 'Galerie Photos')
+            ->setEntryType(UserImageType::class)
+            ->setFormTypeOption('by_reference', false) // INDISPENSABLE pour lier l'owner automatiquement
+            ->onlyOnForms(),
             ChoiceField::new('gender')
             ->setChoices([
                 '♂️ Homme' => 'male',

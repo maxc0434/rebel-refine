@@ -16,6 +16,12 @@ final class ProfileController extends AbstractController
         $today = new \DateTime();
         $age = $user->getBirthdate() ? $today->diff($user->getBirthdate())->y : null;
 
+        // EXTRACTION DES PHOTOS POUR CHAQUE MEMBRE
+        $photos = [];
+        foreach ($user->getUserImages() as $img) {
+            $photos[] = $img->getImageName();
+        }
+
         // On prépare les données détaillées (incluant tes nouveaux champs)
         $data = [
             'id'         => $user->getId(),
@@ -26,7 +32,7 @@ final class ProfileController extends AbstractController
             'children'   => $user->getChildren(),
             'religion'   => $user->getReligion(),
             'interests'  => $user->getInterests(),
-            'imageName'  => $user->getImageName(),
+            'photos'     => $photos,
         ];
 
         return $this->json($data);

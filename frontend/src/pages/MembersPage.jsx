@@ -47,7 +47,19 @@ function MembersPage() {
                     {/* Conteneur de l'image */}
                     <div className="lab-thumb">
                       {/* Image statique (même photo pour tous les membres) */}
-                      <img src="assets/images/member/02.jpg" alt="photo" />
+                      <img
+                        src={
+                          m.photos && m.photos.length > 0
+                            ? `http://localhost:8000/uploads/users/${m.photos[0]}`
+                            : "/assets/images/member/04.jpg"
+                        }
+                        alt={m.nickname}
+                        style={{
+                          width: "100%",
+                          height: "250px",
+                          objectFit: "cover",
+                        }}
+                      />{" "}
                     </div>
 
                     {/* Conteneur des informations textuelles */}

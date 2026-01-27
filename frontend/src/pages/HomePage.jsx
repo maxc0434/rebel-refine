@@ -207,16 +207,16 @@ function HomePage() {
                         <Link to={`/profile/${member.id}`}>
                           <img
                             src={
-                              member.imageName
-                                ? `http://localhost:8000/uploads/users/${member.imageName}`
-                                : "assets/images/member/04.jpg"
+                              member.photos && member.photos.length > 0
+                                ? `http://localhost:8000/uploads/users/${member.photos[0]}`
+                                : "/assets/images/member/04.jpg"
                             }
                             alt={member.nickname}
                             style={{
                               width: "100%",
                               height: "250px",
                               objectFit: "cover",
-                            }} // Optionnel : pour garder un joli cadre
+                            }}
                           />
                         </Link>
                       </div>

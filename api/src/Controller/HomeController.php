@@ -14,7 +14,6 @@ final class HomeController extends AbstractController
     #[Route('/api/home', name: 'app_home', methods: ['GET'])]
     public function index(#[CurrentUser] ?User $user, UserRepository $userRepository): JsonResponse
     {
-
         // On récupère les 5 derniers membres inscrits
         $latestUsers = $userRepository->findBy(['gender' => 'female'], ['id' => 'DESC'], 5);
         $today = new \DateTime();
@@ -25,45 +24,50 @@ final class HomeController extends AbstractController
             $birthday = $lastUser->getBirthdate();
 
             if ($birthday) {
-                // Calcul de l'âge
                 $age = $today->diff($birthday)->y;
             }
+
+            // EXTRACTION DES PHOTOS POUR CHAQUE MEMBRE
+            $photos = [];
+            foreach ($lastUser->getUserImages() as $img) {
+                $photos[] = $img->getImageName();
+            }
+
             $membersData[] = [
                 'id' => $lastUser->getId(),
                 'nickname' => $lastUser->getNickname(),
                 'gender' => $lastUser->getGender(),
                 'age' => $age,
-                'imageName' => $lastUser->getImageName(),
-
-
+                'photos' => $photos, // On envoie le tableau de noms de fichiers
             ];
         }
 
-        // ÉTAPE 1 : Préparation d'un socle de données communes (visibles par tous)
         $data = [
             'app_name' => 'Rebel Refine API',
-            'authenticated' => ($user !== null), // true si le Token est bon
+            'authenticated' => ($user !== null),
             'total_members' => $userRepository->count([]),
             'count_females' => $userRepository->count(['gender' => 'female']),
             'count_males'   => $userRepository->count(['gender' => 'male']),
             'last_members' => $membersData,
-
         ];
 
-        // ÉTAPE 2 : Personnalisation si l'utilisateur est authentifié
         if ($user) {
-            // Symfony a reconnu le Token, on peut donc piocher dans l'objet $user
+            // EXTRACTION DES PHOTOS POUR L'UTILISATEUR CONNECTÉ
+            $myPhotos = [];
+            foreach ($user->getUserImages() as $img) {
+                $myPhotos[] = $img->getImageName();
+            }
+
             $data['message'] = "Bonjour " . $user->getNickname() . " ! Ravi de vous revoir sur Rebel Refine.";
             $data['user_details'] = [
                 'nickname' => $user->getNickname(),
                 'email'    => $user->getUserIdentifier(),
+                'photos'   => $myPhotos, // Ajout des photos ici aussi
             ];
         } else {
-            // ÉTAPE 3 : Message de repli si le Token est absent ou expiré
             $data['message'] = "Bienvenue ! Veuillez vous connecter pour accéder aux profils.";
         }
 
-        // ÉTAPE 4 : Envoi du paquet de données vers React
         return $this->json($data);
     }
 }

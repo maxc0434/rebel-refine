@@ -3,17 +3,16 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\HttpFoundation\File\File;
-use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
-#[Vich\Uploadable]
 #[UniqueEntity(fields: ['email'], message: 'Il existe déjà un compte avec cet email')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -55,14 +54,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $children = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $imageName = null;
+    /**
+     * @var Collection<int, UserImage>
+     */
+    #[ORM\OneToMany(targetEntity: UserImage::class, mappedBy: 'owner', orphanRemoval: true, cascade: ['persist'])]
+    private Collection $userImages;
 
-    #[Vich\UploadableField(mapping: 'user_images', fileNameProperty: 'imageName')]
-    private ?File $imageFile = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $updatedAt = null;
+    public function __construct()
+    {
+        $this->userImages = new ArrayCollection();
+    }
 
     public function getId(): ?int { return $this->id; }
 
@@ -75,7 +76,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /** @see UserInterface */
     public function getRoles(): array {
         $roles = $this->roles;
-        $roles[] = 'ROLE_USER'; // Garantit que chaque utilisateur a au moins ce rôle
+        $roles[] = 'ROLE_USER';
         return array_unique($roles);
     }
     public function setRoles(array $roles): static { $this->roles = $roles; return $this; }
@@ -85,11 +86,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPassword(string $password): static { $this->password = $password; return $this; }
 
     /** @see UserInterface */
-    public function eraseCredentials(): void { /* Utile si tu stockes des données sensibles temporaires */ }
+    public function eraseCredentials(): void { }
 
-    // --- Tes champs personnalisés ---
+    // --- Champs personnalisés ---
     public function getNickname(): ?string { return $this->nickname; }
-    public function setNickname(string $nickname): static { $this->nickname = $nickname; return $this; }
+    public function setNickname(?string $nickname): static { $this->nickname = $nickname; return $this; }
 
     public function getBirthdate(): ?\DateTimeInterface { return $this->birthdate; }
     public function setBirthdate(?\DateTimeInterface $birthdate): static { $this->birthdate = $birthdate; return $this; }
@@ -97,101 +98,45 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getInterests(): ?string { return $this->interests; }
     public function setInterests(?string $interests): static { $this->interests = $interests; return $this; }
 
-    public function isVerified(): bool
+    public function isVerified(): bool { return $this->isVerified; }
+    public function setIsVerified(bool $isVerified): static { $this->isVerified = $isVerified; return $this; }
+
+    public function getGender(): ?string { return $this->gender; }
+    public function setGender(?string $gender): static { $this->gender = $gender; return $this; }
+
+    public function getReligion(): ?string { return $this->religion; }
+    public function setReligion(?string $religion): static { $this->religion = $religion; return $this; }
+
+    public function getMarital(): ?string { return $this->marital; }
+    public function setMarital(?string $marital): static { $this->marital = $marital; return $this; }
+
+    public function getChildren(): ?string { return $this->children; }
+    public function setChildren(?string $children): static { $this->children = $children; return $this; }
+
+    /**
+     * @return Collection<int, UserImage>
+     */
+    public function getUserImages(): Collection
     {
-        return $this->isVerified;
+        return $this->userImages;
     }
 
-    public function setIsVerified(bool $isVerified): static
+    public function addUserImage(UserImage $userImage): static
     {
-        $this->isVerified = $isVerified;
-
-        return $this;
-    }
-
-    public function getGender(): ?string
-    {
-        return $this->gender;
-    }
-
-    public function setGender(?string $gender): static
-    {
-        $this->gender = $gender;
-
-        return $this;
-    }
-
-    public function getReligion(): ?string
-    {
-        return $this->religion;
-    }
-
-    public function setReligion(?string $religion): static
-    {
-        $this->religion = $religion;
-
-        return $this;
-    }
-
-    public function getMarital(): ?string
-    {
-        return $this->marital;
-    }
-
-    public function setMarital(?string $marital): static
-    {
-        $this->marital = $marital;
-
-        return $this;
-    }
-
-    public function getChildren(): ?string
-    {
-        return $this->children;
-    }
-
-    public function setChildren(?string $children): static
-    {
-        $this->children = $children;
-
-        return $this;
-    }
-
-    public function getImageName(): ?string
-    {
-        return $this->imageName;
-    }
-
-    public function setImageName(?string $imageName): static
-    {
-        $this->imageName = $imageName;
-
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?\DateTimeImmutable
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
-
-    public function setImageFile(?File $imageFile = null): void
-    {
-        $this->imageFile = $imageFile;
-
-        if (null !== $imageFile) {
-            $this->updatedAt = new \DateTimeImmutable();
+        if (!$this->userImages->contains($userImage)) {
+            $this->userImages->add($userImage);
+            $userImage->setOwner($this);
         }
+        return $this;
     }
 
-    public function getImageFile(): ?File
+    public function removeUserImage(UserImage $userImage): static
     {
-        return $this->imageFile;
+        if ($this->userImages->removeElement($userImage)) {
+            if ($userImage->getOwner() === $this) {
+                $userImage->setOwner(null);
+            }
+        }
+        return $this;
     }
 }

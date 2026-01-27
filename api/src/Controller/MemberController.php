@@ -44,11 +44,16 @@ final class MemberController extends AbstractController
 
             if ($birthday) {
                 /**
-                 * ÉTAPE 5 : Calcul de l'âge à la volée
+                 * ÉTAPE 5 : Calcul de l'âge à la volée PUIS Extraction des photos
                  * diff() compare deux dates. 
                  * ->y permet d'extraire uniquement le nombre d'années révolues.
                  */
                 $age = $today->diff($birthday)->y;
+            }
+
+            $photos = [];
+            foreach ($female->getUserImages() as $img) {
+                $photos[] = $img->getImageName();
             }
 
             /**
@@ -61,6 +66,7 @@ final class MemberController extends AbstractController
                 'nickname' => $female->getNickname(),
                 'gender'   => $female->getGender(),
                 'age'      => $age, 
+                'photos'   => $photos,
             ];
         }
 
