@@ -26,6 +26,7 @@ final class ProfileController extends AbstractController
             'children'   => $user->getChildren(),
             'religion'   => $user->getReligion(),
             'interests'  => $user->getInterests(),
+            'imageName'  => $user->getImageName(),
         ];
 
         return $this->json($data);

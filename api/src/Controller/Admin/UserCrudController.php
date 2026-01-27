@@ -3,12 +3,14 @@
 namespace App\Controller\Admin;
 
 use App\Entity\User;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\{IdField, EmailField, TextField, DateField, BooleanField, ChoiceField};
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 use Symfony\Component\Validator\Constraints\Choice;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Field\{IdField, EmailField, TextField, DateField, BooleanField, ChoiceField, TextEditorField};
 
 /**
  * CLASSE : UserCrudController
@@ -70,19 +72,31 @@ class UserCrudController extends AbstractCrudController
                 ]),
 
             TextField::new('nickname', 'Pseudo'),
+
             DateField::new('birthdate', 'Date de naissance'),
+
             BooleanField::new('isVerified', 'Compte vérifié'),
+
+            TextField::new('imageFile', 'Photo de profil')
+                ->setFormType(VichImageType::class)
+                ->onlyOnForms(), // On ne le montre que dans le formulaire (création/édition)
+            ImageField::new('imageName', 'Photo')
+                ->setBasePath('/uploads/users') // Chemin public pour l'affichage
+                ->onlyOnIndex(), // On ne le montre que dans la liste récapitulative
+
             ChoiceField::new('gender')
             ->setChoices([
                 '♂️ Homme' => 'male',
                 '♀️ Femme' => 'female',
             ]),
+
             ChoiceField::new('marital')
             ->setChoices([
                 'divorcée' => 'divorced',
                 'veuve' => 'widowed',
                 'célibataire' => 'single',
             ]),
+
             ChoiceField::new('children')
             ->setChoices([
                 '0' => '0',
@@ -93,6 +107,7 @@ class UserCrudController extends AbstractCrudController
                 '5' => '5',
                 '5+' => '5+',
             ]),
+            
             ChoiceField::new('religion')
             ->setChoices([
                 'Catholisme' => 'catholicism',
@@ -105,6 +120,8 @@ class UserCrudController extends AbstractCrudController
                 'Autre' => 'other',
             ]),
 
+            TextEditorField::new('interests', "Centres d'intérêts"),
+            
             /**
              * ÉTAPE 4 : CONFIGURATION DES RÔLES
              * Gère le tableau JSON des rôles dans PostgreSQL

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import './ProfilePage.css' 
+import "./ProfilePage.css";
 
 function ProfilePage() {
   const { id } = useParams();
@@ -44,11 +44,16 @@ function ProfilePage() {
                 <div className="profile-pic">
                   <img
                     src={
-                      user.gender === "female"
-                        ? "/assets/images/member/04.jpg"
-                        : "/assets/images/member/03.jpg"
+                      user.imageName
+                        ? `http://localhost:8000/uploads/users/${user.imageName}`
+                        : "/assets/images/member/04.jpg" 
                     }
-                    alt="vatar"
+                    alt={user.nickname}
+                    style={{
+                      objectFit: "cover",
+                      width: "100%",
+                      height: "100%",
+                    }}
                   />
                 </div>
                 <div className="profile-name">

@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import CountUp from "react-countup";
 
-
 function HomePage() {
   const navigate = useNavigate();
 
@@ -86,7 +85,6 @@ function HomePage() {
 
                       <h6 className="mb-3">Vous recherchez une femme...</h6>
                       <form className="banner-form">
-          
                         <div className="age">
                           <div className="right d-flex justify-content-between w-100">
                             <div className="custom-select">
@@ -188,51 +186,63 @@ function HomePage() {
       </section>
       {/* ================ Banner Section end Here =============== */}
 
-        {/* ================ Member Section (Derniers inscrits BDD) =============== */}
-            <section className="member-section padding-tb">
-                <div className="container">
-                    <div className="section-header">
-                        <h2>Nos nouveaux membres</h2>
-                        <p>Voici les derniers profils ayant rejoint Rebel Refine. Faites le premier pas !</p>
+      {/* ================ Member Section (Derniers inscrits BDD) =============== */}
+      <section className="member-section padding-tb">
+        <div className="container">
+          <div className="section-header">
+            <h2>Nos nouveaux membres</h2>
+            <p>
+              Voici les derniers profils ayant rejoint Rebel Refine. Faites le
+              premier pas !
+            </p>
+          </div>
+          <div className="section-wrapper">
+            <div className="row justify-content-center g-3 g-md-4 row-cols-xl-5 row-cols-md-3 row-cols-1">
+              {/* BOUCLE DYNAMIQUE SUR LAST_MEMBERS */}
+              {apiData?.last_members?.map((member) => (
+                <div className="col" key={member.id}>
+                  <div className="lab-item member-item style-1">
+                    <div className="lab-inner">
+                      <div className="lab-thumb">
+                        <Link to={`/profile/${member.id}`}>
+                          <img
+                            src={
+                              member.imageName
+                                ? `http://localhost:8000/uploads/users/${member.imageName}`
+                                : "assets/images/member/04.jpg"
+                            }
+                            alt={member.nickname}
+                            style={{
+                              width: "100%",
+                              height: "250px",
+                              objectFit: "cover",
+                            }} // Optionnel : pour garder un joli cadre
+                          />
+                        </Link>
+                      </div>
+                      <div className="lab-content">
+                        <h6>
+                          <Link to={`/profile/${member.id}`}>
+                            {member.nickname}{" "}
+                            <i className="icofont-check" title="Vérifié"></i>
+                          </Link>
+                        </h6>
+                        <p>{member.age} ans</p>
+                      </div>
                     </div>
-                    <div className="section-wrapper">
-                        <div className="row justify-content-center g-3 g-md-4 row-cols-xl-5 row-cols-md-3 row-cols-1">
-                            
-                            {/* BOUCLE DYNAMIQUE SUR LAST_MEMBERS */}
-                            {apiData?.last_members?.map((member) => (
-                                <div className="col" key={member.id}>
-                                    <div className="lab-item member-item style-1">
-                                        <div className="lab-inner">
-                                            <div className="lab-thumb">
-                                                <Link to={`/profile/${member.id}`}>
-                                                    <img 
-                                                        src={member.gender === 'female' ? "assets/images/member/04.jpg" : "assets/images/member/03.jpg"} 
-                                                        alt={member.nickname} 
-                                                    />
-                                                </Link>
-                                            </div>
-                                            <div className="lab-content">
-                                                <h6>
-                                                    <Link to={`/profile/${member.id}`}>
-                                                        {member.nickname} <i className="icofont-check" title="Vérifié"></i>
-                                                    </Link>
-                                                </h6>
-                                                <p>{member.age} ans</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-
-                        </div>
-                        <div className="member-button-group d-flex flex-wrap justify-content-center">
-                            <Link to="/members" className="lab-btn"><span>Découvrir tous les membres</span></Link>
-                        </div>
-                    </div>
+                  </div>
                 </div>
-            </section>
-        {/* ================ Member Section end Here =============== */}
-      
+              ))}
+            </div>
+            <div className="member-button-group d-flex flex-wrap justify-content-center">
+              <Link to="/members" className="lab-btn">
+                <span>Découvrir tous les membres</span>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+      {/* ================ Member Section end Here =============== */}
 
       {/* ================ About Section start Here =============== */}
       <section
@@ -257,7 +267,11 @@ function HomePage() {
                     </div>
                     <div className="lab-content">
                       <h2 className="counter">
-                        <CountUp end={apiData?.total_members || 0} separator="," duration={3} />
+                        <CountUp
+                          end={apiData?.total_members || 0}
+                          separator=","
+                          duration={3}
+                        />
                       </h2>
                       <p>Membres au Total</p>
                     </div>
@@ -272,7 +286,11 @@ function HomePage() {
                     </div>
                     <div className="lab-content">
                       <h2 className="counter">
-                        <CountUp end={apiData?.total_members || 0} separator="," duration={3} />
+                        <CountUp
+                          end={apiData?.total_members || 0}
+                          separator=","
+                          duration={3}
+                        />
                       </h2>
                       <p>Membres en ligne</p>
                     </div>
@@ -287,7 +305,11 @@ function HomePage() {
                     </div>
                     <div className="lab-content">
                       <h2 className="counter">
-                        <CountUp end={apiData?.count_males || 0} separator="," duration={3} />
+                        <CountUp
+                          end={apiData?.count_males || 0}
+                          separator=","
+                          duration={3}
+                        />
                       </h2>
                       <p>Hommes en ligne</p>
                     </div>
@@ -302,7 +324,11 @@ function HomePage() {
                     </div>
                     <div className="lab-content">
                       <h2 className="counter">
-                        <CountUp end={apiData?.count_females || 0} separator="," duration={3} />
+                        <CountUp
+                          end={apiData?.count_females || 0}
+                          separator=","
+                          duration={3}
+                        />
                       </h2>
                       <p>Femmes en ligne</p>
                     </div>

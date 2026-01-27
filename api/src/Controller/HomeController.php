@@ -33,6 +33,7 @@ final class HomeController extends AbstractController
                 'nickname' => $lastUser->getNickname(),
                 'gender' => $lastUser->getGender(),
                 'age' => $age,
+                'imageName' => $lastUser->getImageName(),
 
 
             ];
