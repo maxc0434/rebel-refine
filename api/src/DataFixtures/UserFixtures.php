@@ -21,6 +21,14 @@ class UserFixtures extends Fixture
     {
         $faker = Factory::create('fr_FR');
 
+        // Définition des options basées sur ton CrudController
+        $maritalOptions = ['divorced', 'widowed', 'single'];
+        $childrenOptions = ['0', '1', '2', '3', '4', '5', '5+'];
+        $religionOptions = [
+            'catholicism', 'orthodox', 'protestantism', 'buddhism', 
+            'hinduism', 'judaism', 'islam', 'other'
+        ];
+
         // --- 1. ADMIN ---
         $admin = new User();
         $admin->setEmail('admin@admin.admin');
@@ -57,6 +65,10 @@ class UserFixtures extends Fixture
             $user->setBirthdate($faker->dateTimeBetween('-40 years', '-18 years'));
             $user->setInterests($faker->sentence(20));;
             $user->setIsVerified(true);
+            $user->setMarital($faker->randomElement($maritalOptions));
+            $user->setChildren($faker->randomElement($childrenOptions));
+            $user->setReligion($faker->randomElement($religionOptions));
+           
             $manager->persist($user);
         }
 

@@ -43,6 +43,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $gender = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $religion = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $marital = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $children = null;
+
     public function getId(): ?int { return $this->id; }
 
     public function getEmail(): ?string { return $this->email; }
@@ -96,6 +105,42 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setGender(?string $gender): static
     {
         $this->gender = $gender;
+
+        return $this;
+    }
+
+    public function getReligion(): ?string
+    {
+        return $this->religion;
+    }
+
+    public function setReligion(?string $religion): static
+    {
+        $this->religion = $religion;
+
+        return $this;
+    }
+
+    public function getMarital(): ?string
+    {
+        return $this->marital;
+    }
+
+    public function setMarital(?string $marital): static
+    {
+        $this->marital = $marital;
+
+        return $this;
+    }
+
+    public function getChildren(): ?string
+    {
+        return $this->children;
+    }
+
+    public function setChildren(?string $children): static
+    {
+        $this->children = $children;
 
         return $this;
     }

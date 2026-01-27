@@ -8,6 +8,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\{IdField, EmailField, TextField, DateF
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Validator\Constraints\Choice;
 
 /**
  * CLASSE : UserCrudController
@@ -49,7 +50,7 @@ class UserCrudController extends AbstractCrudController
             
             EmailField::new('email', 'Email'),
 
-            // CHAMP PASSWORD : Le cœur de ta demande.
+            // CHAMP PASSWORD : 
             TextField::new('password', 'Mot de passe')
                 ->setFormType(PasswordType::class) // Cache les caractères (●●●●) [cite: 2026-01-12].
                 ->onlyOnForms()                    // Ne pas l'afficher dans la liste globale.
@@ -75,6 +76,33 @@ class UserCrudController extends AbstractCrudController
             ->setChoices([
                 '♂️ Homme' => 'male',
                 '♀️ Femme' => 'female',
+            ]),
+            ChoiceField::new('marital')
+            ->setChoices([
+                'divorcée' => 'divorced',
+                'veuve' => 'widowed',
+                'célibataire' => 'single',
+            ]),
+            ChoiceField::new('children')
+            ->setChoices([
+                '0' => '0',
+                '1' => '1',
+                '2' => '2',
+                '3' => '3',
+                '4' => '4',
+                '5' => '5',
+                '5+' => '5+',
+            ]),
+            ChoiceField::new('religion')
+            ->setChoices([
+                'Catholisme' => 'catholicism',
+                'Orthodoxisme' => 'orthodox',
+                'Protestantisme' => 'protestantism',
+                'Buddhisme' => 'buddhism',
+                'Hindouisme' => 'hinduism',
+                'Judaisme' => 'judaism',
+                'Islam' => 'islam',
+                'Autre' => 'other',
             ]),
 
             /**

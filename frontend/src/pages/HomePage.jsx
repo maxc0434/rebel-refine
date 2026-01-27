@@ -49,7 +49,7 @@ function HomePage() {
       });
   }, [navigate]);
 
-  // ÉTAPE : Affichage du préchargeur du template pendant l'appel API
+  // ÉTAPE 5: Affichage du préchargeur du template pendant l'appel API
   if (loading) {
     return (
       <div className="preloader">
@@ -84,26 +84,9 @@ function HomePage() {
                       </h2>
                       <p>Votre partenaire idéal n'est plus qu'à un clic.</p>
 
-                      <h6 className="mb-3">Vous recherchez...</h6>
+                      <h6 className="mb-3">Vous recherchez une femme...</h6>
                       <form className="banner-form">
-                        <div className="gender">
-                          <div className="custom-select right">
-                            <select>
-                              <option value="0">Une connexion</option>
-                              <option value="1">Homme</option>
-                              <option value="2">Femme</option>
-                            </select>
-                          </div>
-                        </div>
-                        <div className="person">
-                          <div className="custom-select right">
-                            <select>
-                              <option value="0">Avec</option>
-                              <option value="1">Homme</option>
-                              <option value="2">Femme</option>
-                            </select>
-                          </div>
-                        </div>
+          
                         <div className="age">
                           <div className="right d-flex justify-content-between w-100">
                             <div className="custom-select">
@@ -121,6 +104,21 @@ function HomePage() {
                                 <option value="11">28</option>
                                 <option value="13">29</option>
                                 <option value="14">30</option>
+                                <option value="15">31</option>
+                                <option value="16">32</option>
+                                <option value="17">33</option>
+                                <option value="18">34</option>
+                                <option value="19">35</option>
+                                <option value="20">36</option>
+                                <option value="21">37</option>
+                                <option value="22">38</option>
+                                <option value="23">39</option>
+                                <option value="24">40</option>
+                                <option value="25">41</option>
+                                <option value="26">42</option>
+                                <option value="27">43</option>
+                                <option value="28">44</option>
+                                <option value="29">45</option>
                                 <option value="15" selected>
                                   De
                                 </option>
@@ -141,6 +139,36 @@ function HomePage() {
                                 <option value="11">28</option>
                                 <option value="13">29</option>
                                 <option value="14">30</option>
+                                <option value="15">31</option>
+                                <option value="16">32</option>
+                                <option value="17">33</option>
+                                <option value="18">34</option>
+                                <option value="19">35</option>
+                                <option value="20">36</option>
+                                <option value="21">37</option>
+                                <option value="22">38</option>
+                                <option value="23">39</option>
+                                <option value="24">40</option>
+                                <option value="25">41</option>
+                                <option value="26">42</option>
+                                <option value="27">43</option>
+                                <option value="28">44</option>
+                                <option value="29">45</option>
+                                <option value="30">46</option>
+                                <option value="31">47</option>
+                                <option value="32">48</option>
+                                <option value="33">49</option>
+                                <option value="34">50</option>
+                                <option value="35">51</option>
+                                <option value="36">52</option>
+                                <option value="37">53</option>
+                                <option value="38">54</option>
+                                <option value="39">55</option>
+                                <option value="40">56</option>
+                                <option value="41">57</option>
+                                <option value="42">58</option>
+                                <option value="43">59</option>
+                                <option value="44">60</option>
                                 <option value="15" selected>
                                   To
                                 </option>

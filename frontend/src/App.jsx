@@ -5,6 +5,7 @@ import Navbar from "./components/Navbar";
 import RegisterPage from "./pages/RegisterPage";
 import HomePage from "./pages/HomePage";
 import MembersPage from "./pages/MembersPage";
+import ProfilePage from "./pages/ProfilePage";
 
 
 function App() {
@@ -21,6 +22,9 @@ function App() {
           <Route path="/home" element={<HomePage/>} />
           
           <Route path="/members/females" element={<MembersPage/>} />
+          
+          <Route path="/profile/:id" element={<ProfilePage/>} />
+
 
         </Routes>
     </Router>
