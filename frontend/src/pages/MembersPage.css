@@ -33,9 +33,9 @@
 }
 
 .member-section-female .lab-item:hover {
-    transform: translateY(-12px); /* Monte un peu plus haut pour marquer le coup */
+    transform: translateY(-12px); 
     background: rgba(255, 255, 255, 0.08) !important;
-    border: 1px solid rgba(253, 164, 175, 0.4); /* Le rose doux (fda4af) s'allume doucement */
+    border: 1px solid rgba(253, 164, 175, 0.4); 
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
 }
 
@@ -48,3 +48,4 @@
     color: #fda4af; /* Rose doux pour les intérêts */
     font-weight: 500;
 }
+

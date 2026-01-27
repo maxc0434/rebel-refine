@@ -1,0 +1,68 @@
+/* Fond de la page (on garde tes couleurs d'origine) */
+.profile-section.custom-bg {
+    background: linear-gradient(135deg, #1a0521 0%, #310d31 50%, #4a1033 100%);
+    min-height: 100vh;
+    padding-top: 50px;
+}
+
+/* MODIFICATION ICI : On ajoute un dégradé interne aux cartes */
+.profile-section .info-card {
+    /* Un dégradé très léger de bleu nuit vers le violet sombre */
+    background: linear-gradient(145deg, rgba(20, 25, 45, 0.6) 0%, rgba(49, 13, 49, 0.4) 100%);
+    
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    overflow: hidden;
+    margin-bottom: 30px;
+    transition: all 0.3s ease;
+}
+
+/* On peut aussi mettre un dégradé spécifique au titre pour plus de peps */
+.profile-section .info-card-title {
+    background: linear-gradient(90deg, rgba(243, 63, 94, 0.15) 0%, transparent 100%);
+    padding: 15px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.profile-section .info-card:hover {
+    /* On accentue le dégradé au survol */
+    background: linear-gradient(145deg, rgba(30, 35, 60, 0.7) 0%, rgba(60, 20, 60, 0.5) 100%);
+    border: 1px solid rgba(243, 63, 94, 0.4);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    transform: translateY(-2px); /* Petit effet de soulèvement */
+}
+
+/* Le reste du code reste identique pour la cohérence */
+.profile-section .info-card-title h6 {
+    color: #f33f5e;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.profile-section .info-card-content {
+    padding: 20px;
+}
+
+.profile-section .info-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.profile-section .info-name {
+    color: #bbb;
+    font-size: 0.9rem;
+}
+
+.profile-section .info-details {
+    color: #fff;
+    font-weight: 500;
+}
+
+.profile-section .info-card-content p {
+    color: #ddd;
+    line-height: 1.6;
+}
