@@ -19,13 +19,13 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 class UserCrudController extends AbstractCrudController
 {
     // ÉTAPE 1 : Déclaration d'une propriété privée pour stocker le service de hachage.
-    // Cela permet d'utiliser l'outil $passwordHasher dans toutes les méthodes de cette classe [cite: 2026-01-12].
+    // Cela permet d'utiliser l'outil $passwordHasher dans toutes les méthodes de cette classe.
     private UserPasswordHasherInterface $passwordHasher;
 
     /**
      * ÉTAPE 2 : LE CONSTRUCTEUR (Moment de l'initialisation)
      * Appelé une seule fois au chargement du contrôleur. 
-     * Symfony "injecte" ici l'outil UserPasswordHasherInterface pour qu'on puisse l'utiliser plus tard [cite: 2026-01-12].
+     * Symfony "injecte" ici l'outil UserPasswordHasherInterface pour qu'on puisse l'utiliser plus tard.
      */
     public function __construct(UserPasswordHasherInterface $passwordHasher)
     {
@@ -33,7 +33,7 @@ class UserCrudController extends AbstractCrudController
     }
 
     /**
-     * MÉTHODE OBLIGATOIRE : Définit sur quelle entité travaille ce contrôleur [cite: 2026-01-12].
+     * MÉTHODE OBLIGATOIRE : Définit sur quelle entité travaille ce contrôleur.
      */
     public static function getEntityFqcn(): string
     {
@@ -47,24 +47,24 @@ class UserCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            // Champ ID : on le cache dans les formulaires car la BDD le gère seule [cite: 2026-01-12].
+            // Champ ID : on le cache dans les formulaires car la BDD le gère seule.
             IdField::new('id')->hideOnForm(),
             
             EmailField::new('email', 'Email'),
 
             // CHAMP PASSWORD : 
             TextField::new('password', 'Mot de passe')
-                ->setFormType(PasswordType::class) // Cache les caractères (●●●●) [cite: 2026-01-12].
+                ->setFormType(PasswordType::class) // Cache les caractères (●●●●).
                 ->onlyOnForms()                    // Ne pas l'afficher dans la liste globale.
-                ->setRequired($pageName === 'new') // Obligatoire si "New", optionnel si "Edit" [cite: 2026-01-12].
+                ->setRequired($pageName === 'new') // Obligatoire si "New", optionnel si "Edit".
                 
                 // mapped => false : C'est ici qu'on empêche Symfony de lier automatiquement le champ 
-                // à l'entité, évitant ainsi d'envoyer du "null" en BDD si le champ est vide [cite: 2026-01-12].
+                // à l'entité, évitant ainsi d'envoyer du "null" en BDD si le champ est vide.
                 ->setFormTypeOption('mapped', false) 
                 
                 ->setFormTypeOptions([
                     'attr' => [
-                        // Placeholder : Aide visuelle à l'intérieur de la case [cite: 2026-01-12].
+                        // Placeholder : Aide visuelle à l'intérieur de la case.
                         'placeholder' => $pageName === 'edit' ? 
                             'Laissez vide pour conserver le mot de passe actuel' : 
                             'Entrez un mot de passe',

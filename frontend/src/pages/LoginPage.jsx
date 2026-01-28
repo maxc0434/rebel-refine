@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-
+import { Modal, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom"; // Import indispensable pour rediriger
 
 function LoginPage() {
@@ -8,8 +8,27 @@ function LoginPage() {
   const [email, setEmail] = useState(""); // État pour le champ email
   const [password, setPassword] = useState(""); // État pour le champ mot de passe
   const [error, setError] = useState(""); // État pour stocker les messages d'erreur
-
   const navigate = useNavigate(); // Initialisation de la fonction de redirection
+
+  const [showModal, setShowModal] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [status, setStatus] = useState({ type: "", msg: "" });
+
+  const handleForgotPassword = async (e) => {
+    e.preventDefault();
+    setStatus({ type: "info", msg: "Envoi en cours..." });
+
+    const response = await fetch(
+      "http://localhost:8000/api/reset-password/request",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: forgotEmail }),
+      },
+    );
+    const data = await response.json();
+    setStatus({ type: "success", msg: data.message });
+  };
 
   // --- ÉTAPE 2 : Fonction de soumission du formulaire ---
   const handleSubmit = async (e) => {
@@ -44,7 +63,7 @@ function LoginPage() {
       // alert("Connexion réussie ✅");
 
       // --- ÉTAPE 6 : Redirection automatique ---
-      // On vérifie si le serveur nous a envoyé une URL d'administration 
+      // On vérifie si le serveur nous a envoyé une URL d'administration
       if (data.redirectToAdmin) {
         // Si oui, on "quitte" React pour charger l'interface PHP d'EasyAdmin
         window.location.href = data.redirectToAdmin;
@@ -159,6 +178,18 @@ function LoginPage() {
                   </button>
                 </form>
 
+                <div className="text-center mt-3">
+                  <p className="mb-0" style={{ color: "#a5a5cc" }}>
+                    <span
+                      className="text-white fw-bold text-decoration-none border-bottom border-2 border-danger"
+                      style={{ cursor: "pointer" }}
+                      onClick={() => setShowModal(true)}
+                    >
+                      Mot de passe oublié ?
+                    </span>
+                  </p>
+                </div>
+
                 <div className="text-center mt-5">
                   <p className="mb-0" style={{ color: "#a5a5cc" }}>
                     Pas encore de compte ? <br />
@@ -175,6 +206,39 @@ function LoginPage() {
           </div>
         </div>
       </div>
+
+      <Modal
+        show={showModal}
+        onHide={() => setShowModal(false)}
+        centered
+        contentClassName="bg-dark text-white border-secondary"
+      >
+        <Modal.Header closeButton closeVariant="white">
+          <Modal.Title>Récupération de compte</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {status.msg && (
+            <div className={`alert alert-${status.type}`}>{status.msg}</div>
+          )}
+          <form onSubmit={handleForgotPassword}>
+            <label className="mb-2">Entrez votre adresse email :</label>
+            <input
+              type="email"
+              className="form-control bg-secondary text-white border-0"
+              value={forgotEmail}
+              onChange={(e) => setForgotEmail(e.target.value)}
+              required
+            />
+            <Button
+              type="submit"
+              variant="danger"
+              className="w-100 mt-3 fw-bold"
+            >
+              Envoyer le lien
+            </Button>
+          </form>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 }

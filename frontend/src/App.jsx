@@ -1,4 +1,3 @@
-import React from "react";
 import LoginPage from "./pages/LoginPage";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
@@ -6,6 +5,8 @@ import RegisterPage from "./pages/RegisterPage";
 import HomePage from "./pages/HomePage";
 import MembersPage from "./pages/MembersPage";
 import ProfilePage from "./pages/ProfilePage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 
 
 function App() {
@@ -24,6 +25,10 @@ function App() {
           <Route path="/members/females" element={<MembersPage/>} />
           
           <Route path="/profile/:id" element={<ProfilePage/>} />
+          
+          <Route path="/reset-password/:token" element={<ResetPasswordPage/>} />
+
+          <Route path="/forgot-password" element={<ForgotPasswordPage/>} />
 
 
         </Routes>

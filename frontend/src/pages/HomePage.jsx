@@ -5,50 +5,56 @@ import CountUp from "react-countup";
 function HomePage() {
   const navigate = useNavigate();
 
-  // --- ÉTAPE 1 : Initialisation des états ---
-  // apiData contiendra le JSON envoyé par le HomeController (message, nickname, etc.)
+  // --- ÉTAPE 1 : Initialisation des "boîtes" (States) ---
+  // apiData : l'armoire vide qui attend de recevoir le colis du HomeController.php
   const [apiData, setApiData] = useState(null);
-  // loading permet d'afficher un message d'attente pendant la requête réseau
+  
+  // loading : le verrou qui empêche React d'afficher le site tant que le colis n'est pas arrivé
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // --- ÉTAPE 2 : Récupération et vérification du Token ---
+    // --- ÉTAPE 2 : Sécurité ---
+    // On récupère la clé (Token) stockée lors de la connexion
     const token = localStorage.getItem("token");
 
-    // Si aucun token n'est trouvé, on redirige vers l'accueil (connexion)
+    // Si pas de clé, on n'essaie même pas de parler au serveur, on redirige
     if (!token) {
       navigate("/");
       return;
     }
 
-    // --- ÉTAPE 3 : Appel sécurisé vers Symfony (GET /api/home) ---
+    // --- ÉTAPE 3 : L'appel au serveur (Le messager) ---
+    // On contacte l'URL que tu as définie dans ton Controller Symfony
     fetch("http://localhost:8000/api/home", {
       method: "GET",
       headers: {
-        // Transmission du Token dans les headers pour authentifier la requête
+        // On présente le badge de sécurité (le Token) dans l'entête de la requête
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     })
       .then((response) => {
-        // Si le serveur répond autre chose que 200 OK (ex: 401 si le token a expiré)
+        // Si le serveur répond (ex: 200 OK), on transforme le texte JSON en objet JS
+        // Si le serveur dit "401 Unauthorized", on déclenche une erreur volontaire
         if (!response.ok) throw new Error("Session invalide");
-        return response.json();
+        return response.json(); 
       })
       .then((data) => {
-        // --- ÉTAPE 4 : Stockage des données de l'API ---
-        setApiData(data); // On met à jour l'état avec les infos de l'utilisateur
-        setLoading(false); // On retire l'écran de chargement
+        // --- ÉTAPE 4 : Rangement des données ---
+        // 'data' est l'objet JS qui contient tes stats, ton message et tes membres
+        setApiData(data);   // On remplit l'armoire 'apiData' avec ces données
+        setLoading(false);  // On déverrouille l'affichage (loading passe à false)
       })
       .catch((err) => {
+        // En cas d'erreur réseau ou de token expiré, on nettoie tout par sécurité
         console.error("Erreur API:", err);
-        // Sécurité : en cas d'erreur (token corrompu ou expiré), on vide tout et on déconnecte
         localStorage.clear();
         navigate("/");
       });
   }, [navigate]);
 
-  // ÉTAPE 5: Affichage du préchargeur du template pendant l'appel API
+  // --- ÉTAPE 5 : Le mur d'attente ---
+  // Tant que loading est true, on affiche uniquement le preloader
   if (loading) {
     return (
       <div className="preloader">
@@ -342,248 +348,289 @@ function HomePage() {
       {/* ================ About Section end Here =============== */}
 
       {/* ================ Meet Section start Here =============== */}
-    <div className="meet padding-tb">
-      <div className="container">
-        <div className="section-header">
-          <h2>Meet Singles in Your Area</h2>
-          <p>
-            Listen and learn from our community members and find out tips and
-            tricks to meet your love. Join us and be part of a bigger family.
-          </p>
-        </div>
-        <div className="section__wrapper">
-          <div className="row g-4 justify-content-center">
-            
-            {/* ITEM 1 */}
-            <div className="col-lg-6 col-12">
-              <div className="meet__item">
-                <div className="meet__inner">
-                  <div className="meet__thumb">
-                    <Link to="/members">
-                      <img src="/assets/images/meet/01.jpg" alt="dating thumb" />
-                    </Link>
-                  </div>
-                  <div className="meet__content">
-                    <img src="/assets/images/meet/icon/01.jpg" alt="dating thumb" />
-                    <Link to="/members">
-                      <h4>New York, USA</h4>
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* ITEM 2 */}
-            <div className="col-lg-3 col-sm-6 col-12">
-              <div className="meet__item">
-                <div className="meet__inner">
-                  <div className="meet__thumb">
-                    <Link to="/members">
-                      <img src="/assets/images/meet/02.jpg" alt="dating thumb" />
-                    </Link>
-                  </div>
-                  <div className="meet__content">
-                    <img src="/assets/images/meet/icon/02.jpg" alt="dating thumb" />
-                    <Link to="/members">
-                      <h4>London, UK</h4>
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* ITEM 3 */}
-            <div className="col-lg-3 col-sm-6 col-12">
-              <div className="meet__item">
-                <div className="meet__inner">
-                  <div className="meet__thumb">
-                    <Link to="/members">
-                      <img src="/assets/images/meet/03.jpg" alt="dating thumb" />
-                    </Link>
-                  </div>
-                  <div className="meet__content">
-                    <img src="/assets/images/meet/icon/03.jpg" alt="dating thumb" />
-                    <Link to="/members">
-                      <h4>Barcelona, Spain</h4>
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* ITEM 4 */}
-            <div className="col-lg-3 col-sm-6 col-12">
-              <div className="meet__item">
-                <div className="meet__inner">
-                  <div className="meet__thumb">
-                    <Link to="/members">
-                      <img src="/assets/images/meet/04.jpg" alt="dating thumb" />
-                    </Link>
-                  </div>
-                  <div className="meet__content">
-                    <img src="/assets/images/meet/icon/04.jpg" alt="dating thumb" />
-                    <Link to="/members">
-                      <h4>Taj Mahal, India</h4>
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* ITEM 5 */}
-            <div className="col-lg-3 col-sm-6 col-12">
-              <div className="meet__item">
-                <div className="meet__inner">
-                  <div className="meet__thumb">
-                    <Link to="/members">
-                      <img src="/assets/images/meet/05.jpg" alt="dating thumb" />
-                    </Link>
-                  </div>
-                  <div className="meet__content">
-                    <img src="/assets/images/meet/icon/05.jpg" alt="dating thumb" />
-                    <Link to="/members">
-                      <h4>Burj Al Arab, Dubai</h4>
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* ITEM 6 */}
-            <div className="col-lg-6 col-12">
-              <div className="meet__item">
-                <div className="meet__inner">
-                  <div className="meet__thumb">
-                    <Link to="/members">
-                      <img src="/assets/images/meet/06.jpg" alt="dating thumb" />
-                    </Link>
-                  </div>
-                  <div className="meet__content">
-                    <img src="/assets/images/meet/icon/06.jpg" alt="dating thumb" />
-                    <Link to="/members">
-                      <h4>Paris, France</h4>
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-
+      <div className="meet padding-tb">
+        <div className="container">
+          <div className="section-header">
+            <h2>Meet Singles in Your Area</h2>
+            <p>
+              Listen and learn from our community members and find out tips and
+              tricks to meet your love. Join us and be part of a bigger family.
+            </p>
           </div>
-          
-          <div className="text-center mt-5">
-            <Link to="/members" className="lab-btn">
-              <span>Search Near You</span>
-            </Link>
-          </div>
-        </div>
-      </div>
-    </div>
-    {/* ================ Meet Section end Here =============== */}
-
-   
-    {/*  ================ Success Story Section start Here =============== */}
-    <section 
-      className="story-section padding-tb bgimg" 
-      style={{ backgroundImage: "url(/assets/images/bg-img/02.jpg)" }}
-    >
-      <div className="container">
-        <div className="section-header">
-          <h2>Read Our Success Stories</h2>
-          <p>
-            Listen and learn from our community members and find out tips and
-            tricks to meet your love. Join us and be part of a bigger family.
-          </p>
-        </div>
-        <div className="section-wrapper">
-          <div className="row justify-content-center g-4 row-cols-xl-3 row-cols-sm-2 row-cols-1">
-            
-            {/* STORY 1 */}
-            <div className="col">
-              <div className="story-item lab-item">
-                <div className="lab-inner">
-                  <div className="lab-thumb">
-                    <Link to="/blog-single">
-                      <img src="/assets/images/story/01.jpg" alt="img" />
-                    </Link>
+          <div className="section__wrapper">
+            <div className="row g-4 justify-content-center">
+              {/* ITEM 1 */}
+              <div className="col-lg-6 col-12">
+                <div className="meet__item">
+                  <div className="meet__inner">
+                    <div className="meet__thumb">
+                      <Link to="/members">
+                        <img
+                          src="/assets/images/meet/01.jpg"
+                          alt="dating thumb"
+                        />
+                      </Link>
+                    </div>
+                    <div className="meet__content">
+                      <img
+                        src="/assets/images/meet/icon/01.jpg"
+                        alt="dating thumb"
+                      />
+                      <Link to="/members">
+                        <h4>New York, USA</h4>
+                      </Link>
+                    </div>
                   </div>
-                  <div className="lab-content">
-                    <Link to="/blog-single">
-                      <h4>Dream places and locations to visit in 2022</h4>
-                    </Link>
-                    <div className="lab-content-author">
-                      <div className="left">
-                        <img src="/assets/images/story/author/01.png" alt="blog-thumb" />
-                      </div>
-                      <div className="right">
-                        <a href="#">Umme Nishat</a>
-                        <span>April 08, 2022</span>
-                      </div>
+                </div>
+              </div>
+
+              {/* ITEM 2 */}
+              <div className="col-lg-3 col-sm-6 col-12">
+                <div className="meet__item">
+                  <div className="meet__inner">
+                    <div className="meet__thumb">
+                      <Link to="/members">
+                        <img
+                          src="/assets/images/meet/02.jpg"
+                          alt="dating thumb"
+                        />
+                      </Link>
+                    </div>
+                    <div className="meet__content">
+                      <img
+                        src="/assets/images/meet/icon/02.jpg"
+                        alt="dating thumb"
+                      />
+                      <Link to="/members">
+                        <h4>London, UK</h4>
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* ITEM 3 */}
+              <div className="col-lg-3 col-sm-6 col-12">
+                <div className="meet__item">
+                  <div className="meet__inner">
+                    <div className="meet__thumb">
+                      <Link to="/members">
+                        <img
+                          src="/assets/images/meet/03.jpg"
+                          alt="dating thumb"
+                        />
+                      </Link>
+                    </div>
+                    <div className="meet__content">
+                      <img
+                        src="/assets/images/meet/icon/03.jpg"
+                        alt="dating thumb"
+                      />
+                      <Link to="/members">
+                        <h4>Barcelona, Spain</h4>
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* ITEM 4 */}
+              <div className="col-lg-3 col-sm-6 col-12">
+                <div className="meet__item">
+                  <div className="meet__inner">
+                    <div className="meet__thumb">
+                      <Link to="/members">
+                        <img
+                          src="/assets/images/meet/04.jpg"
+                          alt="dating thumb"
+                        />
+                      </Link>
+                    </div>
+                    <div className="meet__content">
+                      <img
+                        src="/assets/images/meet/icon/04.jpg"
+                        alt="dating thumb"
+                      />
+                      <Link to="/members">
+                        <h4>Taj Mahal, India</h4>
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* ITEM 5 */}
+              <div className="col-lg-3 col-sm-6 col-12">
+                <div className="meet__item">
+                  <div className="meet__inner">
+                    <div className="meet__thumb">
+                      <Link to="/members">
+                        <img
+                          src="/assets/images/meet/05.jpg"
+                          alt="dating thumb"
+                        />
+                      </Link>
+                    </div>
+                    <div className="meet__content">
+                      <img
+                        src="/assets/images/meet/icon/05.jpg"
+                        alt="dating thumb"
+                      />
+                      <Link to="/members">
+                        <h4>Burj Al Arab, Dubai</h4>
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* ITEM 6 */}
+              <div className="col-lg-6 col-12">
+                <div className="meet__item">
+                  <div className="meet__inner">
+                    <div className="meet__thumb">
+                      <Link to="/members">
+                        <img
+                          src="/assets/images/meet/06.jpg"
+                          alt="dating thumb"
+                        />
+                      </Link>
+                    </div>
+                    <div className="meet__content">
+                      <img
+                        src="/assets/images/meet/icon/06.jpg"
+                        alt="dating thumb"
+                      />
+                      <Link to="/members">
+                        <h4>Paris, France</h4>
+                      </Link>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* STORY 2 */}
-            <div className="col">
-              <div className="story-item lab-item">
-                <div className="lab-inner">
-                  <div className="lab-thumb">
-                    <Link to="/blog-single">
-                      <img src="/assets/images/story/02.jpg" alt="img" />
-                    </Link>
-                  </div>
-                  <div className="lab-content">
-                    <Link to="/blog-single">
-                      <h4>Make your dreams come true and monetise quickly</h4>
-                    </Link>
-                    <div className="lab-content-author">
-                      <div className="left">
-                        <img src="/assets/images/story/author/02.png" alt="blog-thumb" />
-                      </div>
-                      <div className="right">
-                        <a href="#">Rajib Raj</a>
-                        <span>April 08, 2022</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div className="text-center mt-5">
+              <Link to="/members" className="lab-btn">
+                <span>Search Near You</span>
+              </Link>
             </div>
-
-            {/* STORY 3 */}
-            <div className="col">
-              <div className="story-item lab-item">
-                <div className="lab-inner">
-                  <div className="lab-thumb">
-                    <Link to="/blog-single">
-                      <img src="/assets/images/story/03.jpg" alt="img" />
-                    </Link>
-                  </div>
-                  <div className="lab-content">
-                    <Link to="/blog-single">
-                      <h4>Love looks not with the eyes, but with the mind.</h4>
-                    </Link>
-                    <div className="lab-content-author">
-                      <div className="left">
-                        <img src="/assets/images/story/author/03.png" alt="blog-thumb" />
-                      </div>
-                      <div className="right">
-                        <a href="#">Radika Roy</a>
-                        <span>April 08, 2022</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
           </div>
         </div>
       </div>
-    </section>
-    {/* ================ Success Story Section end Here =============== */ }
+      {/* ================ Meet Section end Here =============== */}
 
+      {/*  ================ Success Story Section start Here =============== */}
+      <section
+        className="story-section padding-tb bgimg"
+        style={{ backgroundImage: "url(/assets/images/bg-img/02.jpg)" }}
+      >
+        <div className="container">
+          <div className="section-header">
+            <h2>Read Our Success Stories</h2>
+            <p>
+              Listen and learn from our community members and find out tips and
+              tricks to meet your love. Join us and be part of a bigger family.
+            </p>
+          </div>
+          <div className="section-wrapper">
+            <div className="row justify-content-center g-4 row-cols-xl-3 row-cols-sm-2 row-cols-1">
+              {/* STORY 1 */}
+              <div className="col">
+                <div className="story-item lab-item">
+                  <div className="lab-inner">
+                    <div className="lab-thumb">
+                      <Link to="/blog-single">
+                        <img src="/assets/images/story/01.jpg" alt="img" />
+                      </Link>
+                    </div>
+                    <div className="lab-content">
+                      <Link to="/blog-single">
+                        <h4>Dream places and locations to visit in 2022</h4>
+                      </Link>
+                      <div className="lab-content-author">
+                        <div className="left">
+                          <img
+                            src="/assets/images/story/author/01.png"
+                            alt="blog-thumb"
+                          />
+                        </div>
+                        <div className="right">
+                          <a href="#">Umme Nishat</a>
+                          <span>April 08, 2022</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* STORY 2 */}
+              <div className="col">
+                <div className="story-item lab-item">
+                  <div className="lab-inner">
+                    <div className="lab-thumb">
+                      <Link to="/blog-single">
+                        <img src="/assets/images/story/02.jpg" alt="img" />
+                      </Link>
+                    </div>
+                    <div className="lab-content">
+                      <Link to="/blog-single">
+                        <h4>Make your dreams come true and monetise quickly</h4>
+                      </Link>
+                      <div className="lab-content-author">
+                        <div className="left">
+                          <img
+                            src="/assets/images/story/author/02.png"
+                            alt="blog-thumb"
+                          />
+                        </div>
+                        <div className="right">
+                          <a href="#">Rajib Raj</a>
+                          <span>April 08, 2022</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* STORY 3 */}
+              <div className="col">
+                <div className="story-item lab-item">
+                  <div className="lab-inner">
+                    <div className="lab-thumb">
+                      <Link to="/blog-single">
+                        <img src="/assets/images/story/03.jpg" alt="img" />
+                      </Link>
+                    </div>
+                    <div className="lab-content">
+                      <Link to="/blog-single">
+                        <h4>
+                          Love looks not with the eyes, but with the mind.
+                        </h4>
+                      </Link>
+                      <div className="lab-content-author">
+                        <div className="left">
+                          <img
+                            src="/assets/images/story/author/03.png"
+                            alt="blog-thumb"
+                          />
+                        </div>
+                        <div className="right">
+                          <a href="#">Radika Roy</a>
+                          <span>April 08, 2022</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      {/* ================ Success Story Section end Here =============== */}
     </>
   );
 }

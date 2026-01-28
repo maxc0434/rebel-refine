@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { background-color: #121212; color: #ffffff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 20px auto; background-color: #1e1e1e; border-radius: 12px; overflow: hidden; border: 1px solid #333; }
+        .header { background: linear-gradient(45deg, #f67280, #c06c84); padding: 30px; text-align: center; }
+        .header h1 { margin: 0; font-size: 24px; text-transform: uppercase; letter-spacing: 2px; color: white; }
+        .content { padding: 40px; text-align: center; line-height: 1.6; }
+        .content p { color: #a5a5cc; font-size: 16px; }
+        .btn { 
+            display: inline-block; background: linear-gradient(45deg, #f67280, #c06c84); color: #ffffff !important; 
+            padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; 
+            margin-top: 25px; box-shadow: 0 4px 15px rgba(246, 114, 128, 0.3);
+        }
+        .footer { padding: 20px; text-align: center; font-size: 12px; color: #666; border-top: 1px solid #333; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Rebel Refine</h1>
+        </div>
+        <div class="content">
+            <p>Bonjour,</p>
+            <p>Vous avez demandé la réinitialisation de votre mot de passe pour votre compte <strong>Rebel Refine</strong>.</p>
+            <p>Cliquez sur le bouton ci-dessous pour choisir un nouveau mot de passe :</p>
+            
+            <a href="{{ frontendUrl }}/reset-password/{{ resetToken.token }}" class="btn">
+                RÉINITIALISER MON MOT DE PASSE
+            </a>
+
+            <p style="margin-top: 30px; font-size: 13px;">
+                Ce lien expirera dans {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.
+            </p>
+        </div>
+        <div class="footer">
+            Si vous n'avez pas demandé ce changement, vous pouvez ignorer cet e-mail en toute sécurité.
+        </div>
+    </div>
+</body>
+</html>

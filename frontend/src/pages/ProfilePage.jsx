@@ -3,22 +3,29 @@ import { useParams } from "react-router-dom";
 import "./ProfilePage.css";
 
 function ProfilePage() {
+  // 1. RÉCUPÉRATION DE L'ID : On récupère l'ID dans l'URL (ex: /profile/12)
   const { id } = useParams();
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [selectedImg, setSelectedImg] = useState(null);
 
+  // 2. LES ÉTATS (STATES) : On crée des boîtes pour stocker nos données
+  const [user, setUser] = useState(null); // Contiendra les infos de l'utilisateur (nom, âge, photos...)
+  const [loading, setLoading] = useState(true); // Est-ce qu'on est en train de charger ? (Vrai au début)
+  const [selectedImg, setSelectedImg] = useState(null); // Contiendra l'image cliquée pour le zoom (modale)
+
+  // 3. L'APPEL API : S'exécute une seule fois au chargement de la page
   useEffect(() => {
+    // On appelle ton backend Symfony
     fetch(`http://localhost:8000/api/profile/${id}`, {
+      // On envoie le token de sécurité pour prouver qu'on est connecté
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     })
-      .then((res) => res.json())
+      .then((res) => res.json()) // On transforme la réponse en objet JavaScript (JSON)
       .then((data) => {
-        setUser(data);
-        setLoading(false);
+        setUser(data);       // On range les données reçues dans la boîte 'user'
+        setLoading(false);   // Le chargement est fini, on passe à 'false'
       });
-  }, [id]);
+  }, [id]); // Si l'ID change dans l'URL, on relance l'appel
 
+  // 4. L'AFFICHAGE D'ATTENTE : Si loading est vrai, on montre l'animation de chargement
   if (loading)
     return (
       <div className="preloader">
@@ -30,6 +37,8 @@ function ProfilePage() {
         </div>
       </div>
     );
+    
+  // La suite du code (le return avec le HTML) ne s'affichera que quand loading sera false
 
   return (
     <section className="profile-section padding-tb">
