@@ -6,7 +6,6 @@ import HomePage from "./pages/HomePage";
 import MembersPage from "./pages/MembersPage";
 import ProfilePage from "./pages/ProfilePage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
-import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 
 
 function App() {
@@ -27,9 +26,6 @@ function App() {
           <Route path="/profile/:id" element={<ProfilePage/>} />
           
           <Route path="/reset-password/:token" element={<ResetPasswordPage/>} />
-
-          <Route path="/forgot-password" element={<ForgotPasswordPage/>} />
-
 
         </Routes>
     </Router>

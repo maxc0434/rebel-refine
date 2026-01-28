@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Repository\UserRepository;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 final class MemberController extends AbstractController
@@ -14,6 +15,7 @@ final class MemberController extends AbstractController
      * On expose l'URL /api/members/females accessible uniquement en GET.
      */
     #[Route('/api/members/females', name: 'app_members_females', methods: ['GET'])]
+    #[IsGranted('ROLE_USER', message: 'Accès interdit')]
     public function getFemales(UserRepository $userRepository): JsonResponse
     {
         /**
@@ -30,7 +32,7 @@ final class MemberController extends AbstractController
          * $today sert de point de référence pour calculer l'âge par rapport à aujourd'hui.
          */
         $results = [];
-        $today = new \DateTime(); 
+        $today = new \DateTime();
 
         /**
          * ÉTAPE 4 : Boucle de traitement (Mapping)
@@ -38,7 +40,7 @@ final class MemberController extends AbstractController
          */
         foreach ($females as $female) {
             $age = null;
-            
+
             // On récupère l'objet DateTime de la date de naissance
             $birthday = $female->getBirthdate();
 
@@ -65,7 +67,7 @@ final class MemberController extends AbstractController
                 'id'       => $female->getId(),
                 'nickname' => $female->getNickname(),
                 'gender'   => $female->getGender(),
-                'age'      => $age, 
+                'age'      => $age,
                 'photos'   => $photos,
             ];
         }

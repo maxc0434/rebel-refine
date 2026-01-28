@@ -3,13 +3,15 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 final class ProfileController extends AbstractController
 {
     #[Route('/api/profile/{id}', name: 'app_profile_show', methods: ['GET'])]
+    #[IsGranted('ROLE_USER', message: 'Accès interdit')]
     public function show(User $user): JsonResponse
     {
         // Calcul de l'âge à la volée

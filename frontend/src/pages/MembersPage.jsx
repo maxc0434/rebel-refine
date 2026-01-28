@@ -12,11 +12,11 @@ function MembersPage() {
  useEffect(() => {
   const token = localStorage.getItem("token");
 
-  // Si pas de token, on peut rediriger ou arrêter là
-  if (!token) {
-    window.location.href = "/";
-    return;
-  }
+  // Si pas de token, on redirige
+    if (!token) {
+        navigate("/");
+        return;
+    }
 
   fetch("http://localhost:8000/api/members/females", {
     headers: { Authorization: `Bearer ${token}` },

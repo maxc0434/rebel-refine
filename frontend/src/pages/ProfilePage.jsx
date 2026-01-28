@@ -13,6 +13,12 @@ function ProfilePage() {
 
   // 3. L'APPEL API : S'exécute une seule fois au chargement de la page
   useEffect(() => {
+
+    // Si pas de token, on redirige vers l'accueil ou le login
+    if (!token) {
+        navigate("/");
+        return;
+    }
     // On appelle ton backend Symfony
     fetch(`http://localhost:8000/api/profile/${id}`, {
       // On envoie le token de sécurité pour prouver qu'on est connecté
