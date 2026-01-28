@@ -60,9 +60,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: UserImage::class, mappedBy: 'owner', orphanRemoval: true, cascade: ['persist'])]
     private Collection $userImages;
 
+    /**
+     * @var Collection<int, self>
+     */
+    #[ORM\ManyToMany(targetEntity: self::class)]
+    private Collection $favorites;
+
     public function __construct()
     {
         $this->userImages = new ArrayCollection();
+        $this->favorites = new ArrayCollection();
     }
 
     public function getId(): ?int { return $this->id; }
@@ -137,6 +144,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $userImage->setOwner(null);
             }
         }
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, self>
+     */
+    public function getFavorites(): Collection
+    {
+        return $this->favorites;
+    }
+
+    public function addFavorite(self $favorite): static
+    {
+        if (!$this->favorites->contains($favorite)) {
+            $this->favorites->add($favorite);
+        }
+
+        return $this;
+    }
+
+    public function removeFavorite(self $favorite): static
+    {
+        $this->favorites->removeElement($favorite);
+
         return $this;
     }
 }
