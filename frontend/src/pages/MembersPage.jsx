@@ -78,7 +78,7 @@ function MembersPage() {
           <h2>Tous nos membres féminins</h2>
         </div>
 
-        <div className="row justify-content-center g-4 row-cols-xl-4 row-cols-md-3 row-cols-sm-2 row-cols-1">
+        <div className="row justify-content-center g-3 g-md-4 row-cols-2 row-cols-md-2 row-cols-lg-2">
           {members.map((m) => (
             <div className="col" key={m.id}>
               <div
@@ -136,9 +136,52 @@ function MembersPage() {
                         }}
                       />
                     </div>
-                    <div className="lab-content">
-                      <h6>{m.nickname}</h6>
-                      <p>{m.age} ans</p>
+                    <div
+                      className="lab-content"
+                      style={{
+                        padding: "25px 15px",
+                        background:
+                          "linear-gradient(180deg, #1f2a4d 0%, #161f3d 100%)", // Dégradé léger pour plus de relief
+                        textAlign: "center",
+                        borderTop: "1px solid rgba(255, 255, 255, 0.05)",
+                      }}
+                    >
+                      <h6
+                        style={{
+                          fontFamily: "'Montserrat', sans-serif",
+                          fontSize: "1.3rem",
+                          fontWeight: "700",
+                          letterSpacing: "1.5px", // L'espacement qui change tout
+                          color: "#ffffff",
+                          textTransform: "uppercase", // Majuscules pour le style "Refine"
+                          marginBottom: "8px",
+                        }}
+                      >
+                        {m.nickname}
+                      </h6>
+
+                      <div
+                        style={{
+                          width: "30px",
+                          height: "2px",
+                          background: "#f94d80",
+                          margin: "0 auto 10px auto",
+                          borderRadius: "2px",
+                        }}
+                      ></div>
+
+                      <p
+                        style={{
+                          fontFamily: "'Lato', sans-serif",
+                          fontSize: "1.1rem",
+                          color: "rgba(255, 255, 255, 0.7)",
+                          margin: 0,
+                          fontWeight: "300",
+                          letterSpacing: "0.5px",
+                        }}
+                      >
+                        {m.age} ans
+                      </p>
                     </div>
                   </div>
                 </Link>
