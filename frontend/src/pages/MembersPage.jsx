@@ -1,62 +1,128 @@
 import { useEffect, useState } from "react";
 import "./MembersPage.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { Heart } from "lucide-react";
 
 function MembersPage() {
-  // Initialisation de l'état local pour stocker la liste des membres
-  // Au départ, le tableau est vide []
   const [members, setMembers] = useState([]);
+  const navigate = useNavigate();
 
-  // useEffect s'exécute après le premier rendu du composant
-  // Le tableau vide [] en dépendance signifie : "exécute une seule fois au montage"
- useEffect(() => {
+  // 1. On récupère le token une seule fois au début du composant
   const token = localStorage.getItem("token");
 
-  // Si pas de token, on redirige
+  useEffect(() => {
+    // 2. Sécurité : si pas de token, on dégage vers l'accueil
     if (!token) {
-        navigate("/");
-        return;
+      navigate("/");
+      return;
     }
 
-  fetch("http://localhost:8000/api/members/females", {
-    headers: { Authorization: `Bearer ${token}` },
-  })
-    .then((res) => {
-       if(res.status === 401) {
-          // Si le token est invalide, on déconnecte
-          localStorage.removeItem("token");
-          window.location.href = "/";
-       }
-       return res.json();
+    fetch("http://localhost:8000/api/members/females", {
+      headers: { Authorization: `Bearer ${token}` },
     })
-    .then((data) => setMembers(data));
-}, []);
+      .then((res) => {
+        if (res.status === 401) {
+          localStorage.removeItem("token");
+          navigate("/");
+          return;
+        }
+        return res.json();
+      })
+      .then((data) => {
+        if (data) setMembers(data);
+      })
+      .catch((err) => console.error("Erreur chargement membres:", err));
+
+    // IMPORTANT : On laisse le tableau vide [] pour ne charger les membres QU'UNE SEULE FOIS
+  }, []);
+
+  const toggleFavorite = async (e, targetId) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!token) return;
+
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/member/favorite/${targetId}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+      const data = await response.json();
+
+      if (data.status === "added" || data.status === "removed") {
+        // MISE À JOUR DE L'INTERFACE SANS RECHARGER
+        setMembers((prevMembers) =>
+          prevMembers.map((member) => {
+            if (member.id === targetId) {
+              // On pourrait ajouter une propriété 'isFavorite' ici si on l'avait
+              return { ...member, isFavorite: data.status === "added" };
+            }
+            return member;
+          }),
+        );
+      }
+    } catch (error) {
+      console.error("Erreur favoris:", error);
+    }
+  };
 
   return (
-    // Section principale avec classes CSS personnalisées
     <section className="member-section-female padding-tb">
       <div className="container">
-        {/* En-tête de la section */}
         <div className="section-header">
           <h2>Tous nos membres féminins</h2>
         </div>
 
         <div className="row justify-content-center g-4 row-cols-xl-4 row-cols-md-3 row-cols-sm-2 row-cols-1">
-          {/* Boucle sur le tableau members pour afficher chaque membre */}
           {members.map((m) => (
-            // key={m.id} est obligatoire pour React afin d'identifier chaque élément de la liste
             <div className="col" key={m.id}>
-              <Link
-                to={`/profile/${m.id}`}
-                className="lab-item member-item style-1"
-                style={{ textDecoration: "none", display: "block" }}
+              <div
+                className="member-card-container"
+                style={{ position: "relative" }}
               >
-                {/* Carte de membre avec classes CSS personnalisées */}
-                <div className="lab-item member-item style-1">
+                {/* BOUTON FAVORIS */}
+                <button
+                  onClick={(e) => toggleFavorite(e, m.id)}
+                  className="favorite-btn"
+                  style={{
+                    position: "absolute",
+                    top: "15px",
+                    right: "15px",
+                    zIndex: 20,
+                    background: "white",
+                    border: "none",
+                    borderRadius: "50%",
+                    width: "40px",
+                    height: "40px",
+                    cursor: "pointer",
+                    boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    opacity: 0.8,
+                  }}
+                >
+                  <Heart
+                    size={20}
+                    color="#f94d80"
+                    fill={m.isFavorite ? "#f94d80" : "none"}
+                  />
+                </button>
+
+                {/* LIEN VERS LE PROFIL */}
+                <Link
+                  to={`/profile/${m.id}`}
+                  className="lab-item member-item style-1"
+                  style={{ textDecoration: "none", display: "block" }}
+                >
                   <div className="lab-inner">
-                    {/* Conteneur de l'image */}
                     <div className="lab-thumb">
-                      {/* Image statique (même photo pour tous les membres) */}
                       <img
                         src={
                           m.photos && m.photos.length > 0
@@ -69,19 +135,15 @@ function MembersPage() {
                           height: "250px",
                           objectFit: "cover",
                         }}
-                      />{" "}
+                      />
                     </div>
-
-                    {/* Conteneur des informations textuelles */}
                     <div className="lab-content">
-                      {/* Affichage du pseudonyme du membre */}
                       <h6>{m.nickname}</h6>
-                      {/* Affichage de l'âge du membre */}
-                      <h6>{m.age} ans</h6>
+                      <p>{m.age} ans</p>
                     </div>
                   </div>
-                </div>
-              </Link>
+                </Link>
+              </div>
             </div>
           ))}
         </div>

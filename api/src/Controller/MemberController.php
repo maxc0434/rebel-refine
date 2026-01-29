@@ -18,6 +18,8 @@ final class MemberController extends AbstractController
     #[IsGranted('ROLE_USER', message: 'Accès interdit')]
     public function getFemales(UserRepository $userRepository): JsonResponse
     {
+        /** @var User $currentUser */
+        $currentUser = $this->getUser();
         /**
          * ÉTAPE 2 : Requête en Base de Données
          * On utilise le Repository pour filtrer : 
@@ -69,6 +71,7 @@ final class MemberController extends AbstractController
                 'gender'   => $female->getGender(),
                 'age'      => $age,
                 'photos'   => $photos,
+                'isFavorite' => $currentUser ? $currentUser->getFavorites()->contains($female) : false,
             ];
         }
 

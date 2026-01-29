@@ -10,6 +10,8 @@ function ProfilePage() {
   const [user, setUser] = useState(null); // Contiendra les infos de l'utilisateur (nom, âge, photos...)
   const [loading, setLoading] = useState(true); // Est-ce qu'on est en train de charger ? (Vrai au début)
   const [selectedImg, setSelectedImg] = useState(null); // Contiendra l'image cliquée pour le zoom (modale)
+  const token = localStorage.getItem("token");
+
 
   // 3. L'APPEL API : S'exécute une seule fois au chargement de la page
   useEffect(() => {
