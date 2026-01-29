@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import "./ProfilePage.css";
+import { Heart } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 function ProfilePage() {
   // 1. RÉCUPÉRATION DE L'ID : On récupère l'ID dans l'URL (ex: /profile/12)
@@ -12,14 +14,12 @@ function ProfilePage() {
   const [selectedImg, setSelectedImg] = useState(null); // Contiendra l'image cliquée pour le zoom (modale)
   const token = localStorage.getItem("token");
 
-
   // 3. L'APPEL API : S'exécute une seule fois au chargement de la page
   useEffect(() => {
-
     // Si pas de token, on redirige vers l'accueil ou le login
     if (!token) {
-        navigate("/");
-        return;
+      navigate("/");
+      return;
     }
     // On appelle ton backend Symfony
     fetch(`http://localhost:8000/api/profile/${id}`, {
@@ -28,8 +28,8 @@ function ProfilePage() {
     })
       .then((res) => res.json()) // On transforme la réponse en objet JavaScript (JSON)
       .then((data) => {
-        setUser(data);       // On range les données reçues dans la boîte 'user'
-        setLoading(false);   // Le chargement est fini, on passe à 'false'
+        setUser(data); // On range les données reçues dans la boîte 'user'
+        setLoading(false); // Le chargement est fini, on passe à 'false'
       });
   }, [id]); // Si l'ID change dans l'URL, on relance l'appel
 
@@ -45,8 +45,36 @@ function ProfilePage() {
         </div>
       </div>
     );
-    
-  // La suite du code (le return avec le HTML) ne s'affichera que quand loading sera false
+
+  // Fonction pour ajouter/retirer des favoris
+  const toggleFavorite = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/member/favorite/${id}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      if (!response.ok) throw new Error("Erreur serveur");
+      const data = await response.json();
+
+      if (data.status === "added" || data.status === "removed") {
+        // MISE À JOUR : On change juste la propriété isFavorite de l'objet user
+        setUser((prev) => ({
+          ...prev,
+          isFavorite: data.status === "added",
+        }));
+      }
+    } catch (error) {
+      console.error("Erreur favoris:", error.message);
+    }
+  };
+
 
   return (
     <section className="profile-section padding-tb">
@@ -56,8 +84,36 @@ function ProfilePage() {
           <div className="member-profile">
             <div className="profile-item">
               <div className="profile-cover">
+                <button
+                  onClick={toggleFavorite}
+                  className="favorite-btn"
+                  style={{
+                    position: "absolute",
+                    bottom: "15px",
+                    right: "15px",
+                    zIndex: 20,
+                    background: "white",
+                    border: "none",
+                    borderRadius: "50%",
+                    width: "90px",
+                    height: "90px",
+                    cursor: "pointer",
+                    boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    opacity: 0.8,
+                  }}
+                >
+                  <Heart
+                    size={50}
+                    color="#f94d80"
+                    fill={user.isFavorite ? "#f94d80" : "none"}
+                  />
+                </button>
                 <img src="/assets/images/profile/cover.jpg" alt="cover-pic" />
               </div>
+
               <div className="profile-information">
                 <div className="profile-pic">
                   <img
@@ -159,8 +215,6 @@ function ProfilePage() {
                 role="tabpanel"
               >
                 <div className="row mt-4">
-
-
                   {/* COLONNE GAUCHE : INFOS DÉTAILLÉES */}
                   {/* a propose de moi */}
                   <div className="col-xl-8 col-lg-7">

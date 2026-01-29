@@ -1,60 +1,98 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import CountUp from "react-countup";
+import { Heart } from "lucide-react";
 
 function HomePage() {
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
 
-  // --- ÉTAPE 1 : Initialisation des "boîtes" (States) ---
-  // apiData : l'armoire vide qui attend de recevoir le colis du HomeController.php
+  // State local stockant l'intégralité du JSON renvoyé par le HomeController (stats, members, etc.)
   const [apiData, setApiData] = useState(null);
-  
-  // loading : le verrou qui empêche React d'afficher le site tant que le colis n'est pas arrivé
+
+  // État de contrôle pour le rendu conditionnel (affichage du loader pendant le fetch)
   const [loading, setLoading] = useState(true);
 
+  /**
+   * Hook d'effet pour l'initialisation du composant.
+   * Déclenché au montage et si 'token' ou 'navigate' changent.
+   */
   useEffect(() => {
-    // --- ÉTAPE 2 : Sécurité ---
-    // On récupère la clé (Token) stockée lors de la connexion
-    const token = localStorage.getItem("token");
-
-    // Si pas de clé, on n'essaie même pas de parler au serveur, on redirige
+    // Garde-fou : redirection immédiate si le jeton d'authentification est absent
     if (!token) {
       navigate("/");
       return;
     }
 
-    // --- ÉTAPE 3 : L'appel au serveur (Le messager) ---
-    // On contacte l'URL que tu as définie dans ton Controller Symfony
+    // Appel API vers le point d'entrée principal de la plateforme
     fetch("http://localhost:8000/api/home", {
       method: "GET",
       headers: {
-        // On présente le badge de sécurité (le Token) dans l'entête de la requête
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     })
-      .then((response) => {
-        // Si le serveur répond (ex: 200 OK), on transforme le texte JSON en objet JS
-        // Si le serveur dit "401 Unauthorized", on déclenche une erreur volontaire
-        if (!response.ok) throw new Error("Session invalide");
-        return response.json(); 
+      .then((res) => {
+        // Intercepte les erreurs HTTP (ex: 401 Unauthorized, 500 Server Error)
+        if (!res.ok) throw new Error("Erreur de session ou serveur");
+        return res.json();
       })
       .then((data) => {
-        // --- ÉTAPE 4 : Rangement des données ---
-        // 'data' est l'objet JS qui contient tes stats, ton message et tes membres
-        setApiData(data);   // On remplit l'armoire 'apiData' avec ces données
-        setLoading(false);  // On déverrouille l'affichage (loading passe à false)
+        // Hydratation de l'état global de la page et levée du verrou de chargement
+        setApiData(data);
+        setLoading(false);
       })
       .catch((err) => {
-        // En cas d'erreur réseau ou de token expiré, on nettoie tout par sécurité
-        console.error("Erreur API:", err);
+        // Nettoyage du cache local et redirection en cas d'échec critique
+        console.error("Échec de la récupération des données Home:", err);
         localStorage.clear();
         navigate("/");
       });
-  }, [navigate]);
+  }, [navigate, token]);
 
-  // --- ÉTAPE 5 : Le mur d'attente ---
-  // Tant que loading est true, on affiche uniquement le preloader
+  const toggleFavorite = async (e, targetId) => {
+    // Empêche la navigation du Link et la propagation du clic
+    e.preventDefault();
+    e.stopPropagation();
+
+    try {
+      // Requête vers l'API avec le Token de sécurité
+      const response = await fetch(
+        `http://localhost:8000/api/member/favorite/${targetId}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      // Gestion des erreurs serveurs (ex: 404, 500)
+      if (!response.ok) throw new Error(`Erreur: ${response.status}`);
+
+      const data = await response.json();
+
+      // Si l'action est confirmée par la BDD
+      if (data.status === "added" || data.status === "removed") {
+        // Mise à jour de l'état local pour rafraîchir le cœur
+        setApiData((prevData) => ({
+          ...prevData, // On garde les stats et infos générales
+          last_members: prevData.last_members.map(
+            (member) =>
+              member.id === targetId
+                ? { ...member, isFavorite: data.status === "added" } // On modifie le membre cliqué
+                : member, // On garde les autres tels quels
+          ),
+        }));
+      }
+    } catch (error) {
+      console.error("Erreur favoris:", error.message);
+      alert("Impossible de mettre à jour le favori.");
+    }
+  };
+
+  // Rendu prioritaire du preloader si les données sont en cours d'acquisition
   if (loading) {
     return (
       <div className="preloader">
@@ -68,6 +106,7 @@ function HomePage() {
     );
   }
 
+  // Affichage de la page
   return (
     <>
       {/* ================ Banner Section start Here =============== */}
@@ -209,7 +248,39 @@ function HomePage() {
                 <div className="col" key={member.id}>
                   <div className="lab-item member-item style-1">
                     <div className="lab-inner">
-                      <div className="lab-thumb">
+                      <div
+                        className="lab-thumb"
+                        style={{ position: "relative" }}
+                      >
+                        {/* BOUTON FAVORIS */}
+                        <button
+                          onClick={(e) => toggleFavorite(e, member.id)}
+                          className="favorite-btn"
+                          style={{
+                            position: "absolute",
+                            top: "15px",
+                            right: "15px",
+                            zIndex: 20,
+                            background: "white",
+                            border: "none",
+                            borderRadius: "50%",
+                            width: "40px",
+                            height: "40px",
+                            cursor: "pointer",
+                            boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            opacity: 0.8,
+                          }}
+                        >
+                          <Heart
+                            size={20}
+                            color="#f94d80"
+                            fill={member.isFavorite ? "#f94d80" : "none"}
+                          />
+                        </button>
+
                         <Link to={`/profile/${member.id}`}>
                           <img
                             src={

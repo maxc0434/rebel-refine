@@ -32,16 +32,15 @@ function MembersPage() {
         if (data) setMembers(data);
       })
       .catch((err) => console.error("Erreur chargement membres:", err));
-
     // IMPORTANT : On laisse le tableau vide [] pour ne charger les membres QU'UNE SEULE FOIS
   }, []);
 
+  // 3. Gestion des favoris
   const toggleFavorite = async (e, targetId) => {
     e.preventDefault();
     e.stopPropagation();
 
     if (!token) return;
-
     try {
       const response = await fetch(
         `http://localhost:8000/api/member/favorite/${targetId}`,

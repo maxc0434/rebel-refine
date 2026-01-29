@@ -14,6 +14,10 @@ final class ProfileController extends AbstractController
     #[IsGranted('ROLE_USER', message: 'Accès interdit')]
     public function show(User $user): JsonResponse
     {
+        // Recupération de l'utilisateur connecté
+        /** @var User $currentUser */
+        $currentUser = $this->getUser();
+
         // Calcul de l'âge à la volée
         $today = new \DateTime();
         $age = $user->getBirthdate() ? $today->diff($user->getBirthdate())->y : null;
@@ -35,6 +39,7 @@ final class ProfileController extends AbstractController
             'religion'   => $user->getReligion(),
             'interests'  => $user->getInterests(),
             'photos'     => $photos,
+            'isFavorite' => $currentUser ? $currentUser->getFavorites()->contains($user) : false,
         ];
 
         return $this->json($data);

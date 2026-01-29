@@ -17,6 +17,8 @@ final class HomeController extends AbstractController
 
     public function index(#[CurrentUser] ?User $user, UserRepository $userRepository): JsonResponse
     {
+                /** @var User $currentUser */
+        $currentUser = $this->getUser();
         $today = new \DateTime();
 
         // --- 1. PRÉPARATION DES DERNIERS MEMBRES ---
@@ -45,6 +47,7 @@ final class HomeController extends AbstractController
                 'gender'   => $lastUser->getGender(),
                 'age'      => $age,
                 'photos'   => $photos, // C'est ce tableau que ton React recevra
+                'isFavorite' => $currentUser ? $currentUser->getFavorites()->contains($lastUser) : false,
             ];
         }
 
