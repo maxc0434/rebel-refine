@@ -7,6 +7,7 @@ import MembersPage from "./pages/MembersPage";
 import ProfilePage from "./pages/ProfilePage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import MemberDashboardPage from "./pages/MemberDashboardPage";
+import SearchPage from "./pages/SearchPage";
 
 function App() {
   return (
@@ -28,6 +29,8 @@ function App() {
           <Route path="/reset-password/:token" element={<ResetPasswordPage/>} />
 
           <Route path="/dashboard" element={<MemberDashboardPage />} />
+
+          <Route path="/search" element={<SearchPage />} />
 
         </Routes>
     </Router>

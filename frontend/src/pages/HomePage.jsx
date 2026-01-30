@@ -13,10 +13,10 @@ function HomePage() {
   // État de contrôle pour le rendu conditionnel (affichage du loader pendant le fetch)
   const [loading, setLoading] = useState(true);
 
+  // FONCTION DE GESTION DE LA RECHERCHE PAR AGE
   const [minAge, setMinAge] = useState("18");
   const [maxAge, setMaxAge] = useState("30");
-
-  // FONCTION DE GESTION DE LA RECHERCHE PAR AGE
+  //boucle pour construire la liste des options/choix age
   const ageOptions = [];
   for (let i = 18; i <= 60; i++) {
     ageOptions.push(
@@ -25,18 +25,17 @@ function HomePage() {
       </option>,
     );
   }
-    const handleSearch = (e) => {
+  // Fonction de gestion de la recherche pour le onSubmit du Form
+  const handleSearch = (e) => {
     // 1. On empêche le rechargement de la page (important !)
     e.preventDefault();
     // 2. On construit l'adresse avec les paramètres
     navigate(`/search?min=${minAge}&max=${maxAge}`);
   };
 
+  
 
-  /**
-   * Hook d'effet pour l'initialisation du composant.
-   * Déclenché au montage et si 'token' ou 'navigate' changent.
-   */
+  // FONCTION DE GESTION DU CHARGEMENT DE LA PAGE
   useEffect(() => {
     // Garde-fou : redirection immédiate si le jeton d'authentification est absent
     if (!token) {
@@ -70,6 +69,9 @@ function HomePage() {
       });
   }, [navigate, token]);
 
+
+
+  // FONCTION DE GESTION DES FAVORIS
   const toggleFavorite = async (e, targetId) => {
     // Empêche la navigation du Link et la propagation du clic
     e.preventDefault();
@@ -91,6 +93,7 @@ function HomePage() {
       // Gestion des erreurs serveurs (ex: 404, 500)
       if (!response.ok) throw new Error(`Erreur: ${response.status}`);
 
+      // Reprise des données renvoyées par l'API
       const data = await response.json();
 
       // Si l'action est confirmée par la BDD
@@ -106,11 +109,13 @@ function HomePage() {
           ),
         }));
       }
+      // Sinon, affiche un message d'erreur
     } catch (error) {
       console.error("Erreur favoris:", error.message);
       alert("Impossible de mettre à jour le favori.");
     }
   };
+
 
   // Rendu prioritaire du preloader si les données sont en cours d'acquisition
   if (loading) {
@@ -125,6 +130,12 @@ function HomePage() {
       </div>
     );
   }
+
+
+
+
+
+
 
   // Affichage de la page
   return (
@@ -149,43 +160,37 @@ function HomePage() {
                       <p>Votre partenaire idéal n'est plus qu'à un clic.</p>
 
                       {/* Formulaire de recherche */}
-                      <h6 className="mb-3">Vous recherchez une femme...</h6>
+                      <h6 className="mb-3">Vous recherchez une femme:</h6>
                       <form className="banner-form" onSubmit={handleSearch}>
                         <div className="age">
                           <div className="right d-flex justify-content-between w-100">
-                            
                             {/* SELECT : ÂGE MINIMUM */}
                             <div className="custom-select">
-                              <select 
-                                value={minAge} 
+                              <h5> De... </h5>
+                              <select
+                                value={minAge}
                                 onChange={(e) => setMinAge(e.target.value)}
                               >
                                 <option value="">De</option>
-                                {/* On génère les options de 18 à 60 ans */}
-                                {Array.from({ length: 43 }, (_, i) => i + 18).map(age => (
-                                  <option key={age} value={age}>{age}</option>
-                                ))}
+                                {ageOptions}{" "}
                               </select>
                             </div>
 
                             {/* SELECT : ÂGE MAXIMUM */}
                             <div className="custom-select">
-                              <select 
-                                value={maxAge} 
+                              <h5> A... </h5>
+                              <select
+                                value={maxAge}
                                 onChange={(e) => setMaxAge(e.target.value)}
                               >
-                                <option value="">À</option>
-                                {/* On génère les options de 18 à 60 ans */}
-                                {Array.from({ length: 43 }, (_, i) => i + 18).map(age => (
-                                  <option key={age} value={age}>{age}</option>
-                                ))}
+                                <option value="">De</option>
+                                {ageOptions}{" "}
                               </select>
                             </div>
-
                           </div>
                         </div>
 
-                        {/* Le bouton déclenche le onSubmit du formulaire */}
+                        {/* Le bouton déclencheur de la recherche*/}
                         <button type="submit">Trouver mon partenaire</button>
                       </form>
                     </div>

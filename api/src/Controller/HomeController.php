@@ -86,3 +86,4 @@ final class HomeController extends AbstractController
         return $this->json($data);
     }
 }
+

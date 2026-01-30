@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { User, Heart, Settings, LogOut } from "lucide-react";
+import { useState, useEffect } from "react";
+import { User, Heart, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 function MemberDashboardPage() {
