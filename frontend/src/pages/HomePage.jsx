@@ -13,6 +13,26 @@ function HomePage() {
   // État de contrôle pour le rendu conditionnel (affichage du loader pendant le fetch)
   const [loading, setLoading] = useState(true);
 
+  const [minAge, setMinAge] = useState("18");
+  const [maxAge, setMaxAge] = useState("30");
+
+  // FONCTION DE GESTION DE LA RECHERCHE PAR AGE
+  const ageOptions = [];
+  for (let i = 18; i <= 60; i++) {
+    ageOptions.push(
+      <option key={i} value={i}>
+        {i}
+      </option>,
+    );
+  }
+    const handleSearch = (e) => {
+    // 1. On empêche le rechargement de la page (important !)
+    e.preventDefault();
+    // 2. On construit l'adresse avec les paramètres
+    navigate(`/search?min=${minAge}&max=${maxAge}`);
+  };
+
+
   /**
    * Hook d'effet pour l'initialisation du composant.
    * Déclenché au montage et si 'token' ou 'navigate' changent.
@@ -128,97 +148,44 @@ function HomePage() {
                       </h2>
                       <p>Votre partenaire idéal n'est plus qu'à un clic.</p>
 
+                      {/* Formulaire de recherche */}
                       <h6 className="mb-3">Vous recherchez une femme...</h6>
-                      <form className="banner-form">
+                      <form className="banner-form" onSubmit={handleSearch}>
                         <div className="age">
                           <div className="right d-flex justify-content-between w-100">
+                            
+                            {/* SELECT : ÂGE MINIMUM */}
                             <div className="custom-select">
-                              <select>
-                                <option value="1">18</option>
-                                <option value="2">19</option>
-                                <option value="3">20</option>
-                                <option value="4">21</option>
-                                <option value="5">22</option>
-                                <option value="6">23</option>
-                                <option value="7">24</option>
-                                <option value="8">25</option>
-                                <option value="9">26</option>
-                                <option value="10">27</option>
-                                <option value="11">28</option>
-                                <option value="13">29</option>
-                                <option value="14">30</option>
-                                <option value="15">31</option>
-                                <option value="16">32</option>
-                                <option value="17">33</option>
-                                <option value="18">34</option>
-                                <option value="19">35</option>
-                                <option value="20">36</option>
-                                <option value="21">37</option>
-                                <option value="22">38</option>
-                                <option value="23">39</option>
-                                <option value="24">40</option>
-                                <option value="25">41</option>
-                                <option value="26">42</option>
-                                <option value="27">43</option>
-                                <option value="28">44</option>
-                                <option value="29">45</option>
-                                <option value="15" selected>
-                                  De
-                                </option>
+                              <select 
+                                value={minAge} 
+                                onChange={(e) => setMinAge(e.target.value)}
+                              >
+                                <option value="">De</option>
+                                {/* On génère les options de 18 à 60 ans */}
+                                {Array.from({ length: 43 }, (_, i) => i + 18).map(age => (
+                                  <option key={age} value={age}>{age}</option>
+                                ))}
                               </select>
                             </div>
+
+                            {/* SELECT : ÂGE MAXIMUM */}
                             <div className="custom-select">
-                              <select>
-                                <option value="1">18+</option>
-                                <option value="2">19</option>
-                                <option value="3">20</option>
-                                <option value="4">21</option>
-                                <option value="5">22</option>
-                                <option value="6">23</option>
-                                <option value="7">24</option>
-                                <option value="8">25</option>
-                                <option value="9">26</option>
-                                <option value="10">27</option>
-                                <option value="11">28</option>
-                                <option value="13">29</option>
-                                <option value="14">30</option>
-                                <option value="15">31</option>
-                                <option value="16">32</option>
-                                <option value="17">33</option>
-                                <option value="18">34</option>
-                                <option value="19">35</option>
-                                <option value="20">36</option>
-                                <option value="21">37</option>
-                                <option value="22">38</option>
-                                <option value="23">39</option>
-                                <option value="24">40</option>
-                                <option value="25">41</option>
-                                <option value="26">42</option>
-                                <option value="27">43</option>
-                                <option value="28">44</option>
-                                <option value="29">45</option>
-                                <option value="30">46</option>
-                                <option value="31">47</option>
-                                <option value="32">48</option>
-                                <option value="33">49</option>
-                                <option value="34">50</option>
-                                <option value="35">51</option>
-                                <option value="36">52</option>
-                                <option value="37">53</option>
-                                <option value="38">54</option>
-                                <option value="39">55</option>
-                                <option value="40">56</option>
-                                <option value="41">57</option>
-                                <option value="42">58</option>
-                                <option value="43">59</option>
-                                <option value="44">60</option>
-                                <option value="15" selected>
-                                  To
-                                </option>
+                              <select 
+                                value={maxAge} 
+                                onChange={(e) => setMaxAge(e.target.value)}
+                              >
+                                <option value="">À</option>
+                                {/* On génère les options de 18 à 60 ans */}
+                                {Array.from({ length: 43 }, (_, i) => i + 18).map(age => (
+                                  <option key={age} value={age}>{age}</option>
+                                ))}
                               </select>
                             </div>
+
                           </div>
                         </div>
+
+                        {/* Le bouton déclenche le onSubmit du formulaire */}
                         <button type="submit">Trouver mon partenaire</button>
                       </form>
                     </div>

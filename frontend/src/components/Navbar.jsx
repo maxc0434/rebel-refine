@@ -1,9 +1,9 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 function Navbar() {
   const navigate = useNavigate();
-  
+
   // On vérifie si l'utilisateur est connecté via le token
   const token = localStorage.getItem("token");
 
@@ -21,7 +21,11 @@ function Navbar() {
           <div className="header-wrapper">
             <div className="logo">
               {/* <Link to="/"> */}
-                <img src="/assets/images/logo/rebel_refine_logo_resized.png" alt="logo" style={{ height: '80px', width: 'auto' }} />
+              <img
+                src="/assets/images/logo/rebel_refine_logo_resized.png"
+                alt="logo"
+                style={{ height: "80px", width: "auto" }}
+              />
               {/* </Link> */}
             </div>
             <div className="menu-area">
@@ -31,6 +35,9 @@ function Navbar() {
                 </li>
                 <li>
                   <Link to="/members/females">Membres</Link>
+                </li>
+                <li>
+                  <Link to="/dashboard">Tableau de bord</Link>
                 </li>
               </ul>
 
@@ -43,13 +50,19 @@ function Navbar() {
               ) : (
                 // Si déconnecté : on affiche Log In et Sign Up
                 <>
-                  <Link to="/" className="login"><i className="icofont-user"></i> <span>LOG IN</span></Link>
-                  <Link to="/register" className="signup"><i className="icofont-users"></i> <span>SIGN UP</span></Link>
+                  <Link to="/" className="login">
+                    <i className="icofont-user"></i> <span>LOG IN</span>
+                  </Link>
+                  <Link to="/register" className="signup">
+                    <i className="icofont-users"></i> <span>SIGN UP</span>
+                  </Link>
                 </>
               )}
 
               <div className="header-bar d-lg-none">
-                <span></span><span></span><span></span>
+                <span></span>
+                <span></span>
+                <span></span>
               </div>
               <div className="ellepsis-bar d-lg-none">
                 <i className="icofont-info-square"></i>

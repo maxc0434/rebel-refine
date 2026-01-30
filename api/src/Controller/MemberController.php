@@ -18,8 +18,11 @@ final class MemberController extends AbstractController
     #[IsGranted('ROLE_USER', message: 'Accès interdit')]
     public function getFemales(UserRepository $userRepository): JsonResponse
     {
+        // On récupère l'objet User de la personne actuellement connectée grace au this
+
         /** @var User $currentUser */
         $currentUser = $this->getUser();
+        
         /**
          * ÉTAPE 2 : Requête en Base de Données
          * On utilise le Repository pour filtrer : 
@@ -49,8 +52,6 @@ final class MemberController extends AbstractController
             if ($birthday) {
                 /**
                  * ÉTAPE 5 : Calcul de l'âge à la volée PUIS Extraction des photos
-                 * diff() compare deux dates. 
-                 * ->y permet d'extraire uniquement le nombre d'années révolues.
                  */
                 $age = $today->diff($birthday)->y;
             }

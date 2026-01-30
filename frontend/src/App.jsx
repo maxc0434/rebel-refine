@@ -6,7 +6,7 @@ import HomePage from "./pages/HomePage";
 import MembersPage from "./pages/MembersPage";
 import ProfilePage from "./pages/ProfilePage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
-
+import MemberDashboardPage from "./pages/MemberDashboardPage";
 
 function App() {
   return (
@@ -26,6 +26,8 @@ function App() {
           <Route path="/profile/:id" element={<ProfilePage/>} />
           
           <Route path="/reset-password/:token" element={<ResetPasswordPage/>} />
+
+          <Route path="/dashboard" element={<MemberDashboardPage />} />
 
         </Routes>
     </Router>

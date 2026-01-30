@@ -35,6 +35,10 @@ class MemberDashboardController extends AbstractController
          * Ici, $favorite est une instance de User représentant une "Target".
          */
         foreach ($user->getFavorites() as $favorite) {
+            // Étape de sécurité : on récupère l'objet image s'il existe
+            $images = $favorite->getUserImages();
+            $firstImage = !$images->isEmpty() ? $images[0] : null;
+
             $favoritesData[] = [
                 // INFO TARGET : Identifiant unique de la personne mise en favori
                 'id' => $favorite->getId(),
@@ -42,11 +46,14 @@ class MemberDashboardController extends AbstractController
                 // INFO TARGET : Son pseudonyme pour l'affichage sur la carte
                 'nickname' => $favorite->getNickname(),
                 
-                // INFO TARGET : Son genre (ex: 'Masculin', 'Féminin')
-                'gender' => $favorite->getGender(),
+                // INFO TARGET : Son status marital
+                'marital' => $favorite->getMarital(),
                 
                 // INFO TARGET : Calcul de son âge basé sur sa date de naissance
                 'age' => $favorite->getBirthDate() ? $favorite->getBirthDate()->diff(new \DateTime())->y : null,
+
+                // INFO TARGET : Sa photo de profil
+                'photo' => $firstImage ? $firstImage->getImageName() : null
             ];
         }
         return $this->json([
@@ -94,7 +101,7 @@ class MemberDashboardController extends AbstractController
             $status = 'added';
         }
 
-        // On synchronise les changements avec la base de données
+        // On synchronise les changements avec la bdd
         $em->flush();
 
         return $this->json([
