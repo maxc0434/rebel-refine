@@ -11,7 +11,7 @@ const SearchPage = () => {
 
     // On extrait les paramètres de recherche de l'URL
     const min = searchParams.get("min") || 18;
-    const max = searchParams.get("max") || 99;
+    const max = searchParams.get("max") || 60;
 
     // On effectue la recherche en utilisant les paramètres extraits de l'URL
     fetch(`http://localhost:8000/api/members/search?min=${min}&max=${max}`)

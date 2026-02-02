@@ -15,7 +15,7 @@ final class SearchController extends AbstractController
     {
         // Récupération et typage des paramètres de filtrage
         $min = (int) $request->query->get('min', 18);
-        $max = (int) $request->query->get('max', 99);
+        $max = (int) $request->query->get('max', 60);
         $today = new \DateTime();
 
         $allUsers = $userRepository->findAll();
@@ -37,10 +37,10 @@ final class SearchController extends AbstractController
             if ($age >= $min && $age <= $max) {
                 
                 // Sélection de la première image ou image par défaut
-                $userImages = $user->getUserImages();
-                $photoName = !$userImages->isEmpty()
-                    ? $userImages->first()->getImageName()
-                    : null;
+                $userImages = $user->getUserImages(); 
+                $photoName = !$userImages->isEmpty() // S'il y a au moins une image
+                    ? $userImages->first()->getImageName() // On choisit la première
+                    : null; // Sinon on choisit null
 
                 // Construction de l'objet de réponse
                 $result[] = [

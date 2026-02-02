@@ -58,14 +58,14 @@ function LoginPage() {
 
 
       // --- ÉTAPE 4 : Gestion de l'échec d'authentification ---
-      if (response.status === 403) {
+      if (response.status === 403) { // En cas de code HTTP 403
         // On récupère le message envoyé par Symfony
         const data = await response.json();
         setError(data.message); 
         return;
       }
-      if (!response.ok) {
-        // On force le passage dans le bloc 'catch' en bas de la fonction
+      if (!response.ok) { // En cas de code HTTP autre que 200
+        // On lance une erreur personnalisée
         throw new Error("Identifiants incorrects");
       }
 
@@ -147,7 +147,7 @@ function LoginPage() {
                 </div>
               )}
 
-              {isVerified && (
+              {isVerified && ( // Affichez l'alerte de successe si isVerified est vrai
                 <div
                   className="alert text-center mb-4 py-3 shadow-lg"
                   style={{

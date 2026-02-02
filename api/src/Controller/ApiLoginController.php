@@ -31,7 +31,7 @@ final class ApiLoginController extends AbstractController
         JWTTokenManagerInterface $JWTManager
     ): JsonResponse {
 
-        // --- ÉTAPE 2 : Vérification de l'Authentification ---
+        // --- ÉTAPE 2 : Vérification de l'Authentification ET de la Vérification de l'Email ---
         // Le firewall de Symfony a déjà travaillé en amont. 
         // Si $user est null, c'est que l'email ou le mot de passe est faux.
         if (null === $user) {
