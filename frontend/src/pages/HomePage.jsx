@@ -33,8 +33,6 @@ function HomePage() {
     navigate(`/search?min=${minAge}&max=${maxAge}`);
   };
 
-  
-
   // FONCTION DE GESTION DU CHARGEMENT DE LA PAGE
   useEffect(() => {
     // Garde-fou : redirection immédiate si le jeton d'authentification est absent
@@ -68,8 +66,6 @@ function HomePage() {
         navigate("/");
       });
   }, [navigate, token]);
-
-
 
   // FONCTION DE GESTION DES FAVORIS
   const toggleFavorite = async (e, targetId) => {
@@ -116,7 +112,6 @@ function HomePage() {
     }
   };
 
-
   // Rendu prioritaire du preloader si les données sont en cours d'acquisition
   if (loading) {
     return (
@@ -131,36 +126,71 @@ function HomePage() {
     );
   }
 
-
-
-
-
-
-
   // Affichage de la page
   return (
     <>
       {/* ================ Banner Section start Here =============== */}
       <section
-        className="banner-section bgimg"
-        style={{ backgroundImage: "url(assets/images/banner/bg.jpg)" }}
+        className="banner-section bgimg d-flex align-items-center"
+        style={{
+          backgroundImage: "url(assets/images/banner/bg.jpg)",
+          minHeight: "80vh", // Donne de l'importance à la bannière
+          backgroundSize: "cover",
+          paddingTop: "100px", // Pour compenser la navbar fixe
+        }}
       >
         <div className="container">
           <div className="section-wrapper">
-            <div className="row align-items-end">
-              <div className="col-lg-6">
+            <div className="row align-items-center">
+              <div className="col-lg-6 col-xl-5">
                 <div className="banner-content">
-                  <div className="intro-form">
-                    <div className="intro-form-inner">
-                      {/* Utilisation du Nickname dynamique venant de l'API */}
-                      <h2>
-                        Ravi de vous revoir,{" "}
-                        {apiData?.user_details?.nickname || "Aventurier"}.
+                  <div
+                    className="intro-form shadow-lg"
+                    style={{
+                      backgroundColor: "rgba(30, 30, 60, 0.8)",
+                      backdropFilter: "blur(15px)",
+                      borderRadius: "30px",
+                      padding: "40px",
+                      border: "1px solid rgba(212, 175, 55, 0.2)",
+                    }}
+                  >
+                    <div className="intro-form-inner text-white">
+                      <h2 className="fw-bold mb-2" style={{ fontSize: "2rem" }}>
+                        Ravi de vous revoir,
+                        <br />
+                        <span style={{ color: "#d4af37" }}>
+                          {apiData?.user_details?.nickname || "Aventurier"}
+                        </span>
+                        .
                       </h2>
-                      <p>Votre partenaire idéal n'est plus qu'à un clic.</p>
+                      <p
+                        className="mb-4"
+                        style={{ color: "#a5a5cc", fontSize: "1.1rem" }}
+                      >
+                        Votre partenaire idéal n'est plus qu'à un clic.
+                      </p>
+
+                      <div
+                        style={{
+                          width: "50px",
+                          height: "2px",
+                          background: "#d4af37",
+                          marginBottom: "30px",
+                        }}
+                      ></div>
 
                       {/* Formulaire de recherche */}
-                      <h6 className="mb-3">Vous recherchez une femme:</h6>
+                      <h6
+                        className="text-uppercase mb-4"
+                        style={{
+                          letterSpacing: "2px",
+                          fontSize: "0.85rem",
+                          color: "#d4af37",
+                        }}
+                      >
+                        Je recherche une femme
+                      </h6>
+
                       <form className="banner-form" onSubmit={handleSearch}>
                         <div className="age">
                           <div className="right d-flex justify-content-between w-100">
@@ -170,9 +200,23 @@ function HomePage() {
                               <select
                                 value={minAge}
                                 onChange={(e) => setMinAge(e.target.value)}
+                                style={{
+                                  backgroundColor: "#1e1e3c",
+                                  color: "white",
+                                  border: "1px solid #d4af37",
+                                }}
                               >
-                                <option value="">De</option>
-                                {ageOptions}{" "}
+                                <option
+                                  value=""
+                                  style={{
+                                    backgroundColor: "#1e1e3c",
+                                    color: "white",
+                                  }}
+                                >
+                                  De
+                                </option>
+                                {/* Assure-toi que tes ageOptions reçoivent aussi ce style si elles sont générées ailleurs */}
+                                {ageOptions}
                               </select>
                             </div>
 
@@ -182,16 +226,44 @@ function HomePage() {
                               <select
                                 value={maxAge}
                                 onChange={(e) => setMaxAge(e.target.value)}
+                                style={{
+                                  backgroundColor: "#1e1e3c",
+                                  color: "white",
+                                  border: "1px solid #d4af37",
+                                }}
                               >
-                                <option value="">De</option>
-                                {ageOptions}{" "}
+                                <option
+                                  value=""
+                                  style={{
+                                    backgroundColor: "#1e1e3c",
+                                    color: "white",
+                                  }}
+                                >
+                                  De
+                                </option>
+                                {ageOptions}
                               </select>
                             </div>
                           </div>
                         </div>
 
-                        {/* Le bouton déclencheur de la recherche*/}
-                        <button type="submit">Trouver mon partenaire</button>
+                        {/* Le bouton avec l'effet pilule et ton dégradé */}
+                        <button
+                          type="submit"
+                          style={{
+                            background:
+                              "linear-gradient(45deg, #f67280, #c06c84)",
+                            borderRadius: "50px",
+                            padding: "10px 30px",
+                            border: "none",
+                            color: "white",
+                            fontWeight: "700",
+                            width: "100%",
+                            marginTop: "20px",
+                          }}
+                        >
+                          Trouver mon partenaire
+                        </button>
                       </form>
                     </div>
                   </div>

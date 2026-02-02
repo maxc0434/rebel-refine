@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 const SearchPage = () => {
   const [searchParams] = useSearchParams();
@@ -37,11 +37,10 @@ const SearchPage = () => {
         color: "#ffffff",
         paddingTop: "60px",
         paddingBottom: "80px",
-        fontFamily: "'Segoe UI', Roboto, Helvetica, Arial, sans-serif", 
+        fontFamily: "'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
       }}
     >
       <div className="container">
-
         {/* Header avec Count discret */}
         <div
           className="d-flex justify-content-between align-items-center mb-5 pb-3"
@@ -125,28 +124,22 @@ const SearchPage = () => {
                       </span>
                     </h5>
 
-                    <button
-                      className="btn w-100 py-2"
+                    <Link
+                      to={`/profile/${member.id}`} // On utilise l'ID dynamique
+                      className="btn w-100 py-2 btn-discover-link"
                       style={{
-                        borderRadius: "15px", // Retour du border-radius
+                        borderRadius: "15px",
                         background: "transparent",
                         border: "1px solid #d4af37",
                         color: "#d4af37",
                         fontSize: "0.85rem",
                         fontWeight: "600",
-                        transition: "0.3s",
-                      }}
-                      onMouseOver={(e) => {
-                        e.target.style.background = "#d4af37";
-                        e.target.style.color = "#1a1a2e";
-                      }}
-                      onMouseOut={(e) => {
-                        e.target.style.background = "transparent";
-                        e.target.style.color = "#d4af37";
+                        transition: "all 0.3s ease",
+                        display: "inline-block",
                       }}
                     >
                       DÉCOUVRIR LE PROFIL
-                    </button>
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -163,11 +156,25 @@ const SearchPage = () => {
 
       <style>
         {`
-                .custom-card:hover {
-                    transform: scale(1.05);
-                    box-shadow: 0 25px 50px rgba(0,0,0,0.5) !important;
-                    border-color: rgba(212, 175, 55, 0.4) !important;
-                }
+        .custom-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5) !important;
+            border-color: rgba(212, 175, 55, 0.4) !important;
+        }
+        .custom-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5) !important;
+            border-color: rgba(212, 175, 55, 0.4) !important;
+        }
+        .btn-discover-link:hover {
+            background-color: #d4af37 !important;
+            color: #1a1a2e !important;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+            transform: translateY(-2px);
+        }
+        .btn-discover-link:active {
+            transform: translateY(0);
+        }
             `}
       </style>
     </div>

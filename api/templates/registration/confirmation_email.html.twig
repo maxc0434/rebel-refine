@@ -1,11 +1,35 @@
-<h1> Mail de CONFIRMATION </h1>
+<div style="background-color: #080808; padding: 40px 20px; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; text-align: center; color: #ffffff;">
+    <div style="max-width: 600px; margin: 0 auto; background-color: #1a1a2e; border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 25px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.5);">
+        
+        <div style="padding: 40px 40px 20px 40px;">
+            <h1 style="color: #d4af37; font-size: 24px; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; margin: 0;">
+                Bienvenue parmi nous
+            </h1>
+            <div style="width: 50px; height: 2px; background-color: #d4af37; margin: 20px auto;"></div>
+        </div>
 
-<p>
-    Merci de confirmer votre email en cliquant sur le lien ci-dessous <br><br>
-    <a href="{{ signedUrl|raw }}">Confirmation du Mail</a>.
-    This link will expire in {{ expiresAtMessageKey|trans(expiresAtMessageData, 'VerifyEmailBundle') }}.
-</p>
+        <div style="padding: 0 40px 40px 40px; line-height: 1.6;">
+            <p style="font-size: 16px; color: #f8f9fa; opacity: 0.9;">
+                Merci de rejoindre notre cercle exclusif. <br>
+                Pour finaliser votre inscription et confirmer votre adresse email, veuillez cliquer sur le bouton ci-dessous :
+            </p>
 
-<p>
-    Cheers!
-</p>
+            <div style="margin: 40px 0;">
+                <a href="{{ signedUrl|raw }}" 
+                   style="background-color: transparent; border: 1px solid #d4af37; color: #d4af37; padding: 15px 35px; text-decoration: none; border-radius: 15px; font-weight: bold; font-size: 14px; letter-spacing: 1px; display: inline-block;">
+                    CONFIRMER MON PROFIL
+                </a>
+            </div>
+
+            <p style="font-size: 13px; color: #ffffff; opacity: 0.5;">
+                Ce lien expirera dans {{ expiresAtMessageKey|trans(expiresAtMessageData, 'VerifyEmailBundle') }}.
+            </p>
+        </div>
+
+        <div style="background-color: rgba(0,0,0,0.2); padding: 20px; border-top: 1px solid rgba(255,255,255,0.05);">
+            <p style="font-size: 12px; color: #d4af37; margin: 0; opacity: 0.8; letter-spacing: 1px;">
+                L'ÉQUIPE REFINE
+            </p>
+        </div>
+    </div>
+</div>

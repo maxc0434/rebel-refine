@@ -73,111 +73,163 @@ function RegisterPage() {
     }
   };
 
-  return (
-    <>
-      {/* ==========Page Header Section Start Here========== */}
-      <section
-        className="page-header-section style-1 bgimg"
-        style={{ backgroundImage: "url(/assets/images/bg-img/pageheader.jpg)" }}
-      >
-        <div className="container">
-          <div className="page-header-content">
-            <div className="page-header-inner">
-              <div className="page-title">
-                <h2>Registration Page</h2>
+return (
+  <div
+    className="login-section d-flex align-items-center justify-content-center"
+    style={{
+      minHeight: "100vh",
+      backgroundImage: 'linear-gradient(rgba(18, 18, 45, 0.85), rgba(18, 18, 45, 0.5)), url("/assets/images/bg-img/pageheader.jpg")',
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      padding: "60px 0"
+    }}
+  >
+    <div className="container">
+      <div className="row justify-content-center">
+        {/* On passe à col-lg-7 pour une carte plus large et plus aérée */}
+        <div className="col-12 col-sm-11 col-md-9 col-lg-7 col-xl-6">
+          <div
+            className="card border-0 shadow-lg text-white"
+            style={{
+              backgroundColor: "rgba(30, 30, 60, 0.85)", // Un peu plus sombre pour le contraste
+              borderRadius: "30px",
+              backdropFilter: "blur(20px)",
+              border: "1px solid rgba(212, 175, 55, 0.2)", // Rappel de l'or sur le bord
+              boxShadow: "0 25px 50px rgba(0,0,0,0.5)"
+            }}
+          >
+            <div className="card-body p-4 p-md-5">
+              {/* Header de la Card - Plus imposant */}
+              <div className="text-center mb-5">
+                <h1 className="fw-bold mb-2" style={{ letterSpacing: '4px', fontSize: '2.5rem' }}>
+                    REBEL <span style={{ color: '#d4af37' }}>REFINE</span>
+                </h1>
+                <p style={{ color: "#a5a5cc", fontSize: '1.1rem', letterSpacing: '1px' }}>
+                  Rejoignez le cercle exclusif
+                </p>
+                <div style={{ width: '60px', height: '3px', background: '#d4af37', margin: '20px auto' }}></div>
               </div>
-              <ol className="breadcrumb">
-                <li>
-                  <Link to="/">Home</Link>
-                </li>
-                <li className="active">Sign up</li>
-              </ol>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* ==========Sign up Section start Here========== */}
-      <div className="login-section padding-tb">
-        <div className="container">
-          <div className="account-wrapper">
-            <h3 className="title">Enregistrez-vous ici</h3>
+              <h3 className="text-center mb-4" style={{ fontSize: '1.4rem', fontWeight: '400', letterSpacing: '2px', textTransform: 'uppercase' }}>
+                Créer un compte
+              </h3>
 
-            {error && (
-              <div
-                className="alert alert-danger"
-                style={{
-                  color: "#721c24",
-                  backgroundColor: "#f8d7da",
-                  borderColor: "#f5c6cb",
-                  padding: "10px",
-                  borderRadius: "5px",
-                  marginBottom: "20px",
-                  textAlign: "center",
-                }}
-              >
-                {error}
-              </div>
-            )}
+              {error && (
+                <div
+                  className="alert text-center mb-4 py-3"
+                  style={{
+                    backgroundColor: "rgba(246, 114, 128, 0.2)",
+                    border: "1px solid #f67280",
+                    color: "#f67280",
+                    borderRadius: "15px",
+                    fontSize: '1rem'
+                  }}
+                >
+                  <i className="bi bi-exclamation-triangle-fill me-2"></i>
+                  {error}
+                </div>
+              )}
 
-            <form className="account-form" onSubmit={handleSubmit}>
-              <div className="form-group">
-                <input
-                  type="text"
-                  placeholder="Tapez votre Nom ou votre Pseudo"
-                  name="nickname"
-                  value={formData.nickname}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <input
-                  type="email"
-                  placeholder="votre Email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <input
-                  type="password"
-                  placeholder="votre Mot de Passe"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <input
-                  type="password"
-                  placeholder="Confirmez votre Mot de Passe "
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <button type="submit" className="d-block lab-btn">
-                  <span>ENREGISTRER</span>
+              <form className="account-form" onSubmit={handleSubmit}>
+                {/* Pseudo - Version Large */}
+                <div className="mb-4">
+                  <label className="form-label small text-uppercase fw-bold ms-2" style={{ color: '#d4af37', letterSpacing: '1px' }}>Pseudo</label>
+                  <input
+                    type="text"
+                    className="form-control form-control-lg bg-dark-subtle border-0 text-white shadow-none"
+                    style={{ 
+                        backgroundColor: "rgba(255,255,255,0.1)", 
+                        borderRadius: "15px", 
+                        padding: '15px 20px',
+                        fontSize: '1.1rem' 
+                    }}
+                    placeholder="Comment devons-nous vous appeler ?"
+                    name="nickname"
+                    value={formData.nickname}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                {/* Email - Version Large */}
+                <div className="mb-4">
+                  <label className="form-label small text-uppercase fw-bold ms-2" style={{ color: '#d4af37', letterSpacing: '1px' }}>Votre adresse email prestigieuse</label>
+                  <input
+                    type="email"
+                    className="form-control form-control-lg bg-dark-subtle border-0 text-white shadow-none"
+                    style={{ 
+                        backgroundColor: "rgba(255,255,255,0.1)", 
+                        borderRadius: "15px", 
+                        padding: '15px 20px',
+                        fontSize: '1.1rem' 
+                    }}
+                    placeholder="email@exemple.com"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className="row">
+                    <div className="col-md-6 mb-4">
+                        <label className="form-label small text-uppercase fw-bold ms-2" style={{ color: '#d4af37' }}>Mot de passe</label>
+                        <input
+                            type="password"
+                            className="form-control form-control-lg bg-dark-subtle border-0 text-white shadow-none"
+                            style={{ backgroundColor: "rgba(255,255,255,0.1)", borderRadius: "15px", padding: '15px 20px', fontSize: '1.1rem' }}
+                            placeholder="••••••••"
+                            name="password"
+                            value={formData.password}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                    <div className="col-md-6 mb-4">
+                        <label className="form-label small text-uppercase fw-bold ms-2" style={{ color: '#d4af37' }}>Confirmation</label>
+                        <input
+                            type="password"
+                            className="form-control form-control-lg bg-dark-subtle border-0 text-white shadow-none"
+                            style={{ backgroundColor: "rgba(255,255,255,0.1)", borderRadius: "15px", padding: '15px 20px', fontSize: '1.1rem' }}
+                            placeholder="••••••••"
+                            name="confirmPassword"
+                            value={formData.confirmPassword}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                </div>
+
+                <button
+                  type="submit"
+                  className="btn btn-lg w-100 fw-bold py-3 mt-4 text-white border-0"
+                  style={{
+                    background: "linear-gradient(45deg, #f67280, #c06c84)",
+                    borderRadius: "15px",
+                    boxShadow: "0 15px 30px rgba(246, 114, 128, 0.3)",
+                    letterSpacing: '2px',
+                    fontSize: '1.2rem'
+                  }}
+                >
+                  DEVENIR MEMBRE
                 </button>
-              </div>
-            </form>
+              </form>
 
-            <div className="account-bottom">
-              <span className="d-block cate pt-10">
-                Vous êtes déjà membre? <br /><br /><Link to="/">Connectez-vous ici</Link>
-              </span>
+              <div className="text-center mt-5">
+                <p className="mb-0" style={{ color: "#a5a5cc", fontSize: '1rem' }}>
+                  Vous faites déjà partie du cercle ? {" "}
+                  <Link to="/" className="fw-bold text-white text-decoration-none border-bottom border-danger border-2 pb-1">
+                    Se connecter
+                  </Link>
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </>
-  );
+    </div>
+  </div>
+);
 }
 
 export default RegisterPage;

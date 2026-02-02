@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -71,14 +72,14 @@ class RegistrationController extends AbstractController
     public function verifyEmail(
         Request $request,
         UserRepository $userRepository
-    ): JsonResponse {
+    ): RedirectResponse {
         
         // ÉTAPE 1 : Identification de l'utilisateur via l'ID dans l'URL
         $id = $request->query->get('id');
         $user = $userRepository->find($id);
 
         if (!$user) {
-            return $this->json(['error' => 'Utilisateur introuvable'], 404);
+            return $this->redirect('http://localhost:3000/?error=utilisateur introuvable');
         }
 
         // ÉTAPE 2 : Tentative de validation de la signature du lien
@@ -86,12 +87,10 @@ class RegistrationController extends AbstractController
             $this->emailVerifier->handleEmailConfirmation($request, $user);
         } catch (VerifyEmailExceptionInterface $e) {
             // ÉTAPE 3 : Gestion de l'erreur (lien expiré ou modifié)
-            return $this->json(['error' => $e->getReason()], 400);
+            return $this->redirect('http://localhost:3000/?error=lien expiré ou modifié');
         }
 
         // ÉTAPE 4 : Confirmation finale du succès de la vérification
-        return $this->json([
-            'message' => 'Email vérifié avec succès. Vous pouvez vous connecter.'
-        ]);
+        return $this->redirect('http://localhost:3000/?verified=1');
     }
 }

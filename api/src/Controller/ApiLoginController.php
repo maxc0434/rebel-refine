@@ -15,22 +15,22 @@ use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 final class ApiLoginController extends AbstractController
 {
 
-public function __construct(
+    public function __construct(
         private AdminUrlGenerator $adminUrlGenerator,
         private Security $security
     ) {}
 
-// Définition de la route : elle écoute sur /api/login et n'accepte que le POST
-// --- ÉTAPE 1 : Configuration de la Route ---
+    // Définition de la route : elle écoute sur /api/login et n'accepte que le POST
+    // --- ÉTAPE 1 : Configuration de la Route ---
     // On définit l'URL d'accès et on force l'utilisation de la méthode POST pour la sécurité
     #[Route('/api/login', name: 'app_api_login', methods: ['POST'])]
     public function index(
         // On demande à Symfony d'injecter l'utilisateur s'il a été reconnu par le firewall
-        #[CurrentUser] ?User $user, 
+        #[CurrentUser] ?User $user,
         // On appelle le service de LexikJWT pour pouvoir générer le jeton final
         JWTTokenManagerInterface $JWTManager
     ): JsonResponse {
-        
+
         // --- ÉTAPE 2 : Vérification de l'Authentification ---
         // Le firewall de Symfony a déjà travaillé en amont. 
         // Si $user est null, c'est que l'email ou le mot de passe est faux.
@@ -39,6 +39,14 @@ public function __construct(
                 'message' => 'Identifiants manquants ou invalides',
             ], JsonResponse::HTTP_UNAUTHORIZED); // Code 401 : accès refusé
         }
+
+        if (!$user->isVerified()) {
+            return $this->json([
+                'message' => 'Votre compte n\'est pas encore vérifié. Veuillez cliquer sur le lien envoyé par mail.',
+                'isVerified' => false // On envoie un flag pour que React puisse agir (ex: proposer un bouton de renvoi)
+            ], JsonResponse::HTTP_FORBIDDEN); // Code 403 : Interdit
+        }
+
         // On crée la session pour éviter l'erreur 401 sur l'admin
         $this->security->login($user, 'security.authenticator.json_login.main', 'main');
 
@@ -62,7 +70,7 @@ public function __construct(
             'email'     => $user->getEmail(),
             'nickname'  => $user->getNickname(),
             'redirectToAdmin' => $adminUrl,
-            
+
             // --- ÉTAPE 5 : Formatage des données spécifiques ---
             // On transforme les objets complexes (Date) en types simples (String) lisibles par JavaScript
             'birthdate' => $user->getBirthdate() ? $user->getBirthdate()->format('Y-m-d') : null,
