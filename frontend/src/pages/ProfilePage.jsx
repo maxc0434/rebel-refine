@@ -77,9 +77,10 @@ function ProfilePage() {
       const data = await response.json(); // On stocke le retour de l'API dans data
 
       // Mise à jour de l'état local pour un changement immédiat à l'écran
-      if (data.status === "added" || data.status === "removed") { 
-        setUser((prev) => ({ // On met à jour isFavorite
-          ...prev,// On copie tout ce qu'il y avait avant
+      if (data.status === "added" || data.status === "removed") {
+        setUser((prev) => ({
+          // On met à jour isFavorite
+          ...prev, // On copie tout ce qu'il y avait avant
           isFavorite: data.status === "added", // On met à jour
         }));
       }
@@ -88,7 +89,7 @@ function ProfilePage() {
     }
   };
 
-  // RENDU CONDITIONNEL DU PRELOADER 
+  // RENDU CONDITIONNEL DU PRELOADER
   if (loading)
     return (
       <div className="preloader">
@@ -253,9 +254,12 @@ function ProfilePage() {
                 <h6 style={{ color: "#d4af37" }}>À propos et Détails</h6>
               </div>
               <div className="info-card-content text-white">
-                <p className="mb-4">
-                  {user.interests || "Pas de description renseignée."}
-                </p>
+                <div
+                  className="mb-4 text-white interests-content"
+                  dangerouslySetInnerHTML={{
+                    __html: user.interests || "Pas de description renseignée.",
+                  }}
+                />
                 <ul className="info-list list-unstyled">
                   <li className="d-flex justify-content-between border-bottom border-secondary py-2">
                     <span className="text-white-50">Situation</span>{" "}

@@ -66,3 +66,26 @@
     color: #ddd;
     line-height: 1.6;
 }
+
+/* Style pour le contenu HTML généré par l'admin */
+.interests-content ul {
+    list-style-type: disc;
+    margin-left: 20px;
+    margin-bottom: 15px;
+}
+
+.interests-content ol {
+    list-style-type: decimal;
+    margin-left: 20px;
+    margin-bottom: 15px;
+}
+
+.interests-content li {
+    margin-bottom: 5px;
+}
+
+.interests-content br {
+    display: block;
+    content: "";
+    margin-top: 5px;
+}

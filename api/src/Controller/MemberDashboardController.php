@@ -61,6 +61,13 @@ class MemberDashboardController extends AbstractController
                 'nickname' => $user->getNickname(),       // Son propre pseudo
                 'email' => $user->getUserIdentifier(),    // Son email (identifiant de connexion)
                 'roles' => $user->getRoles(),             // Ses droits d'accès
+                'marital' => $user->getMarital(),         // Son status marital
+                'children' => $user->getChildren(),       // Son nombre d'enfants
+                'religion' => $user->getReligion(),       // Son religion
+                'birthDate' => $user->getBirthDate(),     // Sa date de naissance
+                'gender' => $user->getGender(),           // Son sexe
+                'interests' => $user->getInterests(),      // Ses passions
+            
             ],
 
             // BLOC DES TARGETS : La liste des profils favoris extraite plus haut
