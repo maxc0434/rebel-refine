@@ -1,52 +1,66 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import "./ProfilePage.css";
 import { Heart } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 
 function ProfilePage() {
-  // 1. RÉCUPÉRATION DE L'ID : On récupère l'ID dans l'URL (ex: /profile/12)
-  const { id } = useParams();
-
-  // 2. LES ÉTATS (STATES) : On crée des boîtes pour stocker nos données
-  const [user, setUser] = useState(null); // Contiendra les infos de l'utilisateur (nom, âge, photos...)
-  const [loading, setLoading] = useState(true); // Est-ce qu'on est en train de charger ? (Vrai au début)
-  const [selectedImg, setSelectedImg] = useState(null); // Contiendra l'image cliquée pour le zoom (modale)
+  // --- INITIALISATION ---
+  const { id } = useParams(); // Récupère l'ID du profil depuis l'URL
+  const navigate = useNavigate(); // Outil pour rediriger l'utilisateur
+  const [user, setUser] = useState(null); // Stocke les données de l'utilisateur
+  const [loading, setLoading] = useState(true); // Gère l'affichage de l'écran de chargement
+  const [selectedImgIndex, setSelectedImgIndex] = useState(null); //si null, la modale est fermée, si c'est un nombre, la modale s'ouvre sur cette photo
   const token = localStorage.getItem("token");
 
-  // 3. L'APPEL API : S'exécute une seule fois au chargement de la page
+  // --- CHARGEMENT DES DONNÉES ---
   useEffect(() => {
-    // Si pas de token, on redirige vers l'accueil ou le login
+    // Sécurité : si pas de token, on ne tente même pas l'appel, on redirige
     if (!token) {
       navigate("/");
       return;
     }
-    // On appelle ton backend Symfony
     fetch(`http://localhost:8000/api/profile/${id}`, {
-      // On envoie le token de sécurité pour prouver qu'on est connecté
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      headers: { Authorization: `Bearer ${token}` },
     })
-      .then((res) => res.json()) // On transforme la réponse en objet JavaScript (JSON)
+      .then((res) => res.json())
       .then((data) => {
-        setUser(data); // On range les données reçues dans la boîte 'user'
-        setLoading(false); // Le chargement est fini, on passe à 'false'
-      });
-  }, [id]); // Si l'ID change dans l'URL, on relance l'appel
+        setUser(data);
+        setLoading(false); // On arrête le preloader dès que les données sont là
+      })
+      .catch((err) => console.error("Erreur API:", err));
+  }, [id, token, navigate]); // Se relance si l'ID dans l'URL change
 
-  // 4. L'AFFICHAGE D'ATTENTE : Si loading est vrai, on montre l'animation de chargement
-  if (loading)
-    return (
-      <div className="preloader">
-        <div className="preloader-inner">
-          <div className="preloader-icon">
-            <span></span>
-            <span></span>
-          </div>
-        </div>
-      </div>
-    );
+  // --- LOGIQUE DU CARROUSEL ---
+  const photos = user?.photos || []; // Sécurité : évite de planter si user est null
 
-  // Fonction pour ajouter/retirer des favoris
+  const nextImg = (e) => {
+    if (e) e.stopPropagation(); // Evite que le clic soit propagé (clic qui fermerait la modale)
+    setSelectedImgIndex((prev) => (prev + 1 === photos.length ? 0 : prev + 1)); // "Si on est à la photo length - 1, on repart à 0, sinon on fait +1"
+  };
+
+  const prevImg = (e) => {
+    if (e) e.stopPropagation();
+    setSelectedImgIndex((prev) => (prev === 0 ? photos.length - 1 : prev - 1)); // "Si on est à 0, on repart à length - 1, sinon on fait -1"
+  };
+
+  // --- GESTION DES ÉVÉNEMENTS CLAVIER ---
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Si la modale est fermée, on ne fait rien
+      if (selectedImgIndex === null) return;
+      // Si la modale est ouverte, on regarde quelle touche est appuyée
+      if (e.key === "ArrowRight") nextImg();
+      if (e.key === "ArrowLeft") prevImg();
+      if (e.key === "Escape") setSelectedImgIndex(null); // Ferme avec Echap
+    };
+
+    // On attache l'écouteur d'événement au navigateur
+    window.addEventListener("keydown", handleKeyDown);
+    // On detache l'écouteur lorsque le composant est supprimé
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedImgIndex, photos.length]); // Se relance si selectedImgIndex change
+
+  // --- FAVORIS (Méthode asynchrone) ---
   const toggleFavorite = async () => {
     try {
       const response = await fetch(
@@ -59,15 +73,14 @@ function ProfilePage() {
           },
         },
       );
-
       if (!response.ok) throw new Error("Erreur serveur");
-      const data = await response.json();
+      const data = await response.json(); // On stocke le retour de l'API dans data
 
-      if (data.status === "added" || data.status === "removed") {
-        // MISE À JOUR : On change juste la propriété isFavorite de l'objet user
-        setUser((prev) => ({
-          ...prev,
-          isFavorite: data.status === "added",
+      // Mise à jour de l'état local pour un changement immédiat à l'écran
+      if (data.status === "added" || data.status === "removed") { 
+        setUser((prev) => ({ // On met à jour isFavorite
+          ...prev,// On copie tout ce qu'il y avait avant
+          isFavorite: data.status === "added", // On met à jour
         }));
       }
     } catch (error) {
@@ -75,6 +88,36 @@ function ProfilePage() {
     }
   };
 
+  // RENDU CONDITIONNEL DU PRELOADER 
+  if (loading)
+    return (
+      <div className="preloader">
+        <div className="preloader-inner">
+          <div className="preloader-icon">
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+      </div>
+    );
+
+  // Style commun pour les flèches
+  const navArrowStyle = {
+    background: "rgba(212, 175, 55, 0.1)",
+    border: "2px solid #d4af37",
+    color: "#d4af37",
+    borderRadius: "50%",
+    width: "60px",
+    height: "60px",
+    fontSize: "1.5rem",
+    cursor: "pointer",
+    transition: "0.3s",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 10001,
+    margin: "0 20px",
+  };
 
   return (
     <section className="profile-section padding-tb">
@@ -95,18 +138,18 @@ function ProfilePage() {
                     background: "white",
                     border: "none",
                     borderRadius: "50%",
-                    width: "90px",
-                    height: "90px",
+                    width: "70px",
+                    height: "70px",
                     cursor: "pointer",
-                    boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
+                    boxShadow: "0 2px 10px rgba(0,0,0,0.3)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    opacity: 0.8,
+                    opacity: 0.9,
                   }}
                 >
                   <Heart
-                    size={50}
+                    size={40}
                     color="#f94d80"
                     fill={user.isFavorite ? "#f94d80" : "none"}
                   />
@@ -118,8 +161,8 @@ function ProfilePage() {
                 <div className="profile-pic">
                   <img
                     src={
-                      user.photos && user.photos.length > 0
-                        ? `http://localhost:8000/uploads/users/${user.photos[0]}`
+                      photos.length > 0
+                        ? `http://localhost:8000/uploads/users/${photos[0]}`
                         : "/assets/images/member/04.jpg"
                     }
                     alt={user.nickname}
@@ -138,26 +181,33 @@ function ProfilePage() {
             </div>
           </div>
 
-          {/* 2. SECTION GALERIE PHOTO DE L'UTILISATEUR */}
+          {/* 2. GALERIE PHOTO */}
           <div className="row mt-5">
             <div className="col-12">
-              <div className="info-card mb-4">
+              <div
+                className="info-card mb-4"
+                style={{
+                  backgroundColor: "rgba(30, 30, 60, 0.4)",
+                  border: "1px solid rgba(212, 175, 55, 0.2)",
+                }}
+              >
                 <div className="info-card-title">
-                  <h6>Ma Galerie Photos</h6>
+                  <h6 style={{ color: "#d4af37" }}>Ma Galerie Photos</h6>
                 </div>
                 <div className="info-card-content">
                   <div className="row g-3">
-                    {user.photos && user.photos.length > 0 ? (
-                      user.photos.map((photo, index) => (
+                    {photos.length > 0 ? (
+                      photos.map((photo, index) => (
                         <div className="col-6 col-md-4 col-lg-3" key={index}>
                           <div
                             className="gallery-card"
                             style={{
                               cursor: "pointer",
                               overflow: "hidden",
-                              borderRadius: "8px",
+                              borderRadius: "12px",
+                              border: "1px solid rgba(255,255,255,0.1)",
                             }}
-                            onClick={() => setSelectedImg(photo)}
+                            onClick={() => setSelectedImgIndex(index)}
                           >
                             <img
                               src={`http://localhost:8000/uploads/users/${photo}`}
@@ -167,11 +217,10 @@ function ProfilePage() {
                                 height: "200px",
                                 width: "100%",
                                 objectFit: "cover",
-                                transition: "transform 0.3s",
+                                transition: "0.4s",
                               }}
                               onMouseOver={(e) =>
-                                (e.currentTarget.style.transform =
-                                  "scale(1.05)")
+                                (e.currentTarget.style.transform = "scale(1.1)")
                               }
                               onMouseOut={(e) =>
                                 (e.currentTarget.style.transform = "scale(1)")
@@ -191,140 +240,111 @@ function ProfilePage() {
             </div>
           </div>
 
-          {/* 3. NAVIGATION ET DÉTAILS DU PROFIL */}
+          {/* 3. DÉTAILS DU PROFIL */}
           <div className="profile-details mt-4">
-            <nav className="profile-nav">
-              <div className="nav nav-tabs" id="nav-tab" role="tablist">
-                <button
-                  className="nav-link active"
-                  id="nav-profile-tab"
-                  data-bs-toggle="tab"
-                  data-bs-target="#profile"
-                  type="button"
-                  role="tab"
-                >
-                  Profil
-                </button>
+            <div
+              className="info-card"
+              style={{
+                backgroundColor: "rgba(30, 30, 60, 0.4)",
+                border: "1px solid rgba(212, 175, 55, 0.2)",
+              }}
+            >
+              <div className="info-card-title">
+                <h6 style={{ color: "#d4af37" }}>À propos et Détails</h6>
               </div>
-            </nav>
-
-            <div className="tab-content" id="nav-tabContent">
-              <div
-                className="tab-pane fade show active"
-                id="profile"
-                role="tabpanel"
-              >
-                <div className="row mt-4">
-                  {/* COLONNE GAUCHE : INFOS DÉTAILLÉES */}
-                  {/* a propose de moi */}
-                  <div className="col-xl-8 col-lg-7">
-                    <div className="info-card mb-4">
-                      <div className="info-card-title">
-                        <h6>À propos de moi</h6>
-                      </div>
-                      <div className="info-card-content">
-                        <p>
-                          {user.interests || "Pas de description renseignée."}
-                        </p>
-                      </div>
-                    </div>
-                    {/* détails du profil */}
-                    <div className="info-card">
-                      <div className="info-card-title">
-                        <h6>Détails du profil</h6>
-                      </div>
-                      <div className="info-card-content">
-                        <ul className="info-list">
-                          <li>
-                            <p className="info-name">Situation amoureuse</p>
-                            <p className="info-details">{user.marital}</p>
-                          </li>
-                          <li>
-                            <p className="info-name">Enfants</p>
-                            <p className="info-details">{user.children}</p>
-                          </li>
-                          <li>
-                            <p className="info-name">Religion</p>
-                            <p className="info-details">{user.religion}</p>
-                          </li>
-                          <li>
-                            <p className="info-name">Âge</p>
-                            <p className="info-details">{user.age} ans</p>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* COLONNE DROITE : SIDEBAR */}
-                  <div className="col-xl-4 col-lg-5">
-                    <div className="info-card">
-                      <div className="info-card-title">
-                        <h6>Informations de base</h6>
-                      </div>
-                      <div className="info-card-content">
-                        <ul className="info-list">
-                          <li>
-                            <p className="info-name">Pseudo</p>
-                            <p className="info-details">{user.nickname}</p>
-                          </li>
-                          <li>
-                            <p className="info-name">Genre</p>
-                            <p className="info-details">
-                              {user.gender === "female" ? "Femme" : "Homme"}
-                            </p>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+              <div className="info-card-content text-white">
+                <p className="mb-4">
+                  {user.interests || "Pas de description renseignée."}
+                </p>
+                <ul className="info-list list-unstyled">
+                  <li className="d-flex justify-content-between border-bottom border-secondary py-2">
+                    <span className="text-white-50">Situation</span>{" "}
+                    <span>{user.marital}</span>
+                  </li>
+                  <li className="d-flex justify-content-between border-bottom border-secondary py-2">
+                    <span className="text-white-50">Enfants</span>{" "}
+                    <span>{user.children}</span>
+                  </li>
+                  <li className="d-flex justify-content-between py-2">
+                    <span className="text-white-50">Religion</span>{" "}
+                    <span>{user.religion}</span>
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
-        </div>{" "}
-        {/* FIN section-wrapper */}
-      </div>{" "}
-      {/* FIN container */}
-      {/* 4. MODALE DE VISUALISATION (Hors du flux normal) */}
-      {selectedImg && (
+        </div>
+      </div>
+
+      {/* 4. MODALE CARROUSEL (FIXED) */}
+      {selectedImgIndex !== null && (
         <div
-          className="image-modal-overlay"
           style={{
             position: "fixed",
             top: 0,
             left: 0,
-            width: "100%",
-            height: "100%",
-            backgroundColor: "rgba(0,0,0,0.9)",
-            zIndex: 9999,
+            width: "100vw",
+            height: "100vh",
+            backgroundColor: "rgba(10, 10, 25, 0.96)",
+            backdropFilter: "blur(12px)",
+            zIndex: 10000,
             display: "flex",
-            justifyContent: "center",
             alignItems: "center",
-            cursor: "zoom-out",
+            justifyContent: "space-between",
           }}
-          onClick={() => setSelectedImg(null)}
+          onClick={() => setSelectedImgIndex(null)}
         >
-          <img
-            src={`http://localhost:8000/uploads/users/${selectedImg}`}
-            style={{
-              maxHeight: "90%",
-              maxWidth: "90%",
-              borderRadius: "8px",
-              boxShadow: "0 0 20px rgba(0,0,0,0.5)",
-            }}
-            alt="Zoom"
-          />
+          {/* Flèche Précédent */}
+          <button onClick={prevImg} style={navArrowStyle}>
+            <i className="icofont-rounded-left"></i>
+          </button>
+
+          {/* Container Image */}
+          <div
+            style={{ textAlign: "center", position: "relative" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={`http://localhost:8000/uploads/users/${photos[selectedImgIndex]}`}
+              style={{
+                maxHeight: "85vh",
+                maxWidth: "85vw",
+                borderRadius: "15px",
+                border: "2px solid rgba(212, 175, 55, 0.3)",
+                boxShadow: "0 0 40px rgba(0,0,0,0.6)",
+              }}
+              alt="Zoom"
+            />
+            <div
+              style={{
+                color: "#d4af37",
+                marginTop: "15px",
+                fontWeight: "bold",
+                fontSize: "1.1rem",
+              }}
+            >
+              {selectedImgIndex + 1} / {photos.length}
+            </div>
+          </div>
+
+          {/* Flèche Suivant */}
+          <button onClick={nextImg} style={navArrowStyle}>
+            <i className="icofont-rounded-right"></i>
+          </button>
+
+          {/* Bouton Fermer */}
           <button
+            onClick={() => setSelectedImgIndex(null)}
             style={{
               position: "absolute",
-              top: "20px",
-              right: "30px",
+              top: "30px",
+              right: "40px",
               color: "white",
               background: "none",
               border: "none",
-              fontSize: "40px",
+              fontSize: "45px",
               cursor: "pointer",
+              lineHeight: "1",
             }}
           >
             &times;
