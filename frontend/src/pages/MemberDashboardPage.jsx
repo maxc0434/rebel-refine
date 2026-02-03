@@ -74,6 +74,60 @@ function MemberDashboardPage() {
     }
   };
 
+  // --- GESTION DE l'UPDATE du PASSWORD ---
+  const [passwordData, setPasswordData] = useState({
+    oldPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+
+  const handleUpdatePassword = async (e) => {
+    e.preventDefault();
+
+    // 1. Vérification locale avant l'appel
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      alert("Les nouveaux mots de passe ne correspondent pas !");
+      return;
+    }
+    try {
+      // 2. L'appel API avec fetch
+      const response = await fetch(
+        "http://localhost:8000/api/auth/update-password",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            // On récupère ton token de session stocké au moment du login
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({
+            oldPassword: passwordData.oldPassword,
+            newPassword: passwordData.newPassword,
+          }),
+        },
+      );
+      // 3. Transformation de la réponse en JSON
+      const data = await response.json();
+      // 4. Vérification du succès (fetch ne "catch" pas les erreurs 401, 403, 500 etc.)
+      if (!response.ok) {
+        throw new Error(data.message || "Erreur lors de la mise à jour");
+      }
+      // 5. Succès !
+      alert("Mot de passe mis à jour avec succès !");
+      setPasswordData({
+        oldPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+      navigate("/home");
+    } catch (error) {
+      // 6. Gestion des erreurs (Ancien mot de passe faux, problème serveur, etc.)
+      console.error("Erreur API:", error.message);
+      alert(error.message);
+    }
+    
+  };
+
   // --- LOGIQUE DE CHARGEMENT (API) ---
   useEffect(() => {
     if (!token) {
@@ -432,7 +486,7 @@ function MemberDashboardPage() {
                         className="btn-cancel"
                         onClick={() => {
                           setUserData(backupData);
-                          setIsEditing(false); 
+                          setIsEditing(false);
                         }}
                       >
                         ANNULER
@@ -555,24 +609,92 @@ function MemberDashboardPage() {
               </div>
             )}
 
+            {/* ONGLETS DE SECURITÉ */}
             {activeTab === "security" && (
-              <div>
+              <div className="security-section">
                 <h3 style={{ marginBottom: "20px" }}>Sécurité du compte</h3>
-                <p>
-                  <strong>Email :</strong> {userData.email}
-                </p>
-                <button
-                  style={{
-                    background: "#f94d80",
-                    border: "none",
-                    color: "white",
-                    padding: "10px 20px",
-                    borderRadius: "5px",
-                    cursor: "pointer",
-                  }}
-                >
-                  Modifier le mot de passe
-                </button>
+
+                <div className="info-item-container">
+                  <span className="info-item-label">Email de connexion</span>
+                  <span className="info-item-value">{userData.email}</span>
+                </div>
+
+                <form className="security-form" onSubmit={handleUpdatePassword} autoComplete="off">
+                  <h4
+                    style={{
+                      marginBottom: "15px",
+                      fontSize: "0.9rem",
+                      color: "#f94d80",
+                    }}
+                  >
+                    Changer le mot de passe
+                  </h4>
+
+                  <div className="password-input-group">
+                    <label className="dashboard-label">
+                      Ancien mot de passe
+                    </label>
+                    <input
+                      type="password"
+                      className="dashboard-input"
+                      value={passwordData.oldPassword}
+                      autoComplete="current-password"
+                      onChange={(e) =>
+                        setPasswordData({
+                          ...passwordData,
+                          oldPassword: e.target.value,
+                        })
+                      }
+                      required
+                    />
+                  </div>
+
+                  <div className="password-input-group">
+                    <label className="dashboard-label">
+                      Nouveau mot de passe
+                    </label>
+                    <input
+                      type="password"
+                      className="dashboard-input"
+                      value={passwordData.newPassword}
+                      autoComplete="new-password"
+                      onChange={(e) =>
+                        setPasswordData({
+                          ...passwordData,
+                          newPassword: e.target.value,
+                        })
+                      }
+                      required
+                    />
+                  </div>
+
+                  <div className="password-input-group">
+                    <label className="dashboard-label">
+                      Confirmer le nouveau mot de passe
+                    </label>
+                    <input
+                      type="password"
+                      className="dashboard-input"
+                      value={passwordData.confirmPassword}
+                      autoComplete="new-password"
+                      onChange={(e) =>
+                        setPasswordData({
+                          ...passwordData,
+                          confirmPassword: e.target.value,
+                        })
+                      }
+                      required
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="btn-gold"
+                    style={{ width: "100%", marginTop: "10px" }}
+                  >
+                    METTRE À JOUR LE MOT DE PASSE
+                  </button>
+                </form>
               </div>
             )}
           </main>

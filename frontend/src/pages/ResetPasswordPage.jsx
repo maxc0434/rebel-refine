@@ -70,7 +70,7 @@ const ResetPasswordPage = () => {
             style={{
               backgroundColor: "rgba(40, 167, 69, 0.2)",
               color: "#2ecc71",
-              whiteSpace: "pre-line", // Permet de lire le \n
+              whiteSpace: "pre-line",
             }}
           >
             {" "}
