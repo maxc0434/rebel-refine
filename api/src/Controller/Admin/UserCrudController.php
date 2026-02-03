@@ -89,9 +89,9 @@ class UserCrudController extends AbstractCrudController
 
             ChoiceField::new('marital')
             ->setChoices([
-                'divorcée' => 'divorced',
-                'veuve' => 'widowed',
-                'célibataire' => 'single',
+                'divorcé(e)' => 'divorcé(e)',
+                'veuf(ve)' => 'veuf(ve)',
+                'célibataire' => 'célibataire',
             ]),
 
             ChoiceField::new('children')
@@ -107,14 +107,15 @@ class UserCrudController extends AbstractCrudController
             
             ChoiceField::new('religion')
             ->setChoices([
-                'Catholisme' => 'catholicism',
-                'Orthodoxisme' => 'orthodox',
-                'Protestantisme' => 'protestantism',
-                'Buddhisme' => 'buddhism',
-                'Hindouisme' => 'hinduism',
-                'Judaisme' => 'judaism',
-                'Islam' => 'islam',
-                'Autre' => 'other',
+                'Aucune' => 'aucune',
+                'Catholique' => 'catholique',
+                'Orthodoxe' => 'orthodoxe',
+                'Protestant' => 'protestant',
+                'Buddhiste' => 'buddhiste',
+                'Hindoue' => 'hindoue',
+                'Judaique' => 'judaique',
+                'Islamiste' => 'islamiste',
+                'Autre' => 'autre',
             ]),
 
             TextEditorField::new('interests', "Centres d'intérêts"),
