@@ -1,0 +1,162 @@
+/* --- LE CONTENEUR GLOBAL --- */
+.editor-container {
+    background: #2d3248; /* Couleur intermédiaire pour délimiter la zone */
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    height: 400px; /* On fixe la hauteur ici */
+}
+
+/* --- LA BARRE D'OUTILS (TOOLBAR) --- */
+.ql-toolbar.ql-snow {
+    background: #e0e0e0 !important; /* Fond gris clair pour bien voir les icônes */
+    border: none !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
+}
+
+/* On force les icônes en noir sur le fond gris clair pour une visibilité maximale */
+.ql-snow .ql-stroke {
+    stroke: #1a1a1a !important;
+}
+.ql-snow .ql-fill {
+    fill: #1a1a1a !important;
+}
+.ql-snow .ql-picker {
+    color: #1a1a1a !important;
+}
+
+/* --- LE CONTENEUR (Celui qui a la bordure) --- */
+.editor-container {
+    background: #2d3248;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    height: 400px; /* On garde la hauteur fixe */
+    overflow: hidden !important; /* Empeche le conteneur de grandir */
+}
+
+/* --- LA ZONE DE TEXTE (SCROLL FIX ULTIME) --- */
+.ql-container.ql-snow {
+    border: none !important;
+    background-color: #24283b;
+    display: block !important; /* On casse le flex ici pour tester */
+    height: 335px !important; /* Hauteur totale moins la toolbar (environ 65px) */
+    overflow: hidden !important; 
+}
+
+.ql-editor {
+    height: 100% !important;
+    overflow-y: auto !important; /* LE SCROLL DOIT APPARAITRE ICI */
+    -webkit-overflow-scrolling: touch; /* Pour la fluidité sur mobile */
+    color: #ffffff !important;
+    font-size: 1rem;
+    line-height: 1.6;
+    padding: 15px !important;
+}
+
+/* On force l'affichage de la scrollbar car elle est peut-être invisible */
+.ql-editor::-webkit-scrollbar {
+    width: 10px !important;
+    display: block !important;
+}
+
+.ql-editor::-webkit-scrollbar-thumb {
+    background: #f94d80 !important;
+    border-radius: 10px;
+    border: 2px solid #24283b; /* Crée un petit espace autour */
+}
+
+.ql-editor::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3) !important;
+}
+
+/* --- LE RESTE DU DASHBOARD (RAPPEL) --- */
+.dashboard-label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+    text-transform: uppercase;
+}
+
+.dashboard-input {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    font-size: 1rem;
+    outline: none;
+}
+
+.nav-button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 15px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.nav-button.active {
+    background: #f94d80;
+    color: white;
+}
+
+.btn-gold {
+    flex: 1;
+    background: linear-gradient(45deg, #bf953f, #fcf6ba, #b38728);
+    border: none;
+    color: #12122d;
+    padding: 12px;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-cancel {
+    flex: 1; 
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    padding: 12px 25px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* Scrollbar stylisée pour ne pas être moche */
+.ql-editor::-webkit-scrollbar {
+    width: 8px;
+}
+.ql-editor::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.1);
+}
+.ql-editor::-webkit-scrollbar-thumb {
+    background: #f94d80;
+    border-radius: 10px;
+}
+
+.info-item-label {
+    display: block; /* FORCE LE RETOUR À LA LIGNE */
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    margin-bottom: 4px; /* Un petit espace sous le titre pour respirer */
+}
+
+.info-item-value {
+    display: block; /* Pour être sûr que la valeur reste bien isolée */
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #ffffff;
+}

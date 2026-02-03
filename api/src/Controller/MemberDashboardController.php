@@ -50,7 +50,11 @@ class MemberDashboardController extends AbstractController
                 'age' => $favorite->getBirthDate() ? $favorite->getBirthDate()->diff(new \DateTime())->y : null,
 
                 // INFO TARGET : Sa photo de profil
-                'photo' => $firstImage ? $firstImage->getImageName() : null
+                'photo' => $firstImage ? $firstImage->getImageName() : null,
+
+                // INFO TARGET : Ses passions
+                // 'interests' => $favorite->getInterests(),
+                
             ];
         }
         return $this->json([

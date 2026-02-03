@@ -1,17 +1,24 @@
 import { useState, useEffect } from "react";
 import { User, Heart, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import ReactQuill from "react-quill-new";
+import "react-quill-new/dist/quill.snow.css";
+import "./MemberDashboardPage.css";
 
 function MemberDashboardPage() {
   // --- ÉTATS (STATES) ---
   // Gère l'onglet sélectionné (Profil, Favoris, etc.)
-  const [activeTab, setActiveTab] = useState(localStorage.getItem("activeTab") || "infos");
+  const [activeTab, setActiveTab] = useState(
+    localStorage.getItem("activeTab") || "infos",
+  );
   // Stocke les données renvoyées par Symfony (pseudo, email, etc.)
   const [userData, setUserData] = useState(null);
   // Gère l'affichage de l'écran d'attente pendant l'appel API
   const [loading, setLoading] = useState(true);
-
+  const [isEditing, setIsEditing] = useState(false);
   const [favorites, setFavorites] = useState([]);
+  // copie de données en cas d'annulation
+  const [backupData, setBackupData] = useState(null);
 
   // --- OUTILS & AUTHENTIFICATION ---
   const navigate = useNavigate(); // Hook pour rediriger l'utilisateur
@@ -19,13 +26,56 @@ function MemberDashboardPage() {
 
   // --- GESTION DE L'ONGLET ---
   const handleTabChange = (tabName) => {
-  setActiveTab(tabName); // Change l'onglet visuellement
-  localStorage.setItem("activeTab", tabName); // Sauvegarde pour la prochaine fois
-};
+    setActiveTab(tabName); // Change l'onglet visuellement
+    localStorage.setItem("activeTab", tabName); // Sauvegarde pour la prochaine fois
+  };
+
+  // --- GESTION DE L'INPUT et de l'UPDATE du PROFIL ---
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setUserData({
+      ...userData,
+      [name]: value,
+    });
+  };
+
+  const handleUpdateProfile = async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem("token");
+
+    try {
+      const response = await fetch(
+        "http://localhost:8000/api/member/update-profile",
+        {
+          method: "POST", // Correspond à ton contrôleur
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            nickname: userData.nickname,
+            interests: userData.interests,
+            marital: userData.marital,
+            religion: userData.religion,
+            children: userData.children,
+          }),
+        },
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log("Profil mis à jour !");
+      } else {
+        console.error("Erreur:", data.message);
+      }
+    } catch (error) {
+      console.error("Erreur réseau:", error);
+    }
+  };
 
   // --- LOGIQUE DE CHARGEMENT (API) ---
   useEffect(() => {
-    // Sécurité : Si aucun token n'est trouvé, retour immédiat à l'accueil
     if (!token) {
       navigate("/");
       return;
@@ -35,7 +85,7 @@ function MemberDashboardPage() {
     fetch("http://localhost:8000/api/member/dashboard", {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${token}`, 
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     })
@@ -110,19 +160,19 @@ function MemberDashboardPage() {
             >
               <button
                 onClick={() => handleTabChange("infos")}
-                style={navButtonStyle(activeTab === "infos")}
+                className={`nav-button ${activeTab === "infos" ? "active" : ""}`}
               >
                 <User size={18} /> Mes Informations
               </button>
               <button
                 onClick={() => handleTabChange("favs")}
-                style={navButtonStyle(activeTab === "favs")}
+                className={`nav-button ${activeTab === "favs" ? "active" : ""}`}
               >
                 <Heart size={18} /> Mes Favoris
               </button>
               <button
                 onClick={() => handleTabChange("security")}
-                style={navButtonStyle(activeTab === "security")}
+                className={`nav-button ${activeTab === "security" ? "active" : ""}`}
               >
                 <Settings size={18} /> Sécurité
               </button>
@@ -141,21 +191,255 @@ function MemberDashboardPage() {
           >
             {activeTab === "infos" && (
               <div>
-                <h3
+                <div
                   style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
                     marginBottom: "20px",
-                    borderBottom: "1px solid #333",
+                    borderBottom: "1px solid rgba(255,255,255,0.1)",
                     paddingBottom: "10px",
                   }}
                 >
-                  Mes Informations
-                </h3>
-                <p>
-                  <strong>Pseudo :</strong> {userData.nickname}
-                </p>
-                <p>
-                  <strong>Adresse de Login :</strong> {userData.email}
-                </p>
+                  <h3 style={{ fontFamily: "Montserrat", margin: 0 }}>
+                    Mes Informations
+                  </h3>
+
+                  {!isEditing && (
+                    <button
+                      onClick={() => {
+                        setBackupData({ ...userData });
+                        setIsEditing(true);
+                      }}
+                      style={{
+                        background: "transparent",
+                        border: "1px solid #d4af37",
+                        color: "#d4af37",
+                        padding: "5px 15px",
+                        borderRadius: "20px",
+                        cursor: "pointer",
+                        fontSize: "0.9rem",
+                      }}
+                    >
+                      <Settings
+                        size={14}
+                        style={{ marginRight: "5px", verticalAlign: "middle" }}
+                      />{" "}
+                      Modifier mes infos
+                    </button>
+                  )}
+                </div>
+
+                {!isEditing ? (
+                  /* --- VUE STATIQUE (Lecture seule) --- */
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns:
+                        "repeat(auto-fit, minmax(200px, 1fr))",
+                      gap: "30px",
+                    }}
+                  >
+                    <InfoItem label="Pseudo" value={userData.nickname} />
+                    <InfoItem label="Email" value={userData.email} />
+                    <InfoItem
+                      label="Situation"
+                      value={userData.marital || "Non renseigné"}
+                    />
+                    <InfoItem
+                      label="Enfants"
+                      value={userData.children || "Non renseigné"}
+                    />
+                    <InfoItem
+                      label="Religion"
+                      value={userData.religion || "Non renseigné"}
+                    />
+                    <div style={{ gridColumn: "1 / -1", marginTop: "20px" }}>
+                      <span
+                        style={{
+                          display: "block",
+                          color: "rgba(255,255,255,0.4)",
+                          fontSize: "0.8rem",
+                          textTransform: "uppercase",
+                          marginBottom: "8px",
+                        }}
+                      >
+                        Intérêts
+                      </span>
+                      <div
+                        className="quill-content-view"
+                        style={{
+                          background: "rgba(255,255,255,0.05)",
+                          padding: "15px",
+                          borderRadius: "10px",
+                          minHeight: "100px",
+                          maxHeight: "300px",
+                          overflowY: "auto",
+                          border: "1px solid rgba(255,255,255,0.1)",
+                          lineHeight: "1.6",
+                        }}
+                        dangerouslySetInnerHTML={{
+                          __html: userData.interests || "Non renseigné",
+                        }}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  /* --- VUE FORMULAIRE (Édition) --- */
+                  <form
+                    onSubmit={async (e) => {
+                      await handleUpdateProfile(e);
+                      setIsEditing(false);
+                    }}
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "20px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns: "1fr 1fr",
+                        gap: "20px",
+                      }}
+                    >
+                      {/* Ligne 1 */}
+                      <div>
+                        <label className="dashboard-label">Pseudo</label>
+                        <input
+                          type="text"
+                          name="nickname"
+                          value={userData.nickname || ""}
+                          onChange={handleInputChange}
+                          className="dashboard-input"
+                        />
+                      </div>
+                      <div>
+                        <label className="dashboard-label">
+                          Email (non modifiable)
+                        </label>
+                        <input
+                          type="text"
+                          value={userData.email || ""}
+                          disabled
+                          className="dashboard-input opacity-50"
+                        />
+                      </div>
+
+                      {/* Ligne 2 */}
+                      <div>
+                        <label className="dashboard-label">
+                          Situation Maritale
+                        </label>
+                        <select
+                          name="marital"
+                          value={userData.marital || ""}
+                          onChange={handleInputChange}
+                          className="dashboard-input"
+                        >
+                          <option value="">Choisir...</option>
+                          <option value="célibataire">Célibataire</option>
+                          <option value="divorcé(e)">Divorcé(e)</option>
+                          <option value="veuf(ve)">Veuf(ve)</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="dashboard-label">Enfants</label>
+                        <select
+                          name="children"
+                          value={userData.children || ""}
+                          onChange={handleInputChange}
+                          className="dashboard-input"
+                        >
+                          <option value="">Choisir...</option>
+                          <option value="aucun">Aucun</option>
+                          <option value="1">1 enfant</option>
+                          <option value="2">2 enfants</option>
+                          <option value="3">3 enfants</option>
+                          <option value="4">4 enfants</option>
+                          <option value="5+">5 enfants ou plus</option>
+                        </select>
+                      </div>
+
+                      {/* Ligne 3 */}
+                      <div style={{ flex: 1, minWidth: "250px" }}>
+                        <label className="dashboard-label">
+                          Religion / Spiritualité
+                        </label>
+                        <select
+                          name="religion"
+                          value={userData.religion || ""}
+                          onChange={handleInputChange}
+                          className="dashboard-input"
+                        >
+                          <option value="">Choisir...</option>
+                          <option value="Aucun">Aucune</option>
+                          <option value="Chrétien">Chrétien</option>
+                          <option value="Musulman">Musulman</option>
+                          <option value="Juif">Juif</option>
+                          <option value="Bouddhiste">Bouddhiste</option>
+                          <option value="Hindouiste">Hindouiste</option>
+                          <option value="Athée">Athée</option>
+                          <option value="Agnostique">Agnostique</option>
+                          <option value="Spirituel mais non religieux">
+                            Spirituel mais non religieux
+                          </option>
+                          <option value="Autre">Autre</option>
+                        </select>
+                      </div>
+
+                      <div style={{ flex: "1 1 100%", marginTop: "10px" }}>
+                        <label className="dashboard-label">
+                          Ma Présentation & Intérêts
+                        </label>
+                        <div className="editor-container">
+                          {" "}
+                          {/* Nouveau conteneur avec classe */}
+                          <ReactQuill
+                            theme="snow"
+                            value={userData.interests || ""}
+                            onChange={(content) =>
+                              setUserData({ ...userData, interests: content })
+                            }
+                            modules={{
+                              toolbar: [
+                                [{ header: [1, 2, false] }],
+                                ["bold", "italic", "underline"],
+                                [{ list: "ordered" }, { list: "bullet" }],
+                                ["clean"],
+                              ],
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div
+                      className="form-actions"
+                      style={{
+                        display: "flex",
+                        gap: "15px",
+                        marginTop: "20px",
+                      }}
+                    >
+                      <button type="submit" className="btn-gold">
+                        SAUVEGARDER
+                      </button>
+
+                      <button
+                        type="button"
+                        className="btn-cancel"
+                        onClick={() => {
+                          setUserData(backupData);
+                          setIsEditing(false); 
+                        }}
+                      >
+                        ANNULER
+                      </button>
+                    </div>
+                  </form>
+                )}
               </div>
             )}
 
@@ -298,20 +582,11 @@ function MemberDashboardPage() {
   );
 }
 
-// Fonction pour styliser les boutons de navigation facilement
-const navButtonStyle = (isActive) => ({
-  display: "flex",
-  alignItems: "center",
-  gap: "10px",
-  padding: "12px 15px",
-  borderRadius: "10px",
-  border: "none",
-  textAlign: "left",
-  cursor: "pointer",
-  fontSize: "1rem",
-  transition: "0.3s",
-  background: isActive ? "#f94d80" : "transparent",
-  color: isActive ? "white" : "rgba(255,255,255,0.7)",
-});
+const InfoItem = ({ label, value }) => (
+  <div className="info-item-container">
+    <span className="info-item-label">{label}</span>
+    <span className="info-item-value">{value}</span>
+  </div>
+);
 
 export default MemberDashboardPage;
