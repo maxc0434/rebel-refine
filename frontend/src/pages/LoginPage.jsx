@@ -40,8 +40,6 @@ function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault(); // Empêche le rechargement de la page
     setError(""); // Réinitialise l'erreur avant chaque tentative
-
-
     try {
       // --- ÉTAPE 3 : Requête vers l'API Symfony ---
       const response = await fetch("http://localhost:8000/api/login", {
@@ -78,6 +76,7 @@ function LoginPage() {
 
 
       // --- ÉTAPE 6 : Redirection automatique ---
+
       // On vérifie si le serveur nous a envoyé une URL d'administration
       if (data.redirectToAdmin) {
         // Si oui, on "quitte" React pour charger l'interface PHP d'EasyAdmin

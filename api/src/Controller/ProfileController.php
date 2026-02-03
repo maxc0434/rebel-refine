@@ -11,7 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 final class ProfileController extends AbstractController
 {
     #[Route('/api/profile/{id}', name: 'app_profile_show', methods: ['GET'])]
-    #[IsGranted('ROLE_USER', message: 'Accès interdit')]
+    #[IsGranted('ROLE_MALE', message: 'Accès interdit')]
     public function show(User $user): JsonResponse
     {
         // Recupération de l'utilisateur connecté

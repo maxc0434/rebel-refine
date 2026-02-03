@@ -19,7 +19,7 @@ class MemberDashboardController extends AbstractController
 {
 
     #[Route('/dashboard', name: 'dashboard', methods: ['GET'])]
-    #[IsGranted('ROLE_USER')]
+    #[IsGranted('ROLE_MALE')]
     public function index(): JsonResponse
     {
         /** @var User $user */
@@ -80,7 +80,7 @@ class MemberDashboardController extends AbstractController
 
 
     #[Route('/favorite/{id}', name: 'toggle_favorite', methods: ['POST'])]
-    #[IsGranted('ROLE_USER')]
+    #[IsGranted('ROLE_MALE')]
     public function toggleFavorite(User $targetUser, EntityManagerInterface $em): JsonResponse
     {
         /** @var User $currentUser */
@@ -108,7 +108,7 @@ class MemberDashboardController extends AbstractController
     }
 
     #[Route('/update-profile', name: 'update_profile', methods: ['POST'])]
-    #[IsGranted('ROLE_USER')]
+    #[IsGranted('ROLE_MALE')]
     public function updateProfile(Request $request, EntityManagerInterface $em): JsonResponse
     {
         /** @var User $user */

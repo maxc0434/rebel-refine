@@ -33,7 +33,7 @@ class RegistrationController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         // ÉTAPE 2 : Validation de la présence des champs obligatoires
-        if (!isset($data['email'], $data['password'], $data['nickname'])) {
+        if (!isset($data['email'], $data['password'], $data['nickname'], $data['gender'])) {
             return $this->json(['error' => 'Données incomplètes'], 400);
         }
 
@@ -41,6 +41,16 @@ class RegistrationController extends AbstractController
         $user = new User();
         $user->setEmail($data['email']);
         $user->setNickname($data['nickname']);
+        
+        //Attribution des rôles en fonction du sexe
+        $gender = $data['gender'];
+        $user->setGender($data['gender']);
+
+        if ($gender === 'female') {
+            $user->setRoles(['ROLE_FEMALE']);
+        } else {
+            $user->setRoles(['ROLE_MALE']);
+        }
         
         // ÉTAPE 4 : Sécurisation du mot de passe (Hachage)
         $hashedPassword = $passwordHasher->hashPassword($user, $data['password']);

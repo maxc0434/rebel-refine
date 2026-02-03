@@ -8,6 +8,7 @@ function RegisterPage() {
     email: "",
     password: "",
     confirmPassword: "",
+    gender: "male",
   });
 
   // Fonction générique pour mettre à jour l'état quand l'utilisateur tape dans un champ
@@ -45,6 +46,7 @@ function RegisterPage() {
           email: formData.email,
           password: formData.password,
           nickname: formData.nickname,
+          gender: formData.gender,
         }),
       });
 

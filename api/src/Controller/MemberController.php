@@ -15,7 +15,7 @@ final class MemberController extends AbstractController
      * On expose l'URL /api/members/females accessible uniquement en GET.
      */
     #[Route('/api/members/females', name: 'app_members_females', methods: ['GET'])]
-    #[IsGranted('ROLE_USER', message: 'Accès interdit')]
+    #[IsGranted('ROLE_MALE', message: 'Accès interdit')]
     public function getFemales(UserRepository $userRepository): JsonResponse
     {
         // On récupère l'objet User de la personne actuellement connectée grace au this
