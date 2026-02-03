@@ -5,6 +5,9 @@ function Navbar() {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
+  const userData = JSON.parse(localStorage.getItem("user") || "{}");
+  const isFemale = userData.roles?.includes("ROLE_FEMALE");
+
   const handleLogout = (e) => {
     e.preventDefault();
     localStorage.clear();
@@ -37,7 +40,7 @@ function Navbar() {
         <div className="container">
           <div className="header-wrapper">
             <div className="logo">
-              <Link to="/home">
+              <Link to={isFemale ? "/female-dashboard" : "/home"}>
                 <img
                   src="/assets/images/logo/rebel_refine_logo_resized.png"
                   alt="logo"
@@ -47,21 +50,25 @@ function Navbar() {
             </div>
             <div className="menu-area">
               <ul className="menu">
-                <li>
-                  <Link to="/home" style={navItemStyle}>
-                    Accueil
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/members/females" style={navItemStyle}>
-                    Membres
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/dashboard" style={navItemStyle}>
-                    Tableau de bord
-                  </Link>
-                </li>
+                {!isFemale && (
+                  <>
+                    <li>
+                      <Link to="/home" style={navItemStyle}>
+                        Accueil
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/members/females" style={navItemStyle}>
+                        Membres
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/dashboard" style={navItemStyle}>
+                        Tableau de bord
+                      </Link>
+                    </li>
+                  </>
+                )}
               </ul>
 
               {/* AFFICHAGE CONDITIONNEL */}
@@ -83,7 +90,8 @@ function Navbar() {
                     transition: "0.3s",
                   }}
                 >
-                  <i className="icofont-logout me-2"></i> <span>DECONNEXION</span>
+                  <i className="icofont-logout me-2"></i>{" "}
+                  <span>DECONNEXION</span>
                 </a>
               ) : (
                 <>

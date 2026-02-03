@@ -69,6 +69,7 @@ final class ApiLoginController extends AbstractController
             'id'        => $user->getId(),
             'email'     => $user->getEmail(),
             'nickname'  => $user->getNickname(),
+            'roles'     => $user->getRoles(),
             'redirectToAdmin' => $adminUrl,
 
             // --- ÉTAPE 5 : Formatage des données spécifiques ---

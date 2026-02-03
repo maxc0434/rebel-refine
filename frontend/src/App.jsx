@@ -8,6 +8,7 @@ import ProfilePage from "./pages/ProfilePage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import MemberDashboardPage from "./pages/MemberDashboardPage";
 import SearchPage from "./pages/SearchPage";
+import FemaleDashboardPage from "./pages/FemaleDashboardPage";
 
 function App() {
   return (
@@ -31,6 +32,8 @@ function App() {
           <Route path="/dashboard" element={<MemberDashboardPage />} />
 
           <Route path="/search" element={<SearchPage />} />
+
+          <Route path="/female-dashboard" element={<FemaleDashboardPage />} />
 
         </Routes>
     </Router>
