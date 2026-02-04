@@ -4,10 +4,9 @@ import { useNavigate } from "react-router-dom";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 import "./MemberDashboardPage.css";
-
+import Swal from 'sweetalert2';
 
 function MemberDashboardPage() {
-
   //#region STATES
   // --- LES STATES ---
   const [userData, setUserData] = useState(null);
@@ -67,14 +66,28 @@ function MemberDashboardPage() {
       const data = await response.json();
 
       if (response.ok) {
-        console.log("Profil mis à jour !");
+        Swal.fire({
+          icon: 'success',
+          title: 'Profil mis à jour !',
+          text: 'Vos modifications ont été enregistrées avec succès.',
+          background: '#1f2a4d', 
+          color: '#fff',
+          confirmButtonColor: '#d4af37',
+          timer: 3000 
+        });
       } else {
-        console.error("Erreur:", data.message);
+        Swal.fire({
+          icon: 'error',
+          title: 'Oups...',
+          text: data.message || 'Une erreur est survenue.',
+          background: '#1f2a4d',
+          color: '#fff'
+        });
       }
     } catch (error) {
-      console.error("Erreur réseau:", error);
+      Swal.fire({ icon: 'error', title: 'Erreur réseau', text: 'Impossible de joindre le serveur.' });
     }
-  };
+};
 
   // --- GESTION DE l'UPDATE du PASSWORD ---
   const [passwordData, setPasswordData] = useState({
@@ -88,9 +101,16 @@ function MemberDashboardPage() {
 
     // 1. Vérification locale avant l'appel
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      alert("Les nouveaux mots de passe ne correspondent pas !");
+      Swal.fire({
+        icon: 'error',
+        title: 'Oups...',
+        text: 'Les mots de passe ne correspondent pas.',
+        background: '#1f2a4d',
+        color: '#fff'
+      });
       return;
     }
+
     try {
       // 2. L'appel API avec fetch
       const response = await fetch(
@@ -108,14 +128,31 @@ function MemberDashboardPage() {
           }),
         },
       );
+
       // 3. Transformation de la réponse en JSON
       const data = await response.json();
-      // 4. Vérification du succès (fetch ne "catch" pas les erreurs 401, 403, 500 etc.)
+
+      // 4. Si echec, affichage de l'erreur
       if (!response.ok) {
-        throw new Error(data.message || "Erreur lors de la mise à jour");
+        Swal.fire({
+          icon: 'error',
+          title: 'Oups...',
+          text: data.message || 'Une erreur est survenue.',
+          background: '#1f2a4d',
+          color: '#fff'
+        });
+        return;
       }
-      // 5. Succès !
-      alert("Mot de passe mis à jour avec succès !");
+      // 5. Succès 
+      Swal.fire({
+        icon: 'success',
+        title: 'Mot de passe mis à jour !',
+        text: 'Votre mot de passe a bien été mis à jour.',
+        background: '#1f2a4d',
+        confirmButtonColor: '#d4af37',
+        color: '#fff',
+        timer: 3000,
+      });
       setPasswordData({
         oldPassword: "",
         newPassword: "",
@@ -127,14 +164,11 @@ function MemberDashboardPage() {
       console.error("Erreur API:", error.message);
       alert(error.message);
     }
-    
   };
   //#endregion
 
-
   //#region CHARGEMENT DE LA PAGE
   // --- LOGIQUE DE CHARGEMENT (API) ---
-
   // Vérification de l'authentification
   useEffect(() => {
     if (!token) {
@@ -181,7 +215,6 @@ function MemberDashboardPage() {
     );
   //#endregion
 
-
   //#region AFFICHAGE DE LA PAGE
   return (
     <div
@@ -208,11 +241,6 @@ function MemberDashboardPage() {
         </header>
 
         <div style={{ display: "flex", gap: "30px", flexWrap: "wrap" }}>
-
-
-
-
-
           {/* MARK: - NAV GAUCHE */}
           <aside
             style={{
@@ -247,13 +275,10 @@ function MemberDashboardPage() {
               </button>
             </nav>
           </aside>
-          
 
-
-          
           {/* MARK: - CONTENU DROITE */}
           <main
-          // --- EN-TETE: INFO ---
+            // --- EN-TETE: INFO ---
             style={{
               flex: "3",
               minWidth: "300px",
@@ -303,8 +328,7 @@ function MemberDashboardPage() {
                   )}
                 </div>
 
-
-                {/* MARK: -  INFO lecture seule puis formulaire */}
+                {/* MARK: -  INFO lecture seule puis formulaire d'update */}
                 {!isEditing ? (
                   <div
                     style={{
@@ -359,8 +383,7 @@ function MemberDashboardPage() {
                     </div>
                   </div>
                 ) : (
-                  
-                  /* --- INFO formulaire --- */
+                  /* --- INFO formulaire d'update --- */
                   <form
                     onSubmit={async (e) => {
                       await handleUpdateProfile(e);
@@ -634,7 +657,15 @@ function MemberDashboardPage() {
 
             {/* MARK: - ONGLET SÉCURITÉ */}
             {activeTab === "security" && (
-              <div className="security-section">
+              <div
+                className="security-section"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center", // Centre horizontalement
+                  width: "100%",
+                }}
+              >
                 <h3 style={{ marginBottom: "20px" }}>Sécurité du compte</h3>
 
                 <div className="info-item-container">
@@ -642,7 +673,11 @@ function MemberDashboardPage() {
                   <span className="info-item-value">{userData.email}</span>
                 </div>
 
-                <form className="security-form" onSubmit={handleUpdatePassword} autoComplete="off">
+                <form
+                  className="security-form"
+                  onSubmit={handleUpdatePassword}
+                  autoComplete="off"
+                >
                   <h4
                     style={{
                       marginBottom: "15px",
