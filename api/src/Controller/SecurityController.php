@@ -30,7 +30,7 @@ class SecurityController extends AbstractController
 
     
     #[Route('/api/auth/update-password', name: 'api_update_password', methods: ['POST'])]
-    #[IsGranted('ROLE_USER')] // Sécurité : il faut être connecté
+    #[IsGranted('ROLE_USER')] 
     public function updatePassword(
         Request $request,
         UserPasswordHasherInterface $passwordHasher,

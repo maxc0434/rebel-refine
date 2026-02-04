@@ -5,24 +5,26 @@ import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 import "./MemberDashboardPage.css";
 
+
 function MemberDashboardPage() {
-  // --- ÉTATS (STATES) ---
+
+  //#region STATES
+  // --- LES STATES ---
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [favorites, setFavorites] = useState([]);
+  const [backupData, setBackupData] = useState(null);
+  //#endregion
+
+  //#region OUTILS & AUTHENTIFICATION
+  const navigate = useNavigate(); // Hook pour rediriger l'utilisateur
+  const token = localStorage.getItem("token"); // Récupère la clé de sécurité (JWT)
+
   // Gère l'onglet sélectionné (Profil, Favoris, etc.)
   const [activeTab, setActiveTab] = useState(
     localStorage.getItem("activeTab") || "infos",
   );
-  // Stocke les données renvoyées par Symfony (pseudo, email, etc.)
-  const [userData, setUserData] = useState(null);
-  // Gère l'affichage de l'écran d'attente pendant l'appel API
-  const [loading, setLoading] = useState(true);
-  const [isEditing, setIsEditing] = useState(false);
-  const [favorites, setFavorites] = useState([]);
-  // copie de données en cas d'annulation
-  const [backupData, setBackupData] = useState(null);
-
-  // --- OUTILS & AUTHENTIFICATION ---
-  const navigate = useNavigate(); // Hook pour rediriger l'utilisateur
-  const token = localStorage.getItem("token"); // Récupère la clé de sécurité (JWT)
 
   // --- GESTION DE L'ONGLET ---
   const handleTabChange = (tabName) => {
@@ -38,7 +40,7 @@ function MemberDashboardPage() {
       [name]: value,
     });
   };
-
+  // --- GESTION DE l'UPDATE du PROFIL ---
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
@@ -47,7 +49,7 @@ function MemberDashboardPage() {
       const response = await fetch(
         "http://localhost:8000/api/member/update-profile",
         {
-          method: "POST", // Correspond à ton contrôleur
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -127,8 +129,13 @@ function MemberDashboardPage() {
     }
     
   };
+  //#endregion
 
+
+  //#region CHARGEMENT DE LA PAGE
   // --- LOGIQUE DE CHARGEMENT (API) ---
+
+  // Vérification de l'authentification
   useEffect(() => {
     if (!token) {
       navigate("/");
@@ -172,7 +179,10 @@ function MemberDashboardPage() {
         Erreur de connexion : impossible de récupérer vos données.
       </div>
     );
+  //#endregion
 
+
+  //#region AFFICHAGE DE LA PAGE
   return (
     <div
       style={{
@@ -198,7 +208,12 @@ function MemberDashboardPage() {
         </header>
 
         <div style={{ display: "flex", gap: "30px", flexWrap: "wrap" }}>
-          {/* BARRE DE NAVIGATION GAUCHE */}
+
+
+
+
+
+          {/* MARK: - NAV GAUCHE */}
           <aside
             style={{
               flex: "1",
@@ -232,9 +247,13 @@ function MemberDashboardPage() {
               </button>
             </nav>
           </aside>
+          
 
-          {/* ZONE DE CONTENU DROITE */}
+
+          
+          {/* MARK: - CONTENU DROITE */}
           <main
+          // --- EN-TETE: INFO ---
             style={{
               flex: "3",
               minWidth: "300px",
@@ -284,8 +303,9 @@ function MemberDashboardPage() {
                   )}
                 </div>
 
+
+                {/* MARK: -  INFO lecture seule puis formulaire */}
                 {!isEditing ? (
-                  /* --- VUE STATIQUE (Lecture seule) --- */
                   <div
                     style={{
                       display: "grid",
@@ -339,7 +359,8 @@ function MemberDashboardPage() {
                     </div>
                   </div>
                 ) : (
-                  /* --- VUE FORMULAIRE (Édition) --- */
+                  
+                  /* --- INFO formulaire --- */
                   <form
                     onSubmit={async (e) => {
                       await handleUpdateProfile(e);
@@ -469,6 +490,7 @@ function MemberDashboardPage() {
                       </div>
                     </div>
 
+                    {/* Boutons de sauvegarde et annulation */}
                     <div
                       className="form-actions"
                       style={{
@@ -497,6 +519,7 @@ function MemberDashboardPage() {
               </div>
             )}
 
+            {/* MARK: - ONGLET FAVORIS */}
             {activeTab === "favs" && (
               <div>
                 {/* TITRE ET COMPTEUR */}
@@ -609,7 +632,7 @@ function MemberDashboardPage() {
               </div>
             )}
 
-            {/* ONGLETS DE SECURITÉ */}
+            {/* MARK: - ONGLET SÉCURITÉ */}
             {activeTab === "security" && (
               <div className="security-section">
                 <h3 style={{ marginBottom: "20px" }}>Sécurité du compte</h3>

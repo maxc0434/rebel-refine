@@ -4,127 +4,118 @@ import "./ProfilePage.css";
 import { Heart } from "lucide-react";
 
 function ProfilePage() {
-  // --- INITIALISATION ---
-  const { id } = useParams(); // Récupère l'ID du profil depuis l'URL
-  const navigate = useNavigate(); // Outil pour rediriger l'utilisateur
-  const [user, setUser] = useState(null); // Stocke les données de l'utilisateur
-  const [loading, setLoading] = useState(true); // Gère l'affichage de l'écran de chargement
-  const [selectedImgIndex, setSelectedImgIndex] = useState(null); //si null, la modale est fermée, si c'est un nombre, la modale s'ouvre sur cette photo
+  //#region OUTILS & AUTHENTIFICATION
+  // --- 1. PRÉPARATION ---
+  const { id } = useParams();      // On récupère l'ID du membre dans l'adresse (ex: /profile/42)
+  const navigate = useNavigate();  // Pour rediriger si besoin
   const token = localStorage.getItem("token");
+  //#endregion
 
-  // --- CHARGEMENT DES DONNÉES ---
+
+
+  //#region STATES
+  // --- 2. LES ÉTATS ---
+  const [user, setUser] = useState(null);         // Les infos du profil (nom, bio, photos...)
+  const [loading, setLoading] = useState(true);   // État du chargement
+  const [selectedImgIndex, setSelectedImgIndex] = useState(null); // Gère l'ouverture de la photo en grand (null = fermé)
+  //#endregion
+
+
+
+  //#region MONTAGE DU COMPOSANT
+  // --- 3. RÉCUPÉRATION DU PROFIL ---
   useEffect(() => {
-    // Sécurité : si pas de token, on ne tente même pas l'appel, on redirige
-    if (!token) {
-      navigate("/");
-      return;
-    }
+    if (!token) { navigate("/"); return; }
+
     fetch(`http://localhost:8000/api/profile/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
       .then((data) => {
         setUser(data);
-        setLoading(false); // On arrête le preloader dès que les données sont là
+        setLoading(false); // On cache le loader dès qu'on a les infos
       })
       .catch((err) => console.error("Erreur API:", err));
-  }, [id, token, navigate]); // Se relance si l'ID dans l'URL change
+  }, [id, token, navigate]); // On relance si on change de profil
+  //#endregion
 
-  // --- LOGIQUE DU CARROUSEL ---
-  const photos = user?.photos || []; // Sécurité : évite de planter si user est null
+
+  //#region CARROUSEL
+  // --- 4. LOGIQUE DU CARROUSEL (PHOTOS) ---
+  const photos = user?.photos || []; // Liste des photos (vide par défaut si pas encore chargé)
 
   const nextImg = (e) => {
-    if (e) e.stopPropagation(); // Evite que le clic soit propagé (clic qui fermerait la modale)
-    setSelectedImgIndex((prev) => (prev + 1 === photos.length ? 0 : prev + 1)); // "Si on est à la photo length - 1, on repart à 0, sinon on fait +1"
+    if (e) e.stopPropagation(); // Évite de fermer la modale en cliquant sur la flèche
+    // Boucle : si c'est la dernière photo, on revient à la première (0)
+    setSelectedImgIndex((prev) => (prev + 1 === photos.length ? 0 : prev + 1));
   };
 
   const prevImg = (e) => {
     if (e) e.stopPropagation();
-    setSelectedImgIndex((prev) => (prev === 0 ? photos.length - 1 : prev - 1)); // "Si on est à 0, on repart à length - 1, sinon on fait -1"
+    // Boucle : si c'est la première (0), on va à la dernière (length - 1)
+    setSelectedImgIndex((prev) => (prev === 0 ? photos.length - 1 : prev - 1));
   };
 
-  // --- GESTION DES ÉVÉNEMENTS CLAVIER ---
+  // --- 5. RACCOURCIS CLAVIER ---
   useEffect(() => {
     const handleKeyDown = (e) => {
-      // Si la modale est fermée, on ne fait rien
-      if (selectedImgIndex === null) return;
-      // Si la modale est ouverte, on regarde quelle touche est appuyée
-      if (e.key === "ArrowRight") nextImg();
-      if (e.key === "ArrowLeft") prevImg();
-      if (e.key === "Escape") setSelectedImgIndex(null); // Ferme avec Echap
+      if (selectedImgIndex === null) return; // Si pas de photo ouverte, on ignore
+      if (e.key === "ArrowRight") nextImg(); // Flèche droite = suivante
+      if (e.key === "ArrowLeft") prevImg();  // Flèche gauche = précédente
+      if (e.key === "Escape") setSelectedImgIndex(null); // Échap = fermer
     };
 
-    // On attache l'écouteur d'événement au navigateur
-    window.addEventListener("keydown", handleKeyDown);
-    // On detache l'écouteur lorsque le composant est supprimé
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [selectedImgIndex, photos.length]); // Se relance si selectedImgIndex change
+    window.addEventListener("keydown", handleKeyDown); // On commence à écouter le clavier
+    return () => window.removeEventListener("keydown", handleKeyDown); // On arrête d'écouter quand on quitte la page
+  }, [selectedImgIndex, photos.length]);
+  //#endregion
 
-  // --- FAVORIS (Méthode asynchrone) ---
+
+  //#region GESTION DES FAVORIS
+  // --- 6. ACTION FAVORIS ---
   const toggleFavorite = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:8000/api/member/favorite/${id}`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
+      const response = await fetch(`http://localhost:8000/api/member/favorite/${id}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
-      );
-      if (!response.ok) throw new Error("Erreur serveur");
-      const data = await response.json(); // On stocke le retour de l'API dans data
+      });
+      const data = await response.json();
 
-      // Mise à jour de l'état local pour un changement immédiat à l'écran
       if (data.status === "added" || data.status === "removed") {
+        // Mise à jour instantanée du bouton coeur sans recharger
         setUser((prev) => ({
-          // On met à jour isFavorite
-          ...prev, // On copie tout ce qu'il y avait avant
-          isFavorite: data.status === "added", // On met à jour
+          ...prev,
+          isFavorite: data.status === "added",
         }));
       }
     } catch (error) {
       console.error("Erreur favoris:", error.message);
     }
   };
+  //#endregion
 
-  // RENDU CONDITIONNEL DU PRELOADER
-  if (loading)
-    return (
-      <div className="preloader">
-        <div className="preloader-inner">
-          <div className="preloader-icon">
-            <span></span>
-            <span></span>
-          </div>
-        </div>
-      </div>
-    );
 
-  // Style commun pour les flèches
-  const navArrowStyle = {
-    background: "rgba(212, 175, 55, 0.1)",
-    border: "2px solid #d4af37",
-    color: "#d4af37",
-    borderRadius: "50%",
-    width: "60px",
-    height: "60px",
-    fontSize: "1.5rem",
-    cursor: "pointer",
-    transition: "0.3s",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 10001,
-    margin: "0 20px",
-  };
+  //#region LOADER
+  // --- 7. AFFICHAGE DU LOADER ---
+  if (loading) return (
+    <div className="preloader">
+      <div className="preloader-inner"><div className="preloader-icon"><span></span><span></span></div></div>
+    </div>
+  );
+  //#endregion
 
+
+  //#region AFFICHAGE DU COMPOSANT
   return (
     <section className="profile-section padding-tb">
       <div className="container">
         <div className="section-wrapper">
-          {/* 1. HEADER DU PROFIL */}
+
+
+          {/* MARK: 1.HEADER DU PROFIL */}
           <div className="member-profile">
             <div className="profile-item">
               <div className="profile-cover">
@@ -181,8 +172,10 @@ function ProfilePage() {
               </div>
             </div>
           </div>
+          
 
-          {/* 2. GALERIE PHOTO */}
+
+          {/* MARK: 2.GALERIE PHOTO */}
           <div className="row mt-5">
             <div className="col-12">
               <div
@@ -241,7 +234,9 @@ function ProfilePage() {
             </div>
           </div>
 
-          {/* 3. DÉTAILS DU PROFIL */}
+
+
+          {/* MARK: 3.DÉTAILS DU PROFIL */}
           <div className="profile-details mt-4">
             <div
               className="info-card"
@@ -280,7 +275,7 @@ function ProfilePage() {
         </div>
       </div>
 
-      {/* 4. MODALE CARROUSEL (FIXED) */}
+      {/* MARK: 4.MODALE CARROUSEL (FIXED) */}
       {selectedImgIndex !== null && (
         <div
           style={{
@@ -359,4 +354,22 @@ function ProfilePage() {
   );
 }
 
+  // Style commun pour les flèches
+  const navArrowStyle = {
+    background: "rgba(212, 175, 55, 0.1)",
+    border: "2px solid #d4af37",
+    color: "#d4af37",
+    borderRadius: "50%",
+    width: "60px",
+    height: "60px",
+    fontSize: "1.5rem",
+    cursor: "pointer",
+    transition: "0.3s",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 10001,
+    margin: "0 20px",
+  };
+//#endregion
 export default ProfilePage;

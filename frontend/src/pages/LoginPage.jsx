@@ -5,99 +5,111 @@ import { useNavigate } from "react-router-dom"; // Import indispensable pour red
 import { useSearchParams } from "react-router-dom";
 
 function LoginPage() {
-  // --- ÉTAPE 1 : Initialisation des états (States) ---
-  const [email, setEmail] = useState(""); // État pour le champ email
-  const [password, setPassword] = useState(""); // État pour le champ mot de passe
-  const [error, setError] = useState(""); // État pour stocker les messages d'erreur
-  const navigate = useNavigate(); // Initialisation de la fonction de redirection
+  //#region STATES
 
-  const [showModal, setShowModal] = useState(false);
-  const [forgotEmail, setForgotEmail] = useState("");
-  const [status, setStatus] = useState({ type: "", msg: "" });
+  // --- ÉTAPE 1 : Gestion des états (Data) ---
+  const [email, setEmail] = useState("");            // Saisie utilisateur pour l'identifiant
+  const [password, setPassword] = useState("");      // Saisie utilisateur pour le mot de passe
+  const [error, setError] = useState("");            // Message à afficher en cas d'échec de login
+  const [showModal, setShowModal] = useState(false); // Affichage ou non de la fenêtre "Mot de passe oublié"
+  const [forgotEmail, setForgotEmail] = useState("");// Email saisi pour la récupération de mot de passe
+  const [status, setStatus] = useState({ type: "", msg: "" }); // Retour visuel (succès/erreur) pour la récupération
+  
+  const [searchParams] = useSearchParams();          // Pour lire les paramètres dans l'URL (ex: ?verified=true)
+  const navigate = useNavigate();                    // Outil pour changer de page sans recharger le site
+  const isVerified = searchParams.get("verified");   // Vérifie si l'utilisateur vient de confirmer son email
+  //#endregion
 
-  const [searchParams] = useSearchParams();
-  const isVerified = searchParams.get("verified");
 
+  //#region FCT REINITIALISATION MDP
+  // --- ÉTAPE 2 : Demande de réinitialisation de mot de passe ---
   const handleForgotPassword = async (e) => {
     e.preventDefault();
     setStatus({ type: "info", msg: "Envoi en cours..." });
 
+    // Appel à la route Symfony qui génère le token de récupération et envoie l'email
     const response = await fetch(
       "http://localhost:8000/api/reset-password/request",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: forgotEmail }),
-      },
+        body: JSON.stringify({ email: forgotEmail }), // On emballe l'email dans le "carton" JSON
+      }
     );
     const data = await response.json();
-    setStatus({ type: "success", msg: data.message });
+    setStatus({ type: "success", msg: data.message }); // Affiche le message de confirmation du serveur
   };
+  //#endregion
 
-  // --- ÉTAPE 2 : Fonction de soumission du formulaire ---
+
+  //#region FCT LOGIN
+  // --- ÉTAPE 3 : Soumission du formulaire de connexion ---
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Empêche le rechargement de la page
-    setError(""); // Réinitialise l'erreur avant chaque tentative
+    e.preventDefault(); // Bloque le rechargement par défaut du navigateur
+    setError("");       // Efface les erreurs précédentes
+    
     try {
-      // --- ÉTAPE 3 : Requête vers l'API Symfony ---
+      // Envoi des identifiants au point d'entrée de sécurité de Symfony (login_check)
       const response = await fetch("http://localhost:8000/api/login", {
         method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        credentials: "include", // Permet d'inclure les cookies de session si nécessaire
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          username: email, // Symfony attend "username" par défaut
+          username: email,    // Note : Symfony attend souvent la clé "username" par défaut
           password: password,
         }),
       });
 
-      // --- ÉTAPE 4 : Gestion de l'échec d'authentification ---
+      // --- ÉTAPE 4 : Vérification de la réponse du serveur ---
       if (response.status === 403) {
-        // En cas de code HTTP 403
-        // On récupère le message envoyé par Symfony
+        // Le serveur refuse l'accès (ex: compte non vérifié)
         const data = await response.json();
         setError(data.message);
         return;
       }
+
       if (!response.ok) {
-        // En cas de code HTTP autre que 200
-        // On lance une erreur personnalisée
+        // Le serveur répond une erreur (ex: 401 Unauthorized)
         throw new Error("Identifiants incorrects");
       }
 
-      // --- ÉTAPE 5 : Succès et stockage du Token ---
+      // --- ÉTAPE 5 : Stockage des clés d'accès (Token & Profil) ---
       const data = await response.json();
-      // Sauvegarde sécurisée du Token JWT dans le navigateur
+      
+      // On sauvegarde le JWT pour prouver l'identité sur les prochaines requêtes
       localStorage.setItem("token", data.token);
-      // Sauvegarde des infos de l'utilisateur(notamment son role pour dispatcher les pages homme/femme)
+      
+      // On sauvegarde les infos de base pour l'affichage (évite des appels API inutiles)
       const userToStore = {
         roles: data.roles,
         nickname: data.nickname,
       };
       localStorage.setItem("user", JSON.stringify(userToStore));
 
-      // --- ÉTAPE 6 : Redirection automatique ---
-      // On vérifie si le serveur nous a envoyé une URL d'administration
+      // --- ÉTAPE 6 : Dispatching (Redirection selon le rôle) ---
+      
+      // Cas A : L'utilisateur est un Admin (on sort de React vers EasyAdmin)
       if (data.redirectToAdmin) {
-        // Si oui, on "quitte" React pour charger l'interface PHP d'EasyAdmin
         window.location.href = data.redirectToAdmin;
       } else {
+        // Cas B : Utilisateur classique (Redirection vers le dashboard dédié)
         const roles = data.roles || [];
         if (roles.includes("ROLE_FEMALE")) {
           navigate("/female-dashboard");
         } else {
-          roles.includes("ROLE_MALE");
+          // Par défaut ou ROLE_MALE, redirection vers le flux principal
           navigate("/home");
         }
       }
     } catch (err) {
-      // --- ÉTAPE 7 : Affichage de l'erreur si ETAPE 4 active ---
+      // --- ÉTAPE 7 : Capture des erreurs (Réseau ou Identifiants) ---
       setError(err.message);
     }
   };
+  //#endregion
 
   return (
+    //#region AFF. FORMULAIRE
     <div
       className="login-section d-flex align-items-center justify-content-center"
       style={{
@@ -111,7 +123,6 @@ function LoginPage() {
     >
       <div className="container">
         <div className="row justify-content-center">
-          {/* On utilise la même largeur que la RegisterPage (col-lg-7) pour la cohérence */}
           <div className="col-12 col-sm-11 col-md-9 col-lg-7 col-xl-6">
             <div
               className="card border-0 shadow-lg text-white"
@@ -124,7 +135,6 @@ function LoginPage() {
               }}
             >
               <div className="card-body p-4 p-md-5">
-                {/* Header Imposant */}
                 <div className="text-center mb-5">
                   <h1
                     className="fw-bold mb-2"
@@ -150,8 +160,8 @@ function LoginPage() {
                     }}
                   ></div>
                 </div>
-
-                {/* Alertes (Erreur ou Succès Vérification) */}
+                
+                {/* AFFICHAGE DES ERREURS */}
                 {error && (
                   <div
                     className="alert text-center mb-4 py-3"
@@ -167,8 +177,8 @@ function LoginPage() {
                     {error}
                   </div>
                 )}
-
-                {isVerified && ( // Affichez l'alerte de successe si isVerified est vrai
+                {/* AFFICHAGE DU MESSAGE DE VERIFICATION */}
+                {isVerified && (
                   <div
                     className="alert text-center mb-4 py-3 shadow-lg"
                     style={{
@@ -184,8 +194,9 @@ function LoginPage() {
                   </div>
                 )}
 
-                <form onSubmit={handleSubmit}>
+                {/* FORMULAIRE DE CONNEXION */}
                   {/* Email */}
+                <form onSubmit={handleSubmit}>
                   <div className="mb-4">
                     <label
                       className="form-label small text-uppercase fw-bold ms-2"
@@ -260,7 +271,8 @@ function LoginPage() {
                     SE CONNECTER
                   </button>
                 </form>
-
+                
+                {/* LIEN D'INSCRIPTION */}
                 <div className="text-center mt-5">
                   <p
                     className="mb-0"
@@ -282,7 +294,7 @@ function LoginPage() {
         </div>
       </div>
 
-      {/* La Modal reste identique mais avec un petit coup de pinceau pour matcher */}
+      {/* MODAL DE RECUPERATION DE COMPTE */}
       <Modal
         show={showModal}
         onHide={() => setShowModal(false)}

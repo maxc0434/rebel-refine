@@ -5,76 +5,76 @@ import { Heart } from "lucide-react";
 
 function HomePage() {
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("token"); // Récupération du pass de connexion
 
-  // State local stockant l'intégralité du JSON renvoyé par le HomeController (stats, members, etc.)
-  const [apiData, setApiData] = useState(null);
+  //#region STATES
+  // --- ÉTAPE 1 : Les États (States) ---
+  const [apiData, setApiData] = useState(null); // Stocke toutes les infos du serveur (stats, membres...)
+  const [loading, setLoading] = useState(true); // Gère l'affichage de l'écran de chargement
+  const [minAge, setMinAge] = useState("18"); // Filtre âge minimum
+  const [maxAge, setMaxAge] = useState("30"); // Filtre âge maximum
+  //#endregion
 
-  // État de contrôle pour le rendu conditionnel (affichage du loader pendant le fetch)
-  const [loading, setLoading] = useState(true);
 
-  // FONCTION DE GESTION DE LA RECHERCHE PAR AGE
-  const [minAge, setMinAge] = useState("18");
-  const [maxAge, setMaxAge] = useState("30");
-  //boucle pour construire la liste des options/choix age
+
+  //#region FCT FORM RECHERCHE
+  // --- ÉTAPE 2 : Préparation du formulaire de recherche ---
   const ageOptions = [];
   for (let i = 18; i <= 60; i++) {
     ageOptions.push(
       <option key={i} value={i}>
         {i}
       </option>,
-    );
+    ); // Génère les choix de 18 à 60 ans
   }
-  // Fonction de gestion de la recherche pour le onSubmit du Form
+
   const handleSearch = (e) => {
-    // 1. On empêche le rechargement de la page (important !)
-    e.preventDefault();
-    // 2. On construit l'adresse avec les paramètres
+    e.preventDefault(); // Évite que la page ne se recharge
+    // Envoie l'utilisateur vers la page de résultats avec les paramètres dans l'URL
     navigate(`/search?min=${minAge}&max=${maxAge}`);
   };
+  //#endregion
 
-  // FONCTION DE GESTION DU CHARGEMENT DE LA PAGE
+
+  //#region FCT HOME
+  // --- ÉTAPE 3 : Chargement initial des données (useEffect) ---
   useEffect(() => {
-    // Garde-fou : redirection immédiate si le jeton d'authentification est absent
+    // Si pas de token, on renvoie à l'accueil (sécurité front-end)
     if (!token) {
       navigate("/");
       return;
     }
 
-    // Appel API vers le point d'entrée principal de la plateforme
     fetch("http://localhost:8000/api/home", {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`, // On prouve qui on est
         "Content-Type": "application/json",
       },
     })
       .then((res) => {
-        // Intercepte les erreurs HTTP (ex: 401 Unauthorized, 500 Server Error)
-        if (!res.ok) throw new Error("Erreur de session ou serveur");
+        if (!res.ok) throw new Error("Erreur de session"); // Si le token est expiré par exemple
         return res.json();
       })
       .then((data) => {
-        // Hydratation de l'état global de la page et levée du verrou de chargement
-        setApiData(data);
-        setLoading(false);
+        setApiData(data); // On range les données reçues
+        setLoading(false); // On enlève le loader
       })
       .catch((err) => {
-        // Nettoyage du cache local et redirection en cas d'échec critique
-        console.error("Échec de la récupération des données Home:", err);
-        localStorage.clear();
+        localStorage.clear(); // En cas de gros souci, on déconnecte par sécurité
         navigate("/");
       });
   }, [navigate, token]);
+  //#endregion
 
-  // FONCTION DE GESTION DES FAVORIS
+
+  //#region FCT FAVORIS
+  // --- ÉTAPE 4 : Gestion des Favoris (Ajouter/Retirer) ---
   const toggleFavorite = async (e, targetId) => {
-    // Empêche la navigation du Link et la propagation du clic
-    e.preventDefault();
-    e.stopPropagation();
+    e.preventDefault(); // Empêche de cliquer sur le profil par erreur
+    e.stopPropagation(); // Stop la propagation du clic aux éléments parents
 
     try {
-      // Requête vers l'API avec le Token de sécurité
       const response = await fetch(
         `http://localhost:8000/api/member/favorite/${targetId}`,
         {
@@ -86,33 +86,30 @@ function HomePage() {
         },
       );
 
-      // Gestion des erreurs serveurs (ex: 404, 500)
-      if (!response.ok) throw new Error(`Erreur: ${response.status}`);
-
-      // Reprise des données renvoyées par l'API
+      if (!response.ok) throw new Error("Erreur serveur");
       const data = await response.json();
 
-      // Si l'action est confirmée par la BDD
+      // Mise à jour visuelle immédiate sans recharger la page
       if (data.status === "added" || data.status === "removed") {
-        // Mise à jour de l'état local pour rafraîchir le cœur
         setApiData((prevData) => ({
-          ...prevData, // On garde les stats et infos générales
-          last_members: prevData.last_members.map(
-            (member) =>
-              member.id === targetId
-                ? { ...member, isFavorite: data.status === "added" } // On modifie le membre cliqué
-                : member, // On garde les autres tels quels
+          ...prevData,
+          last_members: prevData.last_members.map((member) =>
+            // On cherche le membre cliqué et on change juste son état "isFavorite"
+            member.id === targetId
+              ? { ...member, isFavorite: data.status === "added" }
+              : member,
           ),
         }));
       }
-      // Sinon, affiche un message d'erreur
     } catch (error) {
-      console.error("Erreur favoris:", error.message);
       alert("Impossible de mettre à jour le favori.");
     }
   };
+  //#endregion
 
-  // Rendu prioritaire du preloader si les données sont en cours d'acquisition
+  //#region LOADER
+  // --- ÉTAPE 5 : Affichage du Loader ---
+  // Si loading est vrai, on affiche le preloader et on arrête le rendu ici
   if (loading) {
     return (
       <div className="preloader">
@@ -125,8 +122,11 @@ function HomePage() {
       </div>
     );
   }
+  //#endregion
 
-  // Affichage de la page
+
+  //#region RENDER
+  // ---ÉTAPE 6 : Affichage de la page ---
   return (
     <>
       {/* ================ Banner Section start Here =============== */}

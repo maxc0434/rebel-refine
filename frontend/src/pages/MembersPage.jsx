@@ -4,23 +4,27 @@ import { Link, useNavigate } from "react-router-dom";
 import { Heart } from "lucide-react";
 
 function MembersPage() {
-  const [members, setMembers] = useState([]);
+  const [members, setMembers] = useState([]); // Stocke la liste des profils reçus du serveur
   const navigate = useNavigate();
 
-  // 1. On récupère le token une seule fois au début du composant
+  // Récupération de la clé d'accès (Token) stockée lors de la connexion
   const token = localStorage.getItem("token");
 
+  //#region FCT MONTAGE DU COMPOSANT
+  // --- CHARGEMENT DES DONNÉES AU MONTAGE DU COMPOSANT ---
   useEffect(() => {
-    // 2. Sécurité : si pas de token, on dégage vers l'accueil
+    // Sécurité : si le visiteur n'est pas connecté, retour immédiat à l'accueil
     if (!token) {
       navigate("/");
       return;
     }
 
+    // Appel à l'API pour récupérer la liste des profils féminins
     fetch("http://localhost:8000/api/members/females", {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: `Bearer ${token}` }, // On envoie le token pour prouver l'identité
     })
       .then((res) => {
+        // Si le serveur répond 401 (Token expiré ou invalide), on déconnecte l'utilisateur
         if (res.status === 401) {
           localStorage.removeItem("token");
           navigate("/");
@@ -29,18 +33,23 @@ function MembersPage() {
         return res.json();
       })
       .then((data) => {
-        if (data) setMembers(data);
+        if (data) setMembers(data); // On remplit notre état avec les membres reçus
       })
       .catch((err) => console.error("Erreur chargement membres:", err));
-    // IMPORTANT : On laisse le tableau vide [] pour ne charger les membres QU'UNE SEULE FOIS
-  }, []);
+    
+    // Le tableau vide [] garantit que la liste ne se charge qu'une seule fois au début
+  }, [navigate, token]);
+  //#endregion
 
-  // 3. Gestion des favoris
+
+  //#region FCT FAVORIS
+  // --- ACTION : AJOUTER OU RETIRER UN FAVORI ---
   const toggleFavorite = async (e, targetId) => {
-    e.preventDefault();
-    e.stopPropagation();
+    e.preventDefault();  // Empêche la redirection vers le profil
+    e.stopPropagation(); // Empêche le clic de "traverser" vers les éléments parents
 
     if (!token) return;
+
     try {
       const response = await fetch(
         `http://localhost:8000/api/member/favorite/${targetId}`,
@@ -50,19 +59,19 @@ function MembersPage() {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-        },
+        }
       );
       const data = await response.json();
 
+      // Mise à jour de l'interface "en temps réel" (Reactivité)
       if (data.status === "added" || data.status === "removed") {
-        // MISE À JOUR DE L'INTERFACE SANS RECHARGER
         setMembers((prevMembers) =>
           prevMembers.map((member) => {
+            // Si c'est le membre sur lequel on a cliqué, on change l'état du cœur
             if (member.id === targetId) {
-              // On pourrait ajouter une propriété 'isFavorite' ici si on l'avait
               return { ...member, isFavorite: data.status === "added" };
             }
-            return member;
+            return member; // Les autres membres restent inchangés
           }),
         );
       }
@@ -70,7 +79,9 @@ function MembersPage() {
       console.error("Erreur favoris:", error);
     }
   };
+  //#endregion
 
+  //#region AFFICHAGE DU COMPOSANT
   return (
     <section className="member-section-female padding-tb">
       <div className="container">
@@ -78,6 +89,8 @@ function MembersPage() {
           <h2>Tous nos membres féminins</h2>
         </div>
 
+
+        {/* MARK: AFF. PROFILS */}
         <div className="row justify-content-center g-3 g-md-4 row-cols-2 row-cols-md-2 row-cols-lg-2">
           {members.map((m) => (
             <div className="col" key={m.id}>
@@ -85,7 +98,8 @@ function MembersPage() {
                 className="member-card-container"
                 style={{ position: "relative" }}
               >
-                {/* BOUTON FAVORIS */}
+
+                {/* MARK: BOUTON FAVORIS */}
                 <button
                   onClick={(e) => toggleFavorite(e, m.id)}
                   className="favorite-btn"
@@ -114,7 +128,7 @@ function MembersPage() {
                   />
                 </button>
 
-                {/* LIEN VERS LE PROFIL */}
+                {/* MARK: LIEN VERS LE PROFIL */}
                 <Link
                   to={`/profile/${m.id}`}
                   className="lab-item member-item style-1"
@@ -141,7 +155,7 @@ function MembersPage() {
                       style={{
                         padding: "25px 15px",
                         background:
-                          "linear-gradient(180deg, #1f2a4d 0%, #161f3d 100%)", // Dégradé léger pour plus de relief
+                          "linear-gradient(180deg, #1f2a4d 0%, #161f3d 100%)", 
                         textAlign: "center",
                         borderTop: "1px solid rgba(255, 255, 255, 0.05)",
                       }}
@@ -151,9 +165,9 @@ function MembersPage() {
                           fontFamily: "'Montserrat', sans-serif",
                           fontSize: "1.3rem",
                           fontWeight: "700",
-                          letterSpacing: "1.5px", // L'espacement qui change tout
+                          letterSpacing: "1.5px", 
                           color: "#ffffff",
-                          textTransform: "uppercase", // Majuscules pour le style "Refine"
+                          textTransform: "uppercase", 
                           marginBottom: "8px",
                         }}
                       >

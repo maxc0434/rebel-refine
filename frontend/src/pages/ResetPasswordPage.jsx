@@ -13,9 +13,8 @@ const ResetPasswordPage = () => {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
-  /**
-   * Gestion de la soumission du formulaire
-   */
+
+  //#region SOUMISSION DU FORMULAIRE
   const handleSubmit = async (e) => {
     e.preventDefault(); // Empêche le rechargement de la page
 

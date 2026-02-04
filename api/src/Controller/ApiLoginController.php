@@ -20,7 +20,6 @@ final class ApiLoginController extends AbstractController
         private Security $security
     ) {}
 
-    // Définition de la route : elle écoute sur /api/login et n'accepte que le POST
     // --- ÉTAPE 1 : Configuration de la Route ---
     // On définit l'URL d'accès et on force l'utilisation de la méthode POST pour la sécurité
     #[Route('/api/login', name: 'app_api_login', methods: ['POST'])]
@@ -43,18 +42,16 @@ final class ApiLoginController extends AbstractController
         if (!$user->isVerified()) {
             return $this->json([
                 'message' => 'Votre compte n\'est pas encore vérifié. Veuillez cliquer sur le lien envoyé par mail.',
-                'isVerified' => false // On envoie un flag pour que React puisse agir (ex: proposer un bouton de renvoi)
+                'isVerified' => false // On envoie un flag pour que React puisse agir
             ], JsonResponse::HTTP_FORBIDDEN); // Code 403 : Interdit
         }
-
         // On crée la session pour éviter l'erreur 401 sur l'admin
         $this->security->login($user, 'security.authenticator.json_login.main', 'main');
 
         // --- ÉTAPE 3 : Génération du Jeton (Token) ---
         // L'utilisateur est valide. On génère une chaîne de caractères cryptée (JWT)
-        // qui servira de preuve de connexion pour React.
         $token = $JWTManager->create($user);
-
+        
         //  On prépare le lien de redirection pour React
         $adminUrl = null;
         if (in_array('ROLE_ADMIN', $user->getRoles())) {
@@ -63,7 +60,6 @@ final class ApiLoginController extends AbstractController
 
         // --- ÉTAPE 4 : Construction de la Réponse JSON ---
         // On prépare un "paquet" de données complet pour React.
-        // Cela évite au Front-end de refaire un appel API pour connaître le profil de l'utilisateur.
         return $this->json([
             'token'     => $token,
             'id'        => $user->getId(),

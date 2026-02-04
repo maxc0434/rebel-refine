@@ -2,47 +2,47 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 function RegisterPage() {
-  // Déclaration de l'état initial du formulaire (objet regroupant tous les champs)
+  //#region STATES
+  // --- 1. ÉTATS DU FORMULAIRE ---
   const [formData, setFormData] = useState({
     nickname: "",
     email: "",
     password: "",
     confirmPassword: "",
-    gender: "male",
+    gender: "male", // Valeur homme par défaut lorsqu'inscription sur le register du site
   });
 
-  // Fonction générique pour mettre à jour l'état quand l'utilisateur tape dans un champ
-  // [e.target.name] permet de cibler dynamiquement 'email', 'nickname', etc.
+  // États pour les retours utilisateur et la navigation
+  const [error, setError] = useState("");           // Message si l'inscription échoue
+  const [successMessage, setSuccessMessage] = useState(""); // Message de confirmation
+  const navigate = useNavigate();
+  //#endregion
+
+
+  //#region SAISIES ET SOUMISSION
+  // --- 2. GESTION DES SAISIES ---
+  // Met à jour dynamiquement la bonne clé (email, password, etc.) grâce à l'attribut 'name' de l'input
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // États pour la gestion des messages d'erreur et de la redirection
-  const [error, setError] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
-  const navigate = useNavigate();
-
-  // Fonction asynchrone pour traiter la soumission du formulaire
+  // --- 3. SOUMISSION DU FORMULAIRE ---
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Empêche le rechargement de la page
-    setError(""); // Réinitialise les erreurs précédentes
+    e.preventDefault(); // Bloque le rechargement de la page
+    setError("");       // Efface les erreurs précédentes
 
-    // --- ÉTAPE 1 : Validation locale ---
-    // On vérifie que les deux mots de passe saisis sont identiques avant d'appeler l'API
+    // A. Validation locale : Sécurité avant l'appel API
     if (formData.password !== formData.confirmPassword) {
       setError("Les mots de passe ne correspondent pas");
-      return; // On arrête la fonction ici
+      return; 
     }
 
     try {
-      // --- ÉTAPE 2 : Appel API ---
-      // Envoi des données vers le RegistrationController de Symfony
+      // B. Appel API vers Symfony (Inscription)
       const response = await fetch("http://localhost:8000/api/register", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        // On transforme l'objet JS en JSON (on n'envoie pas le confirmPassword au serveur)
+        headers: { "Content-Type": "application/json" },
+        // Envoi des données (on ne transmet pas la confirmation, inutile pour le serveur)
         body: JSON.stringify({
           email: formData.email,
           password: formData.password,
@@ -51,31 +51,32 @@ function RegisterPage() {
         }),
       });
 
-      // --- ÉTAPE 3 : Gestion de la réponse du serveur ---
+      // C. Analyse de la réponse du serveur
       if (!response.ok) {
-        // Si le serveur renvoie une erreur (ex: code 400), on récupère le message d'erreur JSON
         const errorData = await response.json();
-        // On "lance" une erreur avec le message reçu de Symfony (ex: "Email déjà pris")
-        throw new Error(
-          errorData.error || "Une erreur est survenue lors de l'inscription",
-        );
+        // On récupère l'erreur précise de Symfony (ex: "Cet email est déjà utilisé")
+        throw new Error(errorData.error || "Erreur lors de l'inscription");
       }
-      // Si l'inscription réussit (code 201)
+
+      // D. Succès : Information utilisateur
       setSuccessMessage(
-        "Inscription réussie ! CONFIRMEZ votre compte en cliquant sur le lien envoyé par EMAIL",
+        "Inscription réussie ! Un lien de confirmation vous a été envoyé par email."
       );
 
-      // --- ÉTAPE 4 : Redirection ---
-      // On attend 3 secondes avant de rediriger
+      // E. Redirection programmée : On laisse le temps de lire le message
       setTimeout(() => {
         navigate("/");
       }, 6000);
-    } catch (err) {
-      // Si une erreur est survenue dans le bloc try, elle est capturée ici
-      setError(err.message); // On stocke le texte pour l'afficher dans le HTML
-    }
-  };
 
+    } catch (err) {
+      // Capture et affiche l'erreur (soit réseau, soit lancée par le bloc 'throw')
+      setError(err.message);
+    }
+  };  
+  //#endregion
+  
+  
+  //#region AFFICHAGE DU FORMULAIRE
   return (
     <div
       className="login-section d-flex align-items-center justify-content-center"
@@ -90,20 +91,19 @@ function RegisterPage() {
     >
       <div className="container">
         <div className="row justify-content-center">
-          {/* On passe à col-lg-7 pour une carte plus large et plus aérée */}
           <div className="col-12 col-sm-11 col-md-9 col-lg-7 col-xl-6">
             <div
               className="card border-0 shadow-lg text-white"
               style={{
-                backgroundColor: "rgba(30, 30, 60, 0.85)", // Un peu plus sombre pour le contraste
+                backgroundColor: "rgba(30, 30, 60, 0.85)", 
                 borderRadius: "30px",
                 backdropFilter: "blur(20px)",
-                border: "1px solid rgba(212, 175, 55, 0.2)", // Rappel de l'or sur le bord
+                border: "1px solid rgba(212, 175, 55, 0.2)",
                 boxShadow: "0 25px 50px rgba(0,0,0,0.5)",
               }}
             >
               <div className="card-body p-4 p-md-5">
-                {/* Header de la Card - Plus imposant */}
+                {/* MARK: Header (Logo, titre, sous-titre) */}
                 <div className="text-center mb-5">
                   <h1
                     className="fw-bold mb-2"
@@ -141,7 +141,8 @@ function RegisterPage() {
                 >
                   Créer un compte
                 </h3>
-
+                
+                {/* MARK: MESSAGES D'ERREUR OU DE SUCCES */}
                 {successMessage && (
                   <div
                     className="text-center mb-4 py-3"
@@ -177,8 +178,16 @@ function RegisterPage() {
                   </div>
                 )}
 
+
+
+                {/* MARK: FORMULAIRE D'INSCRIPTION */}
                 <form className="account-form" onSubmit={handleSubmit}>
-                  {/* Pseudo - Version Large */}
+
+
+
+
+
+                  {/* MARK: Pseudo de l'utilisateur */}
                   <div className="mb-4">
                     <label
                       className="form-label small text-uppercase fw-bold ms-2"
@@ -203,7 +212,7 @@ function RegisterPage() {
                     />
                   </div>
 
-                  {/* Email - Version Large */}
+                  {/* MARK: Email de l'utilisateur */}
                   <div className="mb-4">
                     <label
                       className="form-label small text-uppercase fw-bold ms-2"
@@ -227,7 +236,8 @@ function RegisterPage() {
                       required
                     />
                   </div>
-
+                  
+                  {/* MARK: Mot de passe de l'utilisateur */}
                   <div className="row">
                     <div className="col-md-6 mb-4">
                       <label
@@ -252,6 +262,8 @@ function RegisterPage() {
                         required
                       />
                     </div>
+
+                    {/* MARK: Confirmation du mot de passe de l'utilisateur */}
                     <div className="col-md-6 mb-4">
                       <label
                         className="form-label small text-uppercase fw-bold ms-2"
@@ -276,7 +288,8 @@ function RegisterPage() {
                       />
                     </div>
                   </div>
-
+                    
+                    {/* MARK: Bouton d'inscription */}
                   <button
                     type="submit"
                     className="btn btn-lg w-100 fw-bold py-3 mt-4 text-white border-0"
@@ -292,6 +305,7 @@ function RegisterPage() {
                   </button>
                 </form>
 
+                    {/* MARK: Lien vers la page de connexion */}
                 <div className="text-center mt-5">
                   <p
                     className="mb-0"
@@ -314,5 +328,6 @@ function RegisterPage() {
     </div>
   );
 }
+//#endregion
 
 export default RegisterPage;
