@@ -17,7 +17,7 @@ final class HomeController extends AbstractController
 
     public function index(#[CurrentUser] ?User $user, UserRepository $userRepository): JsonResponse
     {
-                /** @var User $currentUser */
+        /** @var User $currentUser */
         $currentUser = $this->getUser();
         $today = new \DateTime();
 
@@ -86,4 +86,3 @@ final class HomeController extends AbstractController
         return $this->json($data);
     }
 }
-

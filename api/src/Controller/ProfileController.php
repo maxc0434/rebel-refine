@@ -44,4 +44,6 @@ final class ProfileController extends AbstractController
 
         return $this->json($data);
     }
+
+    
 }

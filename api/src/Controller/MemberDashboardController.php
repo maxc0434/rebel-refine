@@ -19,6 +19,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class MemberDashboardController extends AbstractController
 {
 
+    #region Dashboard
     #[Route('/dashboard', name: 'dashboard', methods: ['GET'])]
     #[IsGranted('ROLE_MALE')]
     public function index(): JsonResponse
@@ -60,8 +61,6 @@ class MemberDashboardController extends AbstractController
                 // INFO TARGET : Sa photo de profil
                 'photo' => $firstImage ? $firstImage->getImageName() : null,
 
-                // INFO TARGET : Ses passions
-                // 'interests' => $favorite->getInterests(),
 
             ];
         }
@@ -82,16 +81,21 @@ class MemberDashboardController extends AbstractController
                 'photos' => $userPhotos,                   // Sa photo de profil
 
             ],
-
             // BLOC DES TARGETS : La liste des profils favoris extraite plus haut
             'favorites' => $favoritesData,
-
             // STATISTIQUE : Le nombre total de favoris du compte connecté
             'favoritesCount' => count($favoritesData),
         ]);
     }
+    #endregion
 
 
+
+
+
+
+
+    #region Favoris
     #[Route('/favorite/{id}', name: 'toggle_favorite', methods: ['POST'])]
     #[IsGranted('ROLE_MALE')]
     public function toggleFavorite(User $targetUser, EntityManagerInterface $em): JsonResponse
@@ -119,7 +123,15 @@ class MemberDashboardController extends AbstractController
             'favoritesCount' => $currentUser->getFavorites()->count()
         ]);
     }
+    #endregion
 
+
+
+
+
+
+
+    #region Update Profil
     #[Route('/update-profile', name: 'update_profile', methods: ['POST'])]
     #[IsGranted('ROLE_MALE')]
     public function updateProfile(Request $request, EntityManagerInterface $em): JsonResponse
@@ -157,7 +169,16 @@ class MemberDashboardController extends AbstractController
             ]
         ]);
     }
+    #endregion
 
+
+
+
+
+
+
+
+    #region Upload Photo
     #[Route('/upload-photo', name: 'api_member_upload_photo', methods: ['POST'])]
     #[IsGranted('ROLE_MALE')]
     public function uploadPhoto(Request $request, EntityManagerInterface $em): JsonResponse
@@ -180,11 +201,9 @@ class MemberDashboardController extends AbstractController
 
         // 2. Création de la nouvelle entité image
         $userImage = new UserImage();
-
         // IMPORTANT : On passe le fichier à VichUploader
         $userImage->setImageFile($file);
-
-        // On lie l'image à l'utilisateur (Vérifie bien si c'est setOwner ou setUser dans ton entité)
+        // On lie l'image à l'utilisateur (qui est l'owner ((et non user)) dans ma table UserImage)
         $userImage->setOwner($user);
 
         // 3. Persistance
@@ -193,15 +212,22 @@ class MemberDashboardController extends AbstractController
 
         // 4. Réponse JSON structurée pour ton .map() React
         return $this->json([
-            'message' => 'Photo ajoutée à votre galerie',
             'photo' => [
                 'id' => $userImage->getId(),
                 'url' => $userImage->getImageName() // Le nom du fichier généré (ex: photo.webp)
             ]
         ]);
     }
+    #endregion
 
-    
+
+
+
+
+
+
+
+    #region Delete Photo
     #[Route('/delete-photo/{id}', name: 'api_member_delete_photo', methods: ['DELETE'])]
     #[IsGranted('ROLE_MALE')]
     public function deletePhoto(UserImage $userImage, EntityManagerInterface $em): JsonResponse
@@ -222,4 +248,5 @@ class MemberDashboardController extends AbstractController
             'message' => 'Photo supprimée avec succès'
         ]);
     }
+    #endregion
 }

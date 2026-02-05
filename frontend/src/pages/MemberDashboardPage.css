@@ -239,18 +239,18 @@
 
 /* Style spécifique pour les listes déroulantes */
 select.dashboard-input {
-    appearance: none; /* Supprime le style par défaut du navigateur */
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-    background-size: 16px;
-    padding-right: 40px; /* Espace pour la flèche personnalisée */
-    cursor: pointer;
+    /* Ton contour doré fin */
+    background-color: #1f2a4d;
+    color: white;
+    outline: none;
+    /* On demande au navigateur de ne pas ajouter ses propres styles au focus */
+    box-shadow: none !important; 
 }
+
 
 /* C'est ici qu'on gère le fond de la liste qui descend */
 select.dashboard-input option {
-    background-color: #1f2a4d; /* Le bleu sombre de ton thème */
+    background-color: #1f2a4d;
     color: white;
     padding: 10px;
 }
@@ -258,4 +258,9 @@ select.dashboard-input option {
 /* Optionnel : couleur au survol dans la liste */
 select.dashboard-input option:hover {
     background-color: #f94d80 !important;
+}
+
+select.dashboard-input:focus {
+    border: 0.5px solid #d4af37 !important; /* Encore plus fin au clic */
+    box-shadow: 0 0 5px rgba(212, 175, 55, 0.2) !important;
 }
