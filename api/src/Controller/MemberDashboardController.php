@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Entity\UserImage;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
@@ -25,7 +26,13 @@ class MemberDashboardController extends AbstractController
         /** @var User $user */
         // On récupère l'objet User de la personne actuellement connectée 
         $user = $this->getUser();
-
+        $userPhotos = [];
+        foreach ($user->getUserImages() as $image) {
+            $userPhotos[] = [
+                'id' => $image->getId(),
+                'url' => $image->getImageName()
+            ];
+        }
         $favoritesData = [];
 
         /** * On boucle sur la collection de favoris du User connecté.
@@ -36,6 +43,7 @@ class MemberDashboardController extends AbstractController
             $images = $favorite->getUserImages();
             $firstImage = !$images->isEmpty() ? $images[0] : null;
 
+            // On construit le tableau des favoris
             $favoritesData[] = [
                 // INFO TARGET : Identifiant unique de la personne mise en favori
                 'id' => $favorite->getId(),
@@ -54,7 +62,7 @@ class MemberDashboardController extends AbstractController
 
                 // INFO TARGET : Ses passions
                 // 'interests' => $favorite->getInterests(),
-                
+
             ];
         }
         return $this->json([
@@ -70,8 +78,9 @@ class MemberDashboardController extends AbstractController
                 'religion' => $user->getReligion(),       // Son religion
                 'birthDate' => $user->getBirthDate(),     // Sa date de naissance
                 'gender' => $user->getGender(),           // Son sexe
-                'interests' => $user->getInterests(),      // Ses passions
-            
+                'interests' => $user->getInterests(),     // Ses passions
+                'photos' => $userPhotos,                   // Sa photo de profil
+
             ],
 
             // BLOC DES TARGETS : La liste des profils favoris extraite plus haut
@@ -127,7 +136,7 @@ class MemberDashboardController extends AbstractController
 
         // --- LOGIQUE "UPDATE" DU CRUD ---
         // On met à jour uniquement les champs autorisés
-        if (isset($data['nickname'])) $user->setNickname($data['nickname']); 
+        if (isset($data['nickname'])) $user->setNickname($data['nickname']);
         if (isset($data['interests'])) $user->setInterests($data['interests']);
         if (isset($data['marital'])) $user->setMarital($data['marital']);
         if (isset($data['religion'])) $user->setReligion($data['religion']);
@@ -146,6 +155,71 @@ class MemberDashboardController extends AbstractController
                 'religion' => $user->getReligion(),
                 'children' => $user->getChildren(),
             ]
+        ]);
+    }
+
+    #[Route('/upload-photo', name: 'api_member_upload_photo', methods: ['POST'])]
+    #[IsGranted('ROLE_MALE')]
+    public function uploadPhoto(Request $request, EntityManagerInterface $em): JsonResponse
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $file = $request->files->get('photo');
+
+        if (!$file) {
+            return $this->json(['message' => 'Fichier manquant'], 400);
+        }
+
+        // 1. Vérification de la limite (3 photos maximum)
+        // On utilise getUserImages() qui est la collection liée à l'utilisateur
+        if ($user->getUserImages()->count() >= 3) {
+            return $this->json([
+                'message' => 'Limite de 3 photos atteinte. Supprimez-en une pour en ajouter une nouvelle.'
+            ], 400);
+        }
+
+        // 2. Création de la nouvelle entité image
+        $userImage = new UserImage();
+
+        // IMPORTANT : On passe le fichier à VichUploader
+        $userImage->setImageFile($file);
+
+        // On lie l'image à l'utilisateur (Vérifie bien si c'est setOwner ou setUser dans ton entité)
+        $userImage->setOwner($user);
+
+        // 3. Persistance
+        $em->persist($userImage);
+        $em->flush();
+
+        // 4. Réponse JSON structurée pour ton .map() React
+        return $this->json([
+            'message' => 'Photo ajoutée à votre galerie',
+            'photo' => [
+                'id' => $userImage->getId(),
+                'url' => $userImage->getImageName() // Le nom du fichier généré (ex: photo.webp)
+            ]
+        ]);
+    }
+
+    
+    #[Route('/delete-photo/{id}', name: 'api_member_delete_photo', methods: ['DELETE'])]
+    #[IsGranted('ROLE_MALE')]
+    public function deletePhoto(UserImage $userImage, EntityManagerInterface $em): JsonResponse
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        // Sécurité : on vérifie que la photo appartient bien à l'utilisateur connecté
+        if ($userImage->getOwner() !== $user) {
+            return $this->json(['message' => 'Action non autorisée'], 403);
+        }
+
+        $em->remove($userImage);
+        $em->flush();
+
+        return $this->json([
+            'status' => 'success',
+            'message' => 'Photo supprimée avec succès'
         ]);
     }
 }

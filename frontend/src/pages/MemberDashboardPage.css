@@ -93,6 +93,7 @@
     color: white;
     font-size: 1rem;
     outline: none;
+
 }
 
 .nav-button {
@@ -172,4 +173,89 @@
 
 .password-input-group {
     margin-bottom: 15px;
+}
+
+/* Empêche la galerie de pousser le reste du contenu de façon désordonnée */
+.gallery-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 40px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 15px;
+}
+
+.gallery-grid {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+    min-height: 130px;
+}
+
+/* Style pour chaque emplacement photo */
+.photo-slot {
+    width: 120px;
+    height: 120px;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    border: 2px solid #1f2a4d;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.photo-slot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* La zone "+" pour uploader */
+.dropzone-slot {
+    width: 120px;
+    height: 120px;
+    border: 2px dashed #d4af37;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: transparent;
+}
+
+.dropzone-slot:hover {
+    background: rgba(212, 175, 55, 0.1);
+    transform: translateY(-2px);
+}
+
+.photo-slot img:hover {
+    filter: brightness(1.1);
+    transition: 0.3s;
+}
+
+/* Style spécifique pour les listes déroulantes */
+select.dashboard-input {
+    appearance: none; /* Supprime le style par défaut du navigateur */
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px;
+    padding-right: 40px; /* Espace pour la flèche personnalisée */
+    cursor: pointer;
+}
+
+/* C'est ici qu'on gère le fond de la liste qui descend */
+select.dashboard-input option {
+    background-color: #1f2a4d; /* Le bleu sombre de ton thème */
+    color: white;
+    padding: 10px;
+}
+
+/* Optionnel : couleur au survol dans la liste */
+select.dashboard-input option:hover {
+    background-color: #f94d80 !important;
 }

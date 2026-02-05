@@ -4,7 +4,9 @@ import { useNavigate } from "react-router-dom";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 import "./MemberDashboardPage.css";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
+import { useDropzone } from "react-dropzone";
+import { useCallback } from "react";
 
 function MemberDashboardPage() {
   //#region STATES
@@ -14,24 +16,27 @@ function MemberDashboardPage() {
   const [isEditing, setIsEditing] = useState(false);
   const [favorites, setFavorites] = useState([]);
   const [backupData, setBackupData] = useState(null);
+  const [selectedImg, setSelectedImg] = useState(null);
+
   //#endregion
 
-  //#region OUTILS & AUTHENTIFICATION
+  //#region AUTHENTIFICATION
   const navigate = useNavigate(); // Hook pour rediriger l'utilisateur
   const token = localStorage.getItem("token"); // Récupère la clé de sécurité (JWT)
+  //#endregion
 
-  // Gère l'onglet sélectionné (Profil, Favoris, etc.)
+  // #region ONGLET ---
   const [activeTab, setActiveTab] = useState(
-    localStorage.getItem("activeTab") || "infos",
+    localStorage.getItem("activeTab") || "infos", // Gère l'onglet sélectionné (Profil, Favoris, etc.)
   );
 
-  // --- GESTION DE L'ONGLET ---
   const handleTabChange = (tabName) => {
     setActiveTab(tabName); // Change l'onglet visuellement
     localStorage.setItem("activeTab", tabName); // Sauvegarde pour la prochaine fois
   };
+  // #endregion
 
-  // --- GESTION DE L'INPUT et de l'UPDATE du PROFIL ---
+  // #region INPUT et de l'UPDATE du PROFIL ---
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setUserData({
@@ -67,29 +72,34 @@ function MemberDashboardPage() {
 
       if (response.ok) {
         Swal.fire({
-          icon: 'success',
-          title: 'Profil mis à jour !',
-          text: 'Vos modifications ont été enregistrées avec succès.',
-          background: '#1f2a4d', 
-          color: '#fff',
-          confirmButtonColor: '#d4af37',
-          timer: 3000 
+          icon: "success",
+          title: "Profil mis à jour !",
+          text: "Vos modifications ont été enregistrées avec succès.",
+          background: "#1f2a4d",
+          color: "#fff",
+          confirmButtonColor: "#d4af37",
+          timer: 3000,
         });
       } else {
         Swal.fire({
-          icon: 'error',
-          title: 'Oups...',
-          text: data.message || 'Une erreur est survenue.',
-          background: '#1f2a4d',
-          color: '#fff'
+          icon: "error",
+          title: "Oups...",
+          text: data.message || "Une erreur est survenue.",
+          background: "#1f2a4d",
+          color: "#fff",
         });
       }
     } catch (error) {
-      Swal.fire({ icon: 'error', title: 'Erreur réseau', text: 'Impossible de joindre le serveur.' });
+      Swal.fire({
+        icon: "error",
+        title: "Erreur réseau",
+        text: "Impossible de joindre le serveur.",
+      });
     }
-};
+  };
+  // #endregion
 
-  // --- GESTION DE l'UPDATE du PASSWORD ---
+  // #region UPDATE du PASSWORD ---
   const [passwordData, setPasswordData] = useState({
     oldPassword: "",
     newPassword: "",
@@ -102,11 +112,11 @@ function MemberDashboardPage() {
     // 1. Vérification locale avant l'appel
     if (passwordData.newPassword !== passwordData.confirmPassword) {
       Swal.fire({
-        icon: 'error',
-        title: 'Oups...',
-        text: 'Les mots de passe ne correspondent pas.',
-        background: '#1f2a4d',
-        color: '#fff'
+        icon: "error",
+        title: "Oups...",
+        text: "Les mots de passe ne correspondent pas.",
+        background: "#1f2a4d",
+        color: "#fff",
       });
       return;
     }
@@ -135,22 +145,22 @@ function MemberDashboardPage() {
       // 4. Si echec, affichage de l'erreur
       if (!response.ok) {
         Swal.fire({
-          icon: 'error',
-          title: 'Oups...',
-          text: data.message || 'Une erreur est survenue.',
-          background: '#1f2a4d',
-          color: '#fff'
+          icon: "error",
+          title: "Oups...",
+          text: data.message || "Une erreur est survenue.",
+          background: "#1f2a4d",
+          color: "#fff",
         });
         return;
       }
-      // 5. Succès 
+      // 5. Succès
       Swal.fire({
-        icon: 'success',
-        title: 'Mot de passe mis à jour !',
-        text: 'Votre mot de passe a bien été mis à jour.',
-        background: '#1f2a4d',
-        confirmButtonColor: '#d4af37',
-        color: '#fff',
+        icon: "success",
+        title: "Mot de passe mis à jour !",
+        text: "Votre mot de passe a bien été mis à jour.",
+        background: "#1f2a4d",
+        confirmButtonColor: "#d4af37",
+        color: "#fff",
         timer: 3000,
       });
       setPasswordData({
@@ -167,7 +177,86 @@ function MemberDashboardPage() {
   };
   //#endregion
 
-  //#region CHARGEMENT DE LA PAGE
+  //#region PHOTOS
+
+  // --- GESTION DE l'UPLOAD d'une PHOTO ---
+  const onDrop = useCallback(
+    async (acceptedFiles) => {
+      // 1. Calcule la place restante pour ne pas dépasser 3 photos
+      const filesToUpload = acceptedFiles.slice(0, 3 - userData.photos.length);
+
+      for (const file of filesToUpload) {
+        // 2. Prépare l'enveloppe (FormData) pour envoyer le fichier...
+        const formData = new FormData();
+        // ... et ajoute le fichier
+        formData.append("photo", file);
+
+        try {
+          const response = await fetch(
+            "http://localhost:8000/api/member/upload-photo",
+            {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+              body: formData, // Envoi de l'enveloppe au serveur
+            },
+          );
+
+          const data = await response.json();
+
+          if (response.ok) {
+            // 3. Ajoute la nouvelle photo à l'écran sans recharger la page
+            setUserData((prev) => ({
+              ...prev,
+              photos: [...prev.photos, data.photo],
+            }));
+          }
+        } catch (error) {
+          console.error("Erreur upload:", error);
+        }
+      }
+    },
+    [userData],
+  );
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop, // La fonction à lancer quand on lâche un fichier
+    accept: { "image/*": [] }, // N'autorise QUE les images
+    multiple: true, // Autorise à glisser plusieurs fichiers d'un coup
+  });
+  //#endregion
+
+  // #region SUPPR. PHOTO ---
+  const handleDeletePhoto = async (photoId) => {
+    // 1. Appel à l'API Symfony
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/member/delete-photo/${photoId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        },
+      );
+
+      if (response.ok) {
+        // On met à jour le state local pour faire disparaître la photo immédiatement
+        setUserData((prev) => ({
+          ...prev,
+          photos: prev.photos.filter((p) => p.id !== photoId),
+        }));
+      } else {
+        alert("Erreur lors de la suppression");
+      }
+    } catch (error) {
+      console.error("Erreur suppression:", error);
+    }
+  };
+  //#endregion
+
+  //#region CHARG. PAGE
   // --- LOGIQUE DE CHARGEMENT (API) ---
   // Vérification de l'authentification
   useEffect(() => {
@@ -252,6 +341,8 @@ function MemberDashboardPage() {
               height: "fit-content",
             }}
           >
+            <h5 style={{ marginBottom: "20px" }}>Navigation</h5>
+            {/* MARK: - Les Onglets de Navigation */}
             <nav
               style={{ display: "flex", flexDirection: "column", gap: "10px" }}
             >
@@ -278,7 +369,7 @@ function MemberDashboardPage() {
 
           {/* MARK: - CONTENU DROITE */}
           <main
-            // --- EN-TETE: INFO ---
+            // --- EN-TETE: Infos + Modification ---
             style={{
               flex: "3",
               minWidth: "300px",
@@ -328,7 +419,138 @@ function MemberDashboardPage() {
                   )}
                 </div>
 
-                {/* MARK: -  INFO lecture seule puis formulaire d'update */}
+                {/* MARK: - Photos Galerie */}
+                <div style={{ marginBottom: "40px", textAlign: "center" }}>
+                  <p
+                    style={{
+                      color: "#d4af37",
+                      fontSize: "0.9rem",
+                      marginBottom: "15px",
+                      fontFamily: "Montserrat",
+                    }}
+                  >
+                    Ma Galerie Photo ({userData.photos?.length || 0} / 3)
+                  </p>
+
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "20px",
+                      justifyContent: "center",
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    {/* Affichage des photos existantes */}
+                    {userData.photos &&
+                      userData.photos.map((pic, index) => (
+                        <div
+                          key={index}
+                          className="photo-slot"
+                          style={{
+                            position: "relative",
+                            cursor: "pointer",
+                          }}
+                        >
+                          <img
+                            src={`http://localhost:8000/uploads/users/${pic.url}`}
+                            onClick={() =>
+                              setSelectedImg(
+                                `http://localhost:8000/uploads/users/${pic.url}`,
+                              )
+                            }
+                            alt="Profil"
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                              borderRadius: "10px",
+                              border: "2px solid #1f2a4d",
+                            }}
+                          />
+                          {/* Affichage de la modale pour l'image agrandi */}
+                          {selectedImg && (
+                            <div
+                              onClick={() => setSelectedImg(null)}
+                              style={{
+                                position: "fixed",
+                                top: 0,
+                                left: 0,
+                                width: "100%",
+                                height: "100%",
+                                backgroundColor: "rgba(0,0,0,0.85)",
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                zIndex: 9999,
+                                cursor: "zoom-out",
+                              }}
+                            >
+                              <img
+                                src={selectedImg}
+                                style={{
+                                  maxWidth: "90%",
+                                  maxHeight: "90%",
+                                  borderRadius: "10px",
+                                  boxShadow: "0 0 20px rgba(0,0,0,0.5)",
+                                }}
+                                alt="Agrandie"
+                              />
+                            </div>
+                          )}
+                          {/* Bouton supprimer */}
+                          <button
+                            onClick={() => handleDeletePhoto(pic.id)}
+                            style={{
+                              position: "absolute",
+                              top: "5px",
+                              right: "5px",
+                              background: "rgba(255, 0, 0, 0.7)",
+                              color: "white",
+                              border: "none",
+                              borderRadius: "50%",
+                              width: "20px",
+                              height: "20px",
+                              cursor: "pointer",
+                              fontSize: "12px",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+
+                    {/* Zone Dropzone (affichée seulement si < 3 photos) */}
+                    {(userData.photos?.length || 0) < 3 && (
+                      <div
+                        {...getRootProps()}
+                        style={{
+                          width: "120px",
+                          height: "120px",
+                          border: "2px dashed #d4af37",
+                          borderRadius: "10px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          cursor: "pointer",
+                          background: isDragActive
+                            ? "rgba(212, 175, 55, 0.1)"
+                            : "transparent",
+                          transition: "0.3s",
+                        }}
+                      >
+                        <input {...getInputProps()} />
+                        <span style={{ color: "#d4af37", fontSize: "2rem" }}>
+                          +
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* MARK: -  Infos en lecture seule */}
                 {!isEditing ? (
                   <div
                     style={{
@@ -383,7 +605,7 @@ function MemberDashboardPage() {
                     </div>
                   </div>
                 ) : (
-                  /* --- INFO formulaire d'update --- */
+                  // MARK: -  FORMULAIRE DE MODIFICATION DES INFOS PERSONNELLES
                   <form
                     onSubmit={async (e) => {
                       await handleUpdateProfile(e);
@@ -402,7 +624,7 @@ function MemberDashboardPage() {
                         gap: "20px",
                       }}
                     >
-                      {/* Ligne 1 */}
+                      {/* MARK: Pseudo & email */}
                       <div>
                         <label className="dashboard-label">Pseudo</label>
                         <input
@@ -422,10 +644,17 @@ function MemberDashboardPage() {
                           value={userData.email || ""}
                           disabled
                           className="dashboard-input opacity-50"
+                          style={{
+                            background: "rgba(255, 255, 255, 0.02)",
+                            color: "rgba(255, 255, 255, 0.3)",
+                            borderColor: "rgba(255, 255, 255, 0.05)",
+                            cursor: "not-allowed",
+                            opacity: 1,
+                          }}
                         />
                       </div>
 
-                      {/* Ligne 2 */}
+                      {/* MARK: Statut marital & enfants */}
                       <div>
                         <label className="dashboard-label">
                           Situation Maritale
@@ -460,7 +689,7 @@ function MemberDashboardPage() {
                         </select>
                       </div>
 
-                      {/* Ligne 3 */}
+                      {/* MARK: Religion */}
                       <div style={{ flex: 1, minWidth: "250px" }}>
                         <label className="dashboard-label">
                           Religion / Spiritualité
@@ -472,7 +701,7 @@ function MemberDashboardPage() {
                           className="dashboard-input"
                         >
                           <option value="">Choisir...</option>
-                          <option value="Aucun">Aucune</option>
+                          <option value="Aucun">Aucun</option>
                           <option value="Chrétien">Chrétien</option>
                           <option value="Musulman">Musulman</option>
                           <option value="Juif">Juif</option>
@@ -487,6 +716,7 @@ function MemberDashboardPage() {
                         </select>
                       </div>
 
+                      {/* MARK: Interests */}
                       <div style={{ flex: "1 1 100%", marginTop: "10px" }}>
                         <label className="dashboard-label">
                           Ma Présentation & Intérêts
@@ -513,7 +743,7 @@ function MemberDashboardPage() {
                       </div>
                     </div>
 
-                    {/* Boutons de sauvegarde et annulation */}
+                    {/* MARK:Boutons de sauvegarde et annulation */}
                     <div
                       className="form-actions"
                       style={{
@@ -622,7 +852,7 @@ function MemberDashboardPage() {
                         )}
                       </div>
 
-                      {/* INFOS DU FAVORI */}
+                      {/* MARK: INFOS DU FAVORI */}
                       <div style={{ padding: "15px", textAlign: "center" }}>
                         <h5 style={{ margin: "0 0 5px 0" }}>{fav.nickname}</h5>
                         <p
