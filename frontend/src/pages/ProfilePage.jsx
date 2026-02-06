@@ -1,32 +1,35 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./ProfilePage.css";
-import { Heart } from "lucide-react";
+import { Heart, NotebookPen } from "lucide-react";
+import Swal from "sweetalert2";
 
 function ProfilePage() {
   //#region OUTILS & AUTHENTIFICATION
-  // --- 1. PRÉPARATION ---
-  const { id } = useParams();      // On récupère l'ID du membre dans l'adresse (ex: /profile/42)
-  const navigate = useNavigate();  // Pour rediriger si besoin
+  // --- PRÉPARATION ---
+  const { id } = useParams(); // On récupère l'ID du membre dans l'adresse (ex: /profile/42)
+  const navigate = useNavigate(); // Pour rediriger si besoin
   const token = localStorage.getItem("token");
   //#endregion
 
-
-
   //#region STATES
-  // --- 2. LES ÉTATS ---
-  const [user, setUser] = useState(null);         // Les infos du profil (nom, bio, photos...)
-  const [loading, setLoading] = useState(true);   // État du chargement
+  // --- LES ÉTATS ---
+  const [user, setUser] = useState(null); // Les infos du profil (nom, bio, photos...)
+  const [loading, setLoading] = useState(true); // État du chargement
   const [selectedImgIndex, setSelectedImgIndex] = useState(null); // Gère l'ouverture de la photo en grand (null = fermé)
+  const [memo, setMemo] = useState("");
+  const [showModal, setShowModal] = useState(false);
   //#endregion
 
-
-
-  //#region MONTAGE DU COMPOSANT
-  // --- 3. RÉCUPÉRATION DU PROFIL ---
+  //#region MONTAGE DU COMPOSANT et CHARGEMENT DES DONNÉES
+  // --- RÉCUPÉRATION DU PROFIL ET MÉMO ---
   useEffect(() => {
-    if (!token) { navigate("/"); return; }
+    if (!token || !id) {
+      navigate("/");
+      return;
+    }
 
+    // Fetch du Profil
     fetch(`http://localhost:8000/api/profile/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
@@ -36,12 +39,23 @@ function ProfilePage() {
         setLoading(false); // On cache le loader dès qu'on a les infos
       })
       .catch((err) => console.error("Erreur API:", err));
-  }, [id, token, navigate]); // On relance si on change de profil
+    // Fetch du Mémo
+    fetch(`http://localhost:8000/api/member/memo/${id}`, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` }, // Si ton API mémo utilise aussi le token
+    })
+      .then((res) => {
+        if (!res.ok) return { content: "" }; // Si erreur 500 ou 404, on renvoie un objet vide
+        return res.json();
+      })
+      .then((data) => setMemo(data.content))
+      .catch(() => setMemo(""));
+
+  }, [token, id, navigate]);
   //#endregion
 
-
   //#region CARROUSEL
-  // --- 4. LOGIQUE DU CARROUSEL (PHOTOS) ---
+  // --- LOGIQUE DU CARROUSEL (PHOTOS) ---
   const photos = user?.photos || []; // Liste des photos (vide par défaut si pas encore chargé)
 
   const nextImg = (e) => {
@@ -56,12 +70,12 @@ function ProfilePage() {
     setSelectedImgIndex((prev) => (prev === 0 ? photos.length - 1 : prev - 1));
   };
 
-  // --- 5. RACCOURCIS CLAVIER ---
+  // --- RACCOURCIS CLAVIER ---
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (selectedImgIndex === null) return; // Si pas de photo ouverte, on ignore
       if (e.key === "ArrowRight") nextImg(); // Flèche droite = suivante
-      if (e.key === "ArrowLeft") prevImg();  // Flèche gauche = précédente
+      if (e.key === "ArrowLeft") prevImg(); // Flèche gauche = précédente
       if (e.key === "Escape") setSelectedImgIndex(null); // Échap = fermer
     };
 
@@ -70,18 +84,20 @@ function ProfilePage() {
   }, [selectedImgIndex, photos.length]);
   //#endregion
 
-
   //#region GESTION DES FAVORIS
-  // --- 6. ACTION FAVORIS ---
+  // --- ACTION FAVORIS ---
   const toggleFavorite = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/api/member/favorite/${id}`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `http://localhost:8000/api/member/favorite/${id}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         },
-      });
+      );
       const data = await response.json();
 
       if (data.status === "added" || data.status === "removed") {
@@ -97,28 +113,129 @@ function ProfilePage() {
   };
   //#endregion
 
+  //#region MEMO
+  // --- CRÉATION D'UN MEMO ---
+  const saveMemo = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/api/member/memo", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          targetId: user.id,
+          content: memo,
+        }),
+      });
 
-  //#region LOADER
-  // --- 7. AFFICHAGE DU LOADER ---
-  if (loading) return (
-    <div className="preloader">
-      <div className="preloader-inner"><div className="preloader-icon"><span></span><span></span></div></div>
-    </div>
-  );
+      if (response.ok) {
+        Swal.fire({
+          title: "Enregistré !",
+          text: "Ton mémo a été mis à jour.",
+          icon: "success",
+          timer: 2000,
+          showConfirmButton: false,
+          background: "#1e2235", // Ton fond sombre
+          color: "#fff",
+          iconColor: "#d4af37", // Ton doré
+        });
+        setShowModal(false); // On ferme ta modale React après le succès
+      } else {
+        throw new Error("Erreur serveur");
+      }
+    } catch (error) {
+      Swal.fire({
+        title: "Oups...",
+        text: "Impossible d'enregistrer la note.",
+        icon: "error",
+        background: "#1e2235",
+        color: "#fff",
+        confirmButtonColor: "#d4af37",
+      });
+    }
+  };
+
+  const deleteMemo = async () => {
+    const result = await Swal.fire({
+      title: "Supprimer la note ?",
+      text: "Cette action est irréversible.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Oui, supprimer",
+      background: "#1e2235",
+      color: "#fff",
+    });
+
+    if (result.isConfirmed) {
+      const response = await fetch(
+        `http://localhost:8000/api/member/memo/${user.id}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        },
+      );
+
+      if (response.ok) {
+        setMemo(""); // On vide le champ
+        setShowModal(false);
+        Swal.fire({
+          title: "Supprimé !",
+          icon: "success",
+          background: "#1e2235",
+          color: "#fff",
+        });
+      }
+    }
+  };
   //#endregion
 
+  //#region LOADER
+  // --- 8. AFFICHAGE DU LOADER ---
+  if (loading)
+    return (
+      <div className="preloader">
+        <div className="preloader-inner">
+          <div className="preloader-icon">
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+      </div>
+    );
+  //#endregion
 
   //#region AFFICHAGE DU COMPOSANT
   return (
     <section className="profile-section padding-tb">
       <div className="container">
         <div className="section-wrapper">
-
-
-          {/* MARK: 1.HEADER DU PROFIL */}
+          {/* MARK: HEADER DU PROFIL */}
           <div className="member-profile">
             <div className="profile-item">
               <div className="profile-cover">
+                <button
+                  onClick={() => setShowModal(true)}
+                  className="btn-memo-trigger"
+                  style={{
+                    backgroundColor: "transparent",
+                    position: "absolute",
+                    bottom: "285px",
+                    right: "15px",
+                    zIndex: 20,
+                    border: "2px solid #d4af37",
+                    color: "#d4af37",
+                    padding: "5px 10px",
+                    borderRadius: "5px",
+                    marginLeft: "10px",
+                    cursor: "pointer",
+                  }}
+                >
+                  <NotebookPen size={20} strokeWidth={1.5} />
+                </button>
                 <button
                   onClick={toggleFavorite}
                   className="favorite-btn"
@@ -127,8 +244,9 @@ function ProfilePage() {
                     bottom: "15px",
                     right: "15px",
                     zIndex: 20,
-                    background: "white",
-                    border: "none",
+                    backgroundColor: "transparent",
+                    border: "2px solid #d4af37",
+                    color: "#d4af37",
                     borderRadius: "50%",
                     width: "70px",
                     height: "70px",
@@ -137,7 +255,7 @@ function ProfilePage() {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    opacity: 0.9,
+                    opacity: 0.8,
                   }}
                 >
                   <Heart
@@ -146,6 +264,7 @@ function ProfilePage() {
                     fill={user.isFavorite ? "#f94d80" : "none"}
                   />
                 </button>
+
                 <img src="/assets/images/profile/cover.jpg" alt="cover-pic" />
               </div>
 
@@ -172,10 +291,8 @@ function ProfilePage() {
               </div>
             </div>
           </div>
-          
 
-
-          {/* MARK: 2.GALERIE PHOTO */}
+          {/* MARK: GALERIE PHOTO */}
           <div className="row mt-5">
             <div className="col-12">
               <div
@@ -234,9 +351,7 @@ function ProfilePage() {
             </div>
           </div>
 
-
-
-          {/* MARK: 3.DÉTAILS DU PROFIL */}
+          {/* MARK: DÉTAILS DU PROFIL */}
           <div className="profile-details mt-4">
             <div
               className="info-card"
@@ -275,7 +390,7 @@ function ProfilePage() {
         </div>
       </div>
 
-      {/* MARK: 4.MODALE CARROUSEL (FIXED) */}
+      {/* MARK: MODALE CARROUSEL */}
       {selectedImgIndex !== null && (
         <div
           style={{
@@ -350,26 +465,123 @@ function ProfilePage() {
           </button>
         </div>
       )}
+
+      {/* MARK: MODALE MÉMO */}
+      {showModal && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0,0,0,0.8)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 1000,
+          }}
+        >
+          <div
+            className="info-card"
+            style={{
+              width: "90%",
+              maxWidth: "500px",
+              backgroundColor: "#1e1e3c", // Fond sombre assorti
+              border: "1px solid rgba(212, 175, 55, 0.5)",
+              borderRadius: "8px",
+              padding: "20px",
+            }}
+          >
+            <div className="info-card-title d-flex justify-content-between align-items-center mb-3">
+              <h6 style={{ color: "#d4af37", margin: 0 }}>MÉMO PRIVÉ</h6>
+              {/* On utilise ici notre fameux &times; pour fermer ! */}
+              <span
+                onClick={() => setShowModal(false)}
+                style={{
+                  color: "#d4af37",
+                  cursor: "pointer",
+                  fontSize: "1.5rem",
+                }}
+              >
+                &times;
+              </span>
+            </div>
+
+            <textarea
+              value={memo}
+              onChange={(e) => setMemo(e.target.value)}
+              style={{
+                width: "100%",
+                minHeight: "150px",
+                backgroundColor: "rgba(0,0,0,0.2)",
+                color: "white",
+                border: "1px solid rgba(212,175,55,0.2)",
+                padding: "10px",
+                borderRadius: "5px",
+                outline: "none",
+                resize: "none",
+              }}
+              placeholder="Écris ta note sur ce membre..."
+            />
+
+            <div className="mt-3 d-flex justify-content-end">
+              <button
+                onClick={deleteMemo}
+                style={{
+                  color: "#ff4d4d",
+                  background: "none",
+                  border: "none",
+                  fontSize: "1rem",
+                  backgroundColor: "transparent",
+                  padding: "8px 20px",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                }}
+              >
+                Supprimer la note
+              </button>
+              <button
+                onClick={() => {
+                  saveMemo();
+                  setShowModal(false);
+                }}
+                style={{
+                  backgroundColor: "#d4af37",
+                  color: "#1e2235",
+                  border: "none",
+                  padding: "8px 20px",
+                  borderRadius: "4px",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                }}
+              >
+                ENREGISTRER
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
 
-  // Style commun pour les flèches
-  const navArrowStyle = {
-    background: "rgba(212, 175, 55, 0.1)",
-    border: "2px solid #d4af37",
-    color: "#d4af37",
-    borderRadius: "50%",
-    width: "60px",
-    height: "60px",
-    fontSize: "1.5rem",
-    cursor: "pointer",
-    transition: "0.3s",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 10001,
-    margin: "0 20px",
-  };
+// Style commun pour les flèches
+const navArrowStyle = {
+  background: "rgba(212, 175, 55, 0.1)",
+  border: "2px solid #d4af37",
+  color: "#d4af37",
+  borderRadius: "50%",
+  width: "60px",
+  height: "60px",
+  fontSize: "1.5rem",
+  cursor: "pointer",
+  transition: "0.3s",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  zIndex: 10001,
+  margin: "0 20px",
+};
 //#endregion
 export default ProfilePage;

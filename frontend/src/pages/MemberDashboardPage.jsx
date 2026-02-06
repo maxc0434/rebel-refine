@@ -20,10 +20,22 @@ function MemberDashboardPage() {
 
   //#endregion
 
+
+
+
+
+
+
   //#region AUTHENTIFICATION
   const navigate = useNavigate(); // Hook pour rediriger l'utilisateur
   const token = localStorage.getItem("token"); // Récupère la clé de sécurité (JWT)
   //#endregion
+
+
+
+
+
+
 
   // #region ONGLET ---
   const [activeTab, setActiveTab] = useState(
@@ -35,6 +47,11 @@ function MemberDashboardPage() {
     localStorage.setItem("activeTab", tabName); // Sauvegarde pour la prochaine fois
   };
   // #endregion
+
+
+
+
+
 
   // #region INPUT et de l'UPDATE du PROFIL ---
   const handleInputChange = (e) => {
@@ -98,6 +115,11 @@ function MemberDashboardPage() {
     }
   };
   // #endregion
+
+
+
+
+
 
   // #region UPDATE du PASSWORD ---
   const [passwordData, setPasswordData] = useState({
@@ -177,8 +199,13 @@ function MemberDashboardPage() {
   };
   //#endregion
 
-  //#region PHOTOS
 
+
+
+
+
+
+  //#region PHOTOS
   // --- GESTION DE l'UPLOAD d'une PHOTO ---
   const onDrop = useCallback(
     async (acceptedFiles) => {
@@ -227,6 +254,12 @@ function MemberDashboardPage() {
   });
   //#endregion
 
+
+
+
+
+
+
   // #region SUPPR. PHOTO ---
   const handleDeletePhoto = async (photoId) => {
     // 1. Appel à l'API Symfony
@@ -255,6 +288,12 @@ function MemberDashboardPage() {
     }
   };
   //#endregion
+
+
+
+
+
+
 
   //#region CHARG. PAGE
   // --- LOGIQUE DE CHARGEMENT (API) ---
@@ -303,6 +342,12 @@ function MemberDashboardPage() {
       </div>
     );
   //#endregion
+
+
+
+
+
+
 
   //#region AFFICHAGE DE LA PAGE
   return (
@@ -992,11 +1037,12 @@ function MemberDashboardPage() {
   );
 }
 
+  
 const InfoItem = ({ label, value }) => (
   <div className="info-item-container">
     <span className="info-item-label">{label}</span>
     <span className="info-item-value">{value}</span>
   </div>
 );
-
+//#endregion
 export default MemberDashboardPage;
