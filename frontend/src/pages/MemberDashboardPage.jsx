@@ -387,7 +387,7 @@ function MemberDashboardPage() {
             }}
           >
             <h5 style={{ marginBottom: "20px" }}>Navigation</h5>
-            {/* MARK: - Les Onglets de Navigation */}
+            {/* MARK: - Onglets de Navigation */}
             <nav
               style={{ display: "flex", flexDirection: "column", gap: "10px" }}
             >

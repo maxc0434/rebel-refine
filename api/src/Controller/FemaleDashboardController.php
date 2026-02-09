@@ -17,6 +17,15 @@ class FemaleDashboardController extends AbstractController
     {
         /** @var User $user */
         $user = $this->getUser();
+        $photos = $user->getUserImages();
+
+        $photosData = [];
+        foreach ($photos as $photo) {
+            $photosData[] = [
+                'id' => $photo->getId(),
+                'imageName' => $photo->getImageName(),
+            ];
+        }
 
         return $this->json([
             'status' => 'success',
@@ -29,6 +38,7 @@ class FemaleDashboardController extends AbstractController
                 'religion' => $user->getReligion(),
                 'birthdate' => $user->getBirthdate(),
                 'interests' => $user->getInterests(),
+                'photos' => $photosData,
             ],
         ]);
     }
