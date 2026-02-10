@@ -66,59 +66,154 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: self::class)]
     private Collection $favorites;
 
+    /**
+     * @var Collection<int, Message>
+     */
+    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'sender')]
+    private Collection $sentMessages;
+
+    /**
+     * @var Collection<int, Message>
+     */
+    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'receiver')]
+    private Collection $receivedMessages;
+
     public function __construct()
     {
         $this->userImages = new ArrayCollection();
         $this->favorites = new ArrayCollection();
+        $this->sentMessages = new ArrayCollection();
+        $this->receivedMessages = new ArrayCollection();
     }
 
-    public function getId(): ?int { return $this->id; }
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
 
-    public function getEmail(): ?string { return $this->email; }
-    public function setEmail(string $email): static { $this->email = $email; return $this; }
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+    public function setEmail(string $email): static
+    {
+        $this->email = $email;
+        return $this;
+    }
 
     /** @see UserInterface */
-    public function getUserIdentifier(): string { return (string) $this->email; }
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->email;
+    }
 
     /** @see UserInterface */
-    public function getRoles(): array {
+    public function getRoles(): array
+    {
         $roles = $this->roles;
         $roles[] = 'ROLE_USER';
         return array_unique($roles);
     }
-    public function setRoles(array $roles): static { $this->roles = $roles; return $this; }
+    public function setRoles(array $roles): static
+    {
+        $this->roles = $roles;
+        return $this;
+    }
 
     /** @see PasswordAuthenticatedUserInterface */
-    public function getPassword(): ?string { return $this->password; }
-    public function setPassword(string $password): static { $this->password = $password; return $this; }
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+    public function setPassword(string $password): static
+    {
+        $this->password = $password;
+        return $this;
+    }
 
     /** @see UserInterface */
-    public function eraseCredentials(): void { }
+    public function eraseCredentials(): void {}
 
     // --- Champs personnalisés ---
-    public function getNickname(): ?string { return $this->nickname; }
-    public function setNickname(?string $nickname): static { $this->nickname = $nickname; return $this; }
+    public function getNickname(): ?string
+    {
+        return $this->nickname;
+    }
+    public function setNickname(?string $nickname): static
+    {
+        $this->nickname = $nickname;
+        return $this;
+    }
 
-    public function getBirthdate(): ?\DateTimeInterface { return $this->birthdate; }
-    public function setBirthdate(?\DateTimeInterface $birthdate): static { $this->birthdate = $birthdate; return $this; }
+    public function getBirthdate(): ?\DateTimeInterface
+    {
+        return $this->birthdate;
+    }
+    public function setBirthdate(?\DateTimeInterface $birthdate): static
+    {
+        $this->birthdate = $birthdate;
+        return $this;
+    }
 
-    public function getInterests(): ?string { return $this->interests; }
-    public function setInterests(?string $interests): static { $this->interests = $interests; return $this; }
+    public function getInterests(): ?string
+    {
+        return $this->interests;
+    }
+    public function setInterests(?string $interests): static
+    {
+        $this->interests = $interests;
+        return $this;
+    }
 
-    public function isVerified(): bool { return $this->isVerified; }
-    public function setIsVerified(bool $isVerified): static { $this->isVerified = $isVerified; return $this; }
+    public function isVerified(): bool
+    {
+        return $this->isVerified;
+    }
+    public function setIsVerified(bool $isVerified): static
+    {
+        $this->isVerified = $isVerified;
+        return $this;
+    }
 
-    public function getGender(): ?string { return $this->gender; }
-    public function setGender(?string $gender): static { $this->gender = $gender; return $this; }
+    public function getGender(): ?string
+    {
+        return $this->gender;
+    }
+    public function setGender(?string $gender): static
+    {
+        $this->gender = $gender;
+        return $this;
+    }
 
-    public function getReligion(): ?string { return $this->religion; }
-    public function setReligion(?string $religion): static { $this->religion = $religion; return $this; }
+    public function getReligion(): ?string
+    {
+        return $this->religion;
+    }
+    public function setReligion(?string $religion): static
+    {
+        $this->religion = $religion;
+        return $this;
+    }
 
-    public function getMarital(): ?string { return $this->marital; }
-    public function setMarital(?string $marital): static { $this->marital = $marital; return $this; }
+    public function getMarital(): ?string
+    {
+        return $this->marital;
+    }
+    public function setMarital(?string $marital): static
+    {
+        $this->marital = $marital;
+        return $this;
+    }
 
-    public function getChildren(): ?string { return $this->children; }
-    public function setChildren(?string $children): static { $this->children = $children; return $this; }
+    public function getChildren(): ?string
+    {
+        return $this->children;
+    }
+    public function setChildren(?string $children): static
+    {
+        $this->children = $children;
+        return $this;
+    }
 
     /**
      * @return Collection<int, UserImage>
@@ -171,5 +266,57 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    /**
+     * @return Collection<int, Message>
+     */
+    public function getSentMessages(): Collection
+    {
+        return $this->sentMessages;
+    }
 
+    public function addSentMessage(Message $message): static
+    {
+        if (!$this->sentMessages->contains($message)) {
+            $this->sentMessages->add($message);
+            $message->setSender($this);
+        }
+        return $this;
+    }
+
+    public function removeSentMessage(Message $message): static
+    {
+        if ($this->sentMessages->removeElement($message)) {
+            if ($message->getSender() === $this) {
+                $message->setSender(null);
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Message>
+     */
+    public function getReceivedMessages(): Collection
+    {
+        return $this->receivedMessages;
+    }
+
+    public function addReceivedMessage(Message $message): static
+    {
+        if (!$this->receivedMessages->contains($message)) {
+            $this->receivedMessages->add($message);
+            $message->setReceiver($this);
+        }
+        return $this;
+    }
+
+    public function removeReceivedMessage(Message $message): static
+    {
+        if ($this->receivedMessages->removeElement($message)) {
+            if ($message->getReceiver() === $this) {
+                $message->setReceiver(null);
+            }
+        }
+        return $this;
+    }
 }
