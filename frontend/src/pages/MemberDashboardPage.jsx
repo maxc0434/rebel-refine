@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { User, Heart, Settings } from "lucide-react";
+import { User, Heart, Settings, MessageSquare } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
@@ -396,6 +396,12 @@ function MemberDashboardPage() {
                 className={`nav-button ${activeTab === "infos" ? "active" : ""}`}
               >
                 <User size={18} /> Mes Informations
+              </button>
+              <button
+                style={navButtonStyle(activeTab === "messagerie")}
+                onClick={() => handleTabChange("messagerie")}
+              >
+                <MessageSquare size={18} /> Ma Messagerie
               </button>
               <button
                 onClick={() => handleTabChange("favs")}
@@ -817,6 +823,44 @@ function MemberDashboardPage() {
               </div>
             )}
 
+            
+             {/* MARK: Messagerie */}
+            {activeTab === "messagerie" && (
+              <div>
+                <h3
+                  style={{
+                    margin: 0,
+                    color: "#f67280",
+                    borderBottom: "1px solid rgba(246, 114, 128, 0.3)",
+                    paddingBottom: "15px",
+                    marginBottom: "20px",
+                  }}
+                >
+                  Messagerie (en cours de développement)
+                </h3>
+                <p
+                  style={{ color: "rgba(255,255,255,0.8)", fontSize: "1.1rem" }}
+                >
+                  C'est ici que vous pourrez consulter vos conversations avec
+                  les membres qui vous ont contactée. Restez à l'affût pour
+                  découvrir de nouvelles fonctionnalités !
+                </p>
+
+                {/* Vous pourriez lister les messages ici */}
+                <div
+                  style={{
+                    background: "rgba(0,0,0,0.2)",
+                    padding: "20px",
+                    borderRadius: "10px",
+                    marginTop: "30px",
+                    color: "rgba(255,255,255,0.6)",
+                  }}
+                >
+                  <p>Aucune conversation pour l'instant...</p>
+                </div>
+              </div>
+            )}
+
             {/* MARK: - ONGLET FAVORIS */}
             {activeTab === "favs" && (
               <div>
@@ -1037,6 +1081,22 @@ function MemberDashboardPage() {
   );
 }
 
+const navButtonStyle = (isActive) => ({
+  display: "flex",
+  alignItems: "center",
+  gap: "10px",
+  padding: "12px 15px",
+  borderRadius: "10px",
+  border: "none",
+  textAlign: "left",
+  cursor: "pointer",
+  fontSize: "1rem",
+  transition: "0.3s",
+  background: isActive ? "#f67280" : "transparent",
+  color: isActive ? "white" : "rgba(255,255,255,0.7)",
+  width: "100%",
+  boxShadow: isActive ? "0 5px 15px rgba(246, 114, 128, 0.2)" : "none",
+});
   
 const InfoItem = ({ label, value }) => (
   <div className="info-item-container">
