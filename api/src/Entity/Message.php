@@ -53,7 +53,7 @@ class Message
     {
         $this->replies = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
-        $this->status = MessageStatus::PENDING;
+        $this->status = MessageStatus::Pending;
     }
 
     public function getId(): ?int

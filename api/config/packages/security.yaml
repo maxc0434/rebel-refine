@@ -14,6 +14,7 @@ security:
         dev:
             pattern: ^/(_profiler|_wdt|assets|build)/
             security: false
+
         
         # On supprime le firewall 'login' et 'api' séparés [cite: 2026-01-12]
         main:
