@@ -127,6 +127,7 @@ class UserCrudController extends AbstractCrudController
             ChoiceField::new('roles', 'Rôles')
                 ->setChoices([
                     '👑 Administrateur' => 'ROLE_ADMIN',
+                    '👤 Traducteur'     => 'ROLE_TRANSLATOR',
                     '♂️ Utilisateur Homme'          => 'ROLE_MALE',
                     '♀️ Utilisateur Femme'          => 'ROLE_FEMALE',
                 ])

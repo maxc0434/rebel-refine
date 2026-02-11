@@ -40,6 +40,17 @@ class UserFixtures extends Fixture
         $admin->setIsVerified(true);
         $manager->persist($admin);
 
+        // --- 1. TRANSLATOR ---
+        $translator = new User();
+        $translator->setEmail('translator@translator.translator');
+        $translator->setNickname('Traducteur');
+        $translator->setRoles(['ROLE_TRANSLATOR']);
+        $translator->setPassword($this->hasher->hashPassword($translator, 'password'));
+        $translator->setBirthdate($faker->dateTimeBetween('-50 years', '-20 years'));
+        $translator->setInterests('Traducteur de texte passionné par la cybersécurité et Symfony.');
+        $translator->setIsVerified(true);
+        $manager->persist($translator);
+
         // --- 15 HOMMES ---
         for ($i = 0; $i < 15; $i++) {
             $user = new User();

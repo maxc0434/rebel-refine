@@ -8,18 +8,17 @@ function LoginPage() {
   //#region STATES
 
   // --- ÉTAPE 1 : Gestion des états (Data) ---
-  const [email, setEmail] = useState("");            // Saisie utilisateur pour l'identifiant
-  const [password, setPassword] = useState("");      // Saisie utilisateur pour le mot de passe
-  const [error, setError] = useState("");            // Message à afficher en cas d'échec de login
+  const [email, setEmail] = useState(""); // Saisie utilisateur pour l'identifiant
+  const [password, setPassword] = useState(""); // Saisie utilisateur pour le mot de passe
+  const [error, setError] = useState(""); // Message à afficher en cas d'échec de login
   const [showModal, setShowModal] = useState(false); // Affichage ou non de la fenêtre "Mot de passe oublié"
-  const [forgotEmail, setForgotEmail] = useState("");// Email saisi pour la récupération de mot de passe
+  const [forgotEmail, setForgotEmail] = useState(""); // Email saisi pour la récupération de mot de passe
   const [status, setStatus] = useState({ type: "", msg: "" }); // Retour visuel (succès/erreur) pour la récupération
-  
-  const [searchParams] = useSearchParams();          // Pour lire les paramètres dans l'URL (ex: ?verified=true)
-  const navigate = useNavigate();                    // Outil pour changer de page sans recharger le site
-  const isVerified = searchParams.get("verified");   // Vérifie si l'utilisateur vient de confirmer son email
-  //#endregion
 
+  const [searchParams] = useSearchParams(); // Pour lire les paramètres dans l'URL (ex: ?verified=true)
+  const navigate = useNavigate(); // Outil pour changer de page sans recharger le site
+  const isVerified = searchParams.get("verified"); // Vérifie si l'utilisateur vient de confirmer son email
+  //#endregion
 
   //#region FCT REINITIALISATION MDP
   // --- ÉTAPE 2 : Demande de réinitialisation de mot de passe ---
@@ -34,20 +33,19 @@ function LoginPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: forgotEmail }), // On emballe l'email dans le "carton" JSON
-      }
+      },
     );
     const data = await response.json();
     setStatus({ type: "success", msg: data.message }); // Affiche le message de confirmation du serveur
   };
   //#endregion
 
-
   //#region FCT LOGIN
   // --- ÉTAPE 3 : Soumission du formulaire de connexion ---
   const handleSubmit = async (e) => {
     e.preventDefault(); // Bloque le rechargement par défaut du navigateur
-    setError("");       // Efface les erreurs précédentes
-    
+    setError(""); // Efface les erreurs précédentes
+
     try {
       // Envoi des identifiants au point d'entrée de sécurité de Symfony (login_check)
       const response = await fetch("http://localhost:8000/api/login", {
@@ -55,7 +53,7 @@ function LoginPage() {
         credentials: "include", // Permet d'inclure les cookies de session si nécessaire
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          username: email,    // Note : Symfony attend souvent la clé "username" par défaut
+          username: email, // Note : Symfony attend souvent la clé "username" par défaut
           password: password,
         }),
       });
@@ -75,10 +73,10 @@ function LoginPage() {
 
       // --- ÉTAPE 5 : Stockage des clés d'accès (Token & Profil) ---
       const data = await response.json();
-      
+
       // On sauvegarde le JWT pour prouver l'identité sur les prochaines requêtes
       localStorage.setItem("token", data.token);
-      
+
       // On sauvegarde les infos de base pour l'affichage (évite des appels API inutiles)
       const userToStore = {
         roles: data.roles,
@@ -87,17 +85,21 @@ function LoginPage() {
       localStorage.setItem("user", JSON.stringify(userToStore));
 
       // --- ÉTAPE 6 : Dispatching (Redirection selon le rôle) ---
-      
       // Cas A : L'utilisateur est un Admin (on sort de React vers EasyAdmin)
       if (data.redirectToAdmin) {
         window.location.href = data.redirectToAdmin;
       } else {
-        // Cas B : Utilisateur classique (Redirection vers le dashboard dédié)
         const roles = data.roles || [];
-        if (roles.includes("ROLE_FEMALE")) {
+
+        // 1. On vérifie d'abord si c'est un traducteur
+        if (roles.includes("ROLE_TRANSLATOR")) {
+          navigate("/translator-dashboard");
+        }
+        // 2. Sinon, on gère les redirections par genre
+        else if (roles.includes("ROLE_FEMALE")) {
           navigate("/female-dashboard");
         } else {
-          // Par défaut ou ROLE_MALE, redirection vers le flux principal
+          // Par défaut (ROLE_MALE ou autre), redirection vers le flux principal
           navigate("/home");
         }
       }
@@ -160,7 +162,7 @@ function LoginPage() {
                     }}
                   ></div>
                 </div>
-                
+
                 {/* AFFICHAGE DES ERREURS */}
                 {error && (
                   <div
@@ -195,7 +197,7 @@ function LoginPage() {
                 )}
 
                 {/* FORMULAIRE DE CONNEXION */}
-                  {/* Email */}
+                {/* Email */}
                 <form onSubmit={handleSubmit}>
                   <div className="mb-4">
                     <label
@@ -271,7 +273,7 @@ function LoginPage() {
                     SE CONNECTER
                   </button>
                 </form>
-                
+
                 {/* LIEN D'INSCRIPTION */}
                 <div className="text-center mt-5">
                   <p

@@ -1,0 +1,127 @@
+/* TranslatorDashboard.css */
+
+.translator-container {
+    padding: 40px;
+    background-color: #1a1d21; /* Gris très sombre pour le fond */
+    min-height: 100vh;
+    font-family: 'Inter', -apple-system, sans-serif;
+    color: #e1e1e1; /* Texte principal gris clair */
+}
+
+.translator-title {
+    color: #ffffff;
+    font-size: 24px;
+    margin-bottom: 30px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.translator-grid {
+    display: grid;
+    /* On force 2 colonnes maximum, et 1 seule sur mobile */
+    grid-template-columns: repeat(auto-fit, minmax(calc(50% - 24px), 1fr));
+    /* Alternative plus simple si tu veux fixer strictement à 2 : */
+    /* grid-template-columns: 1fr 1fr; */
+    gap: 24px;
+    max-width: 1200px; /* Optionnel : pour éviter que les cartes soient trop larges sur écran géant */
+    margin: 0 auto;    /* Centre la grille si tu mets un max-width */
+}
+
+/* Optionnel : Pour les écrans plus petits (tablettes/portables), on repasse à 1 message par ligne */
+@media (max-width: 900px) {
+    .translator-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.message-card {
+    background-color: #24282e; /* Fond des cartes légèrement plus clair */
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    border: 1px solid #2d333b; /* Bordure discrète */
+    display: flex;
+    flex-direction: column;
+}
+
+.direction-badge {
+    align-self: flex-start;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    background-color: #343a42; /* Badge sombre */
+    color: #a0aec0; /* Texte badge doux */
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+.label {
+    font-size: 11px;
+    color: #8b949e; /* Label gris */
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.original-text-box {
+    font-size: 15px;
+    color: #c9d1d9; /* Texte source clair */
+    line-height: 1.5;
+    margin-bottom: 20px;
+    background-color: #1a1d21; /* Fond texte source sombre */
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 3px solid #57606a; /* Bordure gauche discrète */
+}
+
+.translation-area {
+    width: 100%;
+    min-height: 100px;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #3d444d;
+    background-color: #1a1d21; /* Fond textarea sombre */
+    color: #e1e1e1; /* Texte textarea */
+    margin-bottom: 20px;
+    font-size: 14px;
+    resize: vertical;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+}
+
+.translation-area:focus {
+    outline: none;
+    border-color: #6c8e84; /* Focus vert sauge */
+    box-shadow: 0 0 0 3px rgba(108, 142, 132, 0.2);
+}
+
+.btn-validate {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    background-color: #4a655c; /* Vert sauge plus sombre */
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.btn-validate:hover {
+    background-color: #5a776e;
+}
+
+.btn-validate:active {
+    transform: translateY(1px);
+}
+
+.empty-state {
+    color: #8b949e;
+    text-align: center;
+    grid-column: 1 / -1;
+    margin-top: 50px;
+}
