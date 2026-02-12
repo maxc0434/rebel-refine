@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./ProfilePage.css";
-import { Heart, NotebookPen } from "lucide-react";
+import { Heart, NotebookPen, Mail } from "lucide-react";
 import Swal from "sweetalert2";
 
 function ProfilePage() {
@@ -19,6 +19,9 @@ function ProfilePage() {
   const [selectedImgIndex, setSelectedImgIndex] = useState(null); // Gère l'ouverture de la photo en grand (null = fermé)
   const [memo, setMemo] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [selectedContact, setSelectedContact] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [messages, setMessages] = useState([]);
   //#endregion
 
   //#region MONTAGE DU COMPOSANT et CHARGEMENT DES DONNÉES
@@ -50,7 +53,6 @@ function ProfilePage() {
       })
       .then((data) => setMemo(data.content))
       .catch(() => setMemo(""));
-
   }, [token, id, navigate]);
   //#endregion
 
@@ -193,6 +195,69 @@ function ProfilePage() {
   };
   //#endregion
 
+
+  // #region RECUP des MSG
+  const fetchMessages = async (contactId) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/messages/list/${contactId}`,
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        },
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setMessages(data);
+      }
+    } catch (error) {
+      console.error("Erreur historique:", error);
+    }
+  };
+  // #endregion
+
+
+  // #region ENVOI MSG
+    // --- GESTION DE l'ENVOI d'un MSG ---
+    const handleSendMessage = async (receiverId, content) => {
+      if (!content.trim()) return;
+  
+      try {
+        const response = await fetch("http://localhost:8000/api/messages/send", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({ content, receiverId }),
+        });
+  
+        if (response.ok) {
+          Swal.fire({
+            icon: "success",
+            title: "Message envoyé au traducteur !",
+            text: "Votre message va être traduit et envoyé à votre contact.",
+            background: "#1f2a4d",
+            color: "#fff",
+            confirmButtonColor: "#d4af37",
+            timer: 5000,
+          });
+          setIsModalOpen(false);
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Oups...",
+            text: data.message || "Une erreur est survenue lors de l'envoi du message.",
+            background: "#1f2a4d",
+            color: "#fff",
+          });
+        }
+      } catch (error) {
+        console.error("Erreur API:", error);
+      }
+    };
+    // #endregion
+
+
   //#region LOADER
   // --- 8. AFFICHAGE DU LOADER ---
   if (loading)
@@ -217,6 +282,7 @@ function ProfilePage() {
           <div className="member-profile">
             <div className="profile-item">
               <div className="profile-cover">
+                {/* Bouton Memo */}
                 <button
                   onClick={() => setShowModal(true)}
                   className="btn-memo-trigger"
@@ -236,6 +302,42 @@ function ProfilePage() {
                 >
                   <NotebookPen size={20} strokeWidth={1.5} />
                 </button>
+
+                {/* Bouton Message */}
+                <button
+                  onClick={() => {
+                    setSelectedContact(user);
+                    setIsModalOpen(true);
+                    fetchMessages(user.id);
+                  }}
+                  style={{
+                    backgroundColor: "transparent",
+                    position: "absolute",
+                    bottom: "95px",
+                    right: "15px",
+                    zIndex: 20,
+                    color: "#d4af37",
+                    border: "2px solid #d4af37",
+                    borderRadius: "50%",
+                    width: "70px",
+                    height: "70px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    cursor: "pointer",
+                    transition: "transform 0.2s",
+                  }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.transform = "scale(1.1)")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.transform = "scale(1)")
+                  }
+                >
+                  <Mail size={40} />
+                </button>
+
+                {/* Bouton Favoris */}
                 <button
                   onClick={toggleFavorite}
                   className="favorite-btn"
@@ -558,6 +660,171 @@ function ProfilePage() {
               >
                 ENREGISTRER
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MARK: Modal de conversation */}
+      {isModalOpen && selectedContact && (
+        <div
+          style={{
+            position: "fixed",
+            top: 50,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0,0,0,0.85)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 1000,
+          }}
+        >
+          <div
+            style={{
+              background: "#1a1d21",
+              width: "500px",
+              height: "80vh",
+              borderRadius: "20px",
+              display: "flex",
+              flexDirection: "column",
+              overflow: "hidden",
+              border: "1px solid #333",
+            }}
+          >
+            {/* Header */}
+            <div
+              style={{
+                padding: "20px",
+                background: "#25292e",
+                borderBottom: "1px solid #333",
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
+              <div>
+                <h4 style={{ margin: 0, color: "#f67280" }}>
+                  {selectedContact.nickname}
+                </h4>
+                <small style={{ color: "gray" }}>
+                  {selectedContact.age} ans •
+                </small>
+              </div>
+              <button
+                onClick={() => setIsModalOpen(false)}
+                style={{
+                  background: "none",
+                  border: "none",
+                  color: "#fff",
+                  fontSize: "1.5rem",
+                  cursor: "pointer",
+                }}
+              >
+                ×
+              </button>
+            </div>
+
+            {/* Zone des messages */}
+            <div
+              style={{
+                flex: 1,
+                padding: "20px",
+                overflowY: "auto",
+                display: "flex",
+                flexDirection: "column",
+                gap: "10px",
+                background: "#0f1113",
+              }}
+            >
+              {messages.length === 0 ? (
+                <p
+                  style={{
+                    textAlign: "center",
+                    color: "#444",
+                    marginTop: "50%",
+                  }}
+                >
+                  Aucun message approuvé pour le moment.
+                </p>
+              ) : (
+                messages.map((msg) => (
+                  <div
+                    key={msg.id}
+                    style={{
+                      alignSelf:
+                        msg.senderId === selectedContact.id
+                          ? "flex-start"
+                          : "flex-end",
+                      background:
+                        msg.senderId === selectedContact.id
+                          ? "#25292e"
+                          : "#f67280",
+                      padding: "10px 15px",
+                      borderRadius: "15px",
+                      maxWidth: "80%",
+                      color: "#fff",
+                    }}
+                  >
+                    {msg.content}
+                    <div
+                      style={{
+                        fontSize: "0.6rem",
+                        marginTop: "5px",
+                        opacity: 0.7,
+                      }}
+                    >
+                      {new Date(msg.createdAt).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* Input */}
+            <div
+              style={{
+                padding: "20px",
+                background: "#1a1d21",
+                borderTop: "1px solid #333",
+              }}
+            >
+              <div style={{ display: "flex", gap: "10px" }}>
+                <input
+                  id="chatInput"
+                  placeholder="Écrivez votre message ici..."
+                  style={{
+                    flex: 1,
+                    padding: "12px",
+                    borderRadius: "25px",
+                    border: "1px solid #333",
+                    background: "#000",
+                    color: "#fff",
+                  }}
+                />
+                <button
+                  onClick={() =>
+                    handleSendMessage(
+                      selectedContact.id,
+                      document.getElementById("chatInput").value,
+                    )
+                  }
+                  style={{
+                    background: "#f67280",
+                    color: "#fff",
+                    border: "none",
+                    padding: "10px 20px",
+                    borderRadius: "25px",
+                    cursor: "pointer",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Envoyer
+                </button>
+              </div>
             </div>
           </div>
         </div>

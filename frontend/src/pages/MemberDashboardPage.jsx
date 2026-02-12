@@ -9,7 +9,7 @@ import { useDropzone } from "react-dropzone";
 import { useCallback } from "react";
 
 function MemberDashboardPage() {
-  //#region STATES
+  // #region STATES
   // --- LES STATES ---
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -17,25 +17,17 @@ function MemberDashboardPage() {
   const [favorites, setFavorites] = useState([]);
   const [backupData, setBackupData] = useState(null);
   const [selectedImg, setSelectedImg] = useState(null);
+  const [conversations, setConversations] = useState([]);
+  const [selectedContact, setSelectedContact] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [messages, setMessages] = useState([]);
 
   //#endregion
 
-
-
-
-
-
-
-  //#region AUTHENTIFICATION
+  // #region AUTHENTIFICATION
   const navigate = useNavigate(); // Hook pour rediriger l'utilisateur
   const token = localStorage.getItem("token"); // Récupère la clé de sécurité (JWT)
   //#endregion
-
-
-
-
-
-
 
   // #region ONGLET ---
   const [activeTab, setActiveTab] = useState(
@@ -47,11 +39,6 @@ function MemberDashboardPage() {
     localStorage.setItem("activeTab", tabName); // Sauvegarde pour la prochaine fois
   };
   // #endregion
-
-
-
-
-
 
   // #region INPUT et de l'UPDATE du PROFIL ---
   const handleInputChange = (e) => {
@@ -115,11 +102,6 @@ function MemberDashboardPage() {
     }
   };
   // #endregion
-
-
-
-
-
 
   // #region UPDATE du PASSWORD ---
   const [passwordData, setPasswordData] = useState({
@@ -199,13 +181,7 @@ function MemberDashboardPage() {
   };
   //#endregion
 
-
-
-
-
-
-
-  //#region PHOTOS
+  // #region PHOTOS
   // --- GESTION DE l'UPLOAD d'une PHOTO ---
   const onDrop = useCallback(
     async (acceptedFiles) => {
@@ -254,12 +230,6 @@ function MemberDashboardPage() {
   });
   //#endregion
 
-
-
-
-
-
-
   // #region SUPPR. PHOTO ---
   const handleDeletePhoto = async (photoId) => {
     // 1. Appel à l'API Symfony
@@ -289,11 +259,97 @@ function MemberDashboardPage() {
   };
   //#endregion
 
+  // #region RECUP des CONTACTS
+  const fetchConversations = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:8000/api/messages/contacts",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // On envoie le JWT pour le getUser() de Symfony
+            "Content-Type": "application/json",
+          },
+        },
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setConversations(data); // On remplit notre tableau avec les contacts trouvés
+      }
+    } catch (error) {
+      console.error("Erreur lors de la récupération des contacts:", error);
+    }
+  };
 
+  // On déclenche le chargement dès que l'onglet "messagerie" est actif
+  useEffect(() => {
+    if (activeTab === "messagerie") {
+      fetchConversations();
+    }
+  }, [activeTab]);
+  // #endregion
 
+  // #region RECUP des MSG
+  const fetchMessages = async (contactId) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/messages/list/${contactId}`,
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        },
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setMessages(data);
+      }
+    } catch (error) {
+      console.error("Erreur historique:", error);
+    }
+  };
+  // #endregion
 
+  // #region ENVOI MSG
+  // --- GESTION DE l'ENVOI d'un MSG ---
+  const handleSendMessage = async (receiverId, content) => {
+    if (!content.trim()) return;
 
+    try {
+      const response = await fetch("http://localhost:8000/api/messages/send", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ content, receiverId }),
+      });
 
+      if (response.ok) {
+        Swal.fire({
+          icon: "success",
+          title: "Message envoyé au traducteur !",
+          text: "Votre message va être traduit et envoyé à votre contact.",
+          background: "#1f2a4d",
+          color: "#fff",
+          confirmButtonColor: "#d4af37",
+          timer: 5000,
+        });
+        setIsModalOpen(false);
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Oups...",
+          text:
+            data.message ||
+            "Une erreur est survenue lors de l'envoi du message.",
+          background: "#1f2a4d",
+          color: "#fff",
+        });
+      }
+    } catch (error) {
+      console.error("Erreur API:", error);
+    }
+  };
+  // #endregion
 
   //#region CHARG. PAGE
   // --- LOGIQUE DE CHARGEMENT (API) ---
@@ -342,12 +398,6 @@ function MemberDashboardPage() {
       </div>
     );
   //#endregion
-
-
-
-
-
-
 
   //#region AFFICHAGE DE LA PAGE
   return (
@@ -823,8 +873,7 @@ function MemberDashboardPage() {
               </div>
             )}
 
-            
-             {/* MARK: Messagerie */}
+            {/* MARK: Messagerie */}
             {activeTab === "messagerie" && (
               <div>
                 <h3
@@ -836,31 +885,280 @@ function MemberDashboardPage() {
                     marginBottom: "20px",
                   }}
                 >
-                  Messagerie (en cours de développement)
+                  Mes Conversations
                 </h3>
-                <p
-                  style={{ color: "rgba(255,255,255,0.8)", fontSize: "1.1rem" }}
-                >
-                  C'est ici que vous pourrez consulter vos conversations avec
-                  les membres qui vous ont contactée. Restez à l'affût pour
-                  découvrir de nouvelles fonctionnalités !
-                </p>
 
-                {/* Vous pourriez lister les messages ici */}
-                <div
-                  style={{
-                    background: "rgba(0,0,0,0.2)",
-                    padding: "20px",
-                    borderRadius: "10px",
-                    marginTop: "30px",
-                    color: "rgba(255,255,255,0.6)",
-                  }}
-                >
-                  <p>Aucune conversation pour l'instant...</p>
-                </div>
+                {conversations.length === 0 ? (
+                  <div
+                    style={{
+                      background: "rgba(0,0,0,0.2)",
+                      padding: "40px",
+                      borderRadius: "10px",
+                      textAlign: "center",
+                    }}
+                  >
+                    <p style={{ color: "rgba(255,255,255,0.6)" }}>
+                      Vous n'avez pas encore de messages.
+                    </p>
+                    <p
+                      style={{
+                        fontSize: "0.9rem",
+                        color: "rgba(255,255,255,0.4)",
+                      }}
+                    >
+                      Contactez un membre depuis son profil pour démarrer une
+                      discussion !
+                    </p>
+                  </div>
+                ) : (
+                  <div style={{ display: "grid", gap: "15px" }}>
+                    {conversations.map((contact) => (
+                      <div
+                        key={contact.id}
+                        onClick={() => {
+                          setSelectedContact(contact);
+                          setIsModalOpen(true);
+                          fetchMessages(contact.id);
+                        }}
+                        style={{
+                          background: "rgba(255,255,255,0.05)",
+                          padding: "20px",
+                          borderRadius: "12px",
+                          cursor: "pointer",
+                          border: "1px solid rgba(255,255,255,0.1)",
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          transition: "transform 0.2s, background 0.2s",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background =
+                            "rgba(255,255,255,0.1)";
+                          e.currentTarget.style.transform = "translateX(5px)";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background =
+                            "rgba(255,255,255,0.05)";
+                          e.currentTarget.style.transform = "translateX(0)";
+                        }}
+                      >
+                        <div>
+                          <strong style={{ color: "#fff", fontSize: "1.1rem" }}>
+                            {contact.nickname || "Utilisateur"}
+                          </strong>
+                          <div
+                            style={{
+                              color: "rgba(255,255,255,0.5)",
+                              fontSize: "0.8rem",
+                            }}
+                          >
+                            {contact.age} ans
+                          </div>
+                        </div>
+                        <span style={{ color: "#f67280", fontWeight: "bold" }}>
+                          Ouvrir le chat →
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 
+            {/* MARK: Modal de conversation */}
+            {isModalOpen && selectedContact && (
+              <div
+                style={{
+                  position: "fixed",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  height: "100%",
+                  backgroundColor: "rgba(0,0,0,0.85)",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  zIndex: 1000,
+                }}
+              >
+                <div
+                  style={{
+                    background: "#1a1d21",
+                    width: "500px",
+                    height: "80vh",
+                    borderRadius: "20px",
+                    display: "flex",
+                    flexDirection: "column",
+                    overflow: "hidden",
+                    border: "1px solid #333",
+                  }}
+                >
+                  {/* Header */}
+                  <div
+                    style={{
+                      padding: "20px",
+                      background: "#25292e",
+                      borderBottom: "1px solid #333",
+                      display: "flex",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div>
+                      <h4 style={{ margin: 0, color: "#f67280" }}>
+                        {selectedContact.nickname}
+                      </h4>
+                      <small style={{ color: "gray" }}>
+                        {selectedContact.age} ans • {selectedContact.gender}
+                      </small>
+                    </div>
+                    <button
+                      onClick={() => setIsModalOpen(false)}
+                      style={{
+                        background: "none",
+                        border: "none",
+                        color: "#fff",
+                        fontSize: "1.5rem",
+                        cursor: "pointer",
+                      }}
+                    >
+                      ×
+                    </button>
+                  </div>
+
+                  {/* Zone des messages */}
+                  <div
+                    style={{
+                      flex: 1,
+                      padding: "20px",
+                      overflowY: "auto",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "10px",
+                      background: "#0f1113",
+                    }}
+                  >
+                    {messages.length === 0 ? (
+                      <p
+                        style={{
+                          textAlign: "center",
+                          color: "#444",
+                          marginTop: "50%",
+                        }}
+                      >
+                        Aucun message pour le moment.
+                      </p>
+                    ) : (
+                      messages.map((msg) => {
+                        // On détermine si c'est nous qui avons envoyé le message
+                        const isSentByMe = msg.senderId !== selectedContact.id;
+
+                        return (
+                          <div
+                            key={msg.id}
+                            style={{
+                              alignSelf: isSentByMe ? "flex-end" : "flex-start",
+                              background: isSentByMe ? "#f67280" : "#25292e",
+                              padding: "12px 15px",
+                              borderRadius: "15px",
+                              maxWidth: "80%",
+                              color: "#fff",
+                            }}
+                          >
+                            {/* 1. Affichage du texte : 
+                    Si c'est moi (isSentByMe), je vois mon original (content).
+                    Si c'est l'autre, je vois la traduction (contentTranslated). */}
+                            <div style={{ fontSize: "1rem" }}>
+                              {isSentByMe ? msg.content : msg.contentTranslated}
+                            </div>
+
+                            {/* 2. Écriteau "En attente" : Uniquement pour MES messages en statut pending */}
+                            {isSentByMe && msg.status === "pending" && (
+                              <div
+                                style={{
+                                  marginTop: "8px",
+                                  fontSize: "0.7rem",
+                                  color: "rgba(255,255,255,0.6)",
+                                  borderTop: "1px solid rgba(255,255,255,0.1)",
+                                  paddingTop: "5px",
+                                }}
+                              >
+                                🕒 En attente de traduction...
+                              </div>
+                            )}
+
+                            {/* 3. Horodatage */}
+                            <div
+                              style={{
+                                fontSize: "0.6rem",
+                                marginTop: "5px",
+                                opacity: 0.5,
+                                textAlign: "right",
+                              }}
+                            >
+                              {new Date(msg.createdAt).toLocaleTimeString([], {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
+                            </div>
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+
+                  {/* Input */}
+                  <div
+                    style={{
+                      padding: "20px",
+                      background: "#1a1d21",
+                      borderTop: "1px solid #333",
+                    }}
+                  >
+                    <div style={{ display: "flex", gap: "10px" }}>
+                      <input
+                        id="chatInput"
+                        placeholder={`Écrire à ${selectedContact.nickname}...`}
+                        style={{
+                          flex: 1,
+                          padding: "12px",
+                          borderRadius: "25px",
+                          border: "1px solid #333",
+                          background: "#000",
+                          color: "#fff",
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            handleSendMessage(
+                              selectedContact.id,
+                              e.target.value,
+                            );
+                            e.target.value = "";
+                          }
+                        }}
+                      />
+                      <button
+                        onClick={() => {
+                          const input = document.getElementById("chatInput");
+                          handleSendMessage(selectedContact.id, input.value);
+                          input.value = "";
+                        }}
+                        style={{
+                          background: "#f67280",
+                          color: "#fff",
+                          border: "none",
+                          padding: "10px 20px",
+                          borderRadius: "25px",
+                          cursor: "pointer",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Envoyer
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
             {/* MARK: - ONGLET FAVORIS */}
             {activeTab === "favs" && (
               <div>
@@ -1097,7 +1395,7 @@ const navButtonStyle = (isActive) => ({
   width: "100%",
   boxShadow: isActive ? "0 5px 15px rgba(246, 114, 128, 0.2)" : "none",
 });
-  
+
 const InfoItem = ({ label, value }) => (
   <div className="info-item-container">
     <span className="info-item-label">{label}</span>

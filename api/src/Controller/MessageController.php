@@ -18,8 +18,8 @@ class MessageController extends AbstractController
 {
     #region ENVOYER UN MESSAGE
     #[Route('/send', name: 'app_message_send', methods: ['POST'])]
-     #[IsGranted(new Expression("is_granted('ROLE_MALE') or is_granted('ROLE_FEMALE')"), message: 'Accès interdit')]
-     
+    #[IsGranted(new Expression("is_granted('ROLE_MALE') or is_granted('ROLE_FEMALE')"), message: 'Accès interdit')]
+
     public function send(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
@@ -109,45 +109,84 @@ class MessageController extends AbstractController
     #endregion
 
 
-
-
-
-    #region LECTURE DES MESSAGES
-    // Route pour récupérer l'historique de discussion entre l'utilisateur connecté et un contact précis
-    #[Route('/list/{receiverId}', name: 'app_message_list', methods: ['GET'])]
+    #region LISTE DES CONTACTS
+    #[Route('/contacts', name: 'app_message_contacts', methods: ['GET'])]
     #[IsGranted(new Expression("is_granted('ROLE_MALE') or is_granted('ROLE_FEMALE')"), message: 'Accès interdit')]
+    public function getContacts(EntityManagerInterface $entityManager): JsonResponse
+    {
+        /** @var User $currentUser */
+        $currentUser = $this->getUser();
+
+        // 1. On récupère d'abord uniquement les IDs des contacts
+        $query = $entityManager->createQuery(
+            // DISTINCT : On ne veut pas avoir des doublons
+            'SELECT DISTINCT u_contact.id FROM App\Entity\User u_contact 
+             JOIN App\Entity\Message msg WITH (msg.sender = u_contact OR msg.receiver = u_contact)
+             WHERE (msg.sender = :currentUser OR msg.receiver = :currentUser)
+             AND u_contact != :currentUser'
+        )->setParameter('currentUser', $currentUser);
+
+        $contactIds = $query->getScalarResult(); // Retourne un tableau d'IDs : [['id' => 1], ['id' => 2]]
+
+        // 2. Si on a des contacts, on récupère leurs objets complets
+        $data = [];
+        if (!empty($contactIds)) {
+            $ids = array_column($contactIds, 'id');
+            $contacts = $entityManager->getRepository(User::class)->findBy(['id' => $ids]);
+
+            foreach ($contacts as $contact) {
+                // On récupère la date une seule fois pour ne pas fatiguer le serveur
+                $dateNaissance = $contact->getBirthDate();
+
+                // On calcule l'âge seulement si la date existe, sinon on met null
+                $age = ($dateNaissance) ? $dateNaissance->diff(new \DateTime())->y : null;
+
+                $data[] = [
+                    'id' => $contact->getId(),
+                    'nickname' => $contact->getNickname(),
+                    'email' => $contact->getEmail(),
+                    'gender' => $contact->getGender(),
+                    'age' => $age, // On passe notre variable sécurisée ici
+                ];
+            }
+        }
+
+        return new JsonResponse($data);
+    }
+    #endregion
+
+
+
+
+#[Route('/list/{receiverId}', name: 'app_message_list', methods: ['GET'])]
     public function list(int $receiverId, EntityManagerInterface $entityManager): JsonResponse
     {
         /** @var User $currentUser */
-        $currentUser = $this->getUser(); 
-
-        if (!$currentUser) {
-            return new JsonResponse(['error' => 'Non authentifié'], 401);
-        }
+        $currentUser = $this->getUser();
 
         $messages = $entityManager->getRepository(Message::class)->createQueryBuilder('m')
-            ->where('(m.sender = :user AND m.receiver = :contact)') // Cas : Mes messages envoyés
-            ->orWhere('(m.sender = :contact AND m.receiver = :user)') // Cas : Ses messages reçus
-            ->andWhere('m.status = :status') // Sécurité : On ignore les messages encore en 'Pending'
-            ->setParameter('user', $currentUser) // Remplace :user par mon ID d'utilisateur
-            ->setParameter('contact', $receiverId) // Remplace :contact par l'ID de mon interlocuteur
-            ->setParameter('status', MessageStatus::Approved) // Remplace :status par la valeur "Approved"
-            ->orderBy('m.createdAt', 'ASC') // Range chronologiquement 
+            // On récupère les messages entre les deux personnes
+            ->where('(m.sender = :user AND m.receiver = :contact)') 
+            ->orWhere('(m.sender = :contact AND m.receiver = :user)')
+            ->setParameter('user', $currentUser)
+            ->setParameter('contact', $receiverId)
+            ->andWhere('(m.status = :statusApproved OR m.sender = :user)') 
+            ->setParameter('statusApproved', MessageStatus::Approved)
+            ->orderBy('m.createdAt', 'ASC')
             ->getQuery()
-            ->getResult(); // Exécute la requête et récupère la liste d'objets
+            ->getResult();
 
         $data = [];
-        // On transforme les objets Message en un tableau simple pour React
         foreach ($messages as $msg) {
             $data[] = [
                 'id' => $msg->getId(),
-                'content' => $msg->getContentTranslated(), // On n'envoie QUE la traduction à l'interface
-                'senderId' => $msg->getSender()->getId(), // Permet à React de savoir si la bulle est à gauche ou à droite
+                'content' => $msg->getContentOriginal(), // Le Français verra ça
+                'contentTranslated' => $msg->getContentTranslated(), // La Chinoise verra ça
+                'status' => $msg->getStatus(),
+                'senderId' => $msg->getSender()->getId(),
                 'createdAt' => $msg->getCreatedAt()->format('c'),
-                'direction' => $msg->getDirection(), // Pourrait servir à appliquer un style spécifique (Masculin/Féminin)
             ];
         }
-        return new JsonResponse($data); // Envoie la conversation propre sous forme de liste JSON
+        return new JsonResponse($data);
     }
-    #endregion
 }

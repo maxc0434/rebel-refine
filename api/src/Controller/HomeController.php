@@ -27,7 +27,7 @@ final class HomeController extends AbstractController
         $membersData = [];
 
         foreach ($latestUsers as $lastUser) {
-            // Calcul de l'âge (logique métier)
+            // Calcul de l'âge
             $age = null;
             $birthday = $lastUser->getBirthdate();
             if ($birthday) {
