@@ -30,6 +30,7 @@ class FemaleDashboardController extends AbstractController
         return $this->json([
             'status' => 'success',
             'userData' => [
+                'id' => $user->getId(),
                 'nickname' => $user->getNickname(),
                 'email' => $user->getUserIdentifier(),
                 'gender' => $user->getGender(),

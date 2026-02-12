@@ -252,7 +252,7 @@ function ProfilePage() {
         });
       }
     } catch (error) {
-      console.error("Erreur API:", error);
+      console.error("Erreur envoi:", error);
     }
   };
   // #endregion
@@ -669,7 +669,7 @@ function ProfilePage() {
         <div
           style={{
             position: "fixed",
-            top: 0,
+            top: 50,
             left: 0,
             width: "100%",
             height: "100%",

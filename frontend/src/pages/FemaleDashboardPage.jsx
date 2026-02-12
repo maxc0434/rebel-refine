@@ -9,6 +9,10 @@ function FemaleDashboardPage() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
+  const [selectedContact, setSelectedContact] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [messages, setMessages] = useState([]);
+  const [conversations, setConversations] = useState([]);
   //#endregion
 
   // #region UPDATE du PASSWORD ---
@@ -100,45 +104,110 @@ function FemaleDashboardPage() {
   };
   // #endregion
 
-  //#region MONTAGE DU COMPOSANT et CHARGEMENT DES DONNÉES
-  useEffect(() => {
-    if (!token) {
-      navigate("/");
-      return;
-    }
+  // #region RECUP des MSG
 
-    // Récupère les informations de l'utilisatrice depuis l'API
-    const fetchFemaleDashboardData = async () => {
-      try {
-        const response = await fetch(
-          "http://localhost:8000/api/member/female/dashboard",
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          },
-        );
 
-        if (!response.ok) {
-          // Si l'API renvoie une erreur (ex: 403 Forbidden si ROLE_MALE tente d'accéder)
-          throw new Error("Accès refusé ou données introuvables");
-        }
-
+  const fetchMessages = async (contactId) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/messages/list/${contactId}`,
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        },
+      );
+      if (response.ok) {
         const data = await response.json();
-        setUserData(data.userData);
-      } catch (error) {
-        console.error("Erreur lors du chargement du dashboard femme :", error);
-        // Gérer les erreurs, par exemple rediriger si le token est invalide
-        navigate("/");
-      } finally {
-        setLoading(false);
+        setMessages(data);
       }
-    };
+    } catch (error) {
+      console.error("Erreur historique:", error);
+    }
+  };
 
-    fetchFemaleDashboardData();
-  }, [token, navigate]);
+  // #endregion
+
+  // #region ECRIRE MSG
+  const handleSendMessage = async (receiverId, content) => {
+    if (!content.trim()) return;
+    try {
+      const response = await fetch("http://localhost:8000/api/messages/send", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ content, receiverId }),
+      });
+
+      if (response.ok) {
+        // Vide l'input
+        const input = document.getElementById("chatInput");
+        if (input) input.value = "";
+        // Rafraîchit la discussion pour voir le nouveau message
+        fetchMessages(receiverId);
+      }
+    } catch (error) {
+      console.error("Erreur envoi:", error);
+    }
+  };
+  // #endregion
+
+  //#region MONTAGE DU COMPOSANT et CHARGEMENT DES DONNÉES
+useEffect(() => {
+  if (!token) {
+    navigate("/");
+    return;
+  }
+
+  const fetchFemaleDashboardData = async () => {
+    try {
+      // 1. Récupère les informations de l'utilisatrice
+      const response = await fetch(
+        "http://localhost:8000/api/member/female/dashboard",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Accès refusé ou données introuvables");
+      }
+
+      const data = await response.json();
+      setUserData(data.userData);
+
+      // 2. Récupère la liste des conversations
+      const convResponse = await fetch(
+        "http://localhost:8000/api/messages/conversations",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (convResponse.ok) {
+        const convData = await convResponse.json();
+        setConversations(convData); // Remplit l'onglet "Messagerie"
+      }
+
+    } catch (error) {
+      console.error("Erreur lors du chargement du dashboard femme :", error);
+      navigate("/");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchFemaleDashboardData();
+}, [token, navigate]);
+//#endregion
+
+  
   //#endregion
 
   //#region LOADER
@@ -275,27 +344,240 @@ function FemaleDashboardPage() {
                     marginBottom: "20px",
                   }}
                 >
-                  Messagerie (en cours de développement)
+                  Mes Conversations
                 </h3>
-                <p
-                  style={{ color: "rgba(255,255,255,0.8)", fontSize: "1.1rem" }}
-                >
-                  C'est ici que vous pourrez consulter vos conversations avec
-                  les membres qui vous ont contactée. Restez à l'affût pour
-                  découvrir de nouvelles fonctionnalités !
-                </p>
 
-                {/* Vous pourriez lister les messages ici */}
+                {/* On vérifie que conversations existe et n'est pas vide */}
+                {conversations && conversations.length === 0 ? (
+                  <div
+                    style={{
+                      background: "rgba(0,0,0,0.2)",
+                      padding: "40px",
+                      borderRadius: "10px",
+                      textAlign: "center",
+                    }}
+                  >
+                    <p style={{ color: "rgba(255,255,255,0.6)" }}>
+                      Vous n'avez pas encore de messages.
+                    </p>
+                  </div>
+                ) : (
+                  <div style={{ display: "grid", gap: "15px" }}>
+                    {conversations.map((contact) => (
+                      <div
+                        key={contact.id}
+                        onClick={() => {
+                          setSelectedContact(contact);
+                          setIsModalOpen(true);
+                          fetchMessages(contact.id);
+                        }}
+                        style={{
+                          background: "rgba(255,255,255,0.05)",
+                          padding: "20px",
+                          borderRadius: "12px",
+                          cursor: "pointer",
+                          border: "1px solid rgba(255,255,255,0.1)",
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
+                        <div>
+                          <strong style={{ color: "#fff", fontSize: "1.1rem" }}>
+                            {contact.nickname}
+                          </strong>
+                          <div
+                            style={{
+                              color: "rgba(255,255,255,0.5)",
+                              fontSize: "0.8rem",
+                            }}
+                          >
+                            {contact.age} ans
+                          </div>
+                        </div>
+                        <span style={{ color: "#f67280", fontWeight: "bold" }}>
+                          Répondre →
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* MARK: Modal de conversation */}
+            {isModalOpen && selectedContact && (
+              <div
+                style={{
+                  position: "fixed",
+                  top: 50,
+                  left: 0,
+                  width: "100%",
+                  height: "100%",
+                  backgroundColor: "rgba(0,0,0,0.85)",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  zIndex: 1000,
+                }}
+              >
                 <div
                   style={{
-                    background: "rgba(0,0,0,0.2)",
-                    padding: "20px",
-                    borderRadius: "10px",
-                    marginTop: "30px",
-                    color: "rgba(255,255,255,0.6)",
+                    background: "#1a1d21",
+                    width: "500px",
+                    height: "80vh",
+                    borderRadius: "20px",
+                    display: "flex",
+                    flexDirection: "column",
+                    overflow: "hidden",
+                    border: "1px solid #333",
                   }}
                 >
-                  <p>Aucune conversation pour l'instant...</p>
+                  {/* Header */}
+                  <div
+                    style={{
+                      padding: "20px",
+                      background: "#25292e",
+                      borderBottom: "1px solid #333",
+                      display: "flex",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div>
+                      <h4 style={{ margin: 0, color: "#f67280" }}>
+                        {selectedContact.nickname}
+                      </h4>
+                      <small style={{ color: "gray" }}>Conversation</small>
+                    </div>
+                    <button
+                      onClick={() => setIsModalOpen(false)}
+                      style={{
+                        background: "none",
+                        border: "none",
+                        color: "#fff",
+                        fontSize: "1.5rem",
+                        cursor: "pointer",
+                      }}
+                    >
+                      ×
+                    </button>
+                  </div>
+
+                  {/* Zone des messages */}
+                  <div
+                    style={{
+                      flex: 1,
+                      padding: "20px",
+                      overflowY: "auto",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "10px",
+                      background: "#0f1113",
+                    }}
+                  >
+                    {messages.map((msg) => {
+                      // Si l'expéditeur est l'utilisatrice connectée
+                      const isSentByMe = msg.senderId === userData.id;
+
+                      return (
+                        <div
+                          key={msg.id}
+                          style={{
+                            alignSelf: isSentByMe ? "flex-end" : "flex-start",
+                            background: isSentByMe ? "#f67280" : "#25292e",
+                            padding: "12px 15px",
+                            borderRadius: "15px",
+                            maxWidth: "80%",
+                            color: "#fff",
+                          }}
+                        >
+                          {/* Logique : L'utilisatrice voit SON original, et la TRADUCTION de lui */}
+                          <div style={{ fontSize: "1rem" }}>
+                            {isSentByMe ? msg.content : msg.contentTranslated}
+                          </div>
+
+                          {/* Écriteau "En attente" uniquement pour ses messages à elle */}
+                          {isSentByMe && msg.status === "pending" && (
+                            <div
+                              style={{
+                                marginTop: "8px",
+                                fontSize: "0.7rem",
+                                color: "rgba(255,255,255,0.6)",
+                                borderTop: "1px solid rgba(255,255,255,0.1)",
+                                paddingTop: "5px",
+                              }}
+                            >
+                              🕒 En attente de traduction...
+                            </div>
+                          )}
+
+                          <div
+                            style={{
+                              fontSize: "0.6rem",
+                              marginTop: "5px",
+                              opacity: 0.5,
+                              textAlign: "right",
+                            }}
+                          >
+                            {new Date(msg.createdAt).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Input de réponse */}
+                  <div
+                    style={{
+                      padding: "20px",
+                      background: "#1a1d21",
+                      borderTop: "1px solid #333",
+                    }}
+                  >
+                    <div style={{ display: "flex", gap: "10px" }}>
+                      <input
+                        id="chatInput"
+                        placeholder="Répondre dans votre langue..."
+                        style={{
+                          flex: 1,
+                          padding: "12px",
+                          borderRadius: "25px",
+                          border: "1px solid #333",
+                          background: "#000",
+                          color: "#fff",
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter")
+                            handleSendMessage(
+                              selectedContact.id,
+                              e.target.value,
+                            );
+                        }}
+                      />
+                      <button
+                        onClick={() =>
+                          handleSendMessage(
+                            selectedContact.id,
+                            document.getElementById("chatInput").value,
+                          )
+                        }
+                        style={{
+                          background: "#f67280",
+                          color: "#fff",
+                          border: "none",
+                          padding: "10px 20px",
+                          borderRadius: "25px",
+                          cursor: "pointer",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Répondre
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
@@ -303,10 +585,12 @@ function FemaleDashboardPage() {
             {/* MARK: Profil */}
             {activeTab === "profil" && (
               <div>
-            <p style={{ color: "rgba(255,255,255,0.8)", fontSize: "1.1rem" }}>
-              Voici vos informations personnelles visibles par les hommes qui
-              voient votre profil :
-            </p>
+                <p
+                  style={{ color: "rgba(255,255,255,0.8)", fontSize: "1.1rem" }}
+                >
+                  Voici vos informations personnelles visibles par les hommes
+                  qui voient votre profil :
+                </p>
                 <h3
                   style={{
                     margin: 0,
@@ -341,7 +625,10 @@ function FemaleDashboardPage() {
                   style={{
                     marginTop: "10px",
                   }}
-                > {/* div de separation */} </div>
+                >
+                  {" "}
+                  {/* div de separation */}{" "}
+                </div>
                 <div
                   style={{
                     background: "rgba(255, 255, 255, 0.05)",

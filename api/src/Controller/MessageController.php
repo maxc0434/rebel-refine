@@ -158,7 +158,7 @@ class MessageController extends AbstractController
 
 
 
-#[Route('/list/{receiverId}', name: 'app_message_list', methods: ['GET'])]
+    #[Route('/list/{receiverId}', name: 'app_message_list', methods: ['GET'])]
     public function list(int $receiverId, EntityManagerInterface $entityManager): JsonResponse
     {
         /** @var User $currentUser */
@@ -166,11 +166,11 @@ class MessageController extends AbstractController
 
         $messages = $entityManager->getRepository(Message::class)->createQueryBuilder('m')
             // On récupère les messages entre les deux personnes
-            ->where('(m.sender = :user AND m.receiver = :contact)') 
+            ->where('(m.sender = :user AND m.receiver = :contact)')
             ->orWhere('(m.sender = :contact AND m.receiver = :user)')
             ->setParameter('user', $currentUser)
             ->setParameter('contact', $receiverId)
-            ->andWhere('(m.status = :statusApproved OR m.sender = :user)') 
+            ->andWhere('(m.status = :statusApproved OR m.sender = :user)')
             ->setParameter('statusApproved', MessageStatus::Approved)
             ->orderBy('m.createdAt', 'ASC')
             ->getQuery()
@@ -188,5 +188,37 @@ class MessageController extends AbstractController
             ];
         }
         return new JsonResponse($data);
+    }
+
+    
+    #[Route('/conversations', name: 'app_message_conversations', methods: ['GET'])]
+    public function getConversations(EntityManagerInterface $entityManager): JsonResponse
+    {
+        /** @var User $currentUser */
+        $currentUser = $this->getUser();
+
+        // On cherche tous les messages où l'utilisateur est soit expéditeur, soit destinataire
+        $messages = $entityManager->getRepository(Message::class)->createQueryBuilder('m')
+            ->where('m.sender = :user OR m.receiver = :user')
+            ->setParameter('user', $currentUser)
+            ->orderBy('m.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+
+        $contacts = [];
+        foreach ($messages as $msg) {
+            // On détermine qui est l'autre personne (le contact)
+            $otherUser = ($msg->getSender() === $currentUser) ? $msg->getReceiver() : $msg->getSender();
+
+            // On évite les doublons dans la liste
+            if (!isset($contacts[$otherUser->getId()])) {
+                $contacts[$otherUser->getId()] = [
+                    'id' => $otherUser->getId(),
+                    'nickname' => $otherUser->getNickname(),
+                ];
+            }
+        }
+
+        return new JsonResponse(array_values($contacts));
     }
 }
