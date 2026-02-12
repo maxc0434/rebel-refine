@@ -1061,7 +1061,7 @@ function MemberDashboardPage() {
                               padding: "12px 15px",
                               borderRadius: "15px",
                               maxWidth: "80%",
-                              color: "#fff",
+                              color: "#f5f5f5",
                             }}
                           >
                             {/* 1. Affichage du texte : 
@@ -1096,6 +1096,9 @@ function MemberDashboardPage() {
                               }}
                             >
                               {new Date(msg.createdAt).toLocaleTimeString([], {
+                                year: "numeric",
+                                month: "2-digit",
+                                day: "2-digit",
                                 hour: "2-digit",
                                 minute: "2-digit",
                               })}
@@ -1159,6 +1162,7 @@ function MemberDashboardPage() {
                 </div>
               </div>
             )}
+
             {/* MARK: - ONGLET FAVORIS */}
             {activeTab === "favs" && (
               <div>

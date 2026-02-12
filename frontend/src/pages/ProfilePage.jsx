@@ -195,7 +195,6 @@ function ProfilePage() {
   };
   //#endregion
 
-
   // #region RECUP des MSG
   const fetchMessages = async (contactId) => {
     try {
@@ -215,48 +214,48 @@ function ProfilePage() {
   };
   // #endregion
 
-
   // #region ENVOI MSG
-    // --- GESTION DE l'ENVOI d'un MSG ---
-    const handleSendMessage = async (receiverId, content) => {
-      if (!content.trim()) return;
-  
-      try {
-        const response = await fetch("http://localhost:8000/api/messages/send", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify({ content, receiverId }),
-        });
-  
-        if (response.ok) {
-          Swal.fire({
-            icon: "success",
-            title: "Message envoyé au traducteur !",
-            text: "Votre message va être traduit et envoyé à votre contact.",
-            background: "#1f2a4d",
-            color: "#fff",
-            confirmButtonColor: "#d4af37",
-            timer: 5000,
-          });
-          setIsModalOpen(false);
-        } else {
-          Swal.fire({
-            icon: "error",
-            title: "Oups...",
-            text: data.message || "Une erreur est survenue lors de l'envoi du message.",
-            background: "#1f2a4d",
-            color: "#fff",
-          });
-        }
-      } catch (error) {
-        console.error("Erreur API:", error);
-      }
-    };
-    // #endregion
+  // --- GESTION DE l'ENVOI d'un MSG ---
+  const handleSendMessage = async (receiverId, content) => {
+    if (!content.trim()) return;
 
+    try {
+      const response = await fetch("http://localhost:8000/api/messages/send", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ content, receiverId }),
+      });
+
+      if (response.ok) {
+        Swal.fire({
+          icon: "success",
+          title: "Message envoyé au traducteur !",
+          text: "Votre message va être traduit et envoyé à votre contact.",
+          background: "#1f2a4d",
+          color: "#fff",
+          confirmButtonColor: "#d4af37",
+          timer: 5000,
+        });
+        setIsModalOpen(false);
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Oups...",
+          text:
+            data.message ||
+            "Une erreur est survenue lors de l'envoi du message.",
+          background: "#1f2a4d",
+          color: "#fff",
+        });
+      }
+    } catch (error) {
+      console.error("Erreur API:", error);
+    }
+  };
+  // #endregion
 
   //#region LOADER
   // --- 8. AFFICHAGE DU LOADER ---
@@ -670,7 +669,7 @@ function ProfilePage() {
         <div
           style={{
             position: "fixed",
-            top: 50,
+            top: 0,
             left: 0,
             width: "100%",
             height: "100%",
@@ -708,7 +707,7 @@ function ProfilePage() {
                   {selectedContact.nickname}
                 </h4>
                 <small style={{ color: "gray" }}>
-                  {selectedContact.age} ans •
+                  {selectedContact.age} ans • {selectedContact.gender}
                 </small>
               </div>
               <button
@@ -745,42 +744,67 @@ function ProfilePage() {
                     marginTop: "50%",
                   }}
                 >
-                  Aucun message approuvé pour le moment.
+                  Aucun message pour le moment.
                 </p>
               ) : (
-                messages.map((msg) => (
-                  <div
-                    key={msg.id}
-                    style={{
-                      alignSelf:
-                        msg.senderId === selectedContact.id
-                          ? "flex-start"
-                          : "flex-end",
-                      background:
-                        msg.senderId === selectedContact.id
-                          ? "#25292e"
-                          : "#f67280",
-                      padding: "10px 15px",
-                      borderRadius: "15px",
-                      maxWidth: "80%",
-                      color: "#fff",
-                    }}
-                  >
-                    {msg.content}
+                messages.map((msg) => {
+                  // On détermine si c'est nous qui avons envoyé le message
+                  const isSentByMe = msg.senderId !== selectedContact.id;
+
+                  return (
                     <div
+                      key={msg.id}
                       style={{
-                        fontSize: "0.6rem",
-                        marginTop: "5px",
-                        opacity: 0.7,
+                        alignSelf: isSentByMe ? "flex-end" : "flex-start",
+                        background: isSentByMe ? "#f67280" : "#25292e",
+                        padding: "12px 15px",
+                        borderRadius: "15px",
+                        maxWidth: "80%",
+                        color: "#F5F5F5",
                       }}
                     >
-                      {new Date(msg.createdAt).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
+                      {/* 1. Affichage du texte : 
+                    Si c'est moi (isSentByMe), je vois mon original (content).
+                    Si c'est l'autre, je vois la traduction (contentTranslated). */}
+                      <div style={{ fontSize: "1rem" }}>
+                        {isSentByMe ? msg.content : msg.contentTranslated}
+                      </div>
+
+                      {/* 2. Écriteau "En attente" : Uniquement pour MES messages en statut pending */}
+                      {isSentByMe && msg.status === "pending" && (
+                        <div
+                          style={{
+                            marginTop: "8px",
+                            fontSize: "0.7rem",
+                            color: "rgba(255,255,255,0.6)",
+                            borderTop: "1px solid rgba(255,255,255,0.1)",
+                            paddingTop: "5px",
+                          }}
+                        >
+                          🕒 En attente de traduction...
+                        </div>
+                      )}
+
+                      {/* 3. Horodatage */}
+                      <div
+                        style={{
+                          fontSize: "0.6rem",
+                          marginTop: "5px",
+                          opacity: 0.5,
+                          textAlign: "right",
+                        }}
+                      >
+                        {new Date(msg.createdAt).toLocaleTimeString([], {
+                          year: "numeric",
+                          month: "2-digit",
+                          day: "2-digit",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </div>
                     </div>
-                  </div>
-                ))
+                  );
+                })
               )}
             </div>
 
@@ -795,7 +819,7 @@ function ProfilePage() {
               <div style={{ display: "flex", gap: "10px" }}>
                 <input
                   id="chatInput"
-                  placeholder="Écrivez votre message ici..."
+                  placeholder={`Écrire à ${selectedContact.nickname}...`}
                   style={{
                     flex: 1,
                     padding: "12px",
@@ -804,14 +828,19 @@ function ProfilePage() {
                     background: "#000",
                     color: "#fff",
                   }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleSendMessage(selectedContact.id, e.target.value);
+                      e.target.value = "";
+                    }
+                  }}
                 />
                 <button
-                  onClick={() =>
-                    handleSendMessage(
-                      selectedContact.id,
-                      document.getElementById("chatInput").value,
-                    )
-                  }
+                  onClick={() => {
+                    const input = document.getElementById("chatInput");
+                    handleSendMessage(selectedContact.id, input.value);
+                    input.value = "";
+                  }}
                   style={{
                     background: "#f67280",
                     color: "#fff",
