@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { User, MessageSquare, Shield } from "lucide-react";
 import Swal from "sweetalert2";
 
-  //#region STATES
+//#region STATES
 function FemaleDashboardPage() {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -107,7 +107,6 @@ function FemaleDashboardPage() {
 
   // #region RECUP des MSG
 
-
   const fetchMessages = async (contactId) => {
     try {
       const response = await fetch(
@@ -125,6 +124,29 @@ function FemaleDashboardPage() {
     }
   };
 
+  // #endregion
+
+  // #region MARQUER COMME LUS
+  const handleMarkAsRead = async (contactId) => {
+    const token = localStorage.getItem("token");
+
+    try {
+      // 1. Appel API
+      await fetch(`http://localhost:8000/api/messages/mark-read/${contactId}`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      // 2. Mise à jour locale (pour que le badge disparaisse sans recharger la page)
+      setConversations((prev) =>
+        prev.map((c) =>
+          c.id === contactId ? { ...c, hasNewMessages: false } : c,
+        ),
+      );
+    } catch (err) {
+      console.error("Erreur lors du marquage comme lu", err);
+    }
+  };
   // #endregion
 
   // #region SCROLL AUTO
@@ -166,59 +188,58 @@ function FemaleDashboardPage() {
   // #endregion
 
   //#region MONTAGE DU COMPOSANT et CHARGEMENT DES DONNÉES
-useEffect(() => {
-  if (!token) {
-    navigate("/");
-    return;
-  }
-
-  const fetchFemaleDashboardData = async () => {
-    try {
-      // 1. Récupère les informations de l'utilisatrice
-      const response = await fetch(
-        "http://localhost:8000/api/member/female/dashboard",
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Accès refusé ou données introuvables");
-      }
-
-      const data = await response.json();
-      setUserData(data.userData);
-
-      // 2. Récupère la liste des conversations
-      const convResponse = await fetch(
-        "http://localhost:8000/api/messages/conversations",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (convResponse.ok) {
-        const convData = await convResponse.json();
-        setConversations(convData); // Remplit l'onglet "Messagerie"
-      }
-
-    } catch (error) {
-      console.error("Erreur lors du chargement du dashboard femme :", error);
+  useEffect(() => {
+    if (!token) {
       navigate("/");
-    } finally {
-      setLoading(false);
+      return;
     }
-  };
 
-  fetchFemaleDashboardData();
-}, [token, navigate]);
-//#endregion
+    const fetchFemaleDashboardData = async () => {
+      try {
+        // 1. Récupère les informations de l'utilisatrice
+        const response = await fetch(
+          "http://localhost:8000/api/member/female/dashboard",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          },
+        );
+
+        if (!response.ok) {
+          throw new Error("Accès refusé ou données introuvables");
+        }
+
+        const data = await response.json();
+        setUserData(data.userData);
+
+        // 2. Récupère la liste des conversations
+        const convResponse = await fetch(
+          "http://localhost:8000/api/messages/conversations",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+
+        if (convResponse.ok) {
+          const convData = await convResponse.json();
+          setConversations(convData); // Remplit l'onglet "Messagerie"
+        }
+      } catch (error) {
+        console.error("Erreur lors du chargement du dashboard femme :", error);
+        navigate("/");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFemaleDashboardData();
+  }, [token, navigate]);
+  //#endregion
 
   //#region LOADER
   if (loading) {
@@ -342,7 +363,7 @@ useEffect(() => {
               boxShadow: "0 10px 20px rgba(0,0,0,0.2)",
             }}
           >
-            {/* MARK: Messagerie */}
+             {/* MARK: Messagerie */}
             {activeTab === "messagerie" && (
               <div>
                 <h3
@@ -356,9 +377,7 @@ useEffect(() => {
                 >
                   Mes Conversations
                 </h3>
-
-                {/* On vérifie que conversations existe et n'est pas vide */}
-                {conversations && conversations.length === 0 ? (
+                {conversations.length === 0 ? (
                   <div
                     style={{
                       background: "rgba(0,0,0,0.2)",
@@ -370,6 +389,15 @@ useEffect(() => {
                     <p style={{ color: "rgba(255,255,255,0.6)" }}>
                       Vous n'avez pas encore de messages.
                     </p>
+                    <p
+                      style={{
+                        fontSize: "0.9rem",
+                        color: "rgba(255,255,255,0.4)",
+                      }}
+                    >
+                      Contactez un membre depuis son profil pour démarrer une
+                      discussion !
+                    </p>
                   </div>
                 ) : (
                   <div style={{ display: "grid", gap: "15px" }}>
@@ -380,21 +408,30 @@ useEffect(() => {
                           setSelectedContact(contact);
                           setIsModalOpen(true);
                           fetchMessages(contact.id);
+                          if (contact.hasNewMessages) {
+                            handleMarkAsRead(contact.id);
+                          }
                         }}
                         style={{
-                          background: "rgba(255,255,255,0.05)",
+                          // Effet visuel doré si nouveau message
+                          background: contact.hasNewMessages
+                            ? "linear-gradient(90deg, rgba(212,175,55,0.1) 0%, rgba(255,255,255,0.05) 100%)"
+                            : "rgba(255,255,255,0.05)",
                           padding: "20px",
                           borderRadius: "12px",
                           cursor: "pointer",
-                          border: "1px solid rgba(255,255,255,0.1)",
+                          border: contact.hasNewMessages
+                            ? "1px solid #d4af37"
+                            : "1px solid rgba(255,255,255,0.1)",
                           display: "flex",
                           justifyContent: "space-between",
                           alignItems: "center",
+                          transition: "all 0.2s ease",
                         }}
                       >
                         <div>
                           <strong style={{ color: "#fff", fontSize: "1.1rem" }}>
-                            {contact.nickname}
+                            {contact.nickname || "Utilisateur"}
                           </strong>
                           <div
                             style={{
@@ -405,15 +442,36 @@ useEffect(() => {
                             {contact.age} ans
                           </div>
                         </div>
-                        <span style={{ color: "#f67280", fontWeight: "bold" }}>
-                          Répondre →
-                        </span>
+
+                        {/* Badge Doré */}
+                        {contact.hasNewMessages ? (
+                          <span
+                            style={{
+                              background: "#d4af37",
+                              color: "#000",
+                              padding: "5px 12px",
+                              borderRadius: "20px",
+                              fontSize: "0.7rem",
+                              fontWeight: "bold",
+                              boxShadow: "0 0 10px rgba(212,175,55,0.5)",
+                            }}
+                          >
+                            NOUVEAU
+                          </span>
+                        ) : (
+                          <span
+                            style={{ color: "#f67280", fontWeight: "bold" }}
+                          >
+                            Répondre →
+                          </span>
+                        )}
                       </div>
                     ))}
                   </div>
                 )}
               </div>
             )}
+
 
             {/* MARK: Modal de conversation */}
             {isModalOpen && selectedContact && (

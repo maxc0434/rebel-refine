@@ -75,7 +75,7 @@ class MemberDashboardController extends AbstractController
                 'marital' => $user->getMarital(),         // Son status marital
                 'children' => $user->getChildren(),       // Son nombre d'enfants
                 'religion' => $user->getReligion(),       // Son religion
-                'birthDate' => $user->getBirthDate(),     // Sa date de naissance
+                'birthDate' => $user->getBirthDate() ? $user->getBirthDate()->format('Y-m-d') : null,     // Sa date de naissance
                 'gender' => $user->getGender(),           // Son sexe
                 'interests' => $user->getInterests(),     // Ses passions
                 'photos' => $userPhotos,                   // Sa photo de profil
@@ -153,6 +153,7 @@ class MemberDashboardController extends AbstractController
         if (isset($data['marital'])) $user->setMarital($data['marital']);
         if (isset($data['religion'])) $user->setReligion($data['religion']);
         if (isset($data['children'])) $user->setChildren($data['children']);
+        if (isset($data['birthDate'])) $user->setBirthDate(new \DateTime($data['birthDate']));
 
         // On enregistre les modifications en base de données
         $em->flush();
@@ -166,6 +167,7 @@ class MemberDashboardController extends AbstractController
                 'marital' => $user->getMarital(),
                 'religion' => $user->getReligion(),
                 'children' => $user->getChildren(),
+                'birthDate' => $user->getBirthDate() ? $user->getBirthDate()->format('Y-m-d') : null,
             ]
         ]);
     }

@@ -71,6 +71,7 @@ function MemberDashboardPage() {
             marital: userData.marital,
             religion: userData.religion,
             children: userData.children,
+            birthDate: userData.birthDate,
           }),
         },
       );
@@ -266,7 +267,7 @@ function MemberDashboardPage() {
   const fetchConversations = async () => {
     try {
       const response = await fetch(
-        "http://localhost:8000/api/messages/contacts",
+        "http://localhost:8000/api/messages/conversations",
         {
           method: "GET",
           headers: {
@@ -290,6 +291,32 @@ function MemberDashboardPage() {
       fetchConversations();
     }
   }, [activeTab]);
+  // #endregion
+
+  // #region MARQUER COMME LUS
+  const handleMarkAsRead = async (contactId) => {
+    const token = localStorage.getItem("token");
+
+    try {
+      // 1. Appel API
+      await fetch(`http://localhost:8000/api/messages/mark-read/${contactId}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      // 2. Mise à jour locale (pour que le badge disparaisse sans recharger la page)
+      setConversations((prev) =>
+        prev.map((c) =>
+          c.id === contactId ? { ...c, hasNewMessages: false } : c,
+        ),
+      );
+    } catch (err) {
+      console.error("Erreur lors du marquage comme lu", err);
+    }
+  };
   // #endregion
 
   // #region RECUP des MSG
@@ -690,6 +717,10 @@ function MemberDashboardPage() {
                       label="Religion"
                       value={userData.religion || "Non renseigné"}
                     />
+                    <InfoItem
+                      label="Date de naissance"
+                      value={userData.birthDate || "Non renseigné"}
+                    />
                     <div style={{ gridColumn: "1 / -1", marginTop: "20px" }}>
                       <span
                         style={{
@@ -804,6 +835,25 @@ function MemberDashboardPage() {
                           <option value="5+">5 enfants ou plus</option>
                         </select>
                       </div>
+                      <div>
+                        {/* MARK: Date de naissance */}
+                        <label className="dashboard-label">
+                          Date de naissance
+                        </label>
+                        <input
+                          type="date"
+                          name="birthDate"
+                          value={userData.birthDate || ""}
+                          onChange={handleInputChange}
+                          style={{
+                            background: "#000",
+                            color: "#fff",
+                            border: "1px solid #333",
+                            padding: "10px",
+                            borderRadius: "8px",
+                          }}
+                        />
+                      </div>
 
                       {/* MARK: Religion */}
                       <div style={{ flex: 1, minWidth: "250px" }}>
@@ -902,7 +952,6 @@ function MemberDashboardPage() {
                 >
                   Mes Conversations
                 </h3>
-
                 {conversations.length === 0 ? (
                   <div
                     style={{
@@ -934,27 +983,25 @@ function MemberDashboardPage() {
                           setSelectedContact(contact);
                           setIsModalOpen(true);
                           fetchMessages(contact.id);
+                          if (contact.hasNewMessages) {
+                            handleMarkAsRead(contact.id);
+                          }
                         }}
                         style={{
-                          background: "rgba(255,255,255,0.05)",
+                          // Effet visuel doré si nouveau message
+                          background: contact.hasNewMessages
+                            ? "linear-gradient(90deg, rgba(212,175,55,0.1) 0%, rgba(255,255,255,0.05) 100%)"
+                            : "rgba(255,255,255,0.05)",
                           padding: "20px",
                           borderRadius: "12px",
                           cursor: "pointer",
-                          border: "1px solid rgba(255,255,255,0.1)",
+                          border: contact.hasNewMessages
+                            ? "1px solid #d4af37"
+                            : "1px solid rgba(255,255,255,0.1)",
                           display: "flex",
                           justifyContent: "space-between",
                           alignItems: "center",
-                          transition: "transform 0.2s, background 0.2s",
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.background =
-                            "rgba(255,255,255,0.1)";
-                          e.currentTarget.style.transform = "translateX(5px)";
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.background =
-                            "rgba(255,255,255,0.05)";
-                          e.currentTarget.style.transform = "translateX(0)";
+                          transition: "all 0.2s ease",
                         }}
                       >
                         <div>
@@ -970,9 +1017,29 @@ function MemberDashboardPage() {
                             {contact.age} ans
                           </div>
                         </div>
-                        <span style={{ color: "#f67280", fontWeight: "bold" }}>
-                          Ouvrir le chat →
-                        </span>
+
+                        {/* Badge Doré */}
+                        {contact.hasNewMessages ? (
+                          <span
+                            style={{
+                              background: "#d4af37",
+                              color: "#000",
+                              padding: "5px 12px",
+                              borderRadius: "20px",
+                              fontSize: "0.7rem",
+                              fontWeight: "bold",
+                              boxShadow: "0 0 10px rgba(212,175,55,0.5)",
+                            }}
+                          >
+                            NOUVEAU
+                          </span>
+                        ) : (
+                          <span
+                            style={{ color: "#f67280", fontWeight: "bold" }}
+                          >
+                            Répondre →
+                          </span>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -980,7 +1047,7 @@ function MemberDashboardPage() {
               </div>
             )}
 
-            {/* MARK: Modal de conversation */}
+            {/* MARK: Modale de conversation */}
             {isModalOpen && selectedContact && (
               <div
                 style={{

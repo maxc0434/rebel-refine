@@ -146,7 +146,7 @@ class MessageController extends AbstractController
                     'nickname' => $contact->getNickname(),
                     'email' => $contact->getEmail(),
                     'gender' => $contact->getGender(),
-                    'age' => $age, // On passe notre variable sécurisée ici
+                    'age' => $age,
                 ];
             }
         }
@@ -170,8 +170,11 @@ class MessageController extends AbstractController
             ->orWhere('(m.sender = :contact AND m.receiver = :user)')
             ->setParameter('user', $currentUser)
             ->setParameter('contact', $receiverId)
-            ->andWhere('(m.status = :statusApproved OR m.sender = :user)')
-            ->setParameter('statusApproved', MessageStatus::Approved)
+            ->andWhere('(m.status IN (:statusApproved) OR m.sender = :user)')
+            ->setParameter('statusApproved', [
+                \App\Enum\MessageStatus::Approved,
+                \App\Enum\MessageStatus::Read
+            ])
             ->orderBy('m.createdAt', 'ASC')
             ->getQuery()
             ->getResult();
@@ -190,14 +193,14 @@ class MessageController extends AbstractController
         return new JsonResponse($data);
     }
 
-    
+
     #[Route('/conversations', name: 'app_message_conversations', methods: ['GET'])]
     public function getConversations(EntityManagerInterface $entityManager): JsonResponse
     {
         /** @var User $currentUser */
         $currentUser = $this->getUser();
 
-        // On cherche tous les messages où l'utilisateur est soit expéditeur, soit destinataire
+        // On récupère tous les messages où l'utilisateur est impliqué
         $messages = $entityManager->getRepository(Message::class)->createQueryBuilder('m')
             ->where('m.sender = :user OR m.receiver = :user')
             ->setParameter('user', $currentUser)
@@ -207,18 +210,55 @@ class MessageController extends AbstractController
 
         $contacts = [];
         foreach ($messages as $msg) {
-            // On détermine qui est l'autre personne (le contact)
-            $otherUser = ($msg->getSender() === $currentUser) ? $msg->getReceiver() : $msg->getSender();
+            $senderId = $msg->getSender()->getId();
+            $currentId = $currentUser->getId();
+
+            // On identifie l'autre personne de façon sûre (par ID)
+            $otherUser = ($senderId === $currentId) ? $msg->getReceiver() : $msg->getSender();
 
             // On évite les doublons dans la liste
             if (!isset($contacts[$otherUser->getId()])) {
+
+                // ON CHERCHE SI LE CONTACT NOUS A ENVOYÉ UN MESSAGE NON LU (STATUS APPROVED)
+                $hasNew = $entityManager->getRepository(Message::class)->findOneBy([
+                    'sender'   => $otherUser,
+                    'receiver' => $currentUser,
+                    'status'   => \App\Enum\MessageStatus::Approved,
+                ]);
+
                 $contacts[$otherUser->getId()] = [
-                    'id' => $otherUser->getId(),
-                    'nickname' => $otherUser->getNickname(),
+                    'id'             => $otherUser->getId(),
+                    'nickname'       => $otherUser->getNickname(),
+                    'age'            => $otherUser->getBirthDate() ? $otherUser->getBirthDate()->diff(new \DateTime())->y : null,
+                    'hasNewMessages' => ($hasNew !== null),
                 ];
             }
         }
 
         return new JsonResponse(array_values($contacts));
+    }
+
+
+
+    #[Route('/mark-read/{id}', name: 'app_message_mark_read', methods: ['POST'])]
+    public function markAsRead(User $contact, EntityManagerInterface $entityManager): JsonResponse
+    {
+        /** @var User $currentUser */
+        $currentUser = $this->getUser();
+
+        // On récupère tous les messages envoyés par ce contact à moi qui sont encore 'approved'
+        $messages = $entityManager->getRepository(Message::class)->findBy([
+            'sender' => $contact,
+            'receiver' => $currentUser,
+            'status' => \App\Enum\MessageStatus::Approved,
+        ]);
+
+        foreach ($messages as $message) {
+            $message->setStatus(\App\Enum\MessageStatus::Read);
+        }
+
+        $entityManager->flush();
+
+        return new JsonResponse(['status' => 'success']);
     }
 }
