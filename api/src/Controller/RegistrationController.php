@@ -24,11 +24,11 @@ class RegistrationController extends AbstractController
     // --- LOGIQUE D'INSCRIPTION ---
     #[Route('/register', name: 'api_register', methods: ['POST'])]
     public function register(
-        Request $request, 
-        EntityManagerInterface $em, 
+        Request $request,
+        EntityManagerInterface $em,
         UserPasswordHasherInterface $passwordHasher
     ): JsonResponse {
-        
+
         // ÉTAPE 1 : Récupération et décodage des données envoyées par React
         $data = json_decode($request->getContent(), true);
 
@@ -37,11 +37,17 @@ class RegistrationController extends AbstractController
             return $this->json(['error' => 'Données incomplètes'], 400);
         }
 
+        if ($data['gender'] === 'female') {
+            return $this->json([
+                'error' => 'L\'inscription des profils féminins nécessite une validation par l\'administrateur.'
+            ], 403); // 403 Forbidden
+        }
+
         // ÉTAPE 3 : Création de l'objet User et hydratation des données
         $user = new User();
         $user->setEmail($data['email']);
         $user->setNickname($data['nickname']);
-        
+
         //Attribution des rôles en fonction du sexe
         $gender = $data['gender'];
         $user->setGender($data['gender']);
@@ -51,7 +57,7 @@ class RegistrationController extends AbstractController
         } else {
             $user->setRoles(['ROLE_MALE']);
         }
-        
+
         // ÉTAPE 4 : Sécurisation du mot de passe (Hachage)
         $hashedPassword = $passwordHasher->hashPassword($user, $data['password']);
         $user->setPassword($hashedPassword);
@@ -62,7 +68,7 @@ class RegistrationController extends AbstractController
 
         // ÉTAPE 6 : Préparation et envoi de l'email de vérification
         $this->emailVerifier->sendEmailConfirmation(
-            'api_verify_email', 
+            'api_verify_email',
             $user,
             (new TemplatedEmail())
                 ->from(new Address('no-reply@rebel-refine.pro', 'Rebel Bot'))
@@ -83,7 +89,7 @@ class RegistrationController extends AbstractController
         Request $request,
         UserRepository $userRepository
     ): RedirectResponse {
-        
+
         // ÉTAPE 1 : Identification de l'utilisateur via l'ID dans l'URL
         $id = $request->query->get('id');
         $user = $userRepository->find($id);

@@ -13,11 +13,11 @@ function RegisterPage() {
   });
 
   // États pour les retours utilisateur et la navigation
-  const [error, setError] = useState("");           // Message si l'inscription échoue
+  const [error, setError] = useState(""); // Message si l'inscription échoue
   const [successMessage, setSuccessMessage] = useState(""); // Message de confirmation
+  const [showAdminModal, setShowAdminModal] = useState(false);
   const navigate = useNavigate();
   //#endregion
-
 
   //#region SAISIES ET SOUMISSION
   // --- 2. GESTION DES SAISIES ---
@@ -29,12 +29,18 @@ function RegisterPage() {
   // --- 3. SOUMISSION DU FORMULAIRE ---
   const handleSubmit = async (e) => {
     e.preventDefault(); // Bloque le rechargement de la page
-    setError("");       // Efface les erreurs précédentes
+    setError(""); // Efface les erreurs précédentes
+
+    // INTERCEPTION FEMME
+    if (formData.gender === "female") {
+      setShowAdminModal(true);
+      return; // On arrête tout ici, pas d'appel fetch
+    }
 
     // A. Validation locale : Sécurité avant l'appel API
     if (formData.password !== formData.confirmPassword) {
       setError("Les mots de passe ne correspondent pas");
-      return; 
+      return;
     }
 
     try {
@@ -60,22 +66,20 @@ function RegisterPage() {
 
       // D. Succès : Information utilisateur
       setSuccessMessage(
-        "Inscription réussie ! Un lien de confirmation vous a été envoyé par email."
+        "Inscription réussie ! Un lien de confirmation vous a été envoyé par email.",
       );
 
       // E. Redirection programmée : On laisse le temps de lire le message
       setTimeout(() => {
         navigate("/");
       }, 6000);
-
     } catch (err) {
       // Capture et affiche l'erreur (soit réseau, soit lancée par le bloc 'throw')
       setError(err.message);
     }
-  };  
+  };
   //#endregion
-  
-  
+
   //#region AFFICHAGE DU FORMULAIRE
   return (
     <div
@@ -95,7 +99,7 @@ function RegisterPage() {
             <div
               className="card border-0 shadow-lg text-white"
               style={{
-                backgroundColor: "rgba(30, 30, 60, 0.85)", 
+                backgroundColor: "rgba(30, 30, 60, 0.85)",
                 borderRadius: "30px",
                 backdropFilter: "blur(20px)",
                 border: "1px solid rgba(212, 175, 55, 0.2)",
@@ -141,7 +145,7 @@ function RegisterPage() {
                 >
                   Créer un compte
                 </h3>
-                
+
                 {/* MARK: MESSAGES D'ERREUR OU DE SUCCES */}
                 {successMessage && (
                   <div
@@ -178,14 +182,61 @@ function RegisterPage() {
                   </div>
                 )}
 
-
-
                 {/* MARK: FORMULAIRE D'INSCRIPTION */}
                 <form className="account-form" onSubmit={handleSubmit}>
-
-
-
-
+                  {/* CHOIX DU GENRE */}
+                  <div className="mb-4 text-center">
+                    <label
+                      className="form-label small text-uppercase fw-bold d-block mb-3"
+                      style={{ color: "#d4af37" }}
+                    >
+                      Vous êtes :
+                    </label>
+                    <div className="d-flex justify-content-center gap-4">
+                      <div
+                        onClick={() =>
+                          setFormData({ ...formData, gender: "male" })
+                        }
+                        style={{
+                          cursor: "pointer",
+                          padding: "10px 25px",
+                          borderRadius: "12px",
+                          border:
+                            formData.gender === "male"
+                              ? "2px solid #d4af37"
+                              : "1px solid rgba(255,255,255,0.1)",
+                          background:
+                            formData.gender === "male"
+                              ? "rgba(212, 175, 55, 0.2)"
+                              : "transparent",
+                          transition: "all 0.3s",
+                        }}
+                      >
+                        <i className="bi bi-gender-male me-2"></i>HOMME
+                      </div>
+                      <div
+                        onClick={() =>
+                          setFormData({ ...formData, gender: "female" })
+                        }
+                        style={{
+                          cursor: "pointer",
+                          padding: "10px 25px",
+                          borderRadius: "12px",
+                          border:
+                            formData.gender === "female"
+                              ? "2px solid #f67280"
+                              : "1px solid rgba(255,255,255,0.1)",
+                          background:
+                            formData.gender === "female"
+                              ? "rgba(246, 114, 128, 0.2)"
+                              : "transparent",
+                          transition: "all 0.3s",
+                        }}
+                      >
+                        <i className="bi bi-gender-female me-2"></i>FEMME
+                      </div>
+                    </div>
+                  </div>
 
                   {/* MARK: Pseudo de l'utilisateur */}
                   <div className="mb-4">
@@ -236,7 +287,7 @@ function RegisterPage() {
                       required
                     />
                   </div>
-                  
+
                   {/* MARK: Mot de passe de l'utilisateur */}
                   <div className="row">
                     <div className="col-md-6 mb-4">
@@ -288,8 +339,8 @@ function RegisterPage() {
                       />
                     </div>
                   </div>
-                    
-                    {/* MARK: Bouton d'inscription */}
+
+                  {/* MARK: Bouton d'inscription */}
                   <button
                     type="submit"
                     className="btn btn-lg w-100 fw-bold py-3 mt-4 text-white border-0"
@@ -305,7 +356,7 @@ function RegisterPage() {
                   </button>
                 </form>
 
-                    {/* MARK: Lien vers la page de connexion */}
+                {/* MARK: Lien vers la page de connexion */}
                 <div className="text-center mt-5">
                   <p
                     className="mb-0"
@@ -325,6 +376,64 @@ function RegisterPage() {
           </div>
         </div>
       </div>
+
+      {/* MARK: Modale si tentative d'inscription de femme */}
+      {showAdminModal && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0,0,0,0.8)",
+            backdropFilter: "blur(10px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000,
+          }}
+        >
+          <div
+            className="p-5 text-center"
+            style={{
+              backgroundColor: "#1e1e3c",
+              borderRadius: "30px",
+              maxWidth: "500px",
+              border: "1px solid #d4af37",
+              boxShadow: "0 0 30px rgba(212,175,55,0.3)",
+            }}
+          >
+            <h2 style={{ color: "#d4af37", marginBottom: "20px" }}>
+              INSCRIPTION SÉCURISÉE
+            </h2>
+            <p style={{ color: "#a5a5cc", lineHeight: "1.6" }}>
+              Pour garantir l'exclusivité et la sécurité de notre groupe,
+              l'inscription des profils féminins est gérée directement par notre
+              équipe d'administration.
+            </p>
+            <div
+              className="my-4 p-3"
+              style={{
+                background: "rgba(255,255,255,0.05)",
+                borderRadius: "15px",
+              }}
+            >
+              <p className="mb-1 small text-uppercase">
+                Contactez-nous par mail ou téléphone
+              </p>
+              <h4 className="text-white">admin@admin.com</h4>
+              <h4 className="text-white">+33 X XXX XX XX</h4>
+            </div>
+            <button
+              onClick={() => setShowAdminModal(false)}
+              className="btn btn-outline-light rounded-pill px-4"
+            >
+              RETOUR
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
