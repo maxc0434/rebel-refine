@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { User, MessageSquare, Shield } from "lucide-react";
 import Swal from "sweetalert2";
 
-//#region STATES
+  //#region STATES
 function FemaleDashboardPage() {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -13,6 +13,7 @@ function FemaleDashboardPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [conversations, setConversations] = useState([]);
+  const messagesEndRef = useRef(null);
   //#endregion
 
   // #region UPDATE du PASSWORD ---
@@ -126,6 +127,18 @@ function FemaleDashboardPage() {
 
   // #endregion
 
+  // #region SCROLL AUTO
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    if (isModalOpen) {
+      scrollToBottom();
+    }
+  }, [messages, isModalOpen]);
+  // #endregion
+
   // #region ECRIRE MSG
   const handleSendMessage = async (receiverId, content) => {
     if (!content.trim()) return;
@@ -206,9 +219,6 @@ useEffect(() => {
   fetchFemaleDashboardData();
 }, [token, navigate]);
 //#endregion
-
-  
-  //#endregion
 
   //#region LOADER
   if (loading) {
@@ -527,6 +537,7 @@ useEffect(() => {
                         </div>
                       );
                     })}
+                    <div ref={messagesEndRef} />
                   </div>
 
                   {/* Input de réponse */}

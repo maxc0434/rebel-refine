@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { User, Heart, Settings, MessageSquare } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ReactQuill from "react-quill-new";
@@ -21,6 +21,9 @@ function MemberDashboardPage() {
   const [selectedContact, setSelectedContact] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState("");
+
+  const messagesEndRef = useRef(null);
 
   //#endregion
 
@@ -306,6 +309,18 @@ function MemberDashboardPage() {
       console.error("Erreur historique:", error);
     }
   };
+  // #endregion
+
+  // #region SCROLL AUTO
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    if (isModalOpen) {
+      scrollToBottom();
+    }
+  }, [messages, isModalOpen]);
   // #endregion
 
   // #region ENVOI MSG
@@ -1061,12 +1076,12 @@ function MemberDashboardPage() {
                               padding: "12px 15px",
                               borderRadius: "15px",
                               maxWidth: "80%",
-                              color: "#f5f5f5",
+                              color: "#F5F5F5",
                             }}
                           >
                             {/* 1. Affichage du texte : 
-                    Si c'est moi (isSentByMe), je vois mon original (content).
-                    Si c'est l'autre, je vois la traduction (contentTranslated). */}
+                                Si c'est moi (isSentByMe), je vois mon original (content).
+                                Si c'est l'autre, je vois la traduction (contentTranslated). */}
                             <div style={{ fontSize: "1rem" }}>
                               {isSentByMe ? msg.content : msg.contentTranslated}
                             </div>
@@ -1107,6 +1122,7 @@ function MemberDashboardPage() {
                         );
                       })
                     )}
+                    <div ref={messagesEndRef} />
                   </div>
 
                   {/* Input */}
@@ -1118,32 +1134,50 @@ function MemberDashboardPage() {
                     }}
                   >
                     <div style={{ display: "flex", gap: "10px" }}>
-                      <input
-                        id="chatInput"
+                      <textarea
                         placeholder={`Écrire à ${selectedContact.nickname}...`}
+                        value={newMessage}
+                        onChange={(e) => setNewMessage(e.target.value)}
+                        maxLength={500}
                         style={{
                           flex: 1,
                           padding: "12px",
-                          borderRadius: "25px",
+                          borderRadius: "15px", // Un peu moins arrondi pour un textarea
                           border: "1px solid #333",
                           background: "#000",
                           color: "#fff",
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            handleSendMessage(
-                              selectedContact.id,
-                              e.target.value,
-                            );
-                            e.target.value = "";
-                          }
+                          minHeight: "45px", // Hauteur initiale
+                          maxHeight: "150px", // Pour éviter qu'il ne devienne trop grand
+                          resize: "none", // Empêche l'utilisateur de redimensionner manuellement
+                          fontFamily: "inherit",
+                          fontSize: "1rem",
                         }}
                       />
+
                       <button
                         onClick={() => {
-                          const input = document.getElementById("chatInput");
-                          handleSendMessage(selectedContact.id, input.value);
-                          input.value = "";
+                          Swal.fire({
+                            title: "Êtes-vous sûr d'envoyer ce message ?",
+                            text: "Vous ne pourrez pas modifier le message une fois envoyé !",
+                            icon: "warning",
+                            showCancelButton: true,
+                            background: "#1f2a4d",
+                            color: "#fff",
+                            confirmButtonColor: "#3085d6",
+                            cancelButtonColor: "#d33",
+                            confirmButtonText: "Oui, Envoyer !",
+                            cancelButtonText: "Annuler",
+                          }).then((result) => {
+                            if (result.isConfirmed) {
+                              // Action si l'utilisateur clique sur "Confirmer"
+                              handleSendMessage(selectedContact.id, newMessage);
+                              setNewMessage("");
+                            } else if (
+                              result.dismiss === Swal.DismissReason.cancel
+                            ) {
+                              // Action si l'utilisateur clique sur "Annuler"
+                            }
+                          });
                         }}
                         style={{
                           background: "#f67280",
@@ -1157,6 +1191,18 @@ function MemberDashboardPage() {
                       >
                         Envoyer
                       </button>
+                    </div>
+
+                    <div
+                      style={{
+                        textAlign: "right",
+                        fontSize: "0.75rem",
+                        color: newMessage.length >= 450 ? "#f67280" : "gray", // Devient rouge si proche de la limite
+                        marginTop: "5px",
+                        paddingRight: "15px",
+                      }}
+                    >
+                      {newMessage.length} / 500
                     </div>
                   </div>
                 </div>
