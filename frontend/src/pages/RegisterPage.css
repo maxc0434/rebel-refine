@@ -1,0 +1,187 @@
+/* ============================================================
+   PAGE D'INSCRIPTION - REBEL REFINE
+   ============================================================ */
+
+.register-page-container {
+    min-height: 100vh;
+    background-image: linear-gradient(rgba(18, 18, 45, 0.85), rgba(18, 18, 45, 0.5)), url("/assets/images/bg-img/pageheader.jpg");
+    background-size: cover;
+    background-position: center;
+    padding: 60px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* --- LA CARTE --- */
+.register-card {
+    background-color: rgba(30, 30, 60, 0.85) !important;
+    border-radius: 30px !important;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(212, 175, 55, 0.2) !important;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.5) !important;
+    color: white;
+}
+
+/* --- TITRES & TEXTES --- */
+.register-logo-title {
+    letter-spacing: 4px;
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.register-logo-refine {
+    color: #d4af37;
+}
+
+.register-subtitle {
+    color: #a5a5cc;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+}
+
+.register-divider {
+    width: 60px;
+    height: 3px;
+    background: #d4af37;
+    margin: 20px auto;
+}
+
+.register-form-title {
+    font-size: 1.4rem;
+    font-weight: 400;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+/* --- MESSAGES D'ALERTE --- */
+.register-success-msg {
+    background: linear-gradient(45deg, #bf953f, #fcf6ba, #b38728, #fcf6ba, #aa771c);
+    color: #12122d;
+    border-radius: 15px;
+    font-size: 1rem;
+    font-weight: 800;
+    box-shadow: 0 10px 25px rgba(212, 175, 55, 0.4);
+    line-height: 1.5;
+    padding: 1rem;
+    animation: fadeIn 0.5s;
+}
+
+.register-error-msg {
+    background-color: rgba(246, 114, 128, 0.2);
+    border: 1px solid #f67280;
+    color: #f67280;
+    border-radius: 15px;
+    font-size: 1rem;
+    padding: 1rem;
+}
+
+/* --- FORMULAIRE & INPUTS --- */
+.register-form-label {
+    color: #d4af37;
+    letter-spacing: 1px;
+}
+
+.register-input {
+    background-color: rgba(255,255,255,0.1) !important;
+    border-radius: 15px !important;
+    padding: 15px 20px !important;
+    font-size: 1.1rem !important;
+    color: white !important;
+    border: none !important;
+}
+
+.register-input::placeholder {
+    color: rgba(255,255,255,0.4);
+}
+
+/* --- SÉLECTEUR DE GENRE --- */
+.gender-selector {
+    cursor: pointer;
+    padding: 10px 25px;
+    border-radius: 12px;
+    transition: all 0.3s;
+}
+
+.gender-male {
+    border: 1px solid rgba(255,255,255,0.1);
+}
+.gender-male.active {
+    border: 2px solid #d4af37;
+    background: rgba(212, 175, 55, 0.2);
+}
+
+.gender-female {
+    border: 1px solid rgba(255,255,255,0.1);
+}
+.gender-female.active {
+    border: 2px solid #f67280;
+    background: rgba(246, 114, 128, 0.2);
+}
+
+/* --- BOUTON SUBMIT --- */
+.btn-register-submit {
+    background: linear-gradient(45deg, #f67280, #c06c84) !important;
+    border-radius: 15px !important;
+    box-shadow: 0 15px 30px rgba(246, 114, 128, 0.3);
+    letter-spacing: 2px;
+    font-size: 1.2rem;
+    transition: transform 0.2s ease;
+}
+
+.btn-register-submit:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+}
+
+/* --- LIEN CONNEXION --- */
+.login-link-text {
+    color: #a5a5cc;
+    font-size: 1rem;
+}
+
+.login-link {
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+    border-bottom: 2px solid #dc3545; /* Bootstrap danger */
+    padding-bottom: 2px;
+}
+
+/* --- MODALE ADMIN --- */
+.admin-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.8);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.admin-modal-content {
+    background-color: #1e1e3c;
+    border-radius: 30px;
+    max-width: 500px;
+    padding: 3rem;
+    border: 1px solid #d4af37;
+    box-shadow: 0 0 30px rgba(212,175,55,0.3);
+    text-align: center;
+}
+
+.contact-info-box {
+    background: rgba(255,255,255,0.05);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}

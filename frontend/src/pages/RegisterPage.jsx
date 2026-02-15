@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import "./RegisterPage.css";
 
 function RegisterPage() {
   //#region STATES
@@ -80,181 +81,77 @@ function RegisterPage() {
   };
   //#endregion
 
-  //#region AFFICHAGE DU FORMULAIRE
+//#region AFFICHAGE DU FORMULAIRE
   return (
-    <div
-      className="login-section d-flex align-items-center justify-content-center"
-      style={{
-        minHeight: "100vh",
-        backgroundImage:
-          'linear-gradient(rgba(18, 18, 45, 0.85), rgba(18, 18, 45, 0.5)), url("/assets/images/bg-img/pageheader.jpg")',
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        padding: "60px 0",
-      }}
-    >
+    <div className="register-page-container">
       <div className="container">
         <div className="row justify-content-center">
           <div className="col-12 col-sm-11 col-md-9 col-lg-7 col-xl-6">
-            <div
-              className="card border-0 shadow-lg text-white"
-              style={{
-                backgroundColor: "rgba(30, 30, 60, 0.85)",
-                borderRadius: "30px",
-                backdropFilter: "blur(20px)",
-                border: "1px solid rgba(212, 175, 55, 0.2)",
-                boxShadow: "0 25px 50px rgba(0,0,0,0.5)",
-              }}
-            >
+            <div className="card register-card border-0 shadow-lg">
               <div className="card-body p-4 p-md-5">
-                {/* MARK: Header (Logo, titre, sous-titre) */}
+                
+                {/* Header (Logo, titre, sous-titre) */}
                 <div className="text-center mb-5">
-                  <h1
-                    className="fw-bold mb-2"
-                    style={{ letterSpacing: "4px", fontSize: "2.5rem" }}
-                  >
-                    REBEL <span style={{ color: "#d4af37" }}>REFINE</span>
+                  <h1 className="register-logo-title fw-bold mb-2">
+                    REBEL <span className="register-logo-refine">REFINE</span>
                   </h1>
-                  <p
-                    style={{
-                      color: "#a5a5cc",
-                      fontSize: "1.1rem",
-                      letterSpacing: "1px",
-                    }}
-                  >
+                  <p className="register-subtitle">
                     Rejoignez le groupe exclusif
                   </p>
-                  <div
-                    style={{
-                      width: "60px",
-                      height: "3px",
-                      background: "#d4af37",
-                      margin: "20px auto",
-                    }}
-                  ></div>
+                  <div className="register-divider"></div>
                 </div>
 
-                <h3
-                  className="text-center mb-4"
-                  style={{
-                    fontSize: "1.4rem",
-                    fontWeight: "400",
-                    letterSpacing: "2px",
-                    textTransform: "uppercase",
-                  }}
-                >
+                <h3 className="register-form-title text-center mb-4">
                   Créer un compte
                 </h3>
 
-                {/* MARK: MESSAGES D'ERREUR OU DE SUCCES */}
+                {/* MESSAGES D'ERREUR OU DE SUCCES */}
                 {successMessage && (
-                  <div
-                    className="text-center mb-4 py-3"
-                    style={{
-                      background:
-                        "linear-gradient(45deg, #bf953f, #fcf6ba, #b38728, #fcf6ba, #aa771c)", // Dégradé Gold Luxe
-                      color: "#12122d", // Texte foncé pour rester lisible sur le doré
-                      borderRadius: "15px",
-                      fontSize: "1rem",
-                      fontWeight: "800",
-                      boxShadow: "0 10px 25px rgba(212, 175, 55, 0.4)",
-                      animation: "fadeIn 0.5s",
-                      lineHeight: "1.5",
-                    }}
-                  >
+                  <div className="register-success-msg text-center mb-4">
                     <i className="bi bi-check-circle-fill me-2"></i>
                     {successMessage}
                   </div>
                 )}
+                
                 {error && (
-                  <div
-                    className="alert text-center mb-4 py-3"
-                    style={{
-                      backgroundColor: "rgba(246, 114, 128, 0.2)",
-                      border: "1px solid #f67280",
-                      color: "#f67280",
-                      borderRadius: "15px",
-                      fontSize: "1rem",
-                    }}
-                  >
+                  <div className="register-error-msg text-center mb-4">
                     <i className="bi bi-exclamation-triangle-fill me-2"></i>
                     {error}
                   </div>
                 )}
 
-                {/* MARK: FORMULAIRE D'INSCRIPTION */}
+                {/* FORMULAIRE D'INSCRIPTION */}
                 <form className="account-form" onSubmit={handleSubmit}>
+                  
                   {/* CHOIX DU GENRE */}
                   <div className="mb-4 text-center">
-                    <label
-                      className="form-label small text-uppercase fw-bold d-block mb-3"
-                      style={{ color: "#d4af37" }}
-                    >
+                    <label className="form-label register-form-label small text-uppercase fw-bold d-block mb-3">
                       Vous êtes :
                     </label>
                     <div className="d-flex justify-content-center gap-4">
                       <div
-                        onClick={() =>
-                          setFormData({ ...formData, gender: "male" })
-                        }
-                        style={{
-                          cursor: "pointer",
-                          padding: "10px 25px",
-                          borderRadius: "12px",
-                          border:
-                            formData.gender === "male"
-                              ? "2px solid #d4af37"
-                              : "1px solid rgba(255,255,255,0.1)",
-                          background:
-                            formData.gender === "male"
-                              ? "rgba(212, 175, 55, 0.2)"
-                              : "transparent",
-                          transition: "all 0.3s",
-                        }}
+                        onClick={() => setFormData({ ...formData, gender: "male" })}
+                        className={`gender-selector gender-male ${formData.gender === "male" ? "active" : ""}`}
                       >
                         <i className="bi bi-gender-male me-2"></i>HOMME
                       </div>
                       <div
-                        onClick={() =>
-                          setFormData({ ...formData, gender: "female" })
-                        }
-                        style={{
-                          cursor: "pointer",
-                          padding: "10px 25px",
-                          borderRadius: "12px",
-                          border:
-                            formData.gender === "female"
-                              ? "2px solid #f67280"
-                              : "1px solid rgba(255,255,255,0.1)",
-                          background:
-                            formData.gender === "female"
-                              ? "rgba(246, 114, 128, 0.2)"
-                              : "transparent",
-                          transition: "all 0.3s",
-                        }}
+                        onClick={() => setFormData({ ...formData, gender: "female" })}
+                        className={`gender-selector gender-female ${formData.gender === "female" ? "active" : ""}`}
                       >
                         <i className="bi bi-gender-female me-2"></i>FEMME
                       </div>
                     </div>
                   </div>
 
-                  {/* MARK: Pseudo de l'utilisateur */}
+                  {/* Pseudo */}
                   <div className="mb-4">
-                    <label
-                      className="form-label small text-uppercase fw-bold ms-2"
-                      style={{ color: "#d4af37", letterSpacing: "1px" }}
-                    >
+                    <label className="form-label register-form-label small text-uppercase fw-bold ms-2">
                       Pseudo
                     </label>
                     <input
                       type="text"
-                      className="form-control form-control-lg bg-dark-subtle border-0 text-white shadow-none"
-                      style={{
-                        backgroundColor: "rgba(255,255,255,0.1)",
-                        borderRadius: "15px",
-                        padding: "15px 20px",
-                        fontSize: "1.1rem",
-                      }}
+                      className="form-control register-input shadow-none"
                       placeholder="Comment devons-nous vous appeler ?"
                       name="nickname"
                       value={formData.nickname}
@@ -263,23 +160,14 @@ function RegisterPage() {
                     />
                   </div>
 
-                  {/* MARK: Email de l'utilisateur */}
+                  {/* Email */}
                   <div className="mb-4">
-                    <label
-                      className="form-label small text-uppercase fw-bold ms-2"
-                      style={{ color: "#d4af37", letterSpacing: "1px" }}
-                    >
+                    <label className="form-label register-form-label small text-uppercase fw-bold ms-2">
                       Votre adresse email prestigieuse
                     </label>
                     <input
                       type="email"
-                      className="form-control form-control-lg bg-dark-subtle border-0 text-white shadow-none"
-                      style={{
-                        backgroundColor: "rgba(255,255,255,0.1)",
-                        borderRadius: "15px",
-                        padding: "15px 20px",
-                        fontSize: "1.1rem",
-                      }}
+                      className="form-control register-input shadow-none"
                       placeholder="email@exemple.com"
                       name="email"
                       value={formData.email}
@@ -288,24 +176,15 @@ function RegisterPage() {
                     />
                   </div>
 
-                  {/* MARK: Mot de passe de l'utilisateur */}
+                  {/* Mots de passe */}
                   <div className="row">
                     <div className="col-md-6 mb-4">
-                      <label
-                        className="form-label small text-uppercase fw-bold ms-2"
-                        style={{ color: "#d4af37" }}
-                      >
+                      <label className="form-label register-form-label small text-uppercase fw-bold ms-2">
                         Mot de passe
                       </label>
                       <input
                         type="password"
-                        className="form-control form-control-lg bg-dark-subtle border-0 text-white shadow-none"
-                        style={{
-                          backgroundColor: "rgba(255,255,255,0.1)",
-                          borderRadius: "15px",
-                          padding: "15px 20px",
-                          fontSize: "1.1rem",
-                        }}
+                        className="form-control register-input shadow-none"
                         placeholder="••••••••"
                         name="password"
                         value={formData.password}
@@ -314,23 +193,13 @@ function RegisterPage() {
                       />
                     </div>
 
-                    {/* MARK: Confirmation du mot de passe de l'utilisateur */}
                     <div className="col-md-6 mb-4">
-                      <label
-                        className="form-label small text-uppercase fw-bold ms-2"
-                        style={{ color: "#d4af37" }}
-                      >
+                      <label className="form-label register-form-label small text-uppercase fw-bold ms-2">
                         Confirmation
                       </label>
                       <input
                         type="password"
-                        className="form-control form-control-lg bg-dark-subtle border-0 text-white shadow-none"
-                        style={{
-                          backgroundColor: "rgba(255,255,255,0.1)",
-                          borderRadius: "15px",
-                          padding: "15px 20px",
-                          fontSize: "1.1rem",
-                        }}
+                        className="form-control register-input shadow-none"
                         placeholder="••••••••"
                         name="confirmPassword"
                         value={formData.confirmPassword}
@@ -340,33 +209,20 @@ function RegisterPage() {
                     </div>
                   </div>
 
-                  {/* MARK: Bouton d'inscription */}
+                  {/* Bouton d'inscription */}
                   <button
                     type="submit"
-                    className="btn btn-lg w-100 fw-bold py-3 mt-4 text-white border-0"
-                    style={{
-                      background: "linear-gradient(45deg, #f67280, #c06c84)",
-                      borderRadius: "15px",
-                      boxShadow: "0 15px 30px rgba(246, 114, 128, 0.3)",
-                      letterSpacing: "2px",
-                      fontSize: "1.2rem",
-                    }}
+                    className="btn btn-register-submit btn-lg w-100 fw-bold py-3 mt-4 text-white border-0"
                   >
                     DEVENIR MEMBRE
                   </button>
                 </form>
 
-                {/* MARK: Lien vers la page de connexion */}
+                {/* Lien vers la page de connexion */}
                 <div className="text-center mt-5">
-                  <p
-                    className="mb-0"
-                    style={{ color: "#a5a5cc", fontSize: "1rem" }}
-                  >
+                  <p className="mb-0 login-link-text">
                     Vous faites déjà partie du groupe ?{" "}
-                    <Link
-                      to="/"
-                      className="fw-bold text-white text-decoration-none border-bottom border-danger border-2 pb-1"
-                    >
+                    <Link to="/" className="login-link">
                       Se connecter
                     </Link>
                   </p>
@@ -377,48 +233,19 @@ function RegisterPage() {
         </div>
       </div>
 
-      {/* MARK: Modale si tentative d'inscription de femme */}
+      {/* Modale Administration */}
       {showAdminModal && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            backgroundColor: "rgba(0,0,0,0.8)",
-            backdropFilter: "blur(10px)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000,
-          }}
-        >
-          <div
-            className="p-5 text-center"
-            style={{
-              backgroundColor: "#1e1e3c",
-              borderRadius: "30px",
-              maxWidth: "500px",
-              border: "1px solid #d4af37",
-              boxShadow: "0 0 30px rgba(212,175,55,0.3)",
-            }}
-          >
+        <div className="admin-modal-overlay">
+          <div className="admin-modal-content">
             <h2 style={{ color: "#d4af37", marginBottom: "20px" }}>
               INSCRIPTION SÉCURISÉE
             </h2>
-            <p style={{ color: "#a5a5cc", lineHeight: "1.6" }}>
+            <p className="register-subtitle" style={{ lineHeight: "1.6" }}>
               Pour garantir l'exclusivité et la sécurité de notre groupe,
               l'inscription des profils féminins est gérée directement par notre
               équipe d'administration.
             </p>
-            <div
-              className="my-4 p-3"
-              style={{
-                background: "rgba(255,255,255,0.05)",
-                borderRadius: "15px",
-              }}
-            >
+            <div className="contact-info-box">
               <p className="mb-1 small text-uppercase">
                 Contactez-nous par mail ou téléphone
               </p>
