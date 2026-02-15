@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { User, MessageSquare, Shield } from "lucide-react";
 import Swal from "sweetalert2";
+import "./FemaleDashboardPage.css";
 
 //#region STATES
 function FemaleDashboardPage() {
@@ -275,76 +276,46 @@ function FemaleDashboardPage() {
   }
   //#endregion
 
-  //#region AFFICHAGE DU COMPOSANT
   return (
-    <div
-      style={{
-        background:
-          "radial-gradient(circle at center, #162244 0%, #0b1120 100%)",
-        minHeight: "100vh",
-        color: "white",
-        padding: "50px 20px",
-      }}
-    >
-      <div
-        className="container"
-        style={{ maxWidth: "1100px", margin: "0 auto" }}
-      >
+    <div className="dashboard-wrapper">
+      <div className="dashboard-container">
         {/* MARK: En-tête de la page */}
-        <header style={{ marginBottom: "40px" }}>
-          <h1
-            style={{
-              fontFamily: "Montserrat",
-              fontWeight: "700",
-              color: "#f67280",
-            }}
-          >
+        <header className="dashboard-header">
+          <h1>
             Mon Espace Privé{" "}
             <span style={{ fontSize: "0.8em", verticalAlign: "middle" }}>
               ♀️
             </span>
           </h1>
-          <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "1.1rem" }}>
+          <p className="subtitle">
             Bienvenue,{" "}
-            <span style={{ color: "#f67280", fontWeight: "bold" }}>
+            <span className="nickname-highlight">
               {userData.nickname || "Chère membre"}
             </span>
             . Voici votre tableau de bord exclusif.
           </p>
         </header>
 
-        <div style={{ display: "flex", gap: "30px", flexWrap: "wrap" }}>
+        <div className="dashboard-layout">
           {/* MARK: Onglets de gauche */}
-          <aside
-            style={{
-              flex: "1",
-              minWidth: "250px",
-              background: "#1f2a4d",
-              borderRadius: "15px",
-              padding: "20px",
-              height: "fit-content",
-              boxShadow: "0 10px 20px rgba(0,0,0,0.2)",
-            }}
-          >
-            <nav
-              style={{ display: "flex", flexDirection: "column", gap: "10px" }}
-            >
+          <aside className="dashboard-aside">
+            <nav className="nav-list">
               <button
-                style={navButtonStyle(activeTab === "messagerie")}
+                className={`nav-button ${activeTab === "messagerie" ? "active" : ""}`}
                 onClick={() => handleTabChange("messagerie")}
               >
                 <MessageSquare size={18} /> Ma Messagerie
               </button>
 
               <button
-                style={navButtonStyle(activeTab === "profil")}
+                className={`nav-button ${activeTab === "profil" ? "active" : ""}`}
                 onClick={() => handleTabChange("profil")}
               >
                 <User size={18} /> Mon Profil
               </button>
 
               <button
-                style={navButtonStyle(activeTab === "security")}
+                className={`nav-button ${activeTab === "security" ? "active" : ""}`}
                 onClick={() => handleTabChange("security")}
               >
                 <Shield size={18} /> Sécurité
@@ -353,39 +324,13 @@ function FemaleDashboardPage() {
           </aside>
 
           {/* MARK: Contenu principal */}
-          <main
-            style={{
-              flex: "3",
-              minWidth: "300px",
-              background: "#1f2a4d",
-              borderRadius: "15px",
-              padding: "30px",
-              boxShadow: "0 10px 20px rgba(0,0,0,0.2)",
-            }}
-          >
-             {/* MARK: Messagerie */}
+          <main className="dashboard-main">
+            {/* MARK: Messagerie */}
             {activeTab === "messagerie" && (
               <div>
-                <h3
-                  style={{
-                    margin: 0,
-                    color: "#f67280",
-                    borderBottom: "1px solid rgba(246, 114, 128, 0.3)",
-                    paddingBottom: "15px",
-                    marginBottom: "20px",
-                  }}
-                >
-                  Mes Conversations
-                </h3>
+                <h3 className="section-title">Mes Conversations</h3>
                 {conversations.length === 0 ? (
-                  <div
-                    style={{
-                      background: "rgba(0,0,0,0.2)",
-                      padding: "40px",
-                      borderRadius: "10px",
-                      textAlign: "center",
-                    }}
-                  >
+                  <div className="empty-state">
                     <p style={{ color: "rgba(255,255,255,0.6)" }}>
                       Vous n'avez pas encore de messages.
                     </p>
@@ -400,10 +345,11 @@ function FemaleDashboardPage() {
                     </p>
                   </div>
                 ) : (
-                  <div style={{ display: "grid", gap: "15px" }}>
+                  <div className="conversations-grid">
                     {conversations.map((contact) => (
                       <div
                         key={contact.id}
+                        className={`conversation-card ${contact.hasNewMessages ? "new-messages" : ""}`}
                         onClick={() => {
                           setSelectedContact(contact);
                           setIsModalOpen(true);
@@ -411,22 +357,6 @@ function FemaleDashboardPage() {
                           if (contact.hasNewMessages) {
                             handleMarkAsRead(contact.id);
                           }
-                        }}
-                        style={{
-                          // Effet visuel doré si nouveau message
-                          background: contact.hasNewMessages
-                            ? "linear-gradient(90deg, rgba(212,175,55,0.1) 0%, rgba(255,255,255,0.05) 100%)"
-                            : "rgba(255,255,255,0.05)",
-                          padding: "20px",
-                          borderRadius: "12px",
-                          cursor: "pointer",
-                          border: contact.hasNewMessages
-                            ? "1px solid #d4af37"
-                            : "1px solid rgba(255,255,255,0.1)",
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          transition: "all 0.2s ease",
                         }}
                       >
                         <div>
@@ -443,27 +373,11 @@ function FemaleDashboardPage() {
                           </div>
                         </div>
 
-                        {/* Badge Doré */}
+                        {/* Badge Doré ou lien répondre */}
                         {contact.hasNewMessages ? (
-                          <span
-                            style={{
-                              background: "#d4af37",
-                              color: "#000",
-                              padding: "5px 12px",
-                              borderRadius: "20px",
-                              fontSize: "0.7rem",
-                              fontWeight: "bold",
-                              boxShadow: "0 0 10px rgba(212,175,55,0.5)",
-                            }}
-                          >
-                            NOUVEAU
-                          </span>
+                          <span className="badge-new">NOUVEAU</span>
                         ) : (
-                          <span
-                            style={{ color: "#f67280", fontWeight: "bold" }}
-                          >
-                            Répondre →
-                          </span>
+                          <span className="reply-link">Répondre →</span>
                         )}
                       </div>
                     ))}
@@ -472,45 +386,12 @@ function FemaleDashboardPage() {
               </div>
             )}
 
-
             {/* MARK: Modal de conversation */}
             {isModalOpen && selectedContact && (
-              <div
-                style={{
-                  position: "fixed",
-                  top: 50,
-                  left: 0,
-                  width: "100%",
-                  height: "100%",
-                  backgroundColor: "rgba(0,0,0,0.85)",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  zIndex: 1000,
-                }}
-              >
-                <div
-                  style={{
-                    background: "#1a1d21",
-                    width: "500px",
-                    height: "80vh",
-                    borderRadius: "20px",
-                    display: "flex",
-                    flexDirection: "column",
-                    overflow: "hidden",
-                    border: "1px solid #333",
-                  }}
-                >
+              <div className="chat-modal-overlay">
+                <div className="chat-modal-container">
                   {/* Header */}
-                  <div
-                    style={{
-                      padding: "20px",
-                      background: "#25292e",
-                      borderBottom: "1px solid #333",
-                      display: "flex",
-                      justifyContent: "space-between",
-                    }}
-                  >
+                  <div className="chat-header">
                     <div>
                       <h4 style={{ margin: 0, color: "#f67280" }}>
                         {selectedContact.nickname}
@@ -532,49 +413,21 @@ function FemaleDashboardPage() {
                   </div>
 
                   {/* Zone des messages */}
-                  <div
-                    style={{
-                      flex: 1,
-                      padding: "20px",
-                      overflowY: "auto",
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "10px",
-                      background: "#0f1113",
-                    }}
-                  >
+                  <div className="chat-body">
                     {messages.map((msg) => {
-                      // Si l'expéditeur est l'utilisatrice connectée
                       const isSentByMe = msg.senderId === userData.id;
 
                       return (
                         <div
                           key={msg.id}
-                          style={{
-                            alignSelf: isSentByMe ? "flex-end" : "flex-start",
-                            background: isSentByMe ? "#f67280" : "#25292e",
-                            padding: "12px 15px",
-                            borderRadius: "15px",
-                            maxWidth: "80%",
-                            color: "#fff",
-                          }}
+                          className={`message-bubble ${isSentByMe ? "message-sent" : "message-received"}`}
                         >
-                          {/* Logique : L'utilisatrice voit SON original, et la TRADUCTION de lui */}
                           <div style={{ fontSize: "1rem" }}>
                             {isSentByMe ? msg.content : msg.contentTranslated}
                           </div>
 
-                          {/* Écriteau "En attente" uniquement pour ses messages à elle */}
                           {isSentByMe && msg.status === "pending" && (
-                            <div
-                              style={{
-                                marginTop: "8px",
-                                fontSize: "0.7rem",
-                                color: "rgba(255,255,255,0.6)",
-                                borderTop: "1px solid rgba(255,255,255,0.1)",
-                                paddingTop: "5px",
-                              }}
-                            >
+                            <div className="pending-translation">
                               🕒 En attente de traduction...
                             </div>
                           )}
@@ -599,51 +452,35 @@ function FemaleDashboardPage() {
                   </div>
 
                   {/* Input de réponse */}
-                  <div
-                    style={{
-                      padding: "20px",
-                      background: "#1a1d21",
-                      borderTop: "1px solid #333",
-                    }}
-                  >
-                    <div style={{ display: "flex", gap: "10px" }}>
-                      <input
+                  <div className="chat-footer">
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "10px",
+                      }}
+                    >
+                      <textarea
                         id="chatInput"
-                        placeholder="Répondre dans votre langue..."
-                        style={{
-                          flex: 1,
-                          padding: "12px",
-                          borderRadius: "25px",
-                          border: "1px solid #333",
-                          background: "#000",
-                          color: "#fff",
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter")
-                            handleSendMessage(
-                              selectedContact.id,
-                              e.target.value,
-                            );
-                        }}
-                      />
+                        placeholder="Écrivez votre message ici..."
+                        className="dashboard-textarea"
+                        rows="3"
+                      ></textarea>
                       <button
-                        onClick={() =>
-                          handleSendMessage(
-                            selectedContact.id,
-                            document.getElementById("chatInput").value,
-                          )
-                        }
+                        className="btn-gold"
                         style={{
-                          background: "#f67280",
-                          color: "#fff",
-                          border: "none",
-                          padding: "10px 20px",
+                          alignSelf: "flex-end",
+                          padding: "10px 30px",
+                          width: "auto",
                           borderRadius: "25px",
-                          cursor: "pointer",
-                          fontWeight: "bold",
+                        }}
+                        onClick={() => {
+                          const input = document.getElementById("chatInput");
+                          handleSendMessage(selectedContact.id, input.value);
+                          input.value = ""; // Vide le champ après envoi
                         }}
                       >
-                        Répondre
+                        Envoyer
                       </button>
                     </div>
                   </div>
@@ -655,101 +492,43 @@ function FemaleDashboardPage() {
             {activeTab === "profil" && (
               <div>
                 <p
-                  style={{ color: "rgba(255,255,255,0.8)", fontSize: "1.1rem" }}
+                  style={{
+                    color: "rgba(255,255,255,0.8)",
+                    fontSize: "1.1rem",
+                    marginBottom: "20px",
+                  }}
                 >
                   Voici vos informations personnelles visibles par les hommes
                   qui voient votre profil :
                 </p>
-                <h3
-                  style={{
-                    margin: 0,
-                    color: "#f67280",
-                    borderBottom: "1px solid rgba(246, 114, 128, 0.3)",
-                    paddingBottom: "15px",
-                    marginBottom: "20px",
-                  }}
-                >
-                  Mes Informations Personnelles
-                </h3>
+                <h3 className="section-title">Mes Informations Personnelles</h3>
 
-                {/* Section : Données Textuelles */}
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-                    gap: "20px",
-                    background: "rgba(255, 255, 255, 0.05)",
-                    padding: "20px",
-                    borderRadius: "12px",
-                  }}
-                >
+                <div className="info-grid">
                   <InfoBox label="Pseudo" value={userData.nickname} />
                   <InfoBox label="Statut Marital" value={userData.marital} />
                   <InfoBox label="Enfants" value={userData.children} />
                   <InfoBox label="Religion" value={userData.religion} />
                 </div>
 
-                {/* Section : Centres d'intérrets */}
-                <div
-                  style={{
-                    marginTop: "10px",
-                  }}
-                >
-                  {" "}
-                  {/* div de separation */}{" "}
-                </div>
-                <div
-                  style={{
-                    background: "rgba(255, 255, 255, 0.05)",
-                    padding: "20px",
-                    borderRadius: "12px",
-                  }}
-                >
+                <div className="info-grid" style={{ marginTop: "15px" }}>
                   <InfoBox
                     label="Centres d'intérêt"
                     value={userData.interests}
-                    fullWidth={true}
                   />
                 </div>
 
                 {/* Section : Ma Galerie Photo */}
                 <div style={{ marginTop: "30px" }}>
-                  <h3
-                    style={{
-                      margin: 0,
-                      color: "#f67280",
-                      borderBottom: "1px solid rgba(246, 114, 128, 0.3)",
-                      paddingBottom: "15px",
-                      marginBottom: "20px",
-                    }}
-                  >
-                    Ma Galerie Photo
-                  </h3>
+                  <h3 className="section-title">Ma Galerie Photo</h3>
 
-                  <div
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns:
-                        "repeat(auto-fill, minmax(150px, 1fr))",
-                      gap: "15px",
-                      background: "rgba(255, 255, 255, 0.05)",
-                      padding: "20px",
-                      borderRadius: "12px",
-                    }}
-                  >
+                  <div className="photo-gallery">
                     {userData.photos && userData.photos.length > 0 ? (
                       userData.photos.map((photo, index) => (
                         <div key={index}>
                           <img
                             src={`http://localhost:8000/uploads/users/${photo.imageName}`}
                             alt={`Photo ${index}`}
-                            style={{
-                              width: "100%",
-                              height: "150px",
-                              objectFit: "cover",
-                              borderRadius: "10px",
-                              border: "1px solid rgba(255,255,255,0.1)",
-                            }}
+                            className="gallery-image"
                           />
                         </div>
                       ))
@@ -770,15 +549,7 @@ function FemaleDashboardPage() {
 
             {/* MARK: Security */}
             {activeTab === "security" && (
-              <div
-                className="security-section"
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center", // Centre horizontalement
-                  width: "100%",
-                }}
-              >
+              <div className="security-section">
                 <h3 style={{ marginBottom: "20px" }}>Sécurité du compte</h3>
 
                 <div className="info-item-container">
@@ -874,26 +645,6 @@ function FemaleDashboardPage() {
     </div>
   );
 }
-//#endregion
-
-// Styles pour les boutons de navigation
-const navButtonStyle = (isActive) => ({
-  display: "flex",
-  alignItems: "center",
-  gap: "10px",
-  padding: "12px 15px",
-  borderRadius: "10px",
-  border: "none",
-  textAlign: "left",
-  cursor: "pointer",
-  fontSize: "1rem",
-  transition: "0.3s",
-  background: isActive ? "#f67280" : "transparent",
-  color: isActive ? "white" : "rgba(255,255,255,0.7)",
-  width: "100%",
-  boxShadow: isActive ? "0 5px 15px rgba(246, 114, 128, 0.2)" : "none",
-});
-
 const InfoBox = ({ label, value }) => (
   <div style={{ marginBottom: "15px" }}>
     <span
