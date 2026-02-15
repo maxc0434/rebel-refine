@@ -477,7 +477,7 @@ function FemaleDashboardPage() {
                         onClick={() => {
                           const input = document.getElementById("chatInput");
                           handleSendMessage(selectedContact.id, input.value);
-                          input.value = ""; // Vide le champ après envoi
+                          input.value = ""; 
                         }}
                       >
                         Envoyer
@@ -659,14 +659,14 @@ const InfoBox = ({ label, value }) => (
     >
       {label}
     </span>
-    <div // Changé span en div pour le contenu multi-ligne
+    <div 
       style={{
-        fontSize: "1.0rem", // Légèrement plus petit pour les longs textes
+        fontSize: "1.0rem", 
         color: "rgba(255,255,255,0.9)",
         fontWeight: "400",
-        lineHeight: "1.5", // Ajoute de l'air entre les lignes
+        lineHeight: "1.5", 
       }}
-      // Cette ligne magique transforme le code HTML en vrai texte mis en forme
+      // transforme le code HTML en vrai texte mis en forme
       dangerouslySetInnerHTML={{ __html: value || "Non renseigné" }}
     />
   </div>

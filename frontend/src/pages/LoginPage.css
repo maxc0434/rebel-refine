@@ -1,0 +1,112 @@
+/* Section principale avec image de fond */
+.login-page-wrapper {
+  min-height: 100vh;
+  background-image: linear-gradient(rgba(18, 18, 45, 0.85), rgba(18, 18, 45, 0.5)), url("/assets/images/bg-img/01.jpg");
+  background-size: cover;
+  background-position: center;
+  padding: 60px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Carte principale (Glassmorphism) */
+.login-card {
+  background-color: rgba(30, 30, 60, 0.85) !important;
+  border-radius: 30px !important;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(212, 175, 55, 0.2) !important;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+}
+
+/* Titre et typographie */
+.login-brand {
+  letter-spacing: 4px;
+  font-size: 2.5rem;
+}
+
+.login-brand span {
+  color: #d4af37;
+}
+
+.login-subtitle {
+  color: #a5a5cc;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+}
+
+.gold-divider {
+  width: 60px;
+  height: 3px;
+  background: #d4af37;
+  margin: 20px auto;
+}
+
+/* Alertes */
+.alert-custom-error {
+  background-color: rgba(246, 114, 128, 0.2);
+  border: 1px solid #f67280;
+  color: #f67280;
+  border-radius: 15px;
+}
+
+.alert-custom-success {
+  background-color: rgba(212, 175, 55, 0.15);
+  border: 1px solid #d4af37;
+  color: #d4af37;
+  border-radius: 15px;
+}
+
+/* Formulaires */
+.login-label {
+  color: #d4af37;
+  letter-spacing: 1px;
+}
+
+.login-input {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 15px !important;
+  padding: 15px 20px !important;
+  font-size: 1.1rem !important;
+  color: white !important;
+}
+
+.login-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.forgot-password-link {
+  color: #a5a5cc;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* Bouton principal */
+.btn-login-submit {
+  background: linear-gradient(45deg, #f67280, #c06c84);
+  border-radius: 15px;
+  box-shadow: 0 15px 30px rgba(246, 114, 128, 0.3);
+  letter-spacing: 2px;
+  font-size: 1.2rem;
+  transition: transform 0.2s;
+}
+
+.btn-login-submit:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+/* Modal */
+.modal-custom-content {
+  background-color: #1e1e3c;
+  border-radius: 20px;
+  border: 1px solid #d4af37;
+  overflow: hidden;
+}
+
+.register-link-highlight {
+  color: white;
+  text-decoration: none;
+  border-bottom: 2px solid #f67280;
+  padding-bottom: 2px;
+}
