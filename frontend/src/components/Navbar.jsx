@@ -7,6 +7,7 @@ function Navbar() {
 
   const userData = JSON.parse(localStorage.getItem("user") || "{}");
   const isFemale = userData.roles?.includes("ROLE_FEMALE");
+  const isTranslator = userData.roles?.includes("ROLE_TRANSLATOR");
 
   const handleLogout = (e) => {
     e.preventDefault();
@@ -50,7 +51,7 @@ function Navbar() {
             </div>
             <div className="menu-area">
               <ul className="menu">
-                {!isFemale && (
+                {!isFemale && !isTranslator && (
                   <>
                     <li>
                       <Link to="/home" style={navItemStyle}>
