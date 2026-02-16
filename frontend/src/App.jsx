@@ -10,6 +10,7 @@ import MemberDashboardPage from "./pages/MemberDashboardPage";
 import SearchPage from "./pages/SearchPage";
 import FemaleDashboardPage from "./pages/FemaleDashboardPage";
 import TranslatorDashboard from "./pages/TranslatorDashboard";
+import PresentationPage from "./pages/PresentationPage";
 
 function App() {
   return (
@@ -18,7 +19,9 @@ function App() {
       <div style={{ height: '110px' }}></div>
         <Routes>
 
-          <Route path="/" element={<LoginPage />} />
+          <Route path="/" element={<PresentationPage />} />
+
+          <Route path="/login" element={<LoginPage />} />
 
           <Route path="/register" element={<RegisterPage/>} />
           
