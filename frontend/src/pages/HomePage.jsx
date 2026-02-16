@@ -330,7 +330,7 @@ function HomePage() {
                             src={
                               member.photos && member.photos.length > 0
                                 ? `http://localhost:8000/uploads/users/${member.photos[0]}`
-                                : "/assets/images/member/04.jpg"
+                                : "/assets/images/member/01-user-no-photo.jpg"
                             }
                             alt={member.nickname}
                             style={{

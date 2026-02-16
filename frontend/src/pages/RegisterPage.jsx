@@ -133,13 +133,13 @@ function RegisterPage() {
                         onClick={() => setFormData({ ...formData, gender: "male" })}
                         className={`gender-selector gender-male ${formData.gender === "male" ? "active" : ""}`}
                       >
-                        <i className="bi bi-gender-male me-2"></i>HOMME
+                        <i className="bi bi-gender-male me-2"></i>un HOMME
                       </div>
                       <div
                         onClick={() => setFormData({ ...formData, gender: "female" })}
                         className={`gender-selector gender-female ${formData.gender === "female" ? "active" : ""}`}
                       >
-                        <i className="bi bi-gender-female me-2"></i>FEMME
+                        <i className="bi bi-gender-female me-2"></i>une FEMME
                       </div>
                     </div>
                   </div>

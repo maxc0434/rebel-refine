@@ -389,7 +389,7 @@ function ProfilePage() {
                     src={
                       photos.length > 0
                         ? `http://localhost:8000/uploads/users/${photos[0]}`
-                        : "/assets/images/member/04.jpg"
+                        : "/assets/images/member/01-user-no-photo.jpg"
                     }
                     alt={user.nickname}
                     style={{

@@ -1338,21 +1338,21 @@ function MemberDashboardPage() {
                               width: "100%",
                               height: "100%",
                               objectFit: "cover",
+                              borderRadius: "15px 15px 0 0",
                             }}
                           />
                         ) : (
-                          <div
+                          <img
+                            src="/assets/images/member/01-user-no-photo.jpg"
+                            alt={fav.nickname}
                             style={{
                               width: "100%",
                               height: "100%",
-                              background: "#1f2a4d",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
+                              objectFit: "cover",
+                              borderRadius: "15px 15px 0 0",
+                              opacity: 0.8,
                             }}
-                          >
-                            <User size={40} opacity={0.2} />
-                          </div>
+                          />
                         )}
                       </div>
 

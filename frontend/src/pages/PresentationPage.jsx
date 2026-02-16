@@ -1,7 +1,9 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay, Pagination, EffectFade } from "swiper/modules";
+import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router-dom';
 
 // Import Swiper styles
 import "swiper/css";
@@ -12,6 +14,60 @@ import "swiper/css/effect-fade";
 import "./PresentationPage.css";
 
 const PresentationPage = () => {
+  const [apiData, setApiData] = useState([]); // Initialisé par un tableau vide
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+const handleDiscoverClick = (e) => {
+  e.preventDefault(); // On bloque la redirection immédiate
+
+  Swal.fire({
+    title: 'Accès Galerie',
+    text: "Pour accéder à la galerie des membres et à la messagerie, vous devez vous connecter.",
+    icon: 'info',
+    showCancelButton: true,
+    confirmButtonColor: '#d4af37',
+    cancelButtonColor: '#1f2a4d',   
+    confirmButtonText: 'Connexion',
+    cancelButtonText: 'Annuler',
+    background: '#1f2a4d',         
+    color: '#ffffff'               
+  }).then((result) => {
+    if (result.isConfirmed) {
+      navigate("/login"); 
+    }
+  });
+};
+
+  useEffect(() => {
+    const fetchMembers = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/api/home");
+        const data = await response.json();
+
+        // On vérifie si last_members existe, sinon on met un tableau vide
+        if (data && data.last_members) {
+          setApiData(data.last_members);
+        }
+      } catch (error) {
+        console.error("Erreur de connexion à l'API PHP:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMembers();
+  }, []);
+
+  // Affichage pendant le chargement (optionnel mais recommandé)
+  if (loading) {
+    return (
+      <div className="pres-page text-center py-5">
+        Chargement de l'univers Rebel Refine...
+      </div>
+    );
+  }
+
   return (
     <div className="pres-page">
       {/* ================ SECTION SLIDER ================= */}
@@ -21,7 +77,7 @@ const PresentationPage = () => {
           effect="fade"
           loop={true}
           speed={1000}
-          autoplay={{ delay: 5000, disableOnInteraction: false }}
+          autoplay={{ delay: 8000, disableOnInteraction: false }}
           navigation={false}
           pagination={{ clickable: true }}
           className="banner-slider"
@@ -63,7 +119,7 @@ const PresentationPage = () => {
                         Découvrez une nouvelle façon de tisser des liens basée
                         sur le respect.
                       </p>
-                      <Link to="/members" className="lab-btn">
+                      <Link to="/login" className="lab-btn">
                         Explorer les membres
                       </Link>
                     </div>
@@ -75,9 +131,68 @@ const PresentationPage = () => {
         </Swiper>
       </section>
 
-      
+      {/* ================ Member Section (Vitrine uniquement) =============== */}
+      <section className="member-section py-5">
+        <div className="container">
+          <div className="section-header text-center mb-5">
+            <h2 className="section-title">
+              Nos nouveaux <span className="gold-text">membres</span>
+            </h2>
+            <p className="text-muted">
+              Voici les derniers profils ayant rejoint Rebel Refine.
+            </p>
+          </div>
 
-      
+          <div className="section-wrapper">
+            <div className="row justify-content-center g-4 row-cols-xl-5 row-cols-md-3 row-cols-1">
+              {!loading &&
+                apiData.slice(0, 5).map((member) => (
+                  <div className="col" key={member.id}>
+                    <div className="member-item-simple">
+                      <div className="lab-inner">
+                        <div className="lab-thumb">
+                          <Link to={"/login"}>
+                            <img
+                              src={
+                                member.photos && member.photos.length > 0
+                                  ? `http://localhost:8000/uploads/users/${member.photos[0]}`
+                                  : "/assets/images/member/01-user-no-photo.jpg"
+                              }
+                              alt={member.nickname}
+                              style={{
+                                width: "100%",
+                                height: "280px",
+                                objectFit: "cover",
+                                borderRadius: "15px 15px 0 0",
+                              }}
+                            />
+                          </Link>
+                        </div>
+                        <div className="lab-content p-3 text-center">
+                          <h6 className="mb-1 text-white">{member.nickname}</h6>
+                          <p className="small text-muted mb-0">
+                            {member.age} ans
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+            </div>
+
+            <div className="text-center mt-5">
+              <button
+                onClick={handleDiscoverClick}
+                className="lab-btn"
+                style={{ border: "none", cursor: "pointer" }}
+              >
+                <span>Découvrir tous les membres</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ================ SECTION CONCEPT ================= */}
       <section
         className="pres-concept py-10"
@@ -88,7 +203,7 @@ const PresentationPage = () => {
           backgroundPosition: "center",
           backgroundAttachment: "fixed",
           height: "50vh",
-          paddingTop: "100px",
+          paddingTop: "10px",
         }}
       >
         <div className="container">

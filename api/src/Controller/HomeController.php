@@ -13,7 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 final class HomeController extends AbstractController
 {
     #[Route('/api/home', name: 'app_home', methods: ['GET'])]
-    #[IsGranted('ROLE_MALE', message: 'Accès interdit')]
+    // #[IsGranted('ROLE_MALE', message: 'Accès interdit')]
 
     public function index(#[CurrentUser] ?User $user, UserRepository $userRepository): JsonResponse
     {

@@ -36,16 +36,15 @@ function MembersPage() {
         if (data) setMembers(data); // On remplit notre état avec les membres reçus
       })
       .catch((err) => console.error("Erreur chargement membres:", err));
-    
+
     // Le tableau vide [] garantit que la liste ne se charge qu'une seule fois au début
   }, [navigate, token]);
   //#endregion
 
-
   //#region FCT FAVORIS
   // --- ACTION : AJOUTER OU RETIRER UN FAVORI ---
   const toggleFavorite = async (e, targetId) => {
-    e.preventDefault();  // Empêche la redirection vers le profil
+    e.preventDefault(); // Empêche la redirection vers le profil
     e.stopPropagation(); // Empêche le clic de "traverser" vers les éléments parents
 
     if (!token) return;
@@ -59,7 +58,7 @@ function MembersPage() {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-        }
+        },
       );
       const data = await response.json();
 
@@ -89,7 +88,6 @@ function MembersPage() {
           <h2>Tous nos membres féminins</h2>
         </div>
 
-
         {/* MARK: AFF. PROFILS */}
         <div className="row justify-content-center g-3 g-md-4 row-cols-2 row-cols-md-2 row-cols-lg-2">
           {members.map((m) => (
@@ -98,7 +96,6 @@ function MembersPage() {
                 className="member-card-container"
                 style={{ position: "relative" }}
               >
-
                 {/* MARK: BOUTON FAVORIS */}
                 <button
                   onClick={(e) => toggleFavorite(e, m.id)}
@@ -155,7 +152,7 @@ function MembersPage() {
                       style={{
                         padding: "25px 15px",
                         background:
-                          "linear-gradient(180deg, #1f2a4d 0%, #161f3d 100%)", 
+                          "linear-gradient(180deg, #1f2a4d 0%, #161f3d 100%)",
                         textAlign: "center",
                         borderTop: "1px solid rgba(255, 255, 255, 0.05)",
                       }}
@@ -165,9 +162,9 @@ function MembersPage() {
                           fontFamily: "'Montserrat', sans-serif",
                           fontSize: "1.3rem",
                           fontWeight: "700",
-                          letterSpacing: "1.5px", 
+                          letterSpacing: "1.5px",
                           color: "#ffffff",
-                          textTransform: "uppercase", 
+                          textTransform: "uppercase",
                           marginBottom: "8px",
                         }}
                       >
