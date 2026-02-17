@@ -54,7 +54,7 @@ const ChatModal = ({
                   key={msg.id}
                   className={`message-bubble ${isSentByMe ? "message-sent" : "message-received"}`}
                 >
-                  <div style={{ fontSize: "1rem" }}>
+                  <div style={{ fontSize: "1.2rem" }}>
                     {isSentByMe
                       ? msg.content
                       : msg.contentTranslated || msg.content}
@@ -66,8 +66,11 @@ const ChatModal = ({
                     </div>
                   )}
 
-                  <div className="message-time">
+                  <div className="message-time" style={{ color: "	#f5f5f5", fontSize: "0.9rem" }}>
                     {new Date(msg.createdAt).toLocaleTimeString([], {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
                       hour: "2-digit",
                       minute: "2-digit",
                     })}
@@ -96,7 +99,7 @@ const ChatModal = ({
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
           ></textarea>
-          
+
           <button
             className="btn-gold mt-2"
             style={{ alignSelf: "flex-end", padding: "8px 25px" }}

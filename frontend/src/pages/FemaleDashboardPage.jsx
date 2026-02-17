@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { User, MessageSquare, Shield } from "lucide-react";
+import { User, MessageSquare, Shield, Trash2 } from "lucide-react";
 import Swal from "sweetalert2";
 import "./FemaleDashboardPage.css";
 import ChatModal from "../components/ChatModal";
@@ -164,34 +164,90 @@ function FemaleDashboardPage() {
   // #endregion
 
   // #region ECRIRE MSG
-const handleSendMessage = async (receiverId, content) => {
-  if (!content.trim()) return false; // On renvoie false si c'est vide
+  const handleSendMessage = async (receiverId, content) => {
+    if (!content.trim()) return false; // On renvoie false si c'est vide
 
-  try {
-    const response = await fetch("http://localhost:8000/api/messages/send", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify({ content, receiverId }),
-    });
+    try {
+      const response = await fetch("http://localhost:8000/api/messages/send", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ content, receiverId }),
+      });
 
-    if (response.ok) {
-      console.log("SUCCESS : Le message est passé côté Symfony !");
-      // Rafraîchit la discussion pour voir le nouveau message
-      fetchMessages(receiverId);
-      return true; // On informe la modale que l'envoi a réussi
-    } else {
-      console.log("ERREUR : Le serveur a répondu non !", response.status);
-      return false; 
+      if (response.ok) {
+        console.log("SUCCESS : Le message est passé côté Symfony !");
+        // Rafraîchit la discussion pour voir le nouveau message
+        fetchMessages(receiverId);
+        return true; // On informe la modale que l'envoi a réussi
+      } else {
+        console.log("ERREUR : Le serveur a répondu non !", response.status);
+        return false;
+      }
+    } catch (error) {
+      console.error("Erreur envoi:", error);
+      return false;
     }
-  } catch (error) {
-    console.error("Erreur envoi:", error);
-    return false; 
-  }
-};
-// #endregion
+  };
+  // #endregion
+
+  //#region SUPPR CONVERSATION
+    const handleDeleteConversation = async (contactId) => {
+      const result = await Swal.fire({
+        title: "Supprimer la conversation ?",
+        text: "Tous les messages avec ce contact seront effacés définitivement.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Oui, supprimer",
+        cancelButtonText: "Annuler",
+        background: "#1f2a4d",
+        color: "#fff",
+      });
+  
+      if (result.isConfirmed) {
+        try {
+          const response = await fetch(
+            `http://localhost:8000/api/messages/conversation/${contactId}`,
+            {
+              method: "DELETE",
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            },
+          );
+  
+          if (response.ok) {
+            Swal.fire({
+              title: "Supprimé !",
+              icon: "success",
+              timer: 1500,
+              showConfirmButton: false,
+              background: "#1f2a4d",
+              color: "#fff",
+            });
+  
+            // Rafraîchir la liste des conversations après suppression
+            // (La fonction que tu utilises pour charger tes contacts)
+            fetchConversations();
+          } else {
+            throw new Error("Erreur lors de la suppression");
+          }
+        } catch (error) {
+          Swal.fire({
+            icon: "error",
+            title: "Erreur",
+            text: error.message,
+            background: "#1f2a4d",
+            color: "#fff",
+          });
+        }
+      }
+    };
+    //#endregion
 
   //#region MONTAGE DU COMPOSANT et CHARGEMENT DES DONNÉES
   useEffect(() => {
@@ -364,44 +420,63 @@ const handleSendMessage = async (receiverId, content) => {
                           }
                         }}
                       >
-                        <div>
-                          <strong style={{ color: "#fff", fontSize: "1.1rem" }}>
+                        {/* Bloc gauche */}
+                        <div className="conversation-left">
+                          <strong className="conversation-name">
                             {contact.nickname || "Utilisateur"}
                           </strong>
-                          <div
-                            style={{
-                              color: "rgba(255,255,255,0.5)",
-                              fontSize: "0.8rem",
-                            }}
-                          >
+                          <div className="conversation-age">
                             {contact.age} ans
                           </div>
                         </div>
 
-                        {/* LIEN VERS LE PROFIL */}
-                        <span
-                          onClick={(e) => {
-                            e.stopPropagation(); // Évite d'ouvrir la modale de chat au clic
-                            navigate(`/view-male-profile/${contact.id}`);
-                          }}
-                          style={{
-                            color: "#c0c0c0 ",
-                            marginLeft: "5px",
-                            cursor: "pointer",
-                            border: "1px solid  #c0c0c0 ",
-                            borderRadius: "5px",
-                            padding: "2px 5px",
-                          }}
-                        >
-                          Voir son profil
-                        </span>
+                        {/* Bloc centre */}
+                        <div className="conversation-center">
+                          <span
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigate(`/view-male-profile/${contact.id}`);
+                            }}
+                            className="view-profile-btn"
+                          >
+                            Voir son profil
+                          </span>
+                        </div>
 
-                        {/* Badge Doré ou lien répondre */}
-                        {contact.hasNewMessages ? (
-                          <span className="badge-new">NOUVEAU</span>
-                        ) : (
-                          <span className="reply-link">Répondre →</span>
-                        )}
+                        {/* Bloc droite */}
+                        <div className="conversation-right">
+                          {contact.hasNewMessages ? (
+                            <span className="badge-new">NOUVEAU</span>
+                          ) : (
+                            <span className="reply-link">→ Répondre </span>
+                          )}
+                        </div>
+
+                        {/* Bloc de suppression d'une conversation */}
+                        <div style={{ marginLeft: "15px" }}>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation(); // Évite d'ouvrir le chat
+                              handleDeleteConversation(contact.id);
+                            }}
+                            style={{
+                              background: "none",
+                              border: "1px solid #ff4d4d",
+                              borderRadius: "45px",
+                              paddingTop: "10px",
+                              paddingBottom: "10px",
+                              paddingLeft: "10px",
+                              paddingRight: "10px",
+                              color: "#ff4d4d", 
+                              cursor: "pointer",
+                              padding: "5px",
+
+                            }}
+                            title="Supprimer la conversation"
+                          >
+                            <Trash2 size={20} />
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>

@@ -2,16 +2,17 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
 use App\Entity\Message;
+use App\Entity\User;
 use App\Enum\MessageStatus;
+use App\Repository\MessageRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/api/messages')]
 class MessageController extends AbstractController
@@ -156,7 +157,7 @@ class MessageController extends AbstractController
     #endregion
 
 
-    
+
     #[Route('/list/{receiverId}', name: 'app_message_list', methods: ['GET'])]
     public function list(int $receiverId, EntityManagerInterface $entityManager): JsonResponse
     {
@@ -192,6 +193,7 @@ class MessageController extends AbstractController
         return new JsonResponse($data);
     }
 
+    #region CONVERSATIONS
     // Route pour obtenir la liste des conversations
     #[Route('/conversations', name: 'app_message_conversations', methods: ['GET'])]
     public function getConversations(EntityManagerInterface $entityManager): JsonResponse
@@ -236,8 +238,38 @@ class MessageController extends AbstractController
 
         return new JsonResponse(array_values($contacts));
     }
+    #endregion
 
 
+
+    #region SUPPRIMER UNE CONVERSATION
+    #[Route('/conversation/{contactId}', name: 'app_message_delete_conversation', methods: ['DELETE'])]
+    public function deleteConversation(int $contactId, MessageRepository $messageRepo, EntityManagerInterface $em): JsonResponse {
+
+        /** @var User $currentUser */
+        $currentUser = $this->getUser();
+
+        if (!$currentUser) {
+            return new JsonResponse(['error' => 'Non authentifié'], 401);
+        }
+
+        // On cherche tous les messages entre moi et le contact
+        // Assure-toi que cette méthode existe dans ton MessageRepository (voir étape 2)
+        $messages = $messageRepo->findConversation($currentUser->getId(), $contactId);
+
+        if (empty($messages)) {
+            return new JsonResponse(['message' => 'Aucun message à supprimer'], 200);
+        }
+        foreach ($messages as $message) {
+            $em->remove($message);
+        }
+        $em->flush();
+
+        return new JsonResponse(['message' => 'Conversation supprimée avec succès'], 200);
+    }
+    #endregion
+
+    #region MARQUER UN MESSAGE COMME LU
     // Route pour marquer un message comme lu
     #[Route('/mark-read/{id}', name: 'app_message_mark_read', methods: ['POST'])]
     public function markAsRead(User $contact, EntityManagerInterface $entityManager): JsonResponse
@@ -260,4 +292,5 @@ class MessageController extends AbstractController
 
         return new JsonResponse(['status' => 'success']);
     }
+    #endregion
 }

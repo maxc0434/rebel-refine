@@ -13,6 +13,7 @@ function LoginPage() {
   const [password, setPassword] = useState(""); // Saisie utilisateur pour le mot de passe
   const [error, setError] = useState(""); // Message à afficher en cas d'échec de login
   const [showModal, setShowModal] = useState(false); // Affichage ou non de la fenêtre "Mot de passe oublié"
+  const [showPassword, setShowPassword] = useState(false); // Affichage ou non du mot de passe
   const [forgotEmail, setForgotEmail] = useState(""); // Email saisi pour la récupération de mot de passe
   const [status, setStatus] = useState({ type: "", msg: "" }); // Retour visuel (succès/erreur) pour la récupération
   const [searchParams] = useSearchParams(); // Pour lire les paramètres dans l'URL (ex: ?verified=true)
@@ -112,146 +113,174 @@ function LoginPage() {
   //#endregion
 
   return (
-  <div className="login-page-wrapper">
-    <div className="container">
-      <div className="row justify-content-center">
-        <div className="col-12 col-sm-11 col-md-9 col-lg-7 col-xl-6">
-          <div className="card login-card text-white">
-            <div className="card-body p-4 p-md-5">
-              
-              {/* MARK: En-tête */}
-              <div className="text-center mb-5">
-                <h1 className="fw-bold mb-2 login-brand">
-                  REBEL <span>REFINE</span>
-                </h1>
-                <p className="login-subtitle">
-                  Trouvez votre partenaire idéal
-                </p>
-                <div className="gold-divider"></div>
-              </div>
-
-              {/* MARK: Alertes */}
-              {error && (
-                <div className="alert alert-custom-error text-center mb-4 py-3">
-                  <i className="bi bi-exclamation-triangle-fill me-2"></i>
-                  {error}
-                </div>
-              )}
-
-              {isVerified && (
-                <div className="alert alert-custom-success text-center mb-4 py-3 shadow-lg">
-                  <i className="bi bi-patch-check-fill me-2"></i>
-                  Compte vérifié avec succès ! Bienvenue à Rebel Refine.
-                </div>
-              )}
-
-              {/* MARK: Formulaire de connexion */}
-              <form onSubmit={handleSubmit}>
-                {/* Email */}
-                <div className="mb-4">
-                  <label className="form-label small text-uppercase fw-bold ms-2 login-label">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    className="form-control form-control-lg login-input border-0 shadow-none"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="votre@email.com"
-                    required
-                  />
+    <div className="login-page-wrapper">
+      <div className="container">
+        <div className="row justify-content-center">
+          <div className="col-12 col-sm-11 col-md-9 col-lg-7 col-xl-6">
+            <div className="card login-card text-white">
+              <div className="card-body p-4 p-md-5">
+                {/* MARK: En-tête */}
+                <div className="text-center mb-5">
+                  <h1 className="fw-bold mb-2 login-brand">
+                    REBEL <span>REFINE</span>
+                  </h1>
+                  <p className="login-subtitle">
+                    Trouvez votre partenaire idéal
+                  </p>
+                  <div className="gold-divider"></div>
                 </div>
 
-                {/* Mot de passe */}
-                <div className="mb-4">
-                  <div className="d-flex justify-content-between align-items-center">
+                {/* MARK: Alertes */}
+                {error && (
+                  <div className="alert alert-custom-error text-center mb-4 py-3">
+                    <i className="bi bi-exclamation-triangle-fill me-2"></i>
+                    {error}
+                  </div>
+                )}
+
+                {isVerified && (
+                  <div className="alert alert-custom-success text-center mb-4 py-3 shadow-lg">
+                    <i className="bi bi-patch-check-fill me-2"></i>
+                    Compte vérifié avec succès ! Bienvenue à Rebel Refine.
+                  </div>
+                )}
+
+                {/* MARK: Formulaire de connexion */}
+                <form onSubmit={handleSubmit}>
+                  {/* Email */}
+                  <div className="mb-4">
                     <label className="form-label small text-uppercase fw-bold ms-2 login-label">
-                      Mot de passe
+                      Email
                     </label>
-                    <span 
-                      className="small mb-2 forgot-password-link"
+                    <input
+                      type="email"
+                      className="form-control form-control-lg login-input border-0 shadow-none"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="votre@email.com"
+                      required
+                    />
+                  </div>
+
+                  {/* Mot de passe */}
+                  <div className="mb-4">
+                    <div className="d-flex justify-content-between align-items-center">
+                      <label className="form-label small text-uppercase fw-bold ms-2 login-label">
+                        Mot de passe
+                      </label>
+                    </div>
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      className="form-control form-control-lg login-input border-0 shadow-none mb-4"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••"
+                      required
+                    />
+                    <span
+                      onClick={() => setShowPassword(!showPassword)}
+                      style={{
+                        position: "absolute",
+                        right: "10%",
+                        top: "54%",
+                        transform: "translateY(-50%)",
+                        cursor: "pointer",
+                        color: "#b4aeae",
+                        zIndex: 10,
+                        fontSize: "1.2rem",
+                      }}
+                    >
+                      <i
+                        className={`bi ${showPassword ? "bi-eye-slash-fill" : "bi-eye-fill"}`}
+                      ></i>
+                    </span>
+                    <span
+                      className="small mb-2 forgot-password-link justify-content-end d-flex"
                       onClick={() => setShowModal(true)}
                     >
                       Mot de Passe Oublié ?
                     </span>
                   </div>
-                  <input
-                    type="password"
-                    className="form-control form-control-lg login-input border-0 shadow-none"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    required
-                  />
+
+                  <button
+                    type="submit"
+                    className="btn btn-lg w-100 fw-bold py-3 mt-4 text-white border-0 btn-login-submit"
+                  >
+                    SE CONNECTER
+                  </button>
+                </form>
+
+                {/* MARK: Lien d'inscription */}
+                <div className="text-center mt-5">
+                  <p
+                    className="mb-0 login-subtitle"
+                    style={{ fontSize: "1rem" }}
+                  >
+                    Pas encore de compte ? <br />
+                    <Link
+                      to="/register"
+                      className="fw-bold register-link-highlight"
+                    >
+                      Inscrivez-vous dès maintenant et gratuitement en cliquant
+                      ICI
+                    </Link>
+                  </p>
                 </div>
-
-                <button
-                  type="submit"
-                  className="btn btn-lg w-100 fw-bold py-3 mt-4 text-white border-0 btn-login-submit"
-                >
-                  SE CONNECTER
-                </button>
-              </form>
-
-              {/* MARK: Lien d'inscription */}
-              <div className="text-center mt-5">
-                <p className="mb-0 login-subtitle" style={{ fontSize: "1rem" }}>
-                  Pas encore de compte ? <br />
-                  <Link to="/register" className="fw-bold register-link-highlight">
-                    Inscrivez-vous dès maintenant et gratuitement en cliquant ICI
-                  </Link>
-                </p>
               </div>
-
             </div>
           </div>
         </div>
       </div>
-    </div>
 
-    {/* MARK: Modal de récupération */}
-    <Modal
-      show={showModal}
-      onHide={() => setShowModal(false)}
-      centered
-      contentClassName="border-0"
-    >
-      <div className="modal-custom-content">
-        <Modal.Header closeButton closeVariant="white" className="border-0 p-4">
-          <Modal.Title className="text-white fw-bold">
-            Récupération de compte
-          </Modal.Title>
-        </Modal.Header>
-        
-        <Modal.Body className="p-4">
-          {status.msg && (
-            <div className={`alert alert-${status.type} rounded-pill text-center`}>
-              {status.msg}
-            </div>
-          )}
-          <form onSubmit={handleForgotPassword}>
-            <label className="mb-2 text-white-50">
-              Entrez votre adresse email :
-            </label>
-            <input
-              type="email"
-              className="form-control form-control-lg login-input mb-4 border-0"
-              value={forgotEmail}
-              onChange={(e) => setForgotEmail(e.target.value)}
-              required
-            />
-            <Button
-              type="submit"
-              className="w-100 fw-bold py-3 border-0 btn-login-submit"
-            >
-              Envoyer le lien
-            </Button>
-          </form>
-        </Modal.Body>
-      </div>
-    </Modal>
-  </div>
-);
+      {/* MARK: Modal de récupération */}
+      <Modal
+        show={showModal}
+        onHide={() => setShowModal(false)}
+        centered
+        contentClassName="border-0"
+      >
+        <div className="modal-custom-content">
+          <Modal.Header
+            closeButton
+            closeVariant="white"
+            className="border-0 p-4"
+          >
+            <Modal.Title className="text-white fw-bold">
+              Récupération de compte
+            </Modal.Title>
+          </Modal.Header>
+
+          <Modal.Body className="p-4">
+            {status.msg && (
+              <div
+                className={`alert alert-${status.type} rounded-pill text-center`}
+              >
+                {status.msg}
+              </div>
+            )}
+            <form onSubmit={handleForgotPassword}>
+              <label className="mb-2 text-white-50">
+                Entrez votre adresse email :
+              </label>
+              <input
+                type="email"
+                className="form-control form-control-lg login-input mb-4 border-0"
+                value={forgotEmail}
+                onChange={(e) => setForgotEmail(e.target.value)}
+                required
+              />
+              <Button
+                type="submit"
+                className="w-100 fw-bold py-3 border-0 btn-login-submit"
+              >
+                Envoyer le lien
+              </Button>
+            </form>
+          </Modal.Body>
+        </div>
+      </Modal>
+    </div>
+  );
 }
 
 export default LoginPage;

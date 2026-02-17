@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { User, Heart, Settings, MessageSquare } from "lucide-react";
+import { User, Heart, Settings, MessageSquare, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
@@ -339,79 +339,136 @@ function MemberDashboardPage() {
   };
   // #endregion
 
-// #region ENVOI MSG
-const handleSendMessage = async (receiverId, content) => {
-  // 1. Sécurité : on ne fait rien si le message est vide
-  if (!content.trim()) return false;
+  // #region ENVOI MSG
+  const handleSendMessage = async (receiverId, content) => {
+    // 1. Sécurité : on ne fait rien si le message est vide
+    if (!content.trim()) return false;
 
-  try {
-    // 2. ÉTAPE 1 : Confirmation SweetAlert (Spécifique Homme)
-    const confirmation = await Swal.fire({
-      title: "Êtes-vous sûr d'envoyer ce message ?",
-      text: "Vous ne pourrez pas modifier le message une fois envoyé !",
-      icon: "warning",
-      showCancelButton: true,
-      background: "#1f2a4d",
-      color: "#fff",
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Oui, Envoyer !",
-      cancelButtonText: "Annuler",
-    });
-
-    // Si l'utilisateur clique sur "Annuler", on renvoie false
-    // pour que le texte reste dans l'input du ChatModal
-    if (!confirmation.isConfirmed) return false;
-
-    // 3. ÉTAPE 2 : Envoi réel au Backend Symfony
-    const response = await fetch("http://localhost:8000/api/messages/send", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify({ content, receiverId }),
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      // Succès visuel
-      Swal.fire({
-        icon: "success",
-        title: "Message envoyé au traducteur !",
-        text: "Votre message va être traduit et envoyé à votre contact.",
+    try {
+      // 2. ÉTAPE 1 : Confirmation SweetAlert (Spécifique Homme)
+      const confirmation = await Swal.fire({
+        title: "Êtes-vous sûr d'envoyer ce message ?",
+        text: "Vous ne pourrez pas modifier le message une fois envoyé !",
+        icon: "warning",
+        showCancelButton: true,
         background: "#1f2a4d",
         color: "#fff",
-        confirmButtonColor: "#d4af37",
-        timer: 3000,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Oui, Envoyer !",
+        cancelButtonText: "Annuler",
       });
 
-      // On rafraîchit l'historique des messages dans la modale
-      fetchMessages(receiverId);
-      
-      // On renvoie TRUE pour dire à la modale : "C'est bon, tu peux vider l'input !"
-      return true; 
-    } else {
-      // Le serveur a répondu une erreur (ex: plus de crédits, etc.)
-      throw new Error(data.message || "Une erreur est survenue lors de l'envoi.");
+      // Si l'utilisateur clique sur "Annuler", on renvoie false
+      // pour que le texte reste dans l'input du ChatModal
+      if (!confirmation.isConfirmed) return false;
+
+      // 3. ÉTAPE 2 : Envoi réel au Backend Symfony
+      const response = await fetch("http://localhost:8000/api/messages/send", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ content, receiverId }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Succès visuel
+        Swal.fire({
+          icon: "success",
+          title: "Message envoyé au traducteur !",
+          text: "Votre message va être traduit et envoyé à votre contact.",
+          background: "#1f2a4d",
+          color: "#fff",
+          confirmButtonColor: "#d4af37",
+          timer: 3000,
+        });
+
+        // On rafraîchit l'historique des messages dans la modale
+        fetchMessages(receiverId);
+
+        // On renvoie TRUE pour dire à la modale : "C'est bon, tu peux vider l'input !"
+        return true;
+      } else {
+        // Le serveur a répondu une erreur (ex: plus de crédits, etc.)
+        throw new Error(
+          data.message || "Une erreur est survenue lors de l'envoi.",
+        );
+      }
+    } catch (error) {
+      // Erreur réseau ou erreur lancée au-dessus
+      Swal.fire({
+        icon: "error",
+        title: "Oups...",
+        text: error.message,
+        background: "#1f2a4d",
+        color: "#fff",
+      });
+
+      // En cas d'échec, on renvoie FALSE pour garder le texte de l'utilisateur
+      return false;
     }
-  } catch (error) {
-    // Erreur réseau ou erreur lancée au-dessus
-    Swal.fire({
-      icon: "error",
-      title: "Oups...",
-      text: error.message,
+  };
+  // #endregion
+
+  //#region SUPPR CONVERSATION
+  const handleDeleteConversation = async (contactId) => {
+    const result = await Swal.fire({
+      title: "Supprimer la conversation ?",
+      text: "Tous les messages avec ce contact seront effacés définitivement.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Oui, supprimer",
+      cancelButtonText: "Annuler",
       background: "#1f2a4d",
       color: "#fff",
     });
 
-    // En cas d'échec, on renvoie FALSE pour garder le texte de l'utilisateur
-    return false;
-  }
-};
-// #endregion
+    if (result.isConfirmed) {
+      try {
+        const response = await fetch(
+          `http://localhost:8000/api/messages/conversation/${contactId}`,
+          {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          },
+        );
 
+        if (response.ok) {
+          Swal.fire({
+            title: "Supprimé !",
+            icon: "success",
+            timer: 1500,
+            showConfirmButton: false,
+            background: "#1f2a4d",
+            color: "#fff",
+          });
+
+          // Rafraîchir la liste des conversations après suppression
+          // (La fonction que tu utilises pour charger tes contacts)
+          fetchConversations();
+        } else {
+          throw new Error("Erreur lors de la suppression");
+        }
+      } catch (error) {
+        Swal.fire({
+          icon: "error",
+          title: "Erreur",
+          text: error.message,
+          background: "#1f2a4d",
+          color: "#fff",
+        });
+      }
+    }
+  };
+  //#endregion
 
   //#region CHARG. PAGE
   useEffect(() => {
@@ -993,7 +1050,7 @@ const handleSendMessage = async (receiverId, content) => {
                     </p>
                   </div>
                 ) : (
-                  <div style={{ display: "grid", gap: "15px" }}>
+                  <div className="conversations-grid">
                     {conversations.map((contact) => (
                       <div
                         key={contact.id}
@@ -1005,59 +1062,68 @@ const handleSendMessage = async (receiverId, content) => {
                             handleMarkAsRead(contact.id);
                           }
                         }}
-                        style={{
-                          // Effet visuel doré si nouveau message
-                          background: contact.hasNewMessages
-                            ? "linear-gradient(90deg, rgba(212,175,55,0.1) 0%, rgba(255,255,255,0.05) 100%)"
-                            : "rgba(255,255,255,0.05)",
-                          padding: "20px",
-                          borderRadius: "12px",
-                          cursor: "pointer",
-                          border: contact.hasNewMessages
-                            ? "1px solid #d4af37"
-                            : "1px solid rgba(255,255,255,0.1)",
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          transition: "all 0.2s ease",
-                        }}
+                        className={`conversation-card ${
+                          contact.hasNewMessages ? "new-message" : ""
+                        }`}
                       >
-                        <div>
-                          <strong style={{ color: "#fff", fontSize: "1.1rem" }}>
+                        {/* Bloc gauche */}
+                        <div className="conversation-left">
+                          <strong className="conversation-name">
                             {contact.nickname || "Utilisateur"}
                           </strong>
-                          <div
-                            style={{
-                              color: "rgba(255,255,255,0.5)",
-                              fontSize: "0.8rem",
-                            }}
-                          >
+                          <div className="conversation-age">
                             {contact.age} ans
                           </div>
                         </div>
 
-                        {/* Badge Doré */}
-                        {contact.hasNewMessages ? (
+                        {/* Bloc centre */}
+                        <div className="conversation-center">
                           <span
-                            style={{
-                              background: "#d4af37",
-                              color: "#000",
-                              padding: "5px 12px",
-                              borderRadius: "20px",
-                              fontSize: "0.7rem",
-                              fontWeight: "bold",
-                              boxShadow: "0 0 10px rgba(212,175,55,0.5)",
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigate(`/profile/${contact.id}`);
                             }}
+                            className="view-profile-btn"
                           >
-                            NOUVEAU
+                            Voir son profil
                           </span>
-                        ) : (
-                          <span
-                            style={{ color: "#f67280", fontWeight: "bold" }}
+                        </div>
+
+                        {/* Bloc droite */}
+                        <div className="conversation-right">
+                          {contact.hasNewMessages ? (
+                            <span className="badge-new">NOUVEAU</span>
+                          ) : (
+                            <span className="reply-link"> → Répondre </span>
+                          )}
+                        </div>
+
+                        {/* Bloc de suppression d'une conversation */}
+                        <div style={{ marginLeft: "15px" }}>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation(); // Évite d'ouvrir le chat
+                              handleDeleteConversation(contact.id);
+                            }}
+                            className="trashCss"
+                            style={{
+                              background: "none",
+                              border: "1px solid #ff4d4d",
+                              borderRadius: "45px",
+                              paddingTop: "10px",
+                              paddingBottom: "10px",
+                              paddingLeft: "10px",
+                              paddingRight: "10px",
+                              color: "#ff4d4d", 
+                              cursor: "pointer",
+                              padding: "5px",
+
+                            }}
+                            title="Supprimer la conversation"
                           >
-                            Répondre →
-                          </span>
-                        )}
+                            <Trash2 size={20} />
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>
