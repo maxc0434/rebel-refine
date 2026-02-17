@@ -15,51 +15,50 @@ const ViewMaleProfile = () => {
   const messagesEndRef = useRef(null);
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
-
   const userData = JSON.parse(localStorage.getItem("user"));
 
   const onSendMessage = async (contactId, content) => {
-  if (!content.trim()) return false;
+    if (!content.trim()) return false;
 
-  try {
-    const response = await fetch("http://localhost:8000/api/messages/send", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ content, receiverId: contactId }), // Symfony attend receiverId
-    });
+    try {
+      const response = await fetch("http://localhost:8000/api/messages/send", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ content, receiverId: contactId }), // Symfony attend receiverId
+      });
 
-    if (response.ok) {
-      // 1. On rafraîchit la liste locale pour voir le message apparaître immédiatement
-      // Optionnel : tu peux refaire un fetch de l'historique ici
-      const newMsg = {
-        id: Date.now(),
-        content: content,
-        senderId: userData.id,
-        createdAt: new Date().toISOString(),
-        status: "pending",
-      };
-      setMessages((prev) => [...prev, newMsg]);
+      if (response.ok) {
+        // 1. On rafraîchit la liste locale pour voir le message apparaître immédiatement
+        // Optionnel : tu peux refaire un fetch de l'historique ici
+        const newMsg = {
+          id: Date.now(),
+          content: content,
+          senderId: userData.id,
+          createdAt: new Date().toISOString(),
+          status: "pending",
+        };
+        setMessages((prev) => [...prev, newMsg]);
 
-      // 2. TRÈS IMPORTANT : On renvoie true pour vider l'input dans ChatModal
-      return true; 
-    } else {
-      console.error("Erreur serveur lors de l'envoi");
+        // 2. TRÈS IMPORTANT : On renvoie true pour vider l'input dans ChatModal
+        return true;
+      } else {
+        console.error("Erreur serveur lors de l'envoi");
+        return false;
+      }
+    } catch (error) {
+      console.error("Erreur API:", error);
       return false;
     }
-  } catch (error) {
-    console.error("Erreur API:", error);
-    return false;
-  }
-};
+  };
 
+  // #region RECUPERATION PROFIL
   useEffect(() => {
     if (!id) return;
 
     setLoading(true);
-    // Vérifie bien si ton URL API est /api/profile/ ou /api/profile/male/
     fetch(`http://localhost:8000/api/profile/male/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -87,6 +86,9 @@ const ViewMaleProfile = () => {
       .finally(() => setLoading(false));
   }, [id, token]);
 
+  // #endregion
+
+  // #region RECUPERATION HISTORIQUE
   useEffect(() => {
     if (isModalOpen && id) {
       fetch(`http://localhost:8000/api/messages/list/${id}`, {
@@ -106,7 +108,9 @@ const ViewMaleProfile = () => {
     }
   }, [isModalOpen, id, token]);
 
-  // 1. Affichage de l'erreur
+  // #endregion
+
+  // #region GESTION ERREUR
   if (error) {
     return (
       <div
@@ -135,6 +139,9 @@ const ViewMaleProfile = () => {
     );
   }
 
+  // #endregion
+
+  // #region FORMAT DATE
   // Fonction pour formater la date
   const formatDate = (dateString) => {
     if (!dateString) return "Non renseignée";
@@ -145,7 +152,9 @@ const ViewMaleProfile = () => {
       year: "numeric",
     });
   };
+  // #endregion
 
+  // #region CALCUL AGE
   // Fonction pour calculer l'âge dynamiquement si l'API ne le renvoie pas déjà
   const calculateAge = (dateString) => {
     if (!dateString) return "";
@@ -154,7 +163,9 @@ const ViewMaleProfile = () => {
     const ageDate = new Date(difference);
     return Math.abs(ageDate.getUTCFullYear() - 1970);
   };
+  // #endregion
 
+  //#region AFFICHAGE du LOADER
   // 2. Affichage pendant le chargement
   if (loading || !profile) {
     return (
@@ -175,13 +186,17 @@ const ViewMaleProfile = () => {
       </div>
     );
   }
+  //#endregion
 
-  // 3. Rendu du profil
+  //#region AFFICHAGE PROFIL
   return (
     <div
       className="view-profile-page"
       style={{
-        background: "#12122d",
+        background: `
+    radial-gradient(at 0% 0%, rgba(212, 175, 55, 0.05) 0%, transparent 50%), 
+    linear-gradient(180deg, #12122d 0%, #0a0a1a 100%)
+  `,
         minHeight: "100vh",
         color: "white",
         padding: "40px 0",
@@ -197,7 +212,7 @@ const ViewMaleProfile = () => {
 
         <div className="row">
           <div className="col-lg-5">
-            {/* Photo Principale */}
+            {/* MARK: Photo Principale */}
             <div
               className="main-photo-container mb-3"
               style={{
@@ -234,8 +249,8 @@ const ViewMaleProfile = () => {
               )}
             </div>
 
-            {/* Miniatures (La Galerie) */}
-            <div className="d-flex gap-2 overflow-auto pb-2 custom-scrollbar">
+            {/* MARK: Miniatures  */}
+            <div className="d-flex gap-2 overflow-auto pb-2 custom-scrollbar ">
               {profile.photos?.map((photo, index) => (
                 <img
                   key={index}
@@ -260,10 +275,46 @@ const ViewMaleProfile = () => {
                 />
               ))}
             </div>
+            {/* MARK: Autres infos */}
+            <div
+              className="bio-section mb-4 mt-5"
+              style={{
+                background: "rgba(255,255,255,0.05)",
+                borderRadius: "15px",
+                maxHeight: "800px",
+                overflowY: "auto",
+                borderLeft: "4px solid #d4af37",
+                padding: "25px",
+              }}
+            >
+              <h4 className="gold-text mb-3">Autres Informations</h4>
+
+              <div className="row mt-4">
+                <div className="col-sm-6">
+                  <p>
+                    <strong>Date de naissance :</strong>{" "}
+                    {formatDate(profile.birthdate) || "Non renseigné"}
+                  </p>
+                  <p>
+                    <strong>Status Marital :</strong>{" "}
+                    {profile.marital || "Non renseigné"}
+                  </p>
+                  <p>
+                    <strong>Enfants :</strong>{" "}
+                    {profile.children || "Non renseigné"}
+                  </p>
+                  <p>
+                    <strong>Religion :</strong>{" "}
+                    {profile.religion || "Non renseigné"}
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div className="col-lg-7">
-            <h1 className="display-4 fw-bold">
+          {/* MARK: Pseudo + age + description */}
+          <div className="col-lg-7 ">
+            <h1 className="display-4 fw-bold mb-4">
               {profile.nickname},{" "}
               <span className="gold-text">
                 {profile.age ? profile.age : calculateAge(profile.birthdate)}{" "}
@@ -272,13 +323,14 @@ const ViewMaleProfile = () => {
             </h1>
 
             <div
-              className="bio-section p-4 mb-4"
+              className="bio-section mb-4"
               style={{
                 background: "rgba(255,255,255,0.05)",
                 borderRadius: "15px",
                 maxHeight: "800px",
                 overflowY: "auto",
                 borderLeft: "4px solid #d4af37",
+                padding: "25px",
               }}
             >
               <h4 className="gold-text mb-3">À propos</h4>
@@ -289,41 +341,26 @@ const ViewMaleProfile = () => {
                   __html: profile.interests || "Aucune description.",
                 }}
                 style={{
-                  lineHeight: "1.6",
+                  lineHeight: "1.8",
                   fontSize: "1.1rem",
-                  whiteSpace: "normal",
+                  whiteSpace: "pre-wrap",
+                  wordBreak: "break-word",
                 }}
               />
             </div>
 
-            <div className="row mt-4">
-              <div className="col-sm-6">
-                <p>
-                  <strong>Date de naissance :</strong>{" "}
-                  {formatDate(profile.birthdate) || "Non renseigné"}
-                </p>
-                <p>
-                  <strong>Status Marital :</strong>{" "}
-                  {profile.marital || "Non renseigné"}
-                </p>
-                <p>
-                  <strong>Enfants :</strong>{" "}
-                  {profile.children || "Non renseigné"}
-                </p>
-                <p>
-                  <strong>Religion :</strong>{" "}
-                  {profile.religion || "Non renseigné"}
-                </p>
-              </div>
-            </div>
-
             <button
-              className="lab-btn mt-4"
+              className="lab-btn mt-5"
+              style={{ 
+                margin: "100px",
+              }}
               onClick={() => setIsModalOpen(true)}
             >
               <span>Répondre à {profile.nickname}</span>
             </button>
 
+            
+            {/* MARK: Chat */}
             <ChatModal
               isOpen={isModalOpen}
               onClose={() => setIsModalOpen(false)}
@@ -336,6 +373,7 @@ const ViewMaleProfile = () => {
           </div>
         </div>
       </div>
+      {/* MARK: Photo Zoom */}
       {selectedPhoto && (
         <div
           className="photo-zoom-overlay"

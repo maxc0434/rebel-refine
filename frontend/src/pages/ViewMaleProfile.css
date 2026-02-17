@@ -5,4 +5,13 @@
     overflow-wrap: normal !important; /* Empêche le débordement forcé */
     hyphens: none !important;         /* Désactive les tirets automatiques */
     text-align: left !important;      /* Évite les grands espaces vides du 'justify' */
+    
+}
+
+/* Force le texte à ne pas coller à droite, peu importe le contenu HTML */
+.profile-description p, 
+.profile-description div,
+.profile-description span {
+    margin-right: 15px !important; /* <--- Crée l'espace nécessaire */
+    margin-bottom: 10px;
 }
