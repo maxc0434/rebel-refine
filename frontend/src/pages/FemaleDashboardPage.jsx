@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { User, MessageSquare, Shield } from "lucide-react";
 import Swal from "sweetalert2";
 import "./FemaleDashboardPage.css";
@@ -373,6 +373,24 @@ function FemaleDashboardPage() {
                           </div>
                         </div>
 
+                        {/* LIEN VERS LE PROFIL */}
+                        <span
+                          onClick={(e) => {
+                            e.stopPropagation(); // Évite d'ouvrir la modale de chat au clic
+                            navigate(`/view-male-profile/${contact.id}`);
+                          }}
+                          style={{
+                            color: "#c0c0c0 ",
+                            marginLeft: "5px",
+                            cursor: "pointer",
+                            border: "1px solid  #c0c0c0 ",
+                            borderRadius: "5px",
+                            padding: "2px 5px",
+                            }}
+                        >
+                          Voir son profil
+                        </span>
+
                         {/* Badge Doré ou lien répondre */}
                         {contact.hasNewMessages ? (
                           <span className="badge-new">NOUVEAU</span>
@@ -477,7 +495,7 @@ function FemaleDashboardPage() {
                         onClick={() => {
                           const input = document.getElementById("chatInput");
                           handleSendMessage(selectedContact.id, input.value);
-                          input.value = ""; 
+                          input.value = "";
                         }}
                       >
                         Envoyer
@@ -659,12 +677,12 @@ const InfoBox = ({ label, value }) => (
     >
       {label}
     </span>
-    <div 
+    <div
       style={{
-        fontSize: "1.0rem", 
+        fontSize: "1.0rem",
         color: "rgba(255,255,255,0.9)",
         fontWeight: "400",
-        lineHeight: "1.5", 
+        lineHeight: "1.5",
       }}
       // transforme le code HTML en vrai texte mis en forme
       dangerouslySetInnerHTML={{ __html: value || "Non renseigné" }}

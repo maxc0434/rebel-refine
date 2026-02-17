@@ -23,7 +23,7 @@ const handleDiscoverClick = (e) => {
 
   Swal.fire({
     title: 'Accès Galerie',
-    text: "Pour accéder à la galerie des membres et à la messagerie, vous devez vous connecter.",
+    text: "Pour accéder à la galerie des membres ainsi qu'aux profils et à la messagerie, vous devez vous connecter.",
     icon: 'info',
     showCancelButton: true,
     confirmButtonColor: '#d4af37',
@@ -92,13 +92,12 @@ const handleDiscoverClick = (e) => {
                   <h1 className="display-4 fw-bold">
                     REBEL <span className="gold-text">REFINE</span>
                   </h1>
-                  <h2>L'élégance n'attend que vous.</h2>
+                  <h2>Osez l'Orient, Vivez l'Inoubliable.</h2>
                   <p>
-                    Rejoignez des milliers de célibataires exigeants dans un
-                    cadre prestigieux.
+                    Rencontrez des femmes authentiques en quête d'un homme européen moderne. Un pont entre deux mondes, bâti sur le respect.
                   </p>
                   <Link to="/register" className="lab-btn">
-                    Commencer l'aventure
+                    COMMENCER L'AVENTURE
                   </Link>
                 </div>
               </div>
@@ -114,13 +113,12 @@ const handleDiscoverClick = (e) => {
                 <div className="row flex-row-reverse">
                   <div className="col-lg-6">
                     <div className="banner-content-box">
-                      <h2>Des lieux uniques, des rencontres inoubliables.</h2>
+                      <h2>Le Rendez-vous de Deux Mondes.</h2>
                       <p>
-                        Découvrez une nouvelle façon de tisser des liens basée
-                        sur le respect.
+                        Découvrez des profils féminins authentiques et raffinés, sélectionnés pour un homme exigeant en quête d'une histoire sérieuse.
                       </p>
                       <Link to="/login" className="lab-btn">
-                        Explorer les membres
+                        CRÉER LE LIEN
                       </Link>
                     </div>
                   </div>

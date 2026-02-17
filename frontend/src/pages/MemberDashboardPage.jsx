@@ -1310,6 +1310,7 @@ function MemberDashboardPage() {
                     gridTemplateColumns:
                       "repeat(auto-fill, minmax(220px, 1fr))",
                     gap: "25px",
+                    
                   }}
                 >
                   {favorites.map((fav) => (
@@ -1337,7 +1338,7 @@ function MemberDashboardPage() {
                             style={{
                               width: "100%",
                               height: "100%",
-                              objectFit: "cover",
+                              objectFit: "contain",
                               borderRadius: "15px 15px 0 0",
                             }}
                           />
@@ -1348,7 +1349,7 @@ function MemberDashboardPage() {
                             style={{
                               width: "100%",
                               height: "100%",
-                              objectFit: "cover",
+                              objectFit: "contain",
                               borderRadius: "15px 15px 0 0",
                               opacity: 0.8,
                             }}

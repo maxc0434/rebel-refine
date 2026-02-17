@@ -15,8 +15,6 @@ function HomePage() {
   const [maxAge, setMaxAge] = useState("30"); // Filtre âge maximum
   //#endregion
 
-
-
   //#region FCT FORM RECHERCHE
   // --- ÉTAPE 2 : Préparation du formulaire de recherche ---
   const ageOptions = [];
@@ -34,7 +32,6 @@ function HomePage() {
     navigate(`/search?min=${minAge}&max=${maxAge}`);
   };
   //#endregion
-
 
   //#region FCT HOME
   // --- ÉTAPE 3 : Chargement initial des données (useEffect) ---
@@ -66,7 +63,6 @@ function HomePage() {
       });
   }, [navigate, token]);
   //#endregion
-
 
   //#region FCT FAVORIS
   // --- ÉTAPE 4 : Gestion des Favoris (Ajouter/Retirer) ---
@@ -125,11 +121,15 @@ function HomePage() {
   //#endregion
 
 
-  //#region RENDER
-  // ---ÉTAPE 6 : Affichage de la page ---
+
+
+  //#region AFFICHAGE
+
+
+
   return (
     <>
-      {/* ================ Banner Section start Here =============== */}
+      {/* MARK: Banner Section start Here =============== */}
       <section
         className="banner-section bgimg d-flex align-items-center"
         style={{
@@ -179,7 +179,7 @@ function HomePage() {
                         }}
                       ></div>
 
-                      {/* Formulaire de recherche */}
+                      {/* MARK:Form de recherche */}
                       <h6
                         className="text-uppercase mb-4"
                         style={{
@@ -215,7 +215,6 @@ function HomePage() {
                                 >
                                   De
                                 </option>
-                                {/* Assure-toi que tes ageOptions reçoivent aussi ce style si elles sont générées ailleurs */}
                                 {ageOptions}
                               </select>
                             </div>
@@ -247,7 +246,6 @@ function HomePage() {
                           </div>
                         </div>
 
-                        {/* Le bouton avec l'effet pilule et ton dégradé */}
                         <button
                           type="submit"
                           style={{
@@ -275,7 +273,7 @@ function HomePage() {
       </section>
       {/* ================ Banner Section end Here =============== */}
 
-      {/* ================ Member Section (Derniers inscrits BDD) =============== */}
+      {/* MARK: Derniers inscrits =============== */}
       <section className="member-section padding-tb">
         <div className="container">
           <div className="section-header">
@@ -365,14 +363,17 @@ function HomePage() {
       </section>
       {/* ================ Member Section end Here =============== */}
 
-      {/* ================ About Section start Here =============== */}
+      {/* ================ MARK: About Section start Here =============== */}
       <section
         className="about-section padding-tb bgimg"
-        style={{ backgroundImage: "url(assets/images/bg-img/01.jpg)" }}
+        style={{
+          backgroundImage: "url(assets/images/bg-img/01.jpg)",
+          padding: "80px 0",
+        }}
       >
         <div className="container">
-          <div className="section-header">
-            <h2>Tout commence par une rencontre</h2>
+          <div className="section-header text-center mb-5">
+            <h2 style={{ color: "white" }}>Tout commence par une rencontre</h2>
             <p>
               Rejoignez une communauté grandissante et accédez à des milliers de
               profils.
@@ -380,78 +381,210 @@ function HomePage() {
           </div>
           <div className="section-wrapper">
             <div className="row justify-content-center g-4">
+              {/* CARTE 1 : TOTAL */}
               <div className="col-xl-3 col-lg-4 col-sm-6 col-12">
-                <div className="lab-item about-item">
+                <div
+                  className="lab-item about-item"
+                  style={{
+                    background: "rgba(255,255,255,0.05)",
+                    borderRadius: "15px",
+                    padding: "20px",
+                  }}
+                >
                   <div className="lab-inner text-center">
-                    <div className="lab-thumb">
-                      <img src="assets/images/about/01.png" alt="img" />
+                    {/* Le conteneur du logo centré */}
+                    <div
+                      className="lab-thumb"
+                      style={{
+                        height: "120px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        marginBottom: "10px",
+                      }}
+                    >
+                      <img
+                        src="assets/images/about/01.png"
+                        alt="img"
+                        style={{ maxWidth: "70px", height: "auto" }}
+                      />
                     </div>
                     <div className="lab-content">
-                      <h2 className="counter">
+                      <h2
+                        className="counter"
+                        style={{ color: "white", marginBottom: "0" }}
+                      >
                         <CountUp
                           end={apiData?.total_members || 0}
                           separator=","
                           duration={3}
                         />
                       </h2>
-                      <p>Membres au Total</p>
+                      <p
+                        style={{
+                          color: "#d4af37",
+                          fontSize: "0.9rem",
+                          textTransform: "uppercase",
+                        }}
+                      >
+                        Membres au Total
+                      </p>
                     </div>
                   </div>
                 </div>
               </div>
+
+              {/* CARTE 2 : EN LIGNE */}
               <div className="col-xl-3 col-lg-4 col-sm-6 col-12">
-                <div className="lab-item about-item">
+                <div
+                  className="lab-item about-item"
+                  style={{
+                    background: "rgba(255,255,255,0.05)",
+                    borderRadius: "15px",
+                    padding: "20px",
+                  }}
+                >
                   <div className="lab-inner text-center">
-                    <div className="lab-thumb">
-                      <img src="assets/images/about/02.png" alt="img" />
+                    <div
+                      className="lab-thumb"
+                      style={{
+                        height: "120px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        marginBottom: "10px",
+                      }}
+                    >
+                      <img
+                        src="assets/images/about/02.png"
+                        alt="img"
+                        style={{ maxWidth: "70px", height: "auto" }}
+                      />
                     </div>
                     <div className="lab-content">
-                      <h2 className="counter">
+                      <h2
+                        className="counter"
+                        style={{ color: "white", marginBottom: "0" }}
+                      >
                         <CountUp
                           end={apiData?.total_members || 0}
                           separator=","
                           duration={3}
                         />
                       </h2>
-                      <p>Membres en ligne</p>
+                      <p
+                        style={{
+                          color: "#d4af37",
+                          fontSize: "0.9rem",
+                          textTransform: "uppercase",
+                        }}
+                      >
+                        Membres en ligne
+                      </p>
                     </div>
                   </div>
                 </div>
               </div>
+
+              {/* CARTE 3 : HOMMES */}
               <div className="col-xl-3 col-lg-4 col-sm-6 col-12">
-                <div className="lab-item about-item">
+                <div
+                  className="lab-item about-item"
+                  style={{
+                    background: "rgba(255,255,255,0.05)",
+                    borderRadius: "15px",
+                    padding: "20px",
+                  }}
+                >
                   <div className="lab-inner text-center">
-                    <div className="lab-thumb">
-                      <img src="assets/images/about/03.png" alt="img" />
+                    <div
+                      className="lab-thumb"
+                      style={{
+                        height: "120px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        marginBottom: "10px",
+                      }}
+                    >
+                      <img
+                        src="assets/images/about/03.png"
+                        alt="img"
+                        style={{ maxWidth: "70px", height: "auto" }}
+                      />
                     </div>
                     <div className="lab-content">
-                      <h2 className="counter">
+                      <h2
+                        className="counter"
+                        style={{ color: "white", marginBottom: "0" }}
+                      >
                         <CountUp
                           end={apiData?.count_males || 0}
                           separator=","
                           duration={3}
                         />
                       </h2>
-                      <p>Hommes en ligne</p>
+                      <p
+                        style={{
+                          color: "#d4af37",
+                          fontSize: "0.9rem",
+                          textTransform: "uppercase",
+                        }}
+                      >
+                        Hommes en ligne
+                      </p>
                     </div>
                   </div>
                 </div>
               </div>
+
+              {/* CARTE 4 : FEMMES */}
               <div className="col-xl-3 col-lg-4 col-sm-6 col-12">
-                <div className="lab-item about-item">
+                <div
+                  className="lab-item about-item"
+                  style={{
+                    background: "rgba(255,255,255,0.05)",
+                    borderRadius: "15px",
+                    padding: "20px",
+                  }}
+                >
                   <div className="lab-inner text-center">
-                    <div className="lab-thumb">
-                      <img src="assets/images/about/04.png" alt="img" />
+                    <div
+                      className="lab-thumb"
+                      style={{
+                        height: "120px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        marginBottom: "10px",
+                      }}
+                    >
+                      <img
+                        src="assets/images/about/04.png"
+                        alt="img"
+                        style={{ maxWidth: "70px", height: "auto" }}
+                      />
                     </div>
                     <div className="lab-content">
-                      <h2 className="counter">
+                      <h2
+                        className="counter"
+                        style={{ color: "white", marginBottom: "0" }}
+                      >
                         <CountUp
                           end={apiData?.count_females || 0}
                           separator=","
                           duration={3}
                         />
                       </h2>
-                      <p>Femmes en ligne</p>
+                      <p
+                        style={{
+                          color: "#d4af37",
+                          fontSize: "0.9rem",
+                          textTransform: "uppercase",
+                        }}
+                      >
+                        Femmes en ligne
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -462,7 +595,7 @@ function HomePage() {
       </section>
       {/* ================ About Section end Here =============== */}
 
-      {/* ================ Meet Section start Here =============== */}
+      {/* ================ MARK: Meet Section start Here =============== */}
       <div className="meet padding-tb">
         <div className="container">
           <div className="section-header">
@@ -635,7 +768,7 @@ function HomePage() {
       </div>
       {/* ================ Meet Section end Here =============== */}
 
-      {/*  ================ Success Story Section start Here =============== */}
+      {/*  ================ MARK: Success Story Section start Here =============== */}
       <section
         className="story-section padding-tb bgimg"
         style={{ backgroundImage: "url(/assets/images/bg-img/02.jpg)" }}

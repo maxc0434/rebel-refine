@@ -137,13 +137,14 @@ function MembersPage() {
                         src={
                           m.photos && m.photos.length > 0
                             ? `http://localhost:8000/uploads/users/${m.photos[0]}`
-                            : "/assets/images/member/04.jpg"
+                            : "/assets/images/member/01-user-no-photo.jpg"
                         }
                         alt={m.nickname}
                         style={{
                           width: "100%",
                           height: "250px",
-                          objectFit: "cover",
+                          objectFit: "contain",
+                          paddingTop: "20px",
                         }}
                       />
                     </div>

@@ -35,7 +35,7 @@ const ResetPasswordPage = () => {
       setMessage(
         "Succès ! Votre mot de passe est mis à jour.\nRedirection automatique vers la page de connexion...",
       );
-      setTimeout(() => navigate("/"), 3000);
+      setTimeout(() => navigate("/login"), 3000);
     } else {
       // 6. En cas d'erreur (ex: token expiré) : affichage du message d'erreur de l'API
       setError(data.error || "Une erreur est survenue.");

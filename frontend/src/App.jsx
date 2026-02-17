@@ -11,6 +11,7 @@ import SearchPage from "./pages/SearchPage";
 import FemaleDashboardPage from "./pages/FemaleDashboardPage";
 import TranslatorDashboard from "./pages/TranslatorDashboard";
 import PresentationPage from "./pages/PresentationPage";
+import ViewMaleProfile from "./pages/ViewMaleProfile";
 
 function App() {
   return (
@@ -40,6 +41,8 @@ function App() {
           <Route path="/female-dashboard" element={<FemaleDashboardPage />} />
           
           <Route path="/translator-dashboard" element={<TranslatorDashboard />} />
+
+          <Route path="/view-male-profile/:id" element={<ViewMaleProfile />} />
 
         </Routes>
     </Router>

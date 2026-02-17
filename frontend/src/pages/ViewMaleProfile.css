@@ -1,0 +1,8 @@
+/* Désactive les coupures de mots et force l'alignement propre */
+.profile-description, 
+.profile-description * {
+    word-break: normal !important;    /* Ne coupe jamais un mot au milieu */
+    overflow-wrap: normal !important; /* Empêche le débordement forcé */
+    hyphens: none !important;         /* Désactive les tirets automatiques */
+    text-align: left !important;      /* Évite les grands espaces vides du 'justify' */
+}
