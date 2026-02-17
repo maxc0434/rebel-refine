@@ -18,20 +18,42 @@ const ViewMaleProfile = () => {
 
   const userData = JSON.parse(localStorage.getItem("user"));
 
-  const onSendMessage = (contactId, content) => {
-    // Ici on appellera ton API Symfony plus tard
-    console.log("Message pour ID:", contactId, "Contenu:", content);
+  const onSendMessage = async (contactId, content) => {
+  if (!content.trim()) return false;
 
-    // Pour l'instant, on l'ajoute en local pour voir le résultat
-    const newMsg = {
-      id: Date.now(),
-      content: content,
-      senderId: userData.id,
-      createdAt: new Date(),
-      status: "pending",
-    };
-    setMessages([...messages, newMsg]);
-  };
+  try {
+    const response = await fetch("http://localhost:8000/api/messages/send", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ content, receiverId: contactId }), // Symfony attend receiverId
+    });
+
+    if (response.ok) {
+      // 1. On rafraîchit la liste locale pour voir le message apparaître immédiatement
+      // Optionnel : tu peux refaire un fetch de l'historique ici
+      const newMsg = {
+        id: Date.now(),
+        content: content,
+        senderId: userData.id,
+        createdAt: new Date().toISOString(),
+        status: "pending",
+      };
+      setMessages((prev) => [...prev, newMsg]);
+
+      // 2. TRÈS IMPORTANT : On renvoie true pour vider l'input dans ChatModal
+      return true; 
+    } else {
+      console.error("Erreur serveur lors de l'envoi");
+      return false;
+    }
+  } catch (error) {
+    console.error("Erreur API:", error);
+    return false;
+  }
+};
 
   useEffect(() => {
     if (!id) return;
@@ -78,7 +100,6 @@ const ViewMaleProfile = () => {
           return res.json();
         })
         .then((data) => {
-          console.log("Messages récupérés :", data);
           setMessages(data); // On remplit l'état 'messages' pour la modale
         })
         .catch((err) => console.error("Erreur Fetch Messages :", err.message));

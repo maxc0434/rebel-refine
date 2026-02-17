@@ -69,6 +69,7 @@ class MemberDashboardController extends AbstractController
 
             // BLOC DU CURRENT USER : Les informations de celui qui regarde le dashboard
             'userData' => [
+                'id' => $user->getId(),                   // Son identifiant unique
                 'nickname' => $user->getNickname(),       // Son propre pseudo
                 'email' => $user->getUserIdentifier(),    // Son email (identifiant de connexion)
                 'roles' => $user->getRoles(),             // Ses droits d'accès
@@ -162,6 +163,7 @@ class MemberDashboardController extends AbstractController
             'status' => 'success',
             'message' => 'Profil mis à jour avec succès',
             'userData' => [
+                'id' => $user->getId(),
                 'nickname' => $user->getNickname(),
                 'interests' => $user->getInterests(),
                 'marital' => $user->getMarital(),

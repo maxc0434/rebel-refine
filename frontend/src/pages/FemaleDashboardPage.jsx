@@ -164,30 +164,34 @@ function FemaleDashboardPage() {
   // #endregion
 
   // #region ECRIRE MSG
-  const handleSendMessage = async (receiverId, content) => {
-    if (!content.trim()) return;
-    try {
-      const response = await fetch("http://localhost:8000/api/messages/send", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({ content, receiverId }),
-      });
+const handleSendMessage = async (receiverId, content) => {
+  if (!content.trim()) return false; // On renvoie false si c'est vide
 
-      if (response.ok) {
-        // Vide l'input
-        const input = document.getElementById("chatInput");
-        if (input) input.value = "";
-        // Rafraîchit la discussion pour voir le nouveau message
-        fetchMessages(receiverId);
-      }
-    } catch (error) {
-      console.error("Erreur envoi:", error);
+  try {
+    const response = await fetch("http://localhost:8000/api/messages/send", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({ content, receiverId }),
+    });
+
+    if (response.ok) {
+      console.log("SUCCESS : Le message est passé côté Symfony !");
+      // Rafraîchit la discussion pour voir le nouveau message
+      fetchMessages(receiverId);
+      return true; // On informe la modale que l'envoi a réussi
+    } else {
+      console.log("ERREUR : Le serveur a répondu non !", response.status);
+      return false; 
     }
-  };
-  // #endregion
+  } catch (error) {
+    console.error("Erreur envoi:", error);
+    return false; 
+  }
+};
+// #endregion
 
   //#region MONTAGE DU COMPOSANT et CHARGEMENT DES DONNÉES
   useEffect(() => {

@@ -7,6 +7,7 @@ import "./MemberDashboardPage.css";
 import Swal from "sweetalert2";
 import { useDropzone } from "react-dropzone";
 import { useCallback } from "react";
+import ChatModal from "../components/ChatModal";
 
 function MemberDashboardPage() {
   // #region STATES
@@ -338,64 +339,81 @@ function MemberDashboardPage() {
   };
   // #endregion
 
-  // #region SCROLL AUTO
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+// #region ENVOI MSG
+const handleSendMessage = async (receiverId, content) => {
+  // 1. Sécurité : on ne fait rien si le message est vide
+  if (!content.trim()) return false;
 
-  useEffect(() => {
-    if (isModalOpen) {
-      scrollToBottom();
-    }
-  }, [messages, isModalOpen]);
-  // #endregion
+  try {
+    // 2. ÉTAPE 1 : Confirmation SweetAlert (Spécifique Homme)
+    const confirmation = await Swal.fire({
+      title: "Êtes-vous sûr d'envoyer ce message ?",
+      text: "Vous ne pourrez pas modifier le message une fois envoyé !",
+      icon: "warning",
+      showCancelButton: true,
+      background: "#1f2a4d",
+      color: "#fff",
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Oui, Envoyer !",
+      cancelButtonText: "Annuler",
+    });
 
-  // #region ENVOI MSG
-  // --- GESTION DE l'ENVOI d'un MSG ---
-  const handleSendMessage = async (receiverId, content) => {
-    if (!content.trim()) return;
+    // Si l'utilisateur clique sur "Annuler", on renvoie false
+    // pour que le texte reste dans l'input du ChatModal
+    if (!confirmation.isConfirmed) return false;
 
-    try {
-      const response = await fetch("http://localhost:8000/api/messages/send", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({ content, receiverId }),
+    // 3. ÉTAPE 2 : Envoi réel au Backend Symfony
+    const response = await fetch("http://localhost:8000/api/messages/send", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({ content, receiverId }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      // Succès visuel
+      Swal.fire({
+        icon: "success",
+        title: "Message envoyé au traducteur !",
+        text: "Votre message va être traduit et envoyé à votre contact.",
+        background: "#1f2a4d",
+        color: "#fff",
+        confirmButtonColor: "#d4af37",
+        timer: 3000,
       });
 
-      if (response.ok) {
-        Swal.fire({
-          icon: "success",
-          title: "Message envoyé au traducteur !",
-          text: "Votre message va être traduit et envoyé à votre contact.",
-          background: "#1f2a4d",
-          color: "#fff",
-          confirmButtonColor: "#d4af37",
-          timer: 5000,
-        });
-        setIsModalOpen(false);
-      } else {
-        Swal.fire({
-          icon: "error",
-          title: "Oups...",
-          text:
-            data.message ||
-            "Une erreur est survenue lors de l'envoi du message.",
-          background: "#1f2a4d",
-          color: "#fff",
-        });
-      }
-    } catch (error) {
-      console.error("Erreur API:", error);
+      // On rafraîchit l'historique des messages dans la modale
+      fetchMessages(receiverId);
+      
+      // On renvoie TRUE pour dire à la modale : "C'est bon, tu peux vider l'input !"
+      return true; 
+    } else {
+      // Le serveur a répondu une erreur (ex: plus de crédits, etc.)
+      throw new Error(data.message || "Une erreur est survenue lors de l'envoi.");
     }
-  };
-  // #endregion
+  } catch (error) {
+    // Erreur réseau ou erreur lancée au-dessus
+    Swal.fire({
+      icon: "error",
+      title: "Oups...",
+      text: error.message,
+      background: "#1f2a4d",
+      color: "#fff",
+    });
+
+    // En cas d'échec, on renvoie FALSE pour garder le texte de l'utilisateur
+    return false;
+  }
+};
+// #endregion
+
 
   //#region CHARG. PAGE
-  // --- LOGIQUE DE CHARGEMENT (API) ---
-  // Vérification de l'authentification
   useEffect(() => {
     if (!token) {
       navigate("/");
@@ -1048,233 +1066,15 @@ function MemberDashboardPage() {
             )}
 
             {/* MARK: Modale de conversation */}
-            {isModalOpen && selectedContact && (
-              <div
-                style={{
-                  position: "fixed",
-                  top: 50,
-                  left: 0,
-                  width: "100%",
-                  height: "100%",
-                  backgroundColor: "rgba(0,0,0,0.85)",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  zIndex: 1000,
-                }}
-              >
-                <div
-                  style={{
-                    background: "#1a1d21",
-                    width: "500px",
-                    height: "80vh",
-                    borderRadius: "20px",
-                    display: "flex",
-                    flexDirection: "column",
-                    overflow: "hidden",
-                    border: "1px solid #333",
-                  }}
-                >
-                  {/* Header */}
-                  <div
-                    style={{
-                      padding: "20px",
-                      background: "#25292e",
-                      borderBottom: "1px solid #333",
-                      display: "flex",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <div>
-                      <h4 style={{ margin: 0, color: "#f67280" }}>
-                        {selectedContact.nickname}
-                      </h4>
-                      <small style={{ color: "gray" }}>
-                        {selectedContact.age} ans • {selectedContact.gender}
-                      </small>
-                    </div>
-                    <button
-                      onClick={() => setIsModalOpen(false)}
-                      style={{
-                        background: "none",
-                        border: "none",
-                        color: "#fff",
-                        fontSize: "1.5rem",
-                        cursor: "pointer",
-                      }}
-                    >
-                      ×
-                    </button>
-                  </div>
-
-                  {/* Zone des messages */}
-                  <div
-                    style={{
-                      flex: 1,
-                      padding: "20px",
-                      overflowY: "auto",
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "10px",
-                      background: "#0f1113",
-                    }}
-                  >
-                    {messages.length === 0 ? (
-                      <p
-                        style={{
-                          textAlign: "center",
-                          color: "#444",
-                          marginTop: "50%",
-                        }}
-                      >
-                        Aucun message pour le moment.
-                      </p>
-                    ) : (
-                      messages.map((msg) => {
-                        // On détermine si c'est nous qui avons envoyé le message
-                        const isSentByMe = msg.senderId !== selectedContact.id;
-
-                        return (
-                          <div
-                            key={msg.id}
-                            style={{
-                              alignSelf: isSentByMe ? "flex-end" : "flex-start",
-                              background: isSentByMe ? "#f67280" : "#25292e",
-                              padding: "12px 15px",
-                              borderRadius: "15px",
-                              maxWidth: "80%",
-                              color: "#F5F5F5",
-                            }}
-                          >
-                            {/* 1. Affichage du texte : 
-                                Si c'est moi (isSentByMe), je vois mon original (content).
-                                Si c'est l'autre, je vois la traduction (contentTranslated). */}
-                            <div style={{ fontSize: "1rem" }}>
-                              {isSentByMe ? msg.content : msg.contentTranslated}
-                            </div>
-
-                            {/* 2. Écriteau "En attente" : Uniquement pour MES messages en statut pending */}
-                            {isSentByMe && msg.status === "pending" && (
-                              <div
-                                style={{
-                                  marginTop: "8px",
-                                  fontSize: "0.7rem",
-                                  color: "rgba(255,255,255,0.6)",
-                                  borderTop: "1px solid rgba(255,255,255,0.1)",
-                                  paddingTop: "5px",
-                                }}
-                              >
-                                🕒 En attente de traduction...
-                              </div>
-                            )}
-
-                            {/* 3. Horodatage */}
-                            <div
-                              style={{
-                                fontSize: "0.6rem",
-                                marginTop: "5px",
-                                opacity: 0.5,
-                                textAlign: "right",
-                              }}
-                            >
-                              {new Date(msg.createdAt).toLocaleTimeString([], {
-                                year: "numeric",
-                                month: "2-digit",
-                                day: "2-digit",
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              })}
-                            </div>
-                          </div>
-                        );
-                      })
-                    )}
-                    <div ref={messagesEndRef} />
-                  </div>
-
-                  {/* Input */}
-                  <div
-                    style={{
-                      padding: "20px",
-                      background: "#1a1d21",
-                      borderTop: "1px solid #333",
-                    }}
-                  >
-                    <div style={{ display: "flex", gap: "10px" }}>
-                      <textarea
-                        placeholder={`Écrire à ${selectedContact.nickname}...`}
-                        value={newMessage}
-                        onChange={(e) => setNewMessage(e.target.value)}
-                        maxLength={500}
-                        style={{
-                          flex: 1,
-                          padding: "12px",
-                          borderRadius: "15px", // Un peu moins arrondi pour un textarea
-                          border: "1px solid #333",
-                          background: "#000",
-                          color: "#fff",
-                          minHeight: "45px", // Hauteur initiale
-                          maxHeight: "150px", // Pour éviter qu'il ne devienne trop grand
-                          resize: "none", // Empêche l'utilisateur de redimensionner manuellement
-                          fontFamily: "inherit",
-                          fontSize: "1rem",
-                        }}
-                      />
-
-                      <button
-                        onClick={() => {
-                          Swal.fire({
-                            title: "Êtes-vous sûr d'envoyer ce message ?",
-                            text: "Vous ne pourrez pas modifier le message une fois envoyé !",
-                            icon: "warning",
-                            showCancelButton: true,
-                            background: "#1f2a4d",
-                            color: "#fff",
-                            confirmButtonColor: "#3085d6",
-                            cancelButtonColor: "#d33",
-                            confirmButtonText: "Oui, Envoyer !",
-                            cancelButtonText: "Annuler",
-                          }).then((result) => {
-                            if (result.isConfirmed) {
-                              // Action si l'utilisateur clique sur "Confirmer"
-                              handleSendMessage(selectedContact.id, newMessage);
-                              setNewMessage("");
-                            } else if (
-                              result.dismiss === Swal.DismissReason.cancel
-                            ) {
-                              // Action si l'utilisateur clique sur "Annuler"
-                            }
-                          });
-                        }}
-                        style={{
-                          background: "#f67280",
-                          color: "#fff",
-                          border: "none",
-                          padding: "10px 20px",
-                          borderRadius: "25px",
-                          cursor: "pointer",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        Envoyer
-                      </button>
-                    </div>
-
-                    <div
-                      style={{
-                        textAlign: "right",
-                        fontSize: "0.75rem",
-                        color: newMessage.length >= 450 ? "#f67280" : "gray", // Devient rouge si proche de la limite
-                        marginTop: "5px",
-                        paddingRight: "15px",
-                      }}
-                    >
-                      {newMessage.length} / 500
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+            <ChatModal
+              isOpen={isModalOpen}
+              onClose={() => setIsModalOpen(false)}
+              selectedContact={selectedContact}
+              messages={messages}
+              userData={userData}
+              handleSendMessage={handleSendMessage}
+              messagesEndRef={messagesEndRef}
+            />
 
             {/* MARK: - ONGLET FAVORIS */}
             {activeTab === "favs" && (
@@ -1310,7 +1110,6 @@ function MemberDashboardPage() {
                     gridTemplateColumns:
                       "repeat(auto-fill, minmax(220px, 1fr))",
                     gap: "25px",
-                    
                   }}
                 >
                   {favorites.map((fav) => (
@@ -1495,6 +1294,7 @@ function MemberDashboardPage() {
       </div>
     </div>
   );
+  //#endregion
 }
 
 const navButtonStyle = (isActive) => ({
@@ -1520,5 +1320,5 @@ const InfoItem = ({ label, value }) => (
     <span className="info-item-value">{value}</span>
   </div>
 );
-//#endregion
+
 export default MemberDashboardPage;

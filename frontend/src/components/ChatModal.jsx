@@ -1,4 +1,4 @@
-import { useEffect } from "react"; // N'oublie pas d'ajouter useEffect ici
+import { useEffect, useState } from "react"; // N'oublie pas d'ajouter useEffect ici
 import { X } from "lucide-react";
 import "./ChatModal.css";
 
@@ -11,21 +11,19 @@ const ChatModal = ({
   handleSendMessage,
   messagesEndRef,
 }) => {
-  
-  // --- AJOUTE CE BLOC ICI ---
+  const [newMessage, setNewMessage] = useState("");
+
   useEffect(() => {
     if (isOpen && messagesEndRef.current) {
-      // On attend un tout petit peu que le DOM soit rendu
       setTimeout(() => {
         messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
       }, 500);
     }
-  }, [isOpen, messages]); 
-  
-  
+  }, [isOpen, messages]);
+
   if (!isOpen || !selectedContact) return null; // Si le modal n'est pas ouvert, on n'affiche rien
 
-  const myId = userData?.id || userData?._id || userData?.userData?.id; // Récupère ton ID dans le localStorage 
+  const myId = userData?.id || userData?._id || userData?.userData?.id; // Récupère ton ID dans le localStorage
 
   return (
     <div className="chat-modal-overlay">
@@ -61,7 +59,7 @@ const ChatModal = ({
                       ? msg.content
                       : msg.contentTranslated || msg.content}
                   </div>
-                  
+
                   {isSentByMe && msg.status === "pending" && (
                     <div className="pending-translation">
                       🕒 En attente de traduction...
@@ -78,7 +76,10 @@ const ChatModal = ({
               );
             })
           ) : (
-            <div className="text-center mt-5" style={{ opacity: 0.5, color: "white", textAlign: "center" }}>
+            <div
+              className="text-center mt-5"
+              style={{ opacity: 0.5, color: "white", textAlign: "center" }}
+            >
               Aucun message. Envoyez le premier message !
             </div>
           )}
@@ -92,25 +93,22 @@ const ChatModal = ({
             placeholder="Écrivez votre message..."
             className="dashboard-textarea"
             rows="3"
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                const input = e.target;
-                if (input.value.trim()) {
-                  handleSendMessage(selectedContact.id, input.value);
-                  input.value = "";
-                }
-              }
-            }}
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
           ></textarea>
+          
           <button
             className="btn-gold mt-2"
             style={{ alignSelf: "flex-end", padding: "8px 25px" }}
-            onClick={() => {
-              const input = document.getElementById("chatInput");
-              if (input.value.trim()) {
-                handleSendMessage(selectedContact.id, input.value);
-                input.value = "";
+            onClick={async () => {
+              // On attend que la fonction se termine (avec ou sans confirmation)
+              const success = await handleSendMessage(
+                selectedContact.id,
+                newMessage,
+              );
+              // On ne vide le champ QUE si la fonction nous confirme que c'est parti
+              if (success) {
+                setNewMessage("");
               }
             }}
           >
