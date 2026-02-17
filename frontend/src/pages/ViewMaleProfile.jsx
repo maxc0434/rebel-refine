@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { User, ArrowLeft } from "lucide-react";
+import { User, ArrowLeft, X } from "lucide-react";
 import "./ViewMaleProfile.css";
+import ChatModal from "../components/ChatModal";
 
 const ViewMaleProfile = () => {
   const { id } = useParams();
@@ -9,8 +10,28 @@ const ViewMaleProfile = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedPhoto, setSelectedPhoto] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [messages, setMessages] = useState([]);
+  const messagesEndRef = useRef(null);
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
+
+  const userData = JSON.parse(localStorage.getItem("user"));
+
+  const onSendMessage = (contactId, content) => {
+    // Ici on appellera ton API Symfony plus tard
+    console.log("Message pour ID:", contactId, "Contenu:", content);
+
+    // Pour l'instant, on l'ajoute en local pour voir le résultat
+    const newMsg = {
+      id: Date.now(),
+      content: content,
+      senderId: userData.id,
+      createdAt: new Date(),
+      status: "pending",
+    };
+    setMessages([...messages, newMsg]);
+  };
 
   useEffect(() => {
     if (!id) return;
@@ -43,6 +64,26 @@ const ViewMaleProfile = () => {
       })
       .finally(() => setLoading(false));
   }, [id, token]);
+
+  useEffect(() => {
+    if (isModalOpen && id) {
+      fetch(`http://localhost:8000/api/messages/list/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error("Impossible de charger l'historique.");
+          return res.json();
+        })
+        .then((data) => {
+          console.log("Messages récupérés :", data);
+          setMessages(data); // On remplit l'état 'messages' pour la modale
+        })
+        .catch((err) => console.error("Erreur Fetch Messages :", err.message));
+    }
+  }, [isModalOpen, id, token]);
 
   // 1. Affichage de l'erreur
   if (error) {
@@ -257,11 +298,20 @@ const ViewMaleProfile = () => {
 
             <button
               className="lab-btn mt-4"
-              onClick={() => navigate("/female-dashboard")} // Ou ouvre ta modale de chat
-              style={{ cursor: "pointer" }}
+              onClick={() => setIsModalOpen(true)}
             >
               <span>Répondre à {profile.nickname}</span>
             </button>
+
+            <ChatModal
+              isOpen={isModalOpen}
+              onClose={() => setIsModalOpen(false)}
+              selectedContact={profile}
+              messages={messages}
+              userData={userData}
+              handleSendMessage={onSendMessage}
+              messagesEndRef={messagesEndRef}
+            />
           </div>
         </div>
       </div>

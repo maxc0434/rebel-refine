@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { User, MessageSquare, Shield } from "lucide-react";
 import Swal from "sweetalert2";
 import "./FemaleDashboardPage.css";
+import ChatModal from "../components/ChatModal";
 
 //#region STATES
 function FemaleDashboardPage() {
@@ -386,7 +387,7 @@ function FemaleDashboardPage() {
                             border: "1px solid  #c0c0c0 ",
                             borderRadius: "5px",
                             padding: "2px 5px",
-                            }}
+                          }}
                         >
                           Voir son profil
                         </span>
@@ -405,106 +406,15 @@ function FemaleDashboardPage() {
             )}
 
             {/* MARK: Modal de conversation */}
-            {isModalOpen && selectedContact && (
-              <div className="chat-modal-overlay">
-                <div className="chat-modal-container">
-                  {/* Header */}
-                  <div className="chat-header">
-                    <div>
-                      <h4 style={{ margin: 0, color: "#f67280" }}>
-                        {selectedContact.nickname}
-                      </h4>
-                      <small style={{ color: "gray" }}>Conversation</small>
-                    </div>
-                    <button
-                      onClick={() => setIsModalOpen(false)}
-                      style={{
-                        background: "none",
-                        border: "none",
-                        color: "#fff",
-                        fontSize: "1.5rem",
-                        cursor: "pointer",
-                      }}
-                    >
-                      ×
-                    </button>
-                  </div>
-
-                  {/* Zone des messages */}
-                  <div className="chat-body">
-                    {messages.map((msg) => {
-                      const isSentByMe = msg.senderId === userData.id;
-
-                      return (
-                        <div
-                          key={msg.id}
-                          className={`message-bubble ${isSentByMe ? "message-sent" : "message-received"}`}
-                        >
-                          <div style={{ fontSize: "1rem" }}>
-                            {isSentByMe ? msg.content : msg.contentTranslated}
-                          </div>
-
-                          {isSentByMe && msg.status === "pending" && (
-                            <div className="pending-translation">
-                              🕒 En attente de traduction...
-                            </div>
-                          )}
-
-                          <div
-                            style={{
-                              fontSize: "0.6rem",
-                              marginTop: "5px",
-                              opacity: 0.5,
-                              textAlign: "right",
-                            }}
-                          >
-                            {new Date(msg.createdAt).toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}
-                          </div>
-                        </div>
-                      );
-                    })}
-                    <div ref={messagesEndRef} />
-                  </div>
-
-                  {/* Input de réponse */}
-                  <div className="chat-footer">
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "10px",
-                      }}
-                    >
-                      <textarea
-                        id="chatInput"
-                        placeholder="Écrivez votre message ici..."
-                        className="dashboard-textarea"
-                        rows="3"
-                      ></textarea>
-                      <button
-                        className="btn-gold"
-                        style={{
-                          alignSelf: "flex-end",
-                          padding: "10px 30px",
-                          width: "auto",
-                          borderRadius: "25px",
-                        }}
-                        onClick={() => {
-                          const input = document.getElementById("chatInput");
-                          handleSendMessage(selectedContact.id, input.value);
-                          input.value = "";
-                        }}
-                      >
-                        Envoyer
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+            <ChatModal
+              isOpen={isModalOpen}
+              onClose={() => setIsModalOpen(false)}
+              selectedContact={selectedContact}
+              messages={messages}
+              userData={userData}
+              handleSendMessage={handleSendMessage}
+              messagesEndRef={messagesEndRef}
+            />
 
             {/* MARK: Profil */}
             {activeTab === "profil" && (

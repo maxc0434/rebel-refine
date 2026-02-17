@@ -156,8 +156,7 @@ class MessageController extends AbstractController
     #endregion
 
 
-
-
+    
     #[Route('/list/{receiverId}', name: 'app_message_list', methods: ['GET'])]
     public function list(int $receiverId, EntityManagerInterface $entityManager): JsonResponse
     {
@@ -193,7 +192,7 @@ class MessageController extends AbstractController
         return new JsonResponse($data);
     }
 
-
+    // Route pour obtenir la liste des conversations
     #[Route('/conversations', name: 'app_message_conversations', methods: ['GET'])]
     public function getConversations(EntityManagerInterface $entityManager): JsonResponse
     {
@@ -239,7 +238,7 @@ class MessageController extends AbstractController
     }
 
 
-
+    // Route pour marquer un message comme lu
     #[Route('/mark-read/{id}', name: 'app_message_mark_read', methods: ['POST'])]
     public function markAsRead(User $contact, EntityManagerInterface $entityManager): JsonResponse
     {

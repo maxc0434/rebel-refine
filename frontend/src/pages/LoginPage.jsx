@@ -79,6 +79,7 @@ function LoginPage() {
 
       // On sauvegarde les infos de base pour l'affichage (évite des appels API inutiles)
       const userToStore = {
+        id: data.id,
         roles: data.roles,
         nickname: data.nickname,
       };
