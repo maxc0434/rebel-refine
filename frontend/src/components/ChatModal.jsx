@@ -15,7 +15,8 @@ const ChatModal = ({
   const userGender = userData?.gender?.toLowerCase();
   const isMale = userGender === "male";
   const myId = userData?.id || userData?._id || userData?.userData?.id;
-  const hasNoCredits = isMale && (userData?.credits === null || userData?.credits <= 0);   // On considère l'homme bloqué si credits est 0 ou null
+  const hasNoCredits =
+    isMale && (userData?.credits === null || userData?.credits <= 0); // On considère l'homme bloqué si credits est 0 ou null
   const MAX_CHARS = 500;
 
   // Gestion du défilement des messages vers le bas automatiquement
@@ -43,11 +44,18 @@ const ChatModal = ({
             <small style={{ color: "gray" }}>Conversation privée</small>
           </div>
           {/* RAPPEL DES CRÉDITS (Uniquement pour l'homme) */}
-            <div style={{ alignSelf: "flex-end", marginBottom: "5px", fontSize: "0.85rem" }}>
-              <span style={{ color: hasNoCredits ? "#ff4d4d" : "#d4af37" }}>
-                {hasNoCredits ? "Solde épuisé" : "Crédits restants"} : <strong>{userData?.credits ?? 0}</strong>
-              </span>
-            </div>
+          <div
+            style={{
+              alignSelf: "flex-end",
+              marginBottom: "5px",
+              fontSize: "0.85rem",
+            }}
+          >
+            <span style={{ color: hasNoCredits ? "#ff4d4d" : "#d4af37" }}>
+              {hasNoCredits ? "Solde épuisé" : "Crédits restants"} :{" "}
+              <strong>{userData?.credits ?? 0}</strong>
+            </span>
+          </div>
 
           <button onClick={onClose} className="close-chat-btn">
             <X size={24} />
@@ -76,7 +84,10 @@ const ChatModal = ({
                     </div>
                   )}
 
-                  <div className="message-time" style={{ color: " #f5f5f5", fontSize: "0.9rem" }}>
+                  <div
+                    className="message-time"
+                    style={{ color: " #f5f5f5", fontSize: "0.9rem" }}
+                  >
                     {new Date(msg.createdAt).toLocaleTimeString([], {
                       day: "2-digit",
                       month: "short",
@@ -101,12 +112,13 @@ const ChatModal = ({
 
         {/* Footer / Input */}
         <div className="chat-footer" style={{ flexDirection: "column" }}>
-          
-          
-
           <textarea
             id="chatInput"
-            placeholder={hasNoCredits ? "Vous n'avez plus de crédits pour envoyer un message..." : "Écrivez votre message..."}
+            placeholder={
+              hasNoCredits
+                ? "Vous n'avez plus de crédits pour envoyer un message..."
+                : "Écrivez votre message..."
+            }
             className="dashboard-textarea"
             rows="3"
             maxLength={MAX_CHARS}
@@ -118,11 +130,11 @@ const ChatModal = ({
 
           <button
             className={hasNoCredits ? "btn-disabled mt-2" : "btn-gold mt-2"}
-            style={{ 
-                alignSelf: "flex-end", 
-                padding: "8px 25px",
-                backgroundColor: hasNoCredits ? "#666" : "", // Gris si bloqué
-                cursor: hasNoCredits ? "not-allowed" : "pointer"
+            style={{
+              alignSelf: "flex-end",
+              padding: "8px 25px",
+              backgroundColor: hasNoCredits ? "#666" : "", // Gris si bloqué
+              cursor: hasNoCredits ? "not-allowed" : "pointer",
             }}
             disabled={hasNoCredits || !newMessage.trim()}
             onClick={async () => {
@@ -137,7 +149,6 @@ const ChatModal = ({
               }
             }}
           >
-            
             {hasNoCredits ? (
               <span className="d-flex align-items-center gap-2">
                 <Lock size={16} /> Bloqué
@@ -147,14 +158,31 @@ const ChatModal = ({
             )}
           </button>
           {/* Compteur de caractères */}
-            <small style={{ marginLeft: "260px" , color: newMessage.length >= MAX_CHARS ? "#ff4d4d" : "gray" }}>
-              {newMessage.length} / {MAX_CHARS}
-            </small>
-          
+          <small
+            style={{
+              marginLeft: "260px",
+              color: newMessage.length >= MAX_CHARS ? "#ff4d4d" : "gray",
+            }}
+          >
+            {newMessage.length} / {MAX_CHARS}
+          </small>
+
           {hasNoCredits && (
-            <small style={{ color: "#ff4d4d", marginTop: "5px", textAlign: "center" }}>
-              Veuillez recharger votre compte pour continuer la discussion.
-            </small>
+            <div className="no-credits-alert">
+              <div className="alert-content">
+                <Lock size={14} className="alert-icon" />
+                <p>
+                  Votre solde est épuisé. Rechargez vos crédits pour poursuivre
+                  cette belle rencontre.
+                </p>
+              </div>
+              <button
+                className="btn-recharge-quick"
+                onClick={() => navigate("/boutique")}
+              >
+                Boutique
+              </button>
+            </div>
           )}
         </div>
       </div>
