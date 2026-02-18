@@ -376,7 +376,6 @@ function MemberDashboardPage() {
       const data = await response.json();
 
       if (response.ok) {
-
         if (data.remainingCredits !== undefined) {
           // Mise à jour de l'état local (pour que le ChatModal réagisse)
           setUserData((prev) => ({
@@ -551,12 +550,13 @@ function MemberDashboardPage() {
           {userData && (
             <div className="d-flex align-items-center mb-4">
               <h2 className="me-3">Bienvenue, {userData.nickname} !</h2>
-              <div className="badge bg-dark border border-warning text-warning p-2">
-                <i className="bi bi-coin me-2"></i>
-                {userData.credits ?? 0} Crédits
-              </div>
             </div>
           )}
+          <h5>Votre solde :</h5>
+          <div className="badge bg-dark border border-warning text-warning p-2">
+            <i className="bi bi-coin me-2"></i>
+            {userData.credits ?? 0} Crédits
+          </div>
         </header>
 
         <div style={{ display: "flex", gap: "30px", flexWrap: "wrap" }}>

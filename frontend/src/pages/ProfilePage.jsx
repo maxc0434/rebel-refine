@@ -11,7 +11,6 @@ function ProfilePage() {
   const { id } = useParams(); // On récupère l'ID du membre dans l'adresse (ex: /profile/42)
   const navigate = useNavigate(); // Pour rediriger si besoin
   const token = localStorage.getItem("token");
-  // const userData = JSON.parse(localStorage.getItem("user"));
   const [currentUser, setCurrentUser] = useState(() => {
     return JSON.parse(localStorage.getItem("user")) || null;
   });
@@ -270,13 +269,13 @@ function ProfilePage() {
       });
 
       const data = await response.json();
-      const creditsRecus = data.remainingCredits;
+      const creditsRecipes = data.remainingCredits;
 
       if (response.ok) {
         // 1. MISE À JOUR DU STATE ET DU STORAGE
-        if (creditsRecus !== undefined) {
+        if (creditsRecipes !== undefined) {
           setCurrentUser(prev => {
-            const updated = { ...prev, credits: creditsRecus };
+            const updated = { ...prev, credits: creditsRecipes };
             localStorage.setItem("user", JSON.stringify(updated));
             return updated;
           });
@@ -286,7 +285,7 @@ function ProfilePage() {
         Swal.fire({
           icon: "success",
           title: "Message envoyé !",
-          text: `Crédits restants : ${creditsRecus}`,
+          text: `Crédits restants : ${creditsRecipes}`,
           background: "#1f2a4d",
           color: "#fff",
           confirmButtonColor: "#d4af37",
@@ -336,10 +335,6 @@ function ProfilePage() {
       </div>
     );
   //#endregion
-
-
-  console.log("STATE CURRENTUSER :", currentUser?.credits);
-console.log("LOCALSTORAGE :", JSON.parse(localStorage.getItem("user"))?.credits);
 
 
   //#region AFFICHAGE DU COMPOSANT

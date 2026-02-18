@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay, Pagination, EffectFade } from "swiper/modules";
-import Swal from 'sweetalert2';
-import { useNavigate } from 'react-router-dom';
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 // Import Swiper styles
 import "swiper/css";
@@ -18,26 +18,26 @@ const PresentationPage = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-const handleDiscoverClick = (e) => {
-  e.preventDefault(); // On bloque la redirection immédiate
+  const handleDiscoverClick = (e) => {
+    e.preventDefault(); // On bloque la redirection immédiate
 
-  Swal.fire({
-    title: 'Accès Galerie',
-    text: "Pour accéder à la galerie des membres ainsi qu'aux profils et à la messagerie, vous devez vous connecter.",
-    icon: 'info',
-    showCancelButton: true,
-    confirmButtonColor: '#d4af37',
-    cancelButtonColor: '#1f2a4d',   
-    confirmButtonText: 'Connexion',
-    cancelButtonText: 'Annuler',
-    background: '#1f2a4d',         
-    color: '#ffffff'               
-  }).then((result) => {
-    if (result.isConfirmed) {
-      navigate("/login"); 
-    }
-  });
-};
+    Swal.fire({
+      title: "Accès Galerie",
+      text: "Pour accéder à la galerie des membres ainsi qu'aux profils et à la messagerie, vous devez vous connecter.",
+      icon: "info",
+      showCancelButton: true,
+      confirmButtonColor: "#d4af37",
+      cancelButtonColor: "#1f2a4d",
+      confirmButtonText: "Connexion",
+      cancelButtonText: "Annuler",
+      background: "#1f2a4d",
+      color: "#ffffff",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        navigate("/login");
+      }
+    });
+  };
 
   useEffect(() => {
     const fetchMembers = async () => {
@@ -94,7 +94,9 @@ const handleDiscoverClick = (e) => {
                   </h1>
                   <h2>Osez l'Orient, Vivez l'Inoubliable.</h2>
                   <p>
-                    Rencontrez des femmes authentiques en quête d'un homme européen moderne. Un pont entre deux mondes, bâti sur le respect.
+                    Rencontrez des femmes authentiques en quête d'un homme
+                    européen moderne. Un pont entre deux mondes, bâti sur le
+                    respect.
                   </p>
                   <Link to="/register" className="lab-btn">
                     COMMENCER L'AVENTURE
@@ -115,7 +117,9 @@ const handleDiscoverClick = (e) => {
                     <div className="banner-content-box">
                       <h2>Le Rendez-vous de Deux Mondes.</h2>
                       <p>
-                        Découvrez des profils féminins authentiques et raffinés, sélectionnés pour un homme exigeant en quête d'une histoire sérieuse.
+                        Découvrez des profils féminins authentiques et raffinés,
+                        sélectionnés pour un homme exigeant en quête d'une
+                        histoire sérieuse.
                       </p>
                       <Link to="/login" className="lab-btn">
                         CRÉER LE LIEN
@@ -127,6 +131,123 @@ const handleDiscoverClick = (e) => {
             </div>
           </SwiperSlide>
         </Swiper>
+      </section>
+
+      {/* ================ SECTION RÈGLES & FONCTIONNEMENT ================= */}
+      <section
+        className="pres-rules py-10"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(18, 18, 45, 0.85), rgba(18, 18, 45, 0.85)), url(/assets/images/bg-img/pageheader.jpg)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundAttachment: "fixed",
+          minHeight: "60vh",
+          paddingTop: "40px",
+          paddingBottom: "60px",
+        }}
+      >
+        <div className="container">
+          <div className="row justify-content-center">
+            <div className="col-lg-10 text-center">
+              <h2 className="section-title mb-5">
+                Les Règles de notre{" "}
+                <span className="gold-text">Communauté</span>
+              </h2>
+
+              <div className="row g-4 text-start">
+                {/* Règle 1 : Inscription Hommes */}
+                <div className="col-md-6">
+                  <div className="concept-item d-flex p-3">
+                    <i className="bi bi-person-plus gold-text fs-2 me-4"></i>
+                    <div>
+                      <h4 className="text-white">Accès Messieurs</h4>
+                      <p className="text-muted mb-0">
+                        Inscrivez-vous librement et profitez de{" "}
+                        <span className="gold-text fw-bold">
+                          5 crédits offerts
+                        </span>{" "}
+                        pour initier vos premiers échanges dès aujourd'hui.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Règle 2 : Inscription Femmes */}
+                <div className="col-md-6">
+                  <div className="concept-item d-flex p-3">
+                    <i className="bi bi-patch-check gold-text fs-2 me-4"></i>
+                    <div>
+                      <h4 className="text-white">Sélection Dames</h4>
+                      <p className="text-muted mb-0">
+                        Par souci de sécurité, les profils féminins sont validés
+                        et inscrits exclusivement par l'administrateur.
+                        <br />
+                        <small className="gold-text">
+                          Contact : admin@tonsite.com | 06 XX XX XX XX
+                        </small>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Règle 3 : Traducteur */}
+                <div className="col-md-6">
+                  <div className="concept-item d-flex p-3">
+                    <i className="bi bi-translate gold-text fs-2 me-4"></i>
+                    <div>
+                      <h4 className="text-white">Traduction par l'humain</h4>
+                      <p className="text-muted mb-0">
+                        Communiquez sans limites. Vos messages sont{" "}
+                        <span className="gold-text">
+                          traduits par des traducteurs qualifiés
+                        </span>{" "}
+                        pour garantir une fluidité totale dans vos échanges.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Règle 4 : Bienveillance */}
+                <div className="col-md-6">
+                  <div className="concept-item d-flex p-3">
+                    <i className="bi bi-gem gold-text fs-1 me-4"></i>
+                    <div>
+                      <h4 className="text-white">
+                        Esprit Bienveillant
+                      </h4>
+                      <p className="text-muted mb-0">
+                        Un espace fondé sur <span className="gold-text">le respect mutuel</span> 
+                        , dédié aux personnes recherchant des connexions 
+                        <span className="gold-text">authentiques, sincères</span>  et 
+                        <span className="gold-text">durables.</span> 
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Argument Vendeur Final */}
+                <div className="col-12 mt-5 text-center">
+                  <div
+                    className="p-4"
+                    style={{
+                      border: "1px solid rgba(212, 175, 55, 0.4)",
+                      borderRadius: "15px",
+                      background: "rgba(212, 175, 55, 0.03)",
+                    }}
+                  >
+                    <h4 className="text-white mb-2">Liberté & Flexibilité</h4>
+                    <p className="text-muted mb-0">
+                      Pas d'abonnement mensuel. Une fois vos crédits de
+                      bienvenue utilisés, rechargez votre compte selon vos
+                      besoins via nos forfaits sécurisés.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* ================ Member Section (Vitrine uniquement) =============== */}

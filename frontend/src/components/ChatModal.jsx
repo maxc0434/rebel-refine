@@ -30,7 +30,6 @@ const ChatModal = ({
 
   if (!isOpen || !selectedContact) return null;
 
-  console.log("DEBUG MODAL - Crédits reçus :", userData?.credits);
 
   return (
     <div className="chat-modal-overlay">
