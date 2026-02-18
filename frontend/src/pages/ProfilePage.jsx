@@ -240,73 +240,62 @@ function ProfilePage() {
   // #endregion
 
 // #region ENVOI MSG
-  const handleSendMessage = async (receiverId, content) => {
-    if (!content.trim()) return false;
+  // Remplace ton handleSendMessage par celui-ci
+const handleSendMessage = async (receiverId, content) => {
+  if (!content.trim()) return false;
 
-    const confirmation = await Swal.fire({
-      title: "Êtes-vous sûr d'envoyer ce message ?",
-      text: "Cela vous coûtera 1 crédit.",
-      icon: "warning",
-      showCancelButton: true,
-      background: "#1f2a4d",
-      color: "#fff",
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Oui, Envoyer !",
-      cancelButtonText: "Annuler",
+  const confirmation = await Swal.fire({
+    title: "Êtes-vous sûr ?",
+    text: "Cela vous coûtera 1 crédit.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Oui, Envoyer !",
+    background: "#1f2a4d",
+    color: "#fff",
+  });
+
+  if (!confirmation.isConfirmed) return false;
+
+  try {
+    const response = await fetch("http://localhost:8000/api/messages/send", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ content, receiverId }),
     });
 
-    if (!confirmation.isConfirmed) return false;
+    const data = await response.json();
 
-    try {
-      const response = await fetch("http://localhost:8000/api/messages/send", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ content, receiverId }),
-      });
-
-      const data = await response.json();
-      const creditsRecipes = data.remainingCredits;
-
-      if (response.ok) {
-        // 1. MISE À JOUR DU STATE ET DU STORAGE
-        if (creditsRecipes !== undefined) {
-          setCurrentUser(prev => {
-            const updated = { ...prev, credits: creditsRecipes };
-            localStorage.setItem("user", JSON.stringify(updated));
-            return updated;
-          });
-        }
-
-        // 2. ALERTE DE SUCCÈS
-        Swal.fire({
-          icon: "success",
-          title: "Message envoyé !",
-          text: `Crédits restants : ${creditsRecipes}`,
-          background: "#1f2a4d",
-          color: "#fff",
-          confirmButtonColor: "#d4af37",
+    if (response.ok) {
+      if (data.remainingCredits !== undefined) {
+        // MISE À JOUR DU STATE (On utilise setCurrentUser ici)
+        setCurrentUser(prev => {
+          const updated = { ...prev, credits: data.remainingCredits };
+          localStorage.setItem("user", JSON.stringify(updated));
+          return updated;
         });
-
-        fetchMessages(receiverId);
-        return true;
-      } else {
-        throw new Error(data.error || data.message || "Erreur lors de l'envoi");
       }
-    } catch (error) {
+
       Swal.fire({
-        icon: "error",
-        title: "Action impossible",
-        text: error.message,
+        icon: "success",
+        title: "Envoyé !",
+        text: `Crédits restants : ${data.remainingCredits}`,
         background: "#1f2a4d",
         color: "#fff",
       });
-      return false;
+
+      fetchMessages(receiverId);
+      return true;
+    } else {
+      throw new Error(data.error || "Erreur lors de l'envoi");
     }
-  };
+  } catch (error) {
+    Swal.fire({ icon: "error", title: "Erreur", text: error.message, background: "#1f2a4d", color: "#fff" });
+    return false;
+  }
+};
   // #endregion
 
   // #region SCROLL AUTO

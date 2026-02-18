@@ -30,7 +30,6 @@ const ChatModal = ({
 
   if (!isOpen || !selectedContact) return null;
 
-
   return (
     <div className="chat-modal-overlay">
       <div className="chat-modal-container">
@@ -43,19 +42,20 @@ const ChatModal = ({
             <small style={{ color: "gray" }}>Conversation privée</small>
           </div>
           {/* RAPPEL DES CRÉDITS (Uniquement pour l'homme) */}
-          <div
-            style={{
-              alignSelf: "flex-end",
-              marginBottom: "5px",
-              fontSize: "0.85rem",
-            }}
-          >
-            <span style={{ color: hasNoCredits ? "#ff4d4d" : "#d4af37" }}>
-              {hasNoCredits ? "Solde épuisé" : "Crédits restants"} :{" "}
-              <strong>{userData?.credits ?? 0}</strong>
-            </span>
-          </div>
-
+          {isMale && (
+            <div
+              style={{
+                alignSelf: "flex-end",
+                marginBottom: "5px",
+                fontSize: "0.85rem",
+              }}
+            >
+              <span style={{ color: hasNoCredits ? "#ff4d4d" : "#d4af37" }}>
+                {hasNoCredits ? "Solde épuisé" : "Crédits restants"} :{" "}
+                <strong>{userData?.credits ?? 0}</strong>
+              </span>
+            </div>
+          )}
           <button onClick={onClose} className="close-chat-btn">
             <X size={24} />
           </button>

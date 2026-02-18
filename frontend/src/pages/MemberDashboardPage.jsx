@@ -340,35 +340,28 @@ function MemberDashboardPage() {
   // #endregion
 
   // #region ENVOI MSG
+  // Remplace ton handleSendMessage par celui-ci
   const handleSendMessage = async (receiverId, content) => {
-    // 1. Sécurité : on ne fait rien si le message est vide
     if (!content.trim()) return false;
 
+    const confirmation = await Swal.fire({
+      title: "Êtes-vous sûr ?",
+      text: "Cela vous coûtera 1 crédit.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Oui, Envoyer !",
+      background: "#1f2a4d",
+      color: "#fff",
+    });
+
+    if (!confirmation.isConfirmed) return false;
+
     try {
-      // 2. ÉTAPE 1 : Confirmation SweetAlert (Spécifique Homme)
-      const confirmation = await Swal.fire({
-        title: "Êtes-vous sûr d'envoyer ce message ?",
-        text: "Vous ne pourrez pas modifier le message une fois envoyé !",
-        icon: "warning",
-        showCancelButton: true,
-        background: "#1f2a4d",
-        color: "#fff",
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Oui, Envoyer !",
-        cancelButtonText: "Annuler",
-      });
-
-      // Si l'utilisateur clique sur "Annuler", on renvoie false
-      // pour que le texte reste dans l'input du ChatModal
-      if (!confirmation.isConfirmed) return false;
-
-      // 3. ÉTAPE 2 : Envoi réel au Backend Symfony
       const response = await fetch("http://localhost:8000/api/messages/send", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ content, receiverId }),
       });
@@ -377,49 +370,35 @@ function MemberDashboardPage() {
 
       if (response.ok) {
         if (data.remainingCredits !== undefined) {
-          // Mise à jour de l'état local (pour que le ChatModal réagisse)
-          setUserData((prev) => ({
-            ...prev,
-            credits: data.remainingCredits,
-          }));
-          // Mise à jour du localStorage (pour les autres pages)
-          const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
-          storedUser.credits = data.remainingCredits;
-          localStorage.setItem("user", JSON.stringify(storedUser));
+          // MISE À JOUR DU STATE (On utilise setUserData ici)
+          setUserData((prev) => {
+            const updated = { ...prev, credits: data.remainingCredits };
+            localStorage.setItem("user", JSON.stringify(updated));
+            return updated;
+          });
         }
 
-        // Succès visuel
         Swal.fire({
           icon: "success",
-          title: "Message envoyé au traducteur !",
-          text: "1 crédit a été débité de votre compte.",
+          title: "Envoyé !",
+          text: `Crédits restants : ${data.remainingCredits}`,
           background: "#1f2a4d",
           color: "#fff",
-          confirmButtonColor: "#d4af37",
-          timer: 3000,
         });
 
-        // On rafraîchit l'historique des messages dans la modale
         fetchMessages(receiverId);
-        // On renvoie TRUE pour dire à la modale : "C'est bon, tu peux vider l'input !"
         return true;
       } else {
-        // Le serveur a répondu une erreur (ex: plus de crédits, etc.)
-        throw new Error(
-          data.message || "Une erreur est survenue lors de l'envoi.",
-        );
+        throw new Error(data.error || "Erreur lors de l'envoi");
       }
     } catch (error) {
-      // Erreur réseau ou erreur lancée au-dessus
       Swal.fire({
         icon: "error",
-        title: "Oups...",
+        title: "Erreur",
         text: error.message,
         background: "#1f2a4d",
         color: "#fff",
       });
-
-      // En cas d'échec, on renvoie FALSE pour garder le texte de l'utilisateur
       return false;
     }
   };
@@ -893,6 +872,26 @@ function MemberDashboardPage() {
                           }}
                         />
                       </div>
+                      
+                      {/* MARK: Date de naissance */}
+                      <div>
+                        <label className="dashboard-label">
+                          Date de naissance
+                        </label>
+                        <input
+                          type="date"
+                          name="birthDate"
+                          value={userData.birthDate || ""}
+                          onChange={handleInputChange}
+                          style={{
+                            background: "#1f2a4d",
+                            color: "#fff",
+                            border: "1px solid #333",
+                            padding: "10px",
+                            borderRadius: "8px",
+                          }}
+                        />
+                      </div>
 
                       {/* MARK: Statut marital & enfants */}
                       <div>
@@ -928,25 +927,7 @@ function MemberDashboardPage() {
                           <option value="5+">5 enfants ou plus</option>
                         </select>
                       </div>
-                      <div>
-                        {/* MARK: Date de naissance */}
-                        <label className="dashboard-label">
-                          Date de naissance
-                        </label>
-                        <input
-                          type="date"
-                          name="birthDate"
-                          value={userData.birthDate || ""}
-                          onChange={handleInputChange}
-                          style={{
-                            background: "#000",
-                            color: "#fff",
-                            border: "1px solid #333",
-                            padding: "10px",
-                            borderRadius: "8px",
-                          }}
-                        />
-                      </div>
+                        
 
                       {/* MARK: Religion */}
                       <div style={{ flex: 1, minWidth: "250px" }}>
