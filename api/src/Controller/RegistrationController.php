@@ -58,9 +58,17 @@ class RegistrationController extends AbstractController
             $user->setRoles(['ROLE_MALE']);
         }
 
+        // Attribution des crédits en fonction du sexe
+        if ($user->getGender() === 'male') {
+            $user->setCredits(5);
+        } else {
+            $user->setCredits(null);
+        }
+
         // ÉTAPE 4 : Sécurisation du mot de passe (Hachage)
         $hashedPassword = $passwordHasher->hashPassword($user, $data['password']);
         $user->setPassword($hashedPassword);
+
 
         // ÉTAPE 5 : Persistance en base de données via Doctrine
         $em->persist($user);

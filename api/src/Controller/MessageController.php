@@ -17,6 +17,8 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/api/messages')]
 class MessageController extends AbstractController
 {
+
+
     #region ENVOYER UN MESSAGE
     #[Route('/send', name: 'app_message_send', methods: ['POST'])]
     #[IsGranted(new Expression("is_granted('ROLE_MALE') or is_granted('ROLE_FEMALE')"), message: 'Accès interdit')]
@@ -28,15 +30,24 @@ class MessageController extends AbstractController
             return new JsonResponse(['error' => 'Données incomplètes'], 400);
         }
 
-        // --- SÉCURITÉ : RÉCUPÉRATION DE L'UTILISATEUR CONNECTÉ ---
         /** @var User $sender */
         $sender = $this->getUser();
 
+        // Si l'utilisateur n'est pas authentifié, on renvoie une erreur
         if (!$sender) {
             return new JsonResponse(['error' => 'Vous devez être authentifié'], 401);
         }
-        // ---------------------------------------------------------
 
+        // Si l'utilisateur n'a pas assez de crédits, on renvoie une erreur...
+        if ($sender->getGender() === 'male') {
+            if ($sender->getCredits() <= 0) {
+                return new JsonResponse(['error' => 'Crédits insuffisants'], 403);
+            }
+            // ...sinon, on déduit 1 crédit
+            $sender->setCredits($sender->getCredits() - 1);
+        }
+
+        // Si le destinataire n'existe pas, on renvoie une erreur
         $receiver = $entityManager->getRepository(User::class)->find($data['receiverId']);
         if (!$receiver) {
             return new JsonResponse(['error' => 'Destinataire introuvable'], 404);
@@ -61,11 +72,12 @@ class MessageController extends AbstractController
         $entityManager->persist($message);
         $entityManager->flush();
 
-        return new JsonResponse(['status' => 'pending_translation'], 201);
+        return new JsonResponse([
+            'status' => 'pending_translation',
+            'remainingCredits' => $sender->getCredits(),
+            ], 201);
     }
     #endregion
-
-
 
 
 
@@ -108,6 +120,7 @@ class MessageController extends AbstractController
         return new JsonResponse(['status' => 'Message traduit et envoyé au destinataire']);
     }
     #endregion
+
 
 
     #region LISTE DES CONTACTS
@@ -158,6 +171,7 @@ class MessageController extends AbstractController
 
 
 
+    #region LISTE DES MESSAGES
     #[Route('/list/{receiverId}', name: 'app_message_list', methods: ['GET'])]
     public function list(int $receiverId, EntityManagerInterface $entityManager): JsonResponse
     {
@@ -192,6 +206,9 @@ class MessageController extends AbstractController
         }
         return new JsonResponse($data);
     }
+    // #endregion
+
+
 
     #region CONVERSATIONS
     // Route pour obtenir la liste des conversations
@@ -244,7 +261,8 @@ class MessageController extends AbstractController
 
     #region SUPPRIMER UNE CONVERSATION
     #[Route('/conversation/{contactId}', name: 'app_message_delete_conversation', methods: ['DELETE'])]
-    public function deleteConversation(int $contactId, MessageRepository $messageRepo, EntityManagerInterface $em): JsonResponse {
+    public function deleteConversation(int $contactId, MessageRepository $messageRepo, EntityManagerInterface $em): JsonResponse
+    {
 
         /** @var User $currentUser */
         $currentUser = $this->getUser();
@@ -268,6 +286,8 @@ class MessageController extends AbstractController
         return new JsonResponse(['message' => 'Conversation supprimée avec succès'], 200);
     }
     #endregion
+
+
 
     #region MARQUER UN MESSAGE COMME LU
     // Route pour marquer un message comme lu

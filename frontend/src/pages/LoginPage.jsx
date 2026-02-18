@@ -83,6 +83,8 @@ function LoginPage() {
         id: data.id,
         roles: data.roles,
         nickname: data.nickname,
+        gender: data.gender,
+        credits: data.credits,
       };
       localStorage.setItem("user", JSON.stringify(userToStore));
 

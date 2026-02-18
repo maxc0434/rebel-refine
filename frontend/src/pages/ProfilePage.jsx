@@ -11,12 +11,16 @@ function ProfilePage() {
   const { id } = useParams(); // On récupère l'ID du membre dans l'adresse (ex: /profile/42)
   const navigate = useNavigate(); // Pour rediriger si besoin
   const token = localStorage.getItem("token");
-  const userData = JSON.parse(localStorage.getItem("user"));
+  // const userData = JSON.parse(localStorage.getItem("user"));
+  const [currentUser, setCurrentUser] = useState(() => {
+    return JSON.parse(localStorage.getItem("user")) || null;
+  });
+
   //#endregion
 
   //#region STATES
   // --- LES ÉTATS ---
-  const [user, setUser] = useState(null); // Les infos du profil (nom, bio, photos...)
+  const [user, setUser] = useState(null); // Les infos du profil qu'on visite (nom, bio, photos...)
   const [loading, setLoading] = useState(true); // État du chargement
   const [selectedImgIndex, setSelectedImgIndex] = useState(null); // Gère l'ouverture de la photo en grand (null = fermé)
   const [memo, setMemo] = useState("");
@@ -27,6 +31,24 @@ function ProfilePage() {
   const [newMessage, setNewMessage] = useState("");
   const messagesEndRef = useRef(null);
   //#endregion
+
+  // Synchroniser les infos de l'utilisateur connecté (Bernard) au montage
+  useEffect(() => {
+    if (token) {
+      fetch("http://localhost:8000/api/member/dashboard", {
+        // On utilise cette route pour avoir les crédits à jour
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.userData) {
+            setCurrentUser(data.userData);
+            localStorage.setItem("user", JSON.stringify(data.userData));
+          }
+        })
+        .catch((err) => console.error("Erreur sync user:", err));
+    }
+  }, [token]);
 
   //#region MONTAGE DU COMPOSANT et CHARGEMENT DES DONNÉES
   // --- RÉCUPÉRATION DU PROFIL ET MÉMO ---
@@ -218,14 +240,13 @@ function ProfilePage() {
   };
   // #endregion
 
-  // #region ENVOI MSG
+// #region ENVOI MSG
   const handleSendMessage = async (receiverId, content) => {
     if (!content.trim()) return false;
 
-    // --- ÉTAPE 1 : Confirmation (Comme c'est un homme qui écrit à une femme ici) ---
     const confirmation = await Swal.fire({
       title: "Êtes-vous sûr d'envoyer ce message ?",
-      text: "Vous ne pourrez pas modifier le message une fois envoyé !",
+      text: "Cela vous coûtera 1 crédit.",
       icon: "warning",
       showCancelButton: true,
       background: "#1f2a4d",
@@ -238,7 +259,6 @@ function ProfilePage() {
 
     if (!confirmation.isConfirmed) return false;
 
-    // --- ÉTAPE 2 : Envoi réel ---
     try {
       const response = await fetch("http://localhost:8000/api/messages/send", {
         method: "POST",
@@ -249,28 +269,38 @@ function ProfilePage() {
         body: JSON.stringify({ content, receiverId }),
       });
 
+      const data = await response.json();
+      const creditsRecus = data.remainingCredits;
+
       if (response.ok) {
+        // 1. MISE À JOUR DU STATE ET DU STORAGE
+        if (creditsRecus !== undefined) {
+          setCurrentUser(prev => {
+            const updated = { ...prev, credits: creditsRecus };
+            localStorage.setItem("user", JSON.stringify(updated));
+            return updated;
+          });
+        }
+
+        // 2. ALERTE DE SUCCÈS
         Swal.fire({
           icon: "success",
           title: "Message envoyé !",
-          text: "Il va être traduit et transmis.",
+          text: `Crédits restants : ${creditsRecus}`,
           background: "#1f2a4d",
           color: "#fff",
           confirmButtonColor: "#d4af37",
-          timer: 3000,
         });
 
-        // On rafraîchit les messages dans la modale
         fetchMessages(receiverId);
-        return true; // <--- INDISPENSABLE pour vider l'input
+        return true;
       } else {
-        const data = await response.json();
-        throw new Error(data.message || "Erreur lors de l'envoi");
+        throw new Error(data.error || data.message || "Erreur lors de l'envoi");
       }
     } catch (error) {
       Swal.fire({
         icon: "error",
-        title: "Oups...",
+        title: "Action impossible",
         text: error.message,
         background: "#1f2a4d",
         color: "#fff",
@@ -307,6 +337,11 @@ function ProfilePage() {
     );
   //#endregion
 
+
+  console.log("STATE CURRENTUSER :", currentUser?.credits);
+console.log("LOCALSTORAGE :", JSON.parse(localStorage.getItem("user"))?.credits);
+
+
   //#region AFFICHAGE DU COMPOSANT
   return (
     <section className="profile-section padding-tb">
@@ -337,7 +372,7 @@ function ProfilePage() {
                   <NotebookPen size={20} strokeWidth={1.5} />
                 </button>
 
-                {/* Bouton Message */}
+                {/* Bouton ouvrir CHAT Message */}
                 <button
                   onClick={() => {
                     setSelectedContact(user);
@@ -705,7 +740,7 @@ function ProfilePage() {
         onClose={() => setIsModalOpen(false)}
         selectedContact={user}
         messages={messages}
-        userData={userData}
+        userData={currentUser}
         handleSendMessage={handleSendMessage}
         messagesEndRef={messagesEndRef}
       />

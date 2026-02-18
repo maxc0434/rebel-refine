@@ -78,6 +78,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'receiver')]
     private Collection $receivedMessages;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $credits = null;
+
     public function __construct()
     {
         $this->userImages = new ArrayCollection();
@@ -317,6 +320,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $message->setReceiver(null);
             }
         }
+        return $this;
+    }
+
+    public function getCredits(): ?int
+    {
+        return $this->credits;
+    }
+
+    public function setCredits(?int $credits): static
+    {
+        $this->credits = $credits;
+
         return $this;
     }
 }

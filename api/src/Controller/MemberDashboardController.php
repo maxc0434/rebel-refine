@@ -80,6 +80,7 @@ class MemberDashboardController extends AbstractController
                 'gender' => $user->getGender(),           // Son sexe
                 'interests' => $user->getInterests(),     // Ses passions
                 'photos' => $userPhotos,                   // Sa photo de profil
+                'credits' => $user->getCredits(),         // Ses crédits
 
             ],
             // BLOC DES TARGETS : La liste des profils favoris extraite plus haut

@@ -376,11 +376,24 @@ function MemberDashboardPage() {
       const data = await response.json();
 
       if (response.ok) {
+
+        if (data.remainingCredits !== undefined) {
+          // Mise à jour de l'état local (pour que le ChatModal réagisse)
+          setUserData((prev) => ({
+            ...prev,
+            credits: data.remainingCredits,
+          }));
+          // Mise à jour du localStorage (pour les autres pages)
+          const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+          storedUser.credits = data.remainingCredits;
+          localStorage.setItem("user", JSON.stringify(storedUser));
+        }
+
         // Succès visuel
         Swal.fire({
           icon: "success",
           title: "Message envoyé au traducteur !",
-          text: "Votre message va être traduit et envoyé à votre contact.",
+          text: "1 crédit a été débité de votre compte.",
           background: "#1f2a4d",
           color: "#fff",
           confirmButtonColor: "#d4af37",
@@ -389,7 +402,6 @@ function MemberDashboardPage() {
 
         // On rafraîchit l'historique des messages dans la modale
         fetchMessages(receiverId);
-
         // On renvoie TRUE pour dire à la modale : "C'est bon, tu peux vider l'input !"
         return true;
       } else {
@@ -536,9 +548,15 @@ function MemberDashboardPage() {
           <h1 style={{ fontFamily: "Montserrat", fontWeight: "700" }}>
             Mon Tableau de Bord
           </h1>
-          <p style={{ color: "rgba(255,255,255,0.6)" }}>
-            Bienvenue dans votre espace privé, {userData.nickname}.
-          </p>
+          {userData && (
+            <div className="d-flex align-items-center mb-4">
+              <h2 className="me-3">Bienvenue, {userData.nickname} !</h2>
+              <div className="badge bg-dark border border-warning text-warning p-2">
+                <i className="bi bi-coin me-2"></i>
+                {userData.credits ?? 0} Crédits
+              </div>
+            </div>
+          )}
         </header>
 
         <div style={{ display: "flex", gap: "30px", flexWrap: "wrap" }}>
@@ -1114,10 +1132,9 @@ function MemberDashboardPage() {
                               paddingBottom: "10px",
                               paddingLeft: "10px",
                               paddingRight: "10px",
-                              color: "#ff4d4d", 
+                              color: "#ff4d4d",
                               cursor: "pointer",
                               padding: "5px",
-
                             }}
                             title="Supprimer la conversation"
                           >
