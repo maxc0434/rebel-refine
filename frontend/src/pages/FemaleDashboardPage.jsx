@@ -141,8 +141,8 @@ function FemaleDashboardPage() {
 
       // 2. Mise à jour locale (pour que le badge disparaisse sans recharger la page)
       setConversations((prev) =>
-        prev.map((c) =>
-          c.id === contactId ? { ...c, hasNewMessages: false } : c,
+        prev.map((conv) =>
+          conv.id === contactId ? { ...conv, hasNewMessages: false } : conv,
         ),
       );
     } catch (err) {
@@ -459,6 +459,7 @@ function FemaleDashboardPage() {
                               e.stopPropagation(); // Évite d'ouvrir le chat
                               handleDeleteConversation(contact.id);
                             }}
+                            className="trashCss"
                             style={{
                               background: "none",
                               border: "1px solid #ff4d4d",
