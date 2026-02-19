@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Entity\Transaction;
+use App\Repository\TransactionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Stripe\Checkout\Session;
 use Stripe\Stripe;
@@ -20,7 +22,6 @@ class PaymentController extends AbstractController
         $data = json_decode($request->getContent(), true);
         $packId = $data['packId'] ?? null;
 
-        // Définition des tarifs correspondants à tes IDs React
         $packs = [
             'pack_50'  => ['name' => 'Pack Découverte (50 crédits)', 'amount' => 1000, 'credits' => 50],
             'pack_80'  => ['name' => 'Pack Passion (80 crédits)', 'amount' => 1500, 'credits' => 80],
@@ -33,10 +34,8 @@ class PaymentController extends AbstractController
 
         Stripe::setApiKey($this->getParameter('stripe_secret_key'));
 
-
         /** @var User $user */
         $user = $this->getUser();
-        $userId = $user->getId();
 
         $session = Session::create([
             'payment_method_types' => ['card'],
@@ -46,16 +45,15 @@ class PaymentController extends AbstractController
                     'product_data' => [
                         'name' => $packs[$packId]['name'],
                     ],
-                    'unit_amount' => $packs[$packId]['amount'], // Montant en centimes (10€ = 1000)
+                    'unit_amount' => $packs[$packId]['amount'], 
                 ],
                 'quantity' => 1,
             ]],
             'mode' => 'payment',
-            // IMPORTANT : Routes vers ton Front-end React
-            'success_url' => 'http://localhost:3000/payment/success?session_id={CHECKOUT_SESSION_ID}&pack=' . $packId,
+            'success_url' => 'http://localhost:3000/payment/success?session_id={CHECKOUT_SESSION_ID}',
             'cancel_url' => 'http://localhost:3000/boutique',
             'metadata' => [
-                'user_id' => $userId,
+                'user_id' => $user->getId(),
                 'pack_id' => $packId,
                 'credits' => $packs[$packId]['credits']
             ]
@@ -64,33 +62,47 @@ class PaymentController extends AbstractController
         return new JsonResponse(['url' => $session->url]);
     }
 
-
     #[Route('/verify-session/{sessionId}', name: 'verify_session', methods: ['GET'])]
-    public function verifySession(string $sessionId, EntityManagerInterface $em): JsonResponse
-    {
-        \Stripe\Stripe::setApiKey($this->getParameter('stripe_secret_key'));
+    public function verifySession(
+        string $sessionId, 
+        EntityManagerInterface $em, 
+        TransactionRepository $transactionRepository
+    ): JsonResponse {
+        Stripe::setApiKey($this->getParameter('stripe_secret_key'));
 
         try {
-            $session = \Stripe\Checkout\Session::retrieve($sessionId);
+            // 1. Sécurité : On vérifie si la transaction n'existe pas déjà en BDD
+            $existingTransaction = $transactionRepository->findOneBy(['stripeSessionId' => $sessionId]);
+            if ($existingTransaction) {
+                return new JsonResponse(['error' => 'Transaction déjà traitée'], 400);
+            }
+
+            $session = Session::retrieve($sessionId);
 
             if ($session->payment_status === 'paid') {
                 /** @var User $user */
                 $user = $this->getUser();
+                $creditsToAmount = (int) $session->metadata->credits;
 
-                // On récupère les infos stockées dans les metadata lors de la création
-                $creditsToAdd = (int) $session->metadata->credits;
-                $packId = $session->metadata->pack_id;
+                // 2. Création de l'historique dans la table Transaction
+                $transaction = new Transaction();
+                $transaction->setBuyer($user); // Corrigé : buyer au lieu de user
+                $transaction->setCreditsAdded($creditsToAmount); // Corrigé : creditsAdded au lieu de credits
+                $transaction->setAmount($session->amount_total / 100);
+                $transaction->setStripeSessionId($sessionId);
+                $transaction->setCreatedAt(new \DateTimeImmutable());
+                $transaction->setStatus('completed');
 
-                // Sécurité : On vérifie si cette session n'a pas déjà été créditée
-                // (Optionnel mais conseillé : ajouter un champ stripe_session_id dans ton entité User ou Transaction)
+                // 3. Mise à jour du solde de l'utilisateur
+                $user->setCredits($user->getCredits() + $creditsToAmount);
 
-                $user->setCredits($user->getCredits() + $creditsToAdd);
+                $em->persist($transaction);
                 $em->flush();
 
                 return new JsonResponse([
                     'status' => 'success',
                     'newBalance' => $user->getCredits(),
-                    'message' => "Bravo ! $creditsToAdd crédits ont été ajoutés."
+                    'message' => "Bravo ! $creditsToAmount crédits ont été ajoutés."
                 ]);
             }
 
