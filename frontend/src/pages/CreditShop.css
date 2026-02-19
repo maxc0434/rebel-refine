@@ -1,0 +1,31 @@
+.boutique-container {
+  background-color: #12122d;
+  min-height: 100vh;
+  padding-top: 100px;
+}
+
+.pack-card {
+  background: rgba(31, 42, 77, 0.5);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 20px;
+  padding: 40px 30px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.pack-card:hover {
+  transform: translateY(-10px);
+  border-color: #d4af37;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.pack-icon {
+  margin-bottom: 20px;
+  filter: drop-shadow(0 0 10px currentColor);
+}
+
+.pack-credits p {
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 0.8rem;
+}

@@ -12,6 +12,7 @@ import FemaleDashboardPage from "./pages/FemaleDashboardPage";
 import TranslatorDashboard from "./pages/TranslatorDashboard";
 import PresentationPage from "./pages/PresentationPage";
 import ViewMaleProfile from "./pages/ViewMaleProfile";
+import CreditShop from "./pages/CreditShop";
 
 function App() {
   return (
@@ -43,6 +44,8 @@ function App() {
           <Route path="/translator-dashboard" element={<TranslatorDashboard />} />
 
           <Route path="/view-male-profile/:id" element={<ViewMaleProfile />} />
+          
+          <Route path="/credit-shop" element={<CreditShop />} />
 
         </Routes>
     </Router>

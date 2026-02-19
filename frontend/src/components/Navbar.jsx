@@ -16,13 +16,31 @@ function Navbar() {
     navigate("/");
   };
 
-  // Styles réutilisables pour éviter de surcharger le JSX
   const navItemStyle = {
     fontWeight: "600",
     letterSpacing: "1px",
     textTransform: "uppercase",
     fontSize: "0.9rem",
   };
+
+  const navShopBtnStyle = {
+  fontWeight: "700",
+  letterSpacing: "1.5px",
+  textTransform: "uppercase",
+  fontSize: "0.85rem",
+  padding: "6px 18px", 
+  display: "flex",    
+  alignItems: "center",
+  justifyContent: "center",
+  lineHeight: "1.25",   
+  borderRadius: "45px",
+  color: "#4A3121", 
+  textShadow: "0px 1px 1px rgba(255, 255, 255, 0.4)",                
+  background: "linear-gradient(45deg, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C)",
+  boxShadow: "0 4px 15px rgba(191, 149, 63, 0.3)",
+  transition: "all 0.3s ease",
+  cursor: "pointer",
+};
 
   return (
     <header
@@ -67,6 +85,11 @@ function Navbar() {
                     <li>
                       <Link to="/dashboard" style={navItemStyle}>
                         Tableau de bord
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/credit-shop" style={navShopBtnStyle}>
+                        Boutique
                       </Link>
                     </li>
                   </>
