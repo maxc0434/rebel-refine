@@ -12,6 +12,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mime\Address;
 
 #[Route('/api/payment', name: 'api_payment_')]
 class PaymentController extends AbstractController
@@ -45,7 +48,7 @@ class PaymentController extends AbstractController
                     'product_data' => [
                         'name' => $packs[$packId]['name'],
                     ],
-                    'unit_amount' => $packs[$packId]['amount'], 
+                    'unit_amount' => $packs[$packId]['amount'],
                 ],
                 'quantity' => 1,
             ]],
@@ -64,9 +67,10 @@ class PaymentController extends AbstractController
 
     #[Route('/verify-session/{sessionId}', name: 'verify_session', methods: ['GET'])]
     public function verifySession(
-        string $sessionId, 
-        EntityManagerInterface $em, 
-        TransactionRepository $transactionRepository
+        string $sessionId,
+        EntityManagerInterface $em,
+        TransactionRepository $transactionRepository,
+        MailerInterface $mailer
     ): JsonResponse {
         Stripe::setApiKey($this->getParameter('stripe_secret_key'));
 
@@ -98,6 +102,23 @@ class PaymentController extends AbstractController
 
                 $em->persist($transaction);
                 $em->flush();
+
+                // --- ÉTAPE 4 : ENVOI DU MAIL DE CONFIRMATION ---
+                $email = (new TemplatedEmail())
+                    ->from(new Address('no-reply@rebel-refine.pro', 'Rebel Bot'))
+                    ->to($user->getEmail())
+                    ->subject('Confirmation de votre achat - Rebel Refine')
+                    ->htmlTemplate('payment/payment_confirmation.html.twig')
+                    ->context([
+                        'nickname' => $user->getNickname(),
+                        'creditsAdded' => $creditsToAmount,
+                        'amount' => $session->amount_total / 100,
+                        'date' => new \DateTime(),
+                        'transactionId' => $sessionId,
+                    ]);
+
+                $mailer->send($email);
+                // ----------------------------------------------
 
                 return new JsonResponse([
                     'status' => 'success',

@@ -1,0 +1,76 @@
+{# templates/emails/payment_confirmation.html.twig #}
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Confirmation de commande</title>
+	</head>
+	<body style="background-color: #0b0b15; margin: 0; padding: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
+		<table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #0b0b15; padding: 20px 0;">
+			<tr>
+				<td align="center">
+					<table width="600" border="0" cellspacing="0" cellpadding="0" style="background-color: #161625; border: 1px solid #2a2a3d; border-radius: 12px; overflow: hidden; width: 600px; max-width: 600px;">
+						<tr>
+							<td align="center" style="background: #1c1c2e; padding: 30px; border-bottom: 2px solid #d4af37;">
+								<h1 style="color: #d4af37; font-size: 28px; font-weight: bold; letter-spacing: 3px; text-transform: uppercase; margin: 0;">REBEL REFINE</h1>
+							</td>
+						</tr>
+
+						<tr>
+							<td style="padding: 30px; color: #e0e0e0; line-height: 1.6; font-size: 16px;">
+								<h2 style="color: #ffffff; font-size: 22px; margin-top: 0; margin-bottom: 20px;">Merci pour votre confiance,
+									{{ nickname }}</h2>
+								<p style="margin-bottom: 25px;">Votre commande a été traitée avec succès. Nous avons crédité votre compte de
+									<strong style="color: #d4af37;">{{ creditsAdded }}
+										crédits</strong>.</p>
+
+								<table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #1f1f33; border-radius: 8px; border-left: 4px solid #d4af37; margin-bottom: 25px;">
+									<tr>
+										<td style="padding: 20px;">
+											<table width="100%" border="0" cellspacing="0" cellpadding="0">
+												<tr>
+													<td style="color: #888899; font-size: 14px; text-transform: uppercase; padding-bottom: 10px;">Produit</td>
+													<td style="color: #ffffff; font-size: 14px; text-align: right; padding-bottom: 10px; font-weight: bold;">Pack
+														{{ creditsAdded }}
+														Crédits</td>
+												</tr>
+												<tr>
+													<td style="color: #888899; font-size: 14px; text-transform: uppercase; padding-bottom: 10px;">Date</td>
+													<td style="color: #ffffff; font-size: 14px; text-align: right; padding-bottom: 10px;">{{ date|date('d/m/Y H:i') }}</td>
+												</tr>
+												<tr>
+													<td style="color: #888899; font-size: 14px; text-transform: uppercase;">Montant payé</td>
+													<td style="color: #d4af37; font-size: 18px; text-align: right; font-weight: bold;">{{ amount|number_format(2, ',', ' ') }}
+														€</td>
+												</tr>
+											</table>
+										</td>
+									</tr>
+								</table>
+
+								<p style="font-size: 13px; color: #888899; text-align: center; margin-bottom: 25px;">ID Ref:
+									<span style="font-family: monospace;">{{ transactionId }}</span>
+								</p>
+
+								<table width="100%" border="0" cellspacing="0" cellpadding="0">
+									<tr>
+										<td align="center">
+											<a href="http://localhost:3000/dashboard" style="background-color: #d4af37; color: #0b0b15; padding: 15px 25px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 15px; display: inline-block; text-transform: uppercase; letter-spacing: 1px;">Accéder à mon espace</a>
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+
+						<tr>
+							<td align="center" style="padding: 20px; color: #555566; font-size: 12px; border-top: 1px solid #2a2a3d;">
+								&copy; 2026 REBEL REFINE. Tous droits réservés.<br>
+								Ceci est un message automatique de votre assistant Rebel Bot.
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>
