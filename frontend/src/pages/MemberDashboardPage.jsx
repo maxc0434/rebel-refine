@@ -1,5 +1,12 @@
 import { useState, useEffect, useRef } from "react";
-import { User, Heart, Settings, MessageSquare, Trash2 } from "lucide-react";
+import {
+  User,
+  Heart,
+  Settings,
+  MessageSquare,
+  Trash2,
+  BadgeCent,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
@@ -22,11 +29,14 @@ function MemberDashboardPage() {
   const [selectedContact, setSelectedContact] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [messages, setMessages] = useState([]);
+  const [purchases, setPurchases] = useState([]);
   const [newMessage, setNewMessage] = useState("");
 
   const messagesEndRef = useRef(null);
 
   //#endregion
+
+
 
   // #region AUTHENTIFICATION
   const navigate = useNavigate(); // Hook pour rediriger l'utilisateur
@@ -460,6 +470,36 @@ function MemberDashboardPage() {
   };
   //#endregion
 
+
+      //#region HISTO MES ACHATS
+  useEffect(() => {
+    const fetchPurchases = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/api/transactions", {
+          headers: {
+            // N'oublie pas ton token si tu utilises JWT ou les credentials si session
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setPurchases(data);
+        }
+      } catch (error) {
+        console.error("Erreur lors de la récupération des achats:", error);
+      }
+    };
+
+    if (activeTab === "purchases") {
+      fetchPurchases();
+    }
+  }, [activeTab]);
+
+  //#endregion
+
+
+
   //#region CHARG. PAGE
   useEffect(() => {
     if (!token) {
@@ -505,6 +545,8 @@ function MemberDashboardPage() {
       </div>
     );
   //#endregion
+
+
 
   //#region AFFICHAGE DE LA PAGE
   return (
@@ -573,6 +615,13 @@ function MemberDashboardPage() {
               >
                 <Heart size={18} /> Mes Favoris
               </button>
+              <button
+                onClick={() => handleTabChange("purchases")}
+                className={`nav-button ${activeTab === "purchases" ? "active" : ""}`}
+              >
+                <BadgeCent size={18} /> Mes Achats
+              </button>
+
               <button
                 onClick={() => handleTabChange("security")}
                 className={`nav-button ${activeTab === "security" ? "active" : ""}`}
@@ -872,7 +921,7 @@ function MemberDashboardPage() {
                           }}
                         />
                       </div>
-                      
+
                       {/* MARK: Date de naissance */}
                       <div>
                         <label className="dashboard-label">
@@ -927,7 +976,6 @@ function MemberDashboardPage() {
                           <option value="5+">5 enfants ou plus</option>
                         </select>
                       </div>
-                        
 
                       {/* MARK: Religion */}
                       <div style={{ flex: 1, minWidth: "250px" }}>
@@ -1249,6 +1297,154 @@ function MemberDashboardPage() {
                       </div>
                     </div>
                   ))}
+                </div>
+              </div>
+            )}
+
+            {/* MARK: - ONGLET MES ACHATS */}
+            {activeTab === "purchases" && (
+              <div>
+                {/* TITRE ET COMPTEUR */}
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: "30px",
+                  }}
+                >
+                  <h3 style={{ fontFamily: "Montserrat", margin: 0 }}>
+                    Historique de mes recharges
+                  </h3>
+                  <span
+                    style={{
+                      background: "#f94d80", // On garde ton accent rose
+                      padding: "4px 12px",
+                      borderRadius: "20px",
+                      fontSize: "0.8rem",
+                    }}
+                  >
+                    {purchases.length} transactions
+                  </span>
+                </div>
+
+                {/* LA LISTE DES TRANSACTIONS */}
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "15px",
+                  }}
+                >
+                  {purchases.length > 0 ? (
+                    purchases.map((tx) => (
+                      <div
+                        key={tx.id}
+                        style={{
+                          background: "#161f3d",
+                          borderRadius: "15px",
+                          border: "1px solid rgba(255,255,255,0.05)",
+                          padding: "20px",
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          transition: "transform 0.2s ease",
+                        }}
+                      >
+                        {/* INFOS DE GAUCHE : PACK ET DATE */}
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "20px",
+                          }}
+                        >
+                          <div
+                            style={{
+                              background: "rgba(249, 77, 128, 0.1)",
+                              color: "#d4af37",
+                              width: "50px",
+                              height: "50px",
+                              borderRadius: "12px",
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              fontSize: "1.2rem",
+                            }}
+                          >
+                            <BadgeCent size={30} />
+                            {/* Icône de crédit/gemme */}
+                          </div>
+                          <div>
+                            <h5
+                              style={{
+                                margin: "0 0 5px 0",
+                                fontSize: "1.1rem",
+                              }}
+                            >
+                              +{tx.creditsAdded} crédits
+                            </h5>
+                            <p
+                              style={{
+                                color: "rgba(255,255,255,0.5)",
+                                fontSize: "0.85rem",
+                                margin: 0,
+                              }}
+                            >
+                              Le{" "}
+                              {new Date(tx.createdAt).toLocaleDateString(
+                                "fr-FR",
+                                {
+                                  day: "numeric",
+                                  month: "long",
+                                  year: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                },
+                              )}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* INFOS DE DROITE : MONTANT ET STATUT */}
+                        <div style={{ textAlign: "right" }}>
+                          <div
+                            style={{
+                              color: "#fff",
+                              fontWeight: "bold",
+                              fontSize: "1.2rem",
+                              marginBottom: "5px",
+                            }}
+                          >
+                            {tx.amount.toFixed(2)} €
+                          </div>
+                          <span
+                            style={{
+                              color: "#d4af37",
+                              fontSize: "0.75rem",
+                              textTransform: "uppercase",
+                              letterSpacing: "1px",
+                              background: "rgba(249, 77, 128, 0.1)",
+                              padding: "2px 8px",
+                              borderRadius: "4px",
+                            }}
+                          >
+                            {tx.status === "completed" ? "Accepté" : tx.status}
+                          </span>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div
+                      style={{
+                        textAlign: "center",
+                        padding: "40px",
+                        color: "rgba(255,255,255,0.3)",
+                      }}
+                    >
+                      <p>Vous n'avez pas encore effectué d'achats.</p>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
