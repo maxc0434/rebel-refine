@@ -13,6 +13,7 @@ import TranslatorDashboard from "./pages/TranslatorDashboard";
 import PresentationPage from "./pages/PresentationPage";
 import ViewMaleProfile from "./pages/ViewMaleProfile";
 import CreditShop from "./pages/CreditShop";
+import PaymentSuccess from "./pages/PaymentSuccess";
 
 function App() {
   return (
@@ -46,6 +47,8 @@ function App() {
           <Route path="/view-male-profile/:id" element={<ViewMaleProfile />} />
           
           <Route path="/credit-shop" element={<CreditShop />} />
+
+          <Route path="/payment/success" element={<PaymentSuccess />} />
 
         </Routes>
     </Router>
