@@ -47,12 +47,13 @@ const ChatModal = ({
               style={{
                 alignSelf: "flex-end",
                 marginBottom: "5px",
-                fontSize: "0.85rem",
+                fontSize: "1.1rem",
               }}
             >
               <span style={{ color: hasNoCredits ? "#ff4d4d" : "#d4af37" }}>
-                {hasNoCredits ? "Solde épuisé" : "Crédits restants"} :{" "}
-                <strong>{userData?.credits ?? 0}</strong>
+                {hasNoCredits ? "Solde épuisé" : " Crédit(s)"} : {" "}
+                <strong style={{marginRight: "5px" }}>{userData?.credits ?? 0}</strong>
+                <i className="bi bi-coin me-2"></i>
               </span>
             </div>
           )}
@@ -169,7 +170,7 @@ const ChatModal = ({
           {hasNoCredits && (
             <div className="no-credits-alert">
               <div className="alert-content">
-                <Lock size={14} className="alert-icon" />
+                
                 <p>
                   Votre solde est épuisé. Rechargez vos crédits pour poursuivre
                   cette belle rencontre.

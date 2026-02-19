@@ -321,6 +321,7 @@ select.dashboard-input:focus {
   flex: 1;
   display: flex;
   justify-content: center;
+  
 }
 
 /* Bloc droite */
@@ -337,7 +338,7 @@ select.dashboard-input:focus {
   border: 1px solid #ffffff;
   border-radius: 6px;
   padding: 5px 12px;
-  font-size: 0.85rem;
+  font-size: 1.1rem;
   opacity: 0.5;
   transition: all 0.2s ease;
 }
@@ -378,4 +379,8 @@ select.dashboard-input:focus {
 }
 .trashCss:hover{
   opacity: 1;
+}
+
+.badge{
+    font-size: 20px;
 }

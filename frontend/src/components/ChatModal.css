@@ -90,7 +90,7 @@
 
 .no-credits-alert {
   margin-top: 15px;
-  padding: 12px 15px;
+  padding: 12px 12px;
   background: linear-gradient(135deg, rgba(31, 42, 77, 0.9), rgba(20, 27, 51, 0.9));
   border: 1px solid #d4af37; /* Ton doré */
   border-radius: 8px;
@@ -128,9 +128,14 @@
   padding: 5px 15px;
   border-radius: 20px;
   font-weight: bold;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.3s ease;
+  width: 100px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-recharge-quick:hover {
