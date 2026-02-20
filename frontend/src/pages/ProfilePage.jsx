@@ -27,8 +27,10 @@ function ProfilePage() {
   const [selectedContact, setSelectedContact] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState("");
   const messagesEndRef = useRef(null);
+  const [confirmMessageSend, setConfirmMessageSend] = useState(
+    localStorage.getItem("confirmMessageSend") !== "false",
+  );
   //#endregion
 
   // Synchroniser les infos de l'utilisateur connecté (Bernard) au montage
@@ -239,63 +241,81 @@ function ProfilePage() {
   };
   // #endregion
 
-// #region ENVOI MSG
+  // region ALERT CONFIRM ENVOI
+  const handleToggleConfirmation = () => {
+    const newValue = !confirmMessageSend;
+    setConfirmMessageSend(newValue);
+    localStorage.setItem("confirmMessageSend", newValue);
+  };
+  // #endregion
+
+  // #region ENVOI MSG
   // Remplace ton handleSendMessage par celui-ci
-const handleSendMessage = async (receiverId, content) => {
-  if (!content.trim()) return false;
+  const handleSendMessage = async (receiverId, content) => {
+    if (!content.trim()) return false;
 
-  const confirmation = await Swal.fire({
-    title: "Êtes-vous sûr ?",
-    text: "Cela vous coûtera 1 crédit.",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonText: "Oui, Envoyer !",
-    background: "#1f2a4d",
-    color: "#fff",
-  });
+    let isConfirmed = true;
+    
+        if (confirmMessageSend) {
+          const result = await Swal.fire({
+            title: "Êtes-vous sûr ?",
+            text: "Cela vous coûtera 1 crédit.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Oui, Envoyer !",
+            background: "#1f2a4d",
+            color: "#fff",
+          });
+          isConfirmed = result.isConfirmed;
+        }
+        if (!isConfirmed) return false;
 
-  if (!confirmation.isConfirmed) return false;
+    try {
+      const response = await fetch("http://localhost:8000/api/messages/send", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ content, receiverId }),
+      });
 
-  try {
-    const response = await fetch("http://localhost:8000/api/messages/send", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ content, receiverId }),
-    });
+      const data = await response.json();
 
-    const data = await response.json();
+      if (response.ok) {
+        if (data.remainingCredits !== undefined) {
+          // MISE À JOUR DU STATE (On utilise setCurrentUser ici)
+          setCurrentUser((prev) => {
+            const updated = { ...prev, credits: data.remainingCredits };
+            localStorage.setItem("user", JSON.stringify(updated));
+            return updated;
+          });
+        }
 
-    if (response.ok) {
-      if (data.remainingCredits !== undefined) {
-        // MISE À JOUR DU STATE (On utilise setCurrentUser ici)
-        setCurrentUser(prev => {
-          const updated = { ...prev, credits: data.remainingCredits };
-          localStorage.setItem("user", JSON.stringify(updated));
-          return updated;
+        Swal.fire({
+          icon: "success",
+          title: "Envoyé !",
+          text: `Crédits restants : ${data.remainingCredits}`,
+          background: "#1f2a4d",
+          color: "#fff",
         });
-      }
 
+        fetchMessages(receiverId);
+        return true;
+      } else {
+        throw new Error(data.error || "Erreur lors de l'envoi");
+      }
+    } catch (error) {
       Swal.fire({
-        icon: "success",
-        title: "Envoyé !",
-        text: `Crédits restants : ${data.remainingCredits}`,
+        icon: "error",
+        title: "Erreur",
+        text: error.message,
         background: "#1f2a4d",
         color: "#fff",
       });
-
-      fetchMessages(receiverId);
-      return true;
-    } else {
-      throw new Error(data.error || "Erreur lors de l'envoi");
+      return false;
     }
-  } catch (error) {
-    Swal.fire({ icon: "error", title: "Erreur", text: error.message, background: "#1f2a4d", color: "#fff" });
-    return false;
-  }
-};
+  };
   // #endregion
 
   // #region SCROLL AUTO
@@ -324,7 +344,6 @@ const handleSendMessage = async (receiverId, content) => {
       </div>
     );
   //#endregion
-
 
   //#region AFFICHAGE DU COMPOSANT
   return (

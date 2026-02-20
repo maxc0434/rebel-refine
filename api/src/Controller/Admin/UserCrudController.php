@@ -80,21 +80,22 @@ class UserCrudController extends AbstractCrudController
             CollectionField::new('userImages', 'Galerie Photos')
             ->setEntryType(UserImageType::class)
             ->setFormTypeOption('by_reference', false) // INDISPENSABLE pour lier l'owner automatiquement
-            ->onlyOnForms(),
-            ChoiceField::new('gender')
+            ->onlyOnForms()
+            ->setHelp('Attention : chaque photo ne doit pas dépasser 2 Mo.'),
+            ChoiceField::new('gender', "Genre")
             ->setChoices([
                 '♂️ Homme' => 'male',
                 '♀️ Femme' => 'female',
             ]),
 
-            ChoiceField::new('marital')
+            ChoiceField::new('marital', "Situation matrimoniale")
             ->setChoices([
                 'divorcé(e)' => 'divorcé(e)',
                 'veuf(ve)' => 'veuf(ve)',
                 'célibataire' => 'célibataire',
             ]),
 
-            ChoiceField::new('children')
+            ChoiceField::new('children', "Enfants")
             ->setChoices([
                 '0' => '0',
                 '1' => '1',
@@ -105,7 +106,7 @@ class UserCrudController extends AbstractCrudController
                 '5+' => '5+',
             ]),
             
-            ChoiceField::new('religion')
+            ChoiceField::new('religion', "Religion")
             ->setChoices([
                 'Aucune' => 'aucune',
                 'Catholique' => 'catholique',

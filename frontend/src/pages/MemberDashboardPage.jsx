@@ -30,13 +30,14 @@ function MemberDashboardPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [purchases, setPurchases] = useState([]);
-  const [newMessage, setNewMessage] = useState("");
 
   const messagesEndRef = useRef(null);
 
+  const [confirmMessageSend, setConfirmMessageSend] = useState(
+    localStorage.getItem("confirmMessageSend") !== "false",
+  );
+
   //#endregion
-
-
 
   // #region AUTHENTIFICATION
   const navigate = useNavigate(); // Hook pour rediriger l'utilisateur
@@ -349,22 +350,34 @@ function MemberDashboardPage() {
   };
   // #endregion
 
+  // region ALERT CONFIRM ENVOI
+  const handleToggleConfirmation = () => {
+    const newValue = !confirmMessageSend;
+    setConfirmMessageSend(newValue);
+    localStorage.setItem("confirmMessageSend", newValue);
+  };
+  // #endregion
+
   // #region ENVOI MSG
   // Remplace ton handleSendMessage par celui-ci
   const handleSendMessage = async (receiverId, content) => {
     if (!content.trim()) return false;
 
-    const confirmation = await Swal.fire({
-      title: "Êtes-vous sûr ?",
-      text: "Cela vous coûtera 1 crédit.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Oui, Envoyer !",
-      background: "#1f2a4d",
-      color: "#fff",
-    });
+    let isConfirmed = true;
 
-    if (!confirmation.isConfirmed) return false;
+    if (confirmMessageSend) {
+      const result = await Swal.fire({
+        title: "Êtes-vous sûr ?",
+        text: "Cela vous coûtera 1 crédit.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Oui, Envoyer !",
+        background: "#1f2a4d",
+        color: "#fff",
+      });
+      isConfirmed = result.isConfirmed;
+    }
+    if (!isConfirmed) return false;
 
     try {
       const response = await fetch("http://localhost:8000/api/messages/send", {
@@ -470,8 +483,7 @@ function MemberDashboardPage() {
   };
   //#endregion
 
-
-      //#region HISTO MES ACHATS
+  //#region HISTO MES ACHATS
   useEffect(() => {
     const fetchPurchases = async () => {
       try {
@@ -497,8 +509,6 @@ function MemberDashboardPage() {
   }, [activeTab]);
 
   //#endregion
-
-
 
   //#region CHARG. PAGE
   useEffect(() => {
@@ -545,8 +555,6 @@ function MemberDashboardPage() {
       </div>
     );
   //#endregion
-
-
 
   //#region AFFICHAGE DE LA PAGE
   return (
@@ -1456,7 +1464,7 @@ function MemberDashboardPage() {
                 style={{
                   display: "flex",
                   flexDirection: "column",
-                  alignItems: "center", // Centre horizontalement
+                  alignItems: "center",
                   width: "100%",
                 }}
               >
@@ -1467,6 +1475,54 @@ function MemberDashboardPage() {
                   <span className="info-item-value">{userData.email}</span>
                 </div>
 
+                {/* Préférence d'envoi */}
+                <div
+                  style={{
+                    marginTop: "20px",
+                    padding: "20px",
+                    background: "#161f3d",
+                    borderRadius: "15px",
+                  }}
+                >
+                  <h4 style={{ marginBottom: "15px" }}>Préférences d'envoi</h4>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <span style={{marginRight: "15px"}}>Confirmer avant d'envoyer un message (1 crédit) </span>
+
+                    <div
+                      onClick={handleToggleConfirmation}
+                      style={{
+                        width: "50px",
+                        height: "26px",
+                        background: confirmMessageSend ? "#d4af37" : "#333",
+                        borderRadius: "13px",
+                        position: "relative",
+                        cursor: "pointer",
+                        transition: "0.3s",
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: "20px",
+                          height: "20px",
+                          background: "white",
+                          borderRadius: "50%",
+                          position: "absolute",
+                          top: "3px",
+                          left: confirmMessageSend ? "27px" : "3px",
+                          transition: "0.3s",
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Changer le mot de passe */}
                 <form
                   className="security-form"
                   onSubmit={handleUpdatePassword}

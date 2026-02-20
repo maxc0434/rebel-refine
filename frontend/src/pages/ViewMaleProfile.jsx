@@ -296,7 +296,7 @@ const ViewMaleProfile = () => {
                     {formatDate(profile.birthdate) || "Non renseigné"}
                   </p>
                   <p>
-                    <strong>Status Marital :</strong>{" "}
+                    <strong>Statut Marital :</strong>{" "}
                     {profile.marital || "Non renseigné"}
                   </p>
                   <p>

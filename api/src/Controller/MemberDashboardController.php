@@ -52,7 +52,7 @@ class MemberDashboardController extends AbstractController
                 // INFO TARGET : Son pseudonyme pour l'affichage sur la carte
                 'nickname' => $favorite->getNickname(),
 
-                // INFO TARGET : Son status marital
+                // INFO TARGET : Son statut marital
                 'marital' => $favorite->getMarital(),
 
                 // INFO TARGET : Calcul de son âge basé sur sa date de naissance
@@ -73,7 +73,7 @@ class MemberDashboardController extends AbstractController
                 'nickname' => $user->getNickname(),       // Son propre pseudo
                 'email' => $user->getUserIdentifier(),    // Son email (identifiant de connexion)
                 'roles' => $user->getRoles(),             // Ses droits d'accès
-                'marital' => $user->getMarital(),         // Son status marital
+                'marital' => $user->getMarital(),         // Son statut marital
                 'children' => $user->getChildren(),       // Son nombre d'enfants
                 'religion' => $user->getReligion(),       // Son religion
                 'birthDate' => $user->getBirthDate() ? $user->getBirthDate()->format('Y-m-d') : null,     // Sa date de naissance

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { X, Lock } from "lucide-react";
 import "./ChatModal.css";
+import {  useNavigate } from "react-router-dom";
+
 
 const ChatModal = ({
   isOpen,
@@ -11,6 +13,7 @@ const ChatModal = ({
   handleSendMessage,
   messagesEndRef,
 }) => {
+  const navigate = useNavigate();
   const [newMessage, setNewMessage] = useState("");
   const userGender = userData?.gender?.toLowerCase();
   const isMale = userGender === "male";
@@ -178,7 +181,7 @@ const ChatModal = ({
               </div>
               <button
                 className="btn-recharge-quick"
-                onClick={() => navigate("/boutique")}
+                onClick={() => navigate("/credit-shop")}
               >
                 Boutique
               </button>

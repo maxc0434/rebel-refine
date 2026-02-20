@@ -218,9 +218,9 @@ const PresentationPage = () => {
                       </h4>
                       <p className="text-muted mb-0">
                         Un espace fondé sur <span className="gold-text">le respect mutuel</span> 
-                        , dédié aux personnes recherchant des connexions 
-                        <span className="gold-text">authentiques, sincères</span>  et 
-                        <span className="gold-text">durables.</span> 
+                        , dédié aux personnes recherchant des connexions {" "}
+                        <span className="gold-text">authentiques, sincères</span> {" "} et  
+                        {" "}<span className="gold-text">durables.</span> 
                       </p>
                     </div>
                   </div>
