@@ -16,6 +16,26 @@ function Navbar() {
     navigate("/");
   };
 
+  // On récupère la langue actuelle pour mettre en gras le bouton actif
+  const currentLang = localStorage.getItem("app_lang") || "fr";
+
+  const changeLanguage = (lang) => {
+    localStorage.setItem("app_lang", lang);
+    // On recharge la page pour que tout le site (React + Appels API) bascule
+    window.location.reload();
+  };
+
+  const btnStyle = (lang) => ({
+    background: "none",
+    border: "none",
+    color: currentLang === lang ? "#d4af37" : "#fff", // Or si actif, Blanc sinon
+    fontWeight: currentLang === lang ? "bold" : "normal",
+    cursor: "pointer",
+    fontSize: "1rem",
+    margin: "0 5px",
+    textDecoration: currentLang === lang ? "underline" : "none",
+  });
+
   const navItemStyle = {
     fontWeight: "600",
     letterSpacing: "1px",
@@ -24,23 +44,24 @@ function Navbar() {
   };
 
   const navShopBtnStyle = {
-  fontWeight: "700",
-  letterSpacing: "1.5px",
-  textTransform: "uppercase",
-  fontSize: "0.85rem",
-  padding: "6px 18px", 
-  display: "flex",    
-  alignItems: "center",
-  justifyContent: "center",
-  lineHeight: "1.25",   
-  borderRadius: "45px",
-  color: "#4A3121", 
-  textShadow: "0px 1px 1px rgba(255, 255, 255, 0.4)",                
-  background: "linear-gradient(45deg, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C)",
-  boxShadow: "0 4px 15px rgba(191, 149, 63, 0.3)",
-  transition: "all 0.3s ease",
-  cursor: "pointer",
-};
+    fontWeight: "700",
+    letterSpacing: "1.5px",
+    textTransform: "uppercase",
+    fontSize: "0.85rem",
+    padding: "6px 18px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    lineHeight: "1.25",
+    borderRadius: "45px",
+    color: "#4A3121",
+    textShadow: "0px 1px 1px rgba(255, 255, 255, 0.4)",
+    background:
+      "linear-gradient(45deg, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C)",
+    boxShadow: "0 4px 15px rgba(191, 149, 63, 0.3)",
+    transition: "all 0.3s ease",
+    cursor: "pointer",
+  };
 
   return (
     <header
@@ -95,6 +116,8 @@ function Navbar() {
                   </>
                 )}
               </ul>
+
+              
 
               {/* AFFICHAGE CONDITIONNEL */}
               {token ? (
@@ -162,6 +185,25 @@ function Navbar() {
                   </Link>
                 </>
               )}
+
+              <div className="language-switcher"
+              style={{marginLeft: "15px"}}>
+                <button
+                  onClick={() => changeLanguage("fr")}
+                  style={btnStyle("fr")}
+                  title="Passer en Français"
+                >
+                  FR
+                </button>
+                <span style={{ color: "#fff" }}>|</span>
+                <button
+                  onClick={() => changeLanguage("en")}
+                  style={btnStyle("en")}
+                  title="Switch to English"
+                >
+                  EN
+                </button>
+              </div>
 
               {/* Toggles Mobile - On force la couleur Or sur les barres */}
               <div className="header-bar d-lg-none">

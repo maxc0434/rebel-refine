@@ -4,6 +4,8 @@ import { User, MessageSquare, Shield, Trash2 } from "lucide-react";
 import Swal from "sweetalert2";
 import "./FemaleDashboardPage.css";
 import ChatModal from "../components/ChatModal";
+import { apiFetch } from '../apiFemale'; 
+
 
 //#region STATES
 function FemaleDashboardPage() {
@@ -258,45 +260,18 @@ function FemaleDashboardPage() {
 
     const fetchFemaleDashboardData = async () => {
       try {
-        // 1. Récupère les informations de l'utilisatrice
-        const response = await fetch(
-          "http://localhost:8000/api/member/female/dashboard",
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          },
-        );
+    // PLUS BESOIN de configurer les headers manuellement !
+    const data = await apiFetch("/api/member/female/dashboard");
+    setUserData(data.userData);
 
-        if (!response.ok) {
-          throw new Error("Accès refusé ou données introuvables");
-        }
-
-        const data = await response.json();
-        setUserData(data.userData);
-
-        // 2. Récupère la liste des conversations
-        const convResponse = await fetch(
-          "http://localhost:8000/api/messages/conversations",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
-
-        if (convResponse.ok) {
-          const convData = await convResponse.json();
-          setConversations(convData); // Remplit l'onglet "Messagerie"
-        }
-      } catch (error) {
-        console.error("Erreur lors du chargement du dashboard femme :", error);
-        navigate("/");
-      } finally {
-        setLoading(false);
-      }
+    const convData = await apiFetch("/api/messages/conversations");
+    setConversations(convData);
+  } catch (error) {
+    console.error("Erreur :", error);
+    navigate("/");
+  } finally {
+    setLoading(false);
+  }
     };
 
     fetchFemaleDashboardData();

@@ -15,6 +15,7 @@ import Swal from "sweetalert2";
 import { useDropzone } from "react-dropzone";
 import { useCallback } from "react";
 import ChatModal from "../components/ChatModal";
+import { apiFetch } from '../api'; 
 
 function MemberDashboardPage() {
   // #region STATES
@@ -66,17 +67,10 @@ function MemberDashboardPage() {
   // --- GESTION DE l'UPDATE du PROFIL ---
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem("token");
-
     try {
-      const response = await fetch(
-        "http://localhost:8000/api/member/update-profile",
+      const response = await apiFetch("/api/member/update-profile",
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
           body: JSON.stringify({
             nickname: userData.nickname,
             interests: userData.interests,
@@ -211,16 +205,11 @@ function MemberDashboardPage() {
         formData.append("photo", file);
 
         try {
-          const response = await fetch(
-            "http://localhost:8000/api/member/upload-photo",
+          const response = await apiFetch("/api/member/upload-photo",
             {
               method: "POST",
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
-              body: formData, // Envoi de l'enveloppe au serveur
-            },
-          );
+              body: formData,
+            });
 
           const data = await response.json();
 
@@ -250,15 +239,11 @@ function MemberDashboardPage() {
   const handleDeletePhoto = async (photoId) => {
     // 1. Appel à l'API Symfony
     try {
-      const response = await fetch(
-        `http://localhost:8000/api/member/delete-photo/${photoId}`,
+      const response = await apiFetch(
+        `/api/member/delete-photo/${photoId}`,
         {
           method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        },
-      );
+        });
 
       if (response.ok) {
         // On met à jour le state local pour faire disparaître la photo immédiatement
@@ -275,19 +260,10 @@ function MemberDashboardPage() {
   };
   //#endregion
 
-  // #region RECUP des CONTACTS
+  // #region RECUP des CONVERSATIONS
   const fetchConversations = async () => {
     try {
-      const response = await fetch(
-        "http://localhost:8000/api/messages/conversations",
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`, // On envoie le JWT pour le getUser() de Symfony
-            "Content-Type": "application/json",
-          },
-        },
-      );
+      const response = await apiFetch("/api/messages/conversations");
       if (response.ok) {
         const data = await response.json();
         setConversations(data); // On remplit notre tableau avec les contacts trouvés
@@ -350,7 +326,7 @@ function MemberDashboardPage() {
   };
   // #endregion
 
-  // region ALERT CONFIRM ENVOI
+  // #region ALERT CONFIRM ENVOI
   const handleToggleConfirmation = () => {
     const newValue = !confirmMessageSend;
     setConfirmMessageSend(newValue);
@@ -518,13 +494,7 @@ function MemberDashboardPage() {
     }
 
     // Appel au Backend Symfony pour récupérer les infos du dashboard
-    fetch("http://localhost:8000/api/member/dashboard", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    })
+    apiFetch("/api/member/dashboard")
       .then((res) => res.json())
       .then((data) => {
         // Mise à jour de l'état avec les données du contrôleur Symfony

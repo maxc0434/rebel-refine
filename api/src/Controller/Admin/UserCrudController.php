@@ -11,6 +11,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\{IdField, EmailField, TextField, DateField, BooleanField, ChoiceField, TextEditorField};
 use App\Form\UserImageType;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
+use App\Service\TranslationService;
 
 /**
  * CLASSE : UserCrudController
@@ -21,15 +22,17 @@ class UserCrudController extends AbstractCrudController
     // ÉTAPE 1 : Déclaration d'une propriété privée pour stocker le service de hachage.
     // Cela permet d'utiliser l'outil $passwordHasher dans toutes les méthodes de cette classe.
     private UserPasswordHasherInterface $passwordHasher;
+    private TranslationService $translationService;
 
     /**
      * ÉTAPE 2 : LE CONSTRUCTEUR (Moment de l'initialisation)
      * Appelé une seule fois au chargement du contrôleur. 
      * Symfony "injecte" ici l'outil UserPasswordHasherInterface pour qu'on puisse l'utiliser plus tard.
      */
-    public function __construct(UserPasswordHasherInterface $passwordHasher)
+    public function __construct(UserPasswordHasherInterface $passwordHasher, TranslationService $translationService)
     {
-        $this->passwordHasher = $passwordHasher; 
+        $this->passwordHasher = $passwordHasher;
+        $this->translationService = $translationService; 
     }
 
     /**
@@ -145,6 +148,8 @@ class UserCrudController extends AbstractCrudController
     {
         // On déclenche le hachage avant de sauvegarder .
         $this->hashPassword($entityInstance);
+        // On traduit aussi lors de la mise à jour
+        $this->translateInterests($entityInstance);
         // On appelle le comportement standard du parent pour faire le "INSERT" .
         parent::persistEntity($entityManager, $entityInstance);
     }
@@ -157,8 +162,22 @@ class UserCrudController extends AbstractCrudController
     {
         // On déclenche le hachage (sera ignoré si le champ est vide).
         $this->hashPassword($entityInstance);
+        // On traduit aussi lors de la mise à jour
+        $this->translateInterests($entityInstance);
         // On appelle le comportement standard du parent pour faire le "UPDATE".
         parent::updateEntity($entityManager, $entityInstance);
+    }
+
+    private function translateInterests($entity): void
+    {
+        // On vérifie que c'est bien un User et qu'il a des intérêts remplis
+        if ($entity instanceof User && $entity->getInterests()) {
+            $this->translationService->autoTranslate(
+                $entity, 
+                'interests', 
+                $entity->getInterests()
+            );
+        }
     }
 
     /**
