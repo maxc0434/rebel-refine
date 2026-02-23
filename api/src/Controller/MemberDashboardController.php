@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Entity\UserImage;
+use App\Service\TranslationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
@@ -136,7 +137,7 @@ class MemberDashboardController extends AbstractController
     #region Update Profil
     #[Route('/update-profile', name: 'update_profile', methods: ['POST'])]
     #[IsGranted('ROLE_MALE')]
-    public function updateProfile(Request $request, EntityManagerInterface $em): JsonResponse
+    public function updateProfile(Request $request, EntityManagerInterface $em, TranslationService $translationService): JsonResponse
     {
         /** @var User $user */
         $user = $this->getUser(); // On récupère l'utilisateur connecté via le Token
@@ -151,11 +152,12 @@ class MemberDashboardController extends AbstractController
         // --- LOGIQUE "UPDATE" DU CRUD ---
         // On met à jour uniquement les champs autorisés
         if (isset($data['nickname'])) $user->setNickname($data['nickname']);
-        if (isset($data['interests'])) $user->setInterests($data['interests']);
         if (isset($data['marital'])) $user->setMarital($data['marital']);
         if (isset($data['religion'])) $user->setReligion($data['religion']);
         if (isset($data['children'])) $user->setChildren($data['children']);
         if (isset($data['birthDate'])) $user->setBirthDate(new \DateTime($data['birthDate']));
+        if (isset($data['interests'])) $user->setInterests($data['interests']);
+        $translationService->autoTranslate($user, 'interests', $data['interests']);
 
         // On enregistre les modifications en base de données
         $em->flush();
