@@ -4,10 +4,9 @@ import { User, MessageSquare, Shield, Trash2 } from "lucide-react";
 import Swal from "sweetalert2";
 import "./FemaleDashboardPage.css";
 import ChatModal from "../components/ChatModal";
-import { apiFetch } from '../apiFemale'; 
+import { apiFetch } from "../apiFemale";
 
-
-//#region STATES
+  //#region STATES
 function FemaleDashboardPage() {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -18,6 +17,17 @@ function FemaleDashboardPage() {
   const [messages, setMessages] = useState([]);
   const [conversations, setConversations] = useState([]);
   const messagesEndRef = useRef(null);
+  //#endregion
+  
+  // #region RECUP des CONVERSATIONS
+  const fetchConversations = async () => {
+    try {
+      const data = await apiFetch("/api/messages/conversations");
+      setConversations(data);
+    } catch (error) {
+      console.error("Erreur chargement conversations:", error);
+    }
+  };
   //#endregion
 
   // #region UPDATE du PASSWORD ---
@@ -110,48 +120,37 @@ function FemaleDashboardPage() {
   // #endregion
 
   // #region RECUP des MSG
+const fetchMessages = async (contactId) => {
+  try {
+    // apiFetch gère GET par défaut, headers, et renvoie directement le JSON
+    const data = await apiFetch(`/api/messages/list/${contactId}`);
 
-  const fetchMessages = async (contactId) => {
-    try {
-      const response = await fetch(
-        `http://localhost:8000/api/messages/list/${contactId}`,
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        },
-      );
-      if (response.ok) {
-        const data = await response.json();
-        setMessages(data);
-      }
-    } catch (error) {
-      console.error("Erreur historique:", error);
-    }
-  };
-
-  // #endregion
+    setMessages(data);
+  } catch (error) {
+    console.error("Erreur historique:", error);
+  }
+};
+// #endregion
 
   // #region MARQUER COMME LUS
-  const handleMarkAsRead = async (contactId) => {
-    const token = localStorage.getItem("token");
+const handleMarkAsRead = async (contactId) => {
+  try {
+    // apiFetch fait le POST, ajoute headers/token, et renvoie JSON (même si vide)
+    await apiFetch(`/api/messages/mark-read/${contactId}`, {
+      method: "POST",
+    });
 
-    try {
-      // 1. Appel API
-      await fetch(`http://localhost:8000/api/messages/mark-read/${contactId}`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      // 2. Mise à jour locale (pour que le badge disparaisse sans recharger la page)
-      setConversations((prev) =>
-        prev.map((conv) =>
-          conv.id === contactId ? { ...conv, hasNewMessages: false } : conv,
-        ),
-      );
-    } catch (err) {
-      console.error("Erreur lors du marquage comme lu", err);
-    }
-  };
-  // #endregion
+    // 2. Mise à jour locale (pour que le badge disparaisse sans recharger la page)
+    setConversations((prev) =>
+      prev.map((conv) =>
+        conv.id === contactId ? { ...conv, hasNewMessages: false } : conv,
+      ),
+    );
+  } catch (err) {
+    console.error("Erreur lors du marquage comme lu", err);
+  }
+};
+// #endregion
 
   // #region SCROLL AUTO
   const scrollToBottom = () => {
@@ -170,24 +169,16 @@ function FemaleDashboardPage() {
     if (!content.trim()) return false; // On renvoie false si c'est vide
 
     try {
-      const response = await fetch("http://localhost:8000/api/messages/send", {
+      const response = await apiFetch("/api/messages/send", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({ content, receiverId }),
       });
 
-      if (response.ok) {
-        console.log("SUCCESS : Le message est passé côté Symfony !");
-        // Rafraîchit la discussion pour voir le nouveau message
-        fetchMessages(receiverId);
-        return true; // On informe la modale que l'envoi a réussi
-      } else {
-        console.log("ERREUR : Le serveur a répondu non !", response.status);
-        return false;
-      }
+      fetchMessages(receiverId);
+      return true; // On informe la modale que l'envoi a réussi
     } catch (error) {
       console.error("Erreur envoi:", error);
       return false;
@@ -195,61 +186,52 @@ function FemaleDashboardPage() {
   };
   // #endregion
 
-  //#region SUPPR CONVERSATION
-    const handleDeleteConversation = async (contactId) => {
-      const result = await Swal.fire({
-        title: "Supprimer la conversation ?",
-        text: "Tous les messages avec ce contact seront effacés définitivement.",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#d33",
-        cancelButtonColor: "#3085d6",
-        confirmButtonText: "Oui, supprimer",
-        cancelButtonText: "Annuler",
+ //#region SUPPR CONVERSATION
+const handleDeleteConversation = async (contactId) => {
+  const result = await Swal.fire({
+    title: "Supprimer la conversation ?",
+    text: "Tous les messages avec ce contact seront effacés définitivement.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#3085d6",
+    confirmButtonText: "Oui, supprimer",
+    cancelButtonText: "Annuler",
+    background: "#1f2a4d",
+    color: "#fff",
+  });
+
+  if (result.isConfirmed) {
+    try {
+      // apiFetch fait le DELETE, ajoute token, et lève erreur si pas ok
+      await apiFetch(`/api/messages/conversation/${contactId}`, {
+        method: "DELETE",
+      });
+
+      // Succès (on arrive ici seulement si response.ok)
+      Swal.fire({
+        title: "Supprimé !",
+        icon: "success",
+        timer: 1500,
+        showConfirmButton: false,
         background: "#1f2a4d",
         color: "#fff",
       });
-  
-      if (result.isConfirmed) {
-        try {
-          const response = await fetch(
-            `http://localhost:8000/api/messages/conversation/${contactId}`,
-            {
-              method: "DELETE",
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
-            },
-          );
-  
-          if (response.ok) {
-            Swal.fire({
-              title: "Supprimé !",
-              icon: "success",
-              timer: 1500,
-              showConfirmButton: false,
-              background: "#1f2a4d",
-              color: "#fff",
-            });
-  
-            // Rafraîchir la liste des conversations après suppression
-            // (La fonction que tu utilises pour charger tes contacts)
-            fetchConversations();
-          } else {
-            throw new Error("Erreur lors de la suppression");
-          }
-        } catch (error) {
-          Swal.fire({
-            icon: "error",
-            title: "Erreur",
-            text: error.message,
-            background: "#1f2a4d",
-            color: "#fff",
-          });
-        }
-      }
-    };
-    //#endregion
+
+      // Rafraîchir la liste (inchangé)
+      fetchConversations();
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Erreur",
+        text: error.message, // message d'erreur de l'API ou fallback
+        background: "#1f2a4d",
+        color: "#fff",
+      });
+    }
+  }
+};
+//#endregion
 
   //#region MONTAGE DU COMPOSANT et CHARGEMENT DES DONNÉES
   useEffect(() => {
@@ -260,18 +242,18 @@ function FemaleDashboardPage() {
 
     const fetchFemaleDashboardData = async () => {
       try {
-    // PLUS BESOIN de configurer les headers manuellement !
-    const data = await apiFetch("/api/member/female/dashboard");
-    setUserData(data.userData);
+        // PLUS BESOIN de configurer les headers manuellement !
+        const data = await apiFetch("/api/member/female/dashboard");
+        setUserData(data.userData);
 
-    const convData = await apiFetch("/api/messages/conversations");
-    setConversations(convData);
-  } catch (error) {
-    console.error("Erreur :", error);
-    navigate("/");
-  } finally {
-    setLoading(false);
-  }
+        const convData = await apiFetch("/api/messages/conversations");
+        setConversations(convData);
+      } catch (error) {
+        console.error("Erreur :", error);
+        navigate("/");
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchFemaleDashboardData();
@@ -443,10 +425,9 @@ function FemaleDashboardPage() {
                               paddingBottom: "10px",
                               paddingLeft: "10px",
                               paddingRight: "10px",
-                              color: "#ff4d4d", 
+                              color: "#ff4d4d",
                               cursor: "pointer",
                               padding: "5px",
-
                             }}
                             title="Supprimer la conversation"
                           >
