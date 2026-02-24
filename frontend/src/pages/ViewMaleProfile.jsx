@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { User, ArrowLeft, X } from "lucide-react";
 import "./ViewMaleProfile.css";
 import ChatModal from "../components/ChatModal";
+import { apiFetch } from "../api";
 
 const ViewMaleProfile = () => {
   const { id } = useParams();
@@ -17,98 +18,71 @@ const ViewMaleProfile = () => {
   const navigate = useNavigate();
   const userData = JSON.parse(localStorage.getItem("user"));
 
+  // #region ENVOI DE MESSAGE
   const onSendMessage = async (contactId, content) => {
     if (!content.trim()) return false;
 
     try {
-      const response = await fetch("http://localhost:8000/api/messages/send", {
+      // apiFetch s'occupe de l'URL, du Token, du Content-Type et du JSON auto
+      await apiFetch("/api/messages/send", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ content, receiverId: contactId }), // Symfony attend receiverId
+        body: JSON.stringify({ content, receiverId: contactId }),
       });
 
-      if (response.ok) {
-        // 1. On rafraîchit la liste locale pour voir le message apparaître immédiatement
-        // Optionnel : tu peux refaire un fetch de l'historique ici
-        const newMsg = {
-          id: Date.now(),
-          content: content,
-          senderId: userData.id,
-          createdAt: new Date().toISOString(),
-          status: "pending",
-        };
-        setMessages((prev) => [...prev, newMsg]);
+      // 1. On rafraîchit la liste locale
+      const newMsg = {
+        id: Date.now(),
+        content: content,
+        senderId: userData.id,
+        createdAt: new Date().toISOString(),
+        status: "pending",
+      };
+      setMessages((prev) => [...prev, newMsg]);
 
-        // 2. TRÈS IMPORTANT : On renvoie true pour vider l'input dans ChatModal
-        return true;
-      } else {
-        console.error("Erreur serveur lors de l'envoi");
-        return false;
-      }
+      // 2. On renvoie true pour vider l'input
+      return true;
     } catch (error) {
-      console.error("Erreur API:", error);
+      // Si apiFetch lance une erreur (car response.ok est false), on tombe ici
+      console.error("Erreur lors de l'envoi via apiFetch:", error.message);
       return false;
     }
   };
+  // #endregion
 
   // #region RECUPERATION PROFIL
   useEffect(() => {
     if (!id) return;
 
     setLoading(true);
-    fetch(`http://localhost:8000/api/profile/male/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => {
-        if (!res.ok) {
-          if (res.status === 403)
-            throw new Error(
-              "Accès non autorisé : ce membre ne vous a pas contactée.",
-            );
-          if (res.status === 404) throw new Error("Profil introuvable.");
-          throw new Error("Une erreur est survenue lors de la récupération.");
-        }
-        return res.json();
-      })
+    // Plus besoin de headers, de Bearer, ou de .json() manuel !
+    apiFetch(`/api/profile/male/${id}`)
       .then((data) => {
         setProfile(data);
       })
       .catch((err) => {
-        console.error("Erreur Fetch :", err.message);
+        console.error("Erreur Profil :", err.message);
         setError(err.message);
       })
       .finally(() => setLoading(false));
-  }, [id, token]);
+  }, [id]);
 
   // #endregion
 
   // #region RECUPERATION HISTORIQUE
-  useEffect(() => {
-    if (isModalOpen && id) {
-      fetch(`http://localhost:8000/api/messages/list/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
+useEffect(() => {
+  if (isModalOpen && id) {
+    // apiFetch s'occupe de l'URL de base, du token et du .json()
+    apiFetch(`/api/messages/list/${id}`)
+      .then((data) => {
+        setMessages(data); 
       })
-        .then((res) => {
-          if (!res.ok) throw new Error("Impossible de charger l'historique.");
-          return res.json();
-        })
-        .then((data) => {
-          setMessages(data); // On remplit l'état 'messages' pour la modale
-        })
-        .catch((err) => console.error("Erreur Fetch Messages :", err.message));
-    }
-  }, [isModalOpen, id, token]);
-
-  // #endregion
+      .catch((err) => {
+        console.error("Erreur Fetch Messages :", err.message);
+        // Optionnel : tu pourrais ici utiliser t.error_load_history si tu le traduis
+      });
+  }
+}, [isModalOpen, id]); // On enlève 'token' des dépendances, apiFetch le récupère seul
+// #endregion
 
   // #region GESTION ERREUR
   if (error) {
@@ -351,7 +325,7 @@ const ViewMaleProfile = () => {
 
             <button
               className="lab-btn mt-5"
-              style={{ 
+              style={{
                 margin: "100px",
               }}
               onClick={() => setIsModalOpen(true)}
@@ -359,7 +333,6 @@ const ViewMaleProfile = () => {
               <span>Répondre à {profile.nickname}</span>
             </button>
 
-            
             {/* MARK: Chat */}
             <ChatModal
               isOpen={isModalOpen}

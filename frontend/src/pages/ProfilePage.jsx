@@ -33,7 +33,7 @@ function ProfilePage() {
   );
   //#endregion
 
-  // Synchroniser les infos de l'utilisateur connecté (Bernard) au montage
+  // #region SYNC USER
   useEffect(() => {
     if (token) {
       fetch("http://localhost:8000/api/member/dashboard", {
@@ -50,6 +50,7 @@ function ProfilePage() {
         .catch((err) => console.error("Erreur sync user:", err));
     }
   }, [token]);
+  // #endregion
 
   //#region MONTAGE DU COMPOSANT et CHARGEMENT DES DONNÉES
   // --- RÉCUPÉRATION DU PROFIL ET MÉMO ---
@@ -241,7 +242,7 @@ function ProfilePage() {
   };
   // #endregion
 
-  // region ALERT CONFIRM ENVOI
+  //#region ALERT CONFIRM ENVOI
   const handleToggleConfirmation = () => {
     const newValue = !confirmMessageSend;
     setConfirmMessageSend(newValue);
@@ -250,7 +251,6 @@ function ProfilePage() {
   // #endregion
 
   // #region ENVOI MSG
-  // Remplace ton handleSendMessage par celui-ci
   const handleSendMessage = async (receiverId, content) => {
     if (!content.trim()) return false;
 
