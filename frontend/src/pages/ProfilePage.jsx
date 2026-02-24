@@ -4,6 +4,7 @@ import "./ProfilePage.css";
 import { Heart, NotebookPen, Mail } from "lucide-react";
 import Swal from "sweetalert2";
 import ChatModal from "../components/ChatModal";
+import { apiFetch } from "../api";
 
 function ProfilePage() {
   //#region OUTILS & AUTHENTIFICATION
@@ -36,52 +37,53 @@ function ProfilePage() {
   // #region SYNC USER
   useEffect(() => {
     if (token) {
-      fetch("http://localhost:8000/api/member/dashboard", {
-        // On utilise cette route pour avoir les crédits à jour
-        headers: { Authorization: `Bearer ${token}` },
-      })
-        .then((res) => res.json())
+      apiFetch("/api/member/dashboard")
         .then((data) => {
-          if (data.userData) {
+          // data est déjà le JSON parsé grâce à ton apiFetch
+          if (data && data.userData) {
             setCurrentUser(data.userData);
             localStorage.setItem("user", JSON.stringify(data.userData));
           }
         })
-        .catch((err) => console.error("Erreur sync user:", err));
+        .catch((err) => console.error("Erreur sync user:", err.message));
     }
   }, [token]);
   // #endregion
 
   //#region MONTAGE DU COMPOSANT et CHARGEMENT DES DONNÉES
-  // --- RÉCUPÉRATION DU PROFIL ET MÉMO ---
   useEffect(() => {
     if (!token || !id) {
       navigate("/");
       return;
     }
 
-    // Fetch du Profil
-    fetch(`http://localhost:8000/api/profile/${id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => res.json())
+    setLoading(true);
+
+    // 1. Récupération du Profil
+    apiFetch(`/api/profile/${id}`)
       .then((data) => {
         setUser(data);
-        setLoading(false); // On cache le loader dès qu'on a les infos
+        setLoading(false);
       })
-      .catch((err) => console.error("Erreur API:", err));
-    // Fetch du Mémo
-    fetch(`http://localhost:8000/api/member/memo/${id}`, {
-      method: "GET",
-      headers: { Authorization: `Bearer ${token}` }, // Si ton API mémo utilise aussi le token
-    })
-      .then((res) => {
-        if (!res.ok) return { content: "" }; // Si erreur 500 ou 404, on renvoie un objet vide
-        return res.json();
+      .catch((err) => {
+        console.error("Erreur API Profil:", err.message);
+        setLoading(false);
+      });
+
+    // 2. Récupération du Mémo
+    apiFetch(`/api/member/memo/${id}`)
+      .then((data) => {
+        // Si data.content existe, on le met, sinon vide
+        setMemo(data?.content || "");
       })
-      .then((data) => setMemo(data.content))
-      .catch(() => setMemo(""));
-  }, [token, id, navigate]);
+      .catch((err) => {
+        // En cas d'erreur (404, 500), on initialise le mémo à vide sans bloquer l'affichage
+        console.warn(
+          "Mémo introuvable ou erreur serveur, initialisation à vide.",
+        );
+        setMemo("");
+      });
+  }, [id, navigate]); // On retire 'token' des dépendances, apiFetch le gère
   //#endregion
 
   //#region CARROUSEL
@@ -118,20 +120,14 @@ function ProfilePage() {
   // --- ACTION FAVORIS ---
   const toggleFavorite = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:8000/api/member/favorite/${id}`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        },
-      );
-      const data = await response.json();
+      // apiFetch gère l'URL, le token et le Content-Type automatiquement
+      const data = await apiFetch(`/api/member/favorite/${id}`, {
+        method: "POST",
+      });
 
+      // Ton apiFetch renvoie déjà le JSON, donc on vérifie directement le status
       if (data.status === "added" || data.status === "removed") {
-        // Mise à jour instantanée du bouton coeur sans recharger
+        // Mise à jour instantanée du bouton coeur
         setUser((prev) => ({
           ...prev,
           isFavorite: data.status === "added",
@@ -139,43 +135,48 @@ function ProfilePage() {
       }
     } catch (error) {
       console.error("Erreur favoris:", error.message);
+      // En cas d'erreur, on affiche une alerte
+      Swal.fire({
+        title: "Oups...",
+        text: "Impossible de modifier les favoris.",
+        icon: "error",
+        timer: 2000,
+        showConfirmButton: false,
+        background: "#1e2235",
+        color: "#fff",
+        iconColor: "#d4af37",
+      });
     }
   };
   //#endregion
 
   //#region MEMO
-  // --- CRÉATION D'UN MEMO ---
+  // --- CRÉATION / MISE À JOUR D'UN MEMO ---
   const saveMemo = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/member/memo", {
+      // apiFetch gère l'URL, le token, le Content-Type et le JSON
+      await apiFetch("/api/member/memo", {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
         body: JSON.stringify({
           targetId: user.id,
           content: memo,
         }),
       });
 
-      if (response.ok) {
-        Swal.fire({
-          title: "Enregistré !",
-          text: "Ton mémo a été mis à jour.",
-          icon: "success",
-          timer: 2000,
-          showConfirmButton: false,
-          background: "#1e2235", // Ton fond sombre
-          color: "#fff",
-          iconColor: "#d4af37", // Ton doré
-        });
-        setShowModal(false); // On ferme ta modale React après le succès
-      } else {
-        throw new Error("Erreur serveur");
-      }
+      // Le succès déclenche l'alerte
+      Swal.fire({
+        title: "Enregistré !",
+        text: "Ton mémo a été mis à jour.",
+        icon: "success",
+        timer: 2000,
+        showConfirmButton: false,
+        background: "#1e2235",
+        color: "#fff",
+        iconColor: "#d4af37",
+      });
+      setShowModal(false);
     } catch (error) {
+      console.error("Erreur save memo:", error.message);
       Swal.fire({
         title: "Oups...",
         text: "Impossible d'enregistrer la note.",
@@ -187,6 +188,7 @@ function ProfilePage() {
     }
   };
 
+  // --- SUPPRESSION D'UN MEMO ---
   const deleteMemo = async () => {
     const result = await Swal.fire({
       title: "Supprimer la note ?",
@@ -201,16 +203,13 @@ function ProfilePage() {
     });
 
     if (result.isConfirmed) {
-      const response = await fetch(
-        `http://localhost:8000/api/member/memo/${user.id}`,
-        {
+      try {
+        // apiFetch gère la méthode DELETE et le token
+        await apiFetch(`/api/member/memo/${user.id}`, {
           method: "DELETE",
-          credentials: "include",
-        },
-      );
+        });
 
-      if (response.ok) {
-        setMemo(""); // On vide le champ
+        setMemo("");
         setShowModal(false);
         Swal.fire({
           title: "Supprimé !",
@@ -218,6 +217,9 @@ function ProfilePage() {
           background: "#1e2235",
           color: "#fff",
         });
+      } catch (error) {
+        console.error("Erreur delete memo:", error.message);
+        // Optionnel : alerte erreur ici aussi si tu veux
       }
     }
   };
@@ -226,18 +228,13 @@ function ProfilePage() {
   // #region RECUP des MSG
   const fetchMessages = async (contactId) => {
     try {
-      const response = await fetch(
-        `http://localhost:8000/api/messages/list/${contactId}`,
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        },
-      );
-      if (response.ok) {
-        const data = await response.json();
-        setMessages(data);
-      }
+      // apiFetch s'occupe de l'URL, du token et du .json()
+      const data = await apiFetch(`/api/messages/list/${contactId}`);
+
+      // Si l'appel réussit, data contient déjà tes messages
+      setMessages(data);
     } catch (error) {
-      console.error("Erreur historique:", error);
+      console.error("Erreur historique:", error.message);
     }
   };
   // #endregion
@@ -251,72 +248,67 @@ function ProfilePage() {
   // #endregion
 
   // #region ENVOI MSG
-  const handleSendMessage = async (receiverId, content) => {
-    if (!content.trim()) return false;
+const handleSendMessage = async (receiverId, content) => {
+  if (!content.trim()) return false;
 
-    let isConfirmed = true;
-    
-        if (confirmMessageSend) {
-          const result = await Swal.fire({
-            title: "Êtes-vous sûr ?",
-            text: "Cela vous coûtera 1 crédit.",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Oui, Envoyer !",
-            background: "#1f2a4d",
-            color: "#fff",
-          });
-          isConfirmed = result.isConfirmed;
-        }
-        if (!isConfirmed) return false;
+  let isConfirmed = true;
 
-    try {
-      const response = await fetch("http://localhost:8000/api/messages/send", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ content, receiverId }),
+  if (confirmMessageSend) {
+    const result = await Swal.fire({
+      title: "Êtes-vous sûr ?",
+      text: "Cela vous coûtera 1 crédit.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Oui, Envoyer !",
+      background: "#1f2a4d",
+      color: "#fff",
+    });
+    isConfirmed = result.isConfirmed;
+  }
+  
+  if (!isConfirmed) return false;
+
+  try {
+    // apiFetch gère l'URL, le token, le Content-Type et le .json()
+    const data = await apiFetch("/api/messages/send", {
+      method: "POST",
+      body: JSON.stringify({ content, receiverId }),
+    });
+
+    // Si on est ici, c'est que la réponse est ok (status 200)
+    if (data.remainingCredits !== undefined) {
+      // MISE À JOUR DU STATE
+      setCurrentUser((prev) => {
+        const updated = { ...prev, credits: data.remainingCredits };
+        localStorage.setItem("user", JSON.stringify(updated));
+        return updated;
       });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        if (data.remainingCredits !== undefined) {
-          // MISE À JOUR DU STATE (On utilise setCurrentUser ici)
-          setCurrentUser((prev) => {
-            const updated = { ...prev, credits: data.remainingCredits };
-            localStorage.setItem("user", JSON.stringify(updated));
-            return updated;
-          });
-        }
-
-        Swal.fire({
-          icon: "success",
-          title: "Envoyé !",
-          text: `Crédits restants : ${data.remainingCredits}`,
-          background: "#1f2a4d",
-          color: "#fff",
-        });
-
-        fetchMessages(receiverId);
-        return true;
-      } else {
-        throw new Error(data.error || "Erreur lors de l'envoi");
-      }
-    } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Erreur",
-        text: error.message,
-        background: "#1f2a4d",
-        color: "#fff",
-      });
-      return false;
     }
-  };
-  // #endregion
+
+    Swal.fire({
+      icon: "success",
+      title: "Envoyé !",
+      text: `Crédits restants : ${data.remainingCredits}`,
+      background: "#1f2a4d",
+      color: "#fff",
+    });
+
+    fetchMessages(receiverId);
+    return true;
+
+  } catch (error) {
+    // apiFetch a déjà extrait le message d'erreur du serveur s'il y en avait un
+    Swal.fire({
+      icon: "error",
+      title: "Erreur",
+      text: error.message,
+      background: "#1f2a4d",
+      color: "#fff",
+    });
+    return false;
+  }
+};
+// #endregion
 
   // #region SCROLL AUTO
   const scrollToBottom = () => {

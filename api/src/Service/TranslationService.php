@@ -13,22 +13,31 @@ class TranslationService
     ) {}
 
     public function autoTranslate($entity, string $field, string $text): void
-    {
-        try {
-            // Configuration du traducteur : Source = null (auto-détection), Cible = 'en'
-            $tr = new GoogleTranslate('en'); 
+{
+    try {
+        $tr = new GoogleTranslate();
+        // Laisse Google détecter la langue source automatiquement
+        $translatedText = $tr->setTarget('en')->translate($text);
+        $detectedLanguage = $tr->getLastDetectedSource(); // Récupère la langue détectée
+
+        if ($detectedLanguage === 'en') {
+            // Si l'admin a tapé de l'anglais, on traduit vers le FRANÇAIS
+            $frText = $tr->setSource('en')->setTarget('fr')->translate($text);
+            $this->addTranslation($entity, $field, 'fr', $frText);
             
-            // Traduction
-            $translatedText = $tr->translate($text);
-            
-            // Enregistrement dans la table ext_translations
+            // On s'assure aussi que la version 'en' existe officiellement
+            $this->addTranslation($entity, $field, 'en', $text);
+        } else {
+            // Si c'est du français (ou autre), on traduit vers l'ANGLAIS
+            // (Ton comportement actuel)
             $this->addTranslation($entity, $field, 'en', $translatedText);
-            
-        } catch (\Exception $e) {
-            // En cas de souci on garde la version Mock
-            $this->addTranslation($entity, $field, 'en', $text . ' [EN-Fallback]');
         }
+
+    } catch (\Exception $e) {
+        // Fallback simple en cas d'erreur API
+        $this->addTranslation($entity, $field, 'en', $text . ' [EN]');
     }
+}
 
     public function addTranslation($entity, string $field, string $locale, string $value): void
     {

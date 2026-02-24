@@ -12,6 +12,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\{IdField, EmailField, TextField, DateF
 use App\Form\UserImageType;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use App\Service\TranslationService;
+use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use Symfony\Component\Form\FormBuilderInterface;
 
 /**
  * CLASSE : UserCrudController
@@ -32,7 +36,7 @@ class UserCrudController extends AbstractCrudController
     public function __construct(UserPasswordHasherInterface $passwordHasher, TranslationService $translationService)
     {
         $this->passwordHasher = $passwordHasher;
-        $this->translationService = $translationService; 
+        $this->translationService = $translationService;
     }
 
     /**
@@ -41,6 +45,18 @@ class UserCrudController extends AbstractCrudController
     public static function getEntityFqcn(): string
     {
         return User::class;
+    }
+
+
+    public function createEditFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface
+    {
+        $entity = $entityDto->getInstance();
+        if ($entity instanceof User) {
+            // On force la locale AVANT que le parent ne construise le formulaire
+            $entity->setTranslatableLocale('en');
+        }
+
+        return parent::createEditFormBuilder($entityDto, $formOptions, $context);
     }
 
     /**
@@ -52,7 +68,7 @@ class UserCrudController extends AbstractCrudController
         return [
             // Champ ID : on le cache dans les formulaires car la BDD le gère seule.
             IdField::new('id')->hideOnForm(),
-            
+
             EmailField::new('email', 'Email'),
 
             // CHAMP PASSWORD : 
@@ -60,16 +76,16 @@ class UserCrudController extends AbstractCrudController
                 ->setFormType(PasswordType::class) // Cache les caractères (●●●●).
                 ->onlyOnForms()                    // Ne pas l'afficher dans la liste globale.
                 ->setRequired($pageName === 'new') // Obligatoire si "New", optionnel si "Edit".
-                
+
                 // mapped => false : C'est ici qu'on empêche Symfony de lier automatiquement le champ 
                 // à l'entité, évitant ainsi d'envoyer du "null" en BDD si le champ est vide.
-                ->setFormTypeOption('mapped', false) 
-                
+                ->setFormTypeOption('mapped', false)
+
                 ->setFormTypeOptions([
                     'attr' => [
                         // Placeholder : Aide visuelle à l'intérieur de la case.
-                        'placeholder' => $pageName === 'edit' ? 
-                            'Laissez vide pour conserver le mot de passe actuel' : 
+                        'placeholder' => $pageName === 'edit' ?
+                            'Laissez vide pour conserver le mot de passe actuel' :
                             'Entrez un mot de passe',
                     ],
                 ]),
@@ -81,49 +97,49 @@ class UserCrudController extends AbstractCrudController
             BooleanField::new('isVerified', 'Compte vérifié'),
 
             CollectionField::new('userImages', 'Galerie Photos')
-            ->setEntryType(UserImageType::class)
-            ->setFormTypeOption('by_reference', false) // INDISPENSABLE pour lier l'owner automatiquement
-            ->onlyOnForms()
-            ->setHelp('Attention : chaque photo ne doit pas dépasser 2 Mo.'),
+                ->setEntryType(UserImageType::class)
+                ->setFormTypeOption('by_reference', false) // INDISPENSABLE pour lier l'owner automatiquement
+                ->onlyOnForms()
+                ->setHelp('Attention : chaque photo ne doit pas dépasser 2 Mo.'),
             ChoiceField::new('gender', "Genre")
-            ->setChoices([
-                '♂️ Homme' => 'male',
-                '♀️ Femme' => 'female',
-            ]),
+                ->setChoices([
+                    '♂️ Homme' => 'male',
+                    '♀️ Femme' => 'female',
+                ]),
 
             ChoiceField::new('marital', "Situation matrimoniale")
-            ->setChoices([
-                'divorcé(e)' => 'divorcé(e)',
-                'veuf(ve)' => 'veuf(ve)',
-                'célibataire' => 'célibataire',
-            ]),
+                ->setChoices([
+                    'divorcé(e)' => 'divorcé(e)',
+                    'veuf(ve)' => 'veuf(ve)',
+                    'célibataire' => 'célibataire',
+                ]),
 
             ChoiceField::new('children', "Enfants")
-            ->setChoices([
-                '0' => '0',
-                '1' => '1',
-                '2' => '2',
-                '3' => '3',
-                '4' => '4',
-                '5' => '5',
-                '5+' => '5+',
-            ]),
-            
+                ->setChoices([
+                    '0' => '0',
+                    '1' => '1',
+                    '2' => '2',
+                    '3' => '3',
+                    '4' => '4',
+                    '5' => '5',
+                    '5+' => '5+',
+                ]),
+
             ChoiceField::new('religion', "Religion")
-            ->setChoices([
-                'Aucune' => 'aucune',
-                'Catholique' => 'catholique',
-                'Orthodoxe' => 'orthodoxe',
-                'Protestant' => 'protestant',
-                'Buddhiste' => 'buddhiste',
-                'Hindoue' => 'hindoue',
-                'Judaique' => 'judaique',
-                'Islamiste' => 'islamiste',
-                'Autre' => 'autre',
-            ]),
+                ->setChoices([
+                    'Aucune' => 'aucune',
+                    'Catholique' => 'catholique',
+                    'Orthodoxe' => 'orthodoxe',
+                    'Protestant' => 'protestant',
+                    'Buddhiste' => 'buddhiste',
+                    'Hindoue' => 'hindoue',
+                    'Judaique' => 'judaique',
+                    'Islamiste' => 'islamiste',
+                    'Autre' => 'autre',
+                ]),
 
             TextEditorField::new('interests', "Centres d'intérêts"),
-            
+
             /**
              * ÉTAPE 4 : CONFIGURATION DES RÔLES
              * Gère le tableau JSON des rôles dans PostgreSQL
@@ -146,11 +162,11 @@ class UserCrudController extends AbstractCrudController
      */
     public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
-        // On déclenche le hachage avant de sauvegarder .
+        if ($entityInstance instanceof User) {
+            $entityInstance->setTranslatableLocale('en'); // On force avant toute action
+        }
         $this->hashPassword($entityInstance);
-        // On traduit aussi lors de la mise à jour
         $this->translateInterests($entityInstance);
-        // On appelle le comportement standard du parent pour faire le "INSERT" .
         parent::persistEntity($entityManager, $entityInstance);
     }
 
@@ -160,11 +176,11 @@ class UserCrudController extends AbstractCrudController
      */
     public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
-        // On déclenche le hachage (sera ignoré si le champ est vide).
+        if ($entityInstance instanceof User) {
+            $entityInstance->setTranslatableLocale('en'); // On force avant toute action
+        }
         $this->hashPassword($entityInstance);
-        // On traduit aussi lors de la mise à jour
         $this->translateInterests($entityInstance);
-        // On appelle le comportement standard du parent pour faire le "UPDATE".
         parent::updateEntity($entityManager, $entityInstance);
     }
 
@@ -172,9 +188,10 @@ class UserCrudController extends AbstractCrudController
     {
         // On vérifie que c'est bien un User et qu'il a des intérêts remplis
         if ($entity instanceof User && $entity->getInterests()) {
+            $entity->setTranslatableLocale('en');
             $this->translationService->autoTranslate(
-                $entity, 
-                'interests', 
+                $entity,
+                'interests',
                 $entity->getInterests()
             );
         }
