@@ -1,19 +1,15 @@
-// src/api.js
+// src/api.js (version améliorée)
 const API_BASE_URL = 'http://localhost:8000';
 
 export const apiFetch = async (endpoint, options = {}) => {
     const lang = localStorage.getItem('app_lang') || 'fr';
     const token = localStorage.getItem('token');
 
-    // On prépare les en-têtes de base
     const headers = {
         'Accept-Language': lang,
         ...options.headers,
     };
 
-    // CONDITION CRUCIALE : 
-    // Si on envoie un FormData (photo), on NE DOIT PAS mettre de Content-Type.
-    // Le navigateur le mettra tout seul avec le bon "boundary".
     if (!(options.body instanceof FormData)) {
         headers['Content-Type'] = 'application/json';
     }
@@ -27,5 +23,11 @@ export const apiFetch = async (endpoint, options = {}) => {
         headers,
     });
 
-    return response;
+    //  gestion d'erreur + JSON auto
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `Erreur ${response.status}`);
+    }
+
+    return await response.json(); // RENVOIE JSON DIRECT
 };

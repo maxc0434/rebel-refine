@@ -15,7 +15,7 @@ import Swal from "sweetalert2";
 import { useDropzone } from "react-dropzone";
 import { useCallback } from "react";
 import ChatModal from "../components/ChatModal";
-import { apiFetch } from '../api'; 
+import { apiFetch } from "../api";
 
 function MemberDashboardPage() {
   // #region STATES
@@ -68,19 +68,17 @@ function MemberDashboardPage() {
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
     try {
-      const response = await apiFetch("/api/member/update-profile",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            nickname: userData.nickname,
-            interests: userData.interests,
-            marital: userData.marital,
-            religion: userData.religion,
-            children: userData.children,
-            birthDate: userData.birthDate,
-          }),
-        },
-      );
+      const response = await apiFetch("/api/member/update-profile", {
+        method: "POST",
+        body: JSON.stringify({
+          nickname: userData.nickname,
+          interests: userData.interests,
+          marital: userData.marital,
+          religion: userData.religion,
+          children: userData.children,
+          birthDate: userData.birthDate,
+        }),
+      });
 
       const data = await response.json();
 
@@ -123,7 +121,7 @@ function MemberDashboardPage() {
   const handleUpdatePassword = async (e) => {
     e.preventDefault();
 
-    // 1. Vérification locale avant l'appel
+    // 1. Vérification locale (inchangée)
     if (passwordData.newPassword !== passwordData.confirmPassword) {
       Swal.fire({
         icon: "error",
@@ -136,38 +134,16 @@ function MemberDashboardPage() {
     }
 
     try {
-      // 2. L'appel API avec fetch
-      const response = await fetch(
-        "http://localhost:8000/api/auth/update-password",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            // On récupère ton token de session stocké au moment du login
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify({
-            oldPassword: passwordData.oldPassword,
-            newPassword: passwordData.newPassword,
-          }),
-        },
-      );
+      // 2. apiFetch (plus besoin d'URL complète ni headers)
+      await apiFetch("/api/auth/update-password", {
+        method: "POST",
+        body: JSON.stringify({
+          oldPassword: passwordData.oldPassword,
+          newPassword: passwordData.newPassword,
+        }),
+      });
 
-      // 3. Transformation de la réponse en JSON
-      const data = await response.json();
-
-      // 4. Si echec, affichage de l'erreur
-      if (!response.ok) {
-        Swal.fire({
-          icon: "error",
-          title: "Oups...",
-          text: data.message || "Une erreur est survenue.",
-          background: "#1f2a4d",
-          color: "#fff",
-        });
-        return;
-      }
-      // 5. Succès
+      // 3. Succès (on arrive ici seulement si ok)
       Swal.fire({
         icon: "success",
         title: "Mot de passe mis à jour !",
@@ -184,12 +160,18 @@ function MemberDashboardPage() {
       });
       navigate("/home");
     } catch (error) {
-      // 6. Gestion des erreurs (Ancien mot de passe faux, problème serveur, etc.)
+      // 4. Erreur (message de l'API ou fallback)
       console.error("Erreur API:", error.message);
-      alert(error.message);
+      Swal.fire({
+        icon: "error",
+        title: "Oups...",
+        text: error.message || "Une erreur est survenue.",
+        background: "#1f2a4d",
+        color: "#fff",
+      });
     }
   };
-  //#endregion
+  // #endregion
 
   // #region PHOTOS
   // --- GESTION DE l'UPLOAD d'une PHOTO ---
@@ -205,11 +187,10 @@ function MemberDashboardPage() {
         formData.append("photo", file);
 
         try {
-          const response = await apiFetch("/api/member/upload-photo",
-            {
-              method: "POST",
-              body: formData,
-            });
+          const response = await apiFetch("/api/member/upload-photo", {
+            method: "POST",
+            body: formData,
+          });
 
           const data = await response.json();
 
@@ -239,11 +220,9 @@ function MemberDashboardPage() {
   const handleDeletePhoto = async (photoId) => {
     // 1. Appel à l'API Symfony
     try {
-      const response = await apiFetch(
-        `/api/member/delete-photo/${photoId}`,
-        {
-          method: "DELETE",
-        });
+      const response = await apiFetch(`/api/member/delete-photo/${photoId}`, {
+        method: "DELETE",
+      });
 
       if (response.ok) {
         // On met à jour le state local pour faire disparaître la photo immédiatement
@@ -262,16 +241,13 @@ function MemberDashboardPage() {
 
   // #region RECUP des CONVERSATIONS
   const fetchConversations = async () => {
-    try {
-      const response = await apiFetch("/api/messages/conversations");
-      if (response.ok) {
-        const data = await response.json();
-        setConversations(data); // On remplit notre tableau avec les contacts trouvés
-      }
-    } catch (error) {
-      console.error("Erreur lors de la récupération des contacts:", error);
-    }
-  };
+  try {
+    const data = await apiFetch("/api/messages/conversations");
+    setConversations(data);
+  } catch (error) {
+    console.error("Erreur conversations:", error);
+  }
+};
 
   // On déclenche le chargement dès que l'onglet "messagerie" est actif
   useEffect(() => {
@@ -283,16 +259,9 @@ function MemberDashboardPage() {
 
   // #region MARQUER COMME LUS
   const handleMarkAsRead = async (contactId) => {
-    const token = localStorage.getItem("token");
-
     try {
-      // 1. Appel API
-      await fetch(`http://localhost:8000/api/messages/mark-read/${contactId}`, {
+      await apiFetch(`/api/messages/mark-read/${contactId}`, {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
       });
 
       // 2. Mise à jour locale (pour que le badge disparaisse sans recharger la page)
@@ -308,23 +277,16 @@ function MemberDashboardPage() {
   // #endregion
 
   // #region RECUP des MSG
-  const fetchMessages = async (contactId) => {
-    try {
-      const response = await fetch(
-        `http://localhost:8000/api/messages/list/${contactId}`,
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        },
-      );
-      if (response.ok) {
-        const data = await response.json();
-        setMessages(data);
-      }
-    } catch (error) {
-      console.error("Erreur historique:", error);
-    }
-  };
-  // #endregion
+const fetchMessages = async (contactId) => {
+  try {
+    const data = await apiFetch(`/api/messages/list/${contactId}`);
+    setMessages(data);
+  } catch (error) {
+    console.error("Erreur historique:", error);
+  }
+};
+// #endregion
+
 
   // #region ALERT CONFIRM ENVOI
   const handleToggleConfirmation = () => {
@@ -335,61 +297,95 @@ function MemberDashboardPage() {
   // #endregion
 
   // #region ENVOI MSG
-  // Remplace ton handleSendMessage par celui-ci
-  const handleSendMessage = async (receiverId, content) => {
-    if (!content.trim()) return false;
+const handleSendMessage = async (receiverId, content) => {
+  if (!content.trim()) return false;
 
-    let isConfirmed = true;
+  let isConfirmed = true;
 
-    if (confirmMessageSend) {
-      const result = await Swal.fire({
-        title: "Êtes-vous sûr ?",
-        text: "Cela vous coûtera 1 crédit.",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Oui, Envoyer !",
+  if (confirmMessageSend) {
+    const result = await Swal.fire({
+      title: "Êtes-vous sûr ?",
+      text: "Cela vous coûtera 1 crédit.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Oui, Envoyer !",
+      background: "#1f2a4d",
+      color: "#fff",
+    });
+    isConfirmed = result.isConfirmed;
+  }
+  if (!isConfirmed) return false;
+
+  try {
+    const data = await apiFetch("/api/messages/send", {
+      method: "POST",
+      body: JSON.stringify({ content, receiverId }),
+    });
+
+    // Succès (data.remainingCredits vient directement du JSON)
+    if (data.remainingCredits !== undefined) {
+      setUserData((prev) => {
+        const updated = { ...prev, credits: data.remainingCredits };
+        localStorage.setItem("user", JSON.stringify(updated));
+        return updated;
+      });
+    }
+
+    Swal.fire({
+      icon: "success",
+      title: "Envoyé !",
+      text: `Crédits restants : ${data.remainingCredits}`,
+      background: "#1f2a4d",
+      color: "#fff",
+    });
+
+    fetchMessages(receiverId);
+    return true;
+  } catch (error) {
+    Swal.fire({
+      icon: "error",
+      title: "Erreur",
+      text: error.message,
+      background: "#1f2a4d",
+      color: "#fff",
+    });
+    return false;
+  }
+};
+// #endregion
+
+
+  //#region SUPPR CONVERSATION
+const handleDeleteConversation = async (contactId) => {
+  const result = await Swal.fire({
+    title: "Supprimer la conversation ?",
+    text: "Tous les messages avec ce contact seront effacés définitivement.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#3085d6",
+    confirmButtonText: "Oui, supprimer",
+    cancelButtonText: "Annuler",
+    background: "#1f2a4d",
+    color: "#fff",
+  });
+
+  if (result.isConfirmed) {
+    try {
+      await apiFetch(`/api/messages/conversation/${contactId}`, {
+        method: "DELETE",
+      });
+
+      Swal.fire({
+        title: "Supprimé !",
+        icon: "success",
+        timer: 1500,
+        showConfirmButton: false,
         background: "#1f2a4d",
         color: "#fff",
       });
-      isConfirmed = result.isConfirmed;
-    }
-    if (!isConfirmed) return false;
 
-    try {
-      const response = await fetch("http://localhost:8000/api/messages/send", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ content, receiverId }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        if (data.remainingCredits !== undefined) {
-          // MISE À JOUR DU STATE (On utilise setUserData ici)
-          setUserData((prev) => {
-            const updated = { ...prev, credits: data.remainingCredits };
-            localStorage.setItem("user", JSON.stringify(updated));
-            return updated;
-          });
-        }
-
-        Swal.fire({
-          icon: "success",
-          title: "Envoyé !",
-          text: `Crédits restants : ${data.remainingCredits}`,
-          background: "#1f2a4d",
-          color: "#fff",
-        });
-
-        fetchMessages(receiverId);
-        return true;
-      } else {
-        throw new Error(data.error || "Erreur lors de l'envoi");
-      }
+      fetchConversations();
     } catch (error) {
       Swal.fire({
         icon: "error",
@@ -398,93 +394,29 @@ function MemberDashboardPage() {
         background: "#1f2a4d",
         color: "#fff",
       });
-      return false;
     }
-  };
-  // #endregion
+  }
+};
+//#endregion
 
-  //#region SUPPR CONVERSATION
-  const handleDeleteConversation = async (contactId) => {
-    const result = await Swal.fire({
-      title: "Supprimer la conversation ?",
-      text: "Tous les messages avec ce contact seront effacés définitivement.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Oui, supprimer",
-      cancelButtonText: "Annuler",
-      background: "#1f2a4d",
-      color: "#fff",
-    });
-
-    if (result.isConfirmed) {
-      try {
-        const response = await fetch(
-          `http://localhost:8000/api/messages/conversation/${contactId}`,
-          {
-            method: "DELETE",
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          },
-        );
-
-        if (response.ok) {
-          Swal.fire({
-            title: "Supprimé !",
-            icon: "success",
-            timer: 1500,
-            showConfirmButton: false,
-            background: "#1f2a4d",
-            color: "#fff",
-          });
-
-          // Rafraîchir la liste des conversations après suppression
-          // (La fonction que tu utilises pour charger tes contacts)
-          fetchConversations();
-        } else {
-          throw new Error("Erreur lors de la suppression");
-        }
-      } catch (error) {
-        Swal.fire({
-          icon: "error",
-          title: "Erreur",
-          text: error.message,
-          background: "#1f2a4d",
-          color: "#fff",
-        });
-      }
-    }
-  };
-  //#endregion
 
   //#region HISTO MES ACHATS
-  useEffect(() => {
-    const fetchPurchases = async () => {
-      try {
-        const response = await fetch("http://localhost:8000/api/transactions", {
-          headers: {
-            // N'oublie pas ton token si tu utilises JWT ou les credentials si session
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type": "application/json",
-          },
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setPurchases(data);
-        }
-      } catch (error) {
-        console.error("Erreur lors de la récupération des achats:", error);
-      }
-    };
-
-    if (activeTab === "purchases") {
-      fetchPurchases();
+useEffect(() => {
+  const fetchPurchases = async () => {
+    try {
+      const data = await apiFetch("/api/transactions");
+      setPurchases(data);
+    } catch (error) {
+      console.error("Erreur lors de la récupération des achats:", error);
     }
-  }, [activeTab]);
+  };
 
-  //#endregion
+  if (activeTab === "purchases") {
+    fetchPurchases();
+  }
+}, [activeTab]);
+//#endregion
+
 
   //#region CHARG. PAGE
   useEffect(() => {
@@ -492,21 +424,24 @@ function MemberDashboardPage() {
       navigate("/");
       return;
     }
-
-    // Appel au Backend Symfony pour récupérer les infos du dashboard
-    apiFetch("/api/member/dashboard")
-      .then((res) => res.json())
-      .then((data) => {
-        // Mise à jour de l'état avec les données du contrôleur Symfony
+    // Syntaxe async/await cohérente avec le nouveau apiFetch
+    const loadDashboard = async () => {
+      try {
+        const data = await apiFetch("/api/member/dashboard");
         setUserData(data.userData);
         setFavorites(data.favorites);
-        setLoading(false); // Fin du chargement
-      })
-      .catch((err) => {
-        console.error("Erreur chargement dashboard", err);
-        setLoading(false); // Arrêt du chargement même en cas d'erreur
-      });
-  }, [token, navigate]); // Se relance si le token ou navigate change
+        setLoading(false);
+        
+        await fetchConversations();
+
+      } catch (error) {
+        console.error("Erreur chargement dashboard", error);
+        setLoading(false);
+      }
+    };
+
+    loadDashboard();
+  }, [token, navigate]);
 
   // --- RENDU CONDITIONNEL ---
   // Affiche un écran vide avec un message tant que les données ne sont pas là
@@ -1462,7 +1397,9 @@ function MemberDashboardPage() {
                       justifyContent: "space-between",
                     }}
                   >
-                    <span style={{marginRight: "15px"}}>Confirmer avant d'envoyer un message (1 crédit) </span>
+                    <span style={{ marginRight: "15px" }}>
+                      Confirmer avant d'envoyer un message (1 crédit){" "}
+                    </span>
 
                     <div
                       onClick={handleToggleConfirmation}
@@ -1491,7 +1428,7 @@ function MemberDashboardPage() {
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Changer le mot de passe */}
                 <form
                   className="security-form"
