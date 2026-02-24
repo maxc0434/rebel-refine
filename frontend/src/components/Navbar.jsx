@@ -1,8 +1,10 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useLanguage } from "../translations/hooks/useLanguage"; // N'oublie pas l'import
 
 function Navbar() {
   const navigate = useNavigate();
+  const { t } = useLanguage(); // On initialise les traductions
   const token = localStorage.getItem("token");
 
   const userData = JSON.parse(localStorage.getItem("user") || "{}");
@@ -16,19 +18,17 @@ function Navbar() {
     navigate("/");
   };
 
-  // On récupère la langue actuelle pour mettre en gras le bouton actif
   const currentLang = localStorage.getItem("app_lang") || "fr";
 
   const changeLanguage = (lang) => {
     localStorage.setItem("app_lang", lang);
-    // On recharge la page pour que tout le site (React + Appels API) bascule
     window.location.reload();
   };
 
   const btnStyle = (lang) => ({
     background: "none",
     border: "none",
-    color: currentLang === lang ? "#d4af37" : "#fff", // Or si actif, Blanc sinon
+    color: currentLang === lang ? "#d4af37" : "#fff",
     fontWeight: currentLang === lang ? "bold" : "normal",
     cursor: "pointer",
     fontSize: "1rem",
@@ -56,8 +56,7 @@ function Navbar() {
     borderRadius: "45px",
     color: "#4A3121",
     textShadow: "0px 1px 1px rgba(255, 255, 255, 0.4)",
-    background:
-      "linear-gradient(45deg, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C)",
+    background: "linear-gradient(45deg, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C)",
     boxShadow: "0 4px 15px rgba(191, 149, 63, 0.3)",
     transition: "all 0.3s ease",
     cursor: "pointer",
@@ -69,12 +68,12 @@ function Navbar() {
       style={{
         borderBottom: "1px solid rgba(212, 175, 55, 0.3)",
         backgroundColor: "#12122d",
-        position: "fixed", // Fixe la navbar
-        top: 0, // Colle au sommet
-        left: 0, // Aligne à gauche
-        width: "100%", // Prend toute la largeur
-        zIndex: 1050, // Passe par-dessus tous les autres éléments
-        boxShadow: "0 5px 20px rgba(0,0,0,0.3)", // Ajoute une petite ombre pour la profondeur au scroll
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100%",
+        zIndex: 1050,
+        boxShadow: "0 5px 20px rgba(0,0,0,0.3)",
       }}
     >
       <div className="header-bottom">
@@ -95,31 +94,28 @@ function Navbar() {
                   <>
                     <li>
                       <Link to="/home" style={navItemStyle}>
-                        Accueil
+                        {t.nav_home}
                       </Link>
                     </li>
                     <li>
                       <Link to="/members/females" style={navItemStyle}>
-                        Membres
+                        {t.nav_members}
                       </Link>
                     </li>
                     <li>
                       <Link to="/dashboard" style={navItemStyle}>
-                        Tableau de bord
+                        {t.nav_dashboard}
                       </Link>
                     </li>
                     <li>
                       <Link to="/credit-shop" style={navShopBtnStyle}>
-                        Boutique
+                        {t.nav_shop}
                       </Link>
                     </li>
                   </>
                 )}
               </ul>
 
-              
-
-              {/* AFFICHAGE CONDITIONNEL */}
               {token ? (
                 <a
                   href="/"
@@ -128,10 +124,10 @@ function Navbar() {
                   style={{
                     color: "#f67280",
                     fontWeight: "700",
-                    border: "2px solid #f67280", // Épaisseur 2px pour matcher les autres
-                    borderRadius: "50px", // Effet pilule parfait
-                    padding: "10px 25px", // Même padding que Login/Signup
-                    fontSize: "0.85rem", // Même taille de police
+                    border: "2px solid #f67280",
+                    borderRadius: "50px",
+                    padding: "10px 25px",
+                    fontSize: "0.85rem",
                     display: "inline-flex",
                     alignItems: "center",
                     textDecoration: "none",
@@ -139,7 +135,7 @@ function Navbar() {
                   }}
                 >
                   <i className="icofont-logout me-2"></i>{" "}
-                  <span>DECONNEXION</span>
+                  <span>{t.nav_logout}</span>
                 </a>
               ) : (
                 <>
@@ -151,7 +147,7 @@ function Navbar() {
                       fontWeight: "700",
                       border: "2px solid #d4af37",
                       padding: "10px 25px",
-                      borderRadius: "50px", // Style pilule
+                      borderRadius: "50px",
                       fontSize: "0.85rem",
                       display: "inline-flex",
                       alignItems: "center",
@@ -160,7 +156,7 @@ function Navbar() {
                     }}
                   >
                     <i className="icofont-user me-2"></i>{" "}
-                    <span>SE CONNECTER</span>
+                    <span>{t.nav_login}</span>
                   </Link>
 
                   <Link
@@ -171,7 +167,7 @@ function Navbar() {
                       border: "2px solid transparent",
                       color: "white",
                       padding: "10px 25px",
-                      borderRadius: "50px", // Style pilule
+                      borderRadius: "50px",
                       fontWeight: "700",
                       fontSize: "0.85rem",
                       display: "inline-flex",
@@ -181,13 +177,12 @@ function Navbar() {
                     }}
                   >
                     <i className="icofont-users me-2"></i>{" "}
-                    <span>S'INSCRIRE</span>
+                    <span>{t.nav_register}</span>
                   </Link>
                 </>
               )}
 
-              <div className="language-switcher"
-              style={{marginLeft: "15px"}}>
+              <div className="language-switcher" style={{ marginLeft: "25px" }}> {/* Margin augmenté pour aérer */}
                 <button
                   onClick={() => changeLanguage("fr")}
                   style={btnStyle("fr")}
@@ -195,7 +190,7 @@ function Navbar() {
                 >
                   FR
                 </button>
-                <span style={{ color: "#fff" }}>|</span>
+                <span style={{ color: "rgba(255,255,255,0.3)" }}>|</span>
                 <button
                   onClick={() => changeLanguage("en")}
                   style={btnStyle("en")}
@@ -205,17 +200,11 @@ function Navbar() {
                 </button>
               </div>
 
-              {/* Toggles Mobile - On force la couleur Or sur les barres */}
+              {/* Toggles Mobile */}
               <div className="header-bar d-lg-none">
                 <span style={{ backgroundColor: "#d4af37" }}></span>
                 <span style={{ backgroundColor: "#d4af37" }}></span>
                 <span style={{ backgroundColor: "#d4af37" }}></span>
-              </div>
-              <div
-                className="ellepsis-bar d-lg-none"
-                style={{ color: "#d4af37" }}
-              >
-                <i className="icofont-info-square"></i>
               </div>
             </div>
           </div>

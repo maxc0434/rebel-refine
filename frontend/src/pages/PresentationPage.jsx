@@ -4,6 +4,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay, Pagination, EffectFade } from "swiper/modules";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "../translations/hooks/useLanguage";
 
 // Import Swiper styles
 import "swiper/css";
@@ -17,19 +18,19 @@ const PresentationPage = () => {
   const [apiData, setApiData] = useState([]); // Initialisé par un tableau vide
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const handleDiscoverClick = (e) => {
     e.preventDefault(); // On bloque la redirection immédiate
-
     Swal.fire({
-      title: "Accès Galerie",
-      text: "Pour accéder à la galerie des membres ainsi qu'aux profils et à la messagerie, vous devez vous connecter.",
+      title: t.alert_gallery_title, // Utilise la traduction
+      text: t.alert_gallery_text,
       icon: "info",
       showCancelButton: true,
       confirmButtonColor: "#d4af37",
       cancelButtonColor: "#1f2a4d",
-      confirmButtonText: "Connexion",
-      cancelButtonText: "Annuler",
+      confirmButtonText: t.alert_gallery_confirm,
+      cancelButtonText: t.alert_gallery_cancel,
       background: "#1f2a4d",
       color: "#ffffff",
     }).then((result) => {
@@ -92,14 +93,11 @@ const PresentationPage = () => {
                   <h1 className="display-4 fw-bold">
                     REBEL <span className="gold-text">REFINE</span>
                   </h1>
-                  <h2>Osez l'Orient, Vivez l'Inoubliable.</h2>
-                  <p>
-                    Rencontrez des femmes authentiques en quête d'un homme
-                    européen moderne. Un pont entre deux mondes, bâti sur le
-                    respect.
-                  </p>
+                  {/* Utilisation des clés du dictionnaire */}
+                  <h2>{t.banner_1_subtitle}</h2>
+                  <p>{t.banner_1_desc}</p>
                   <Link to="/register" className="lab-btn">
-                    COMMENCER L'AVENTURE
+                    {t.banner_1_btn}
                   </Link>
                 </div>
               </div>
@@ -115,14 +113,13 @@ const PresentationPage = () => {
                 <div className="row flex-row-reverse">
                   <div className="col-lg-6">
                     <div className="banner-content-box">
-                      <h2>Le Rendez-vous de Deux Mondes.</h2>
-                      <p>
-                        Découvrez des profils féminins authentiques et raffinés,
-                        sélectionnés pour un homme exigeant en quête d'une
-                        histoire sérieuse.
-                      </p>
+                      {/* Titre traduit */}
+                      <h2>{t.banner_2_subtitle}</h2>
+                      {/* Description traduite */}
+                      <p>{t.banner_2_desc}</p>
+                      {/* Bouton traduit */}
                       <Link to="/login" className="lab-btn">
-                        CRÉER LE LIEN
+                        {t.banner_2_btn}
                       </Link>
                     </div>
                   </div>
@@ -151,8 +148,8 @@ const PresentationPage = () => {
           <div className="row justify-content-center">
             <div className="col-lg-10 text-center">
               <h2 className="section-title mb-5">
-                Les Règles de notre{" "}
-                <span className="gold-text">Communauté</span>
+                {t.rules_title}{" "}
+                <span className="gold-text">{t.rules_highlight}</span>
               </h2>
 
               <div className="row g-4 text-start">
@@ -161,13 +158,13 @@ const PresentationPage = () => {
                   <div className="concept-item d-flex p-3">
                     <i className="bi bi-person-plus gold-text fs-2 me-4"></i>
                     <div>
-                      <h4 className="text-white">Accès Messieurs</h4>
+                      <h4 className="text-white">{t.rule_men_title}</h4>
                       <p className="text-muted mb-0">
-                        Inscrivez-vous librement et profitez de{" "}
+                        {t.rule_men_desc_part1}{" "}
                         <span className="gold-text fw-bold">
-                          5 crédits offerts
+                          {t.rule_men_desc_highlight}
                         </span>{" "}
-                        pour initier vos premiers échanges dès aujourd'hui.
+                        {t.rule_men_desc_part2}
                       </p>
                     </div>
                   </div>
@@ -178,13 +175,12 @@ const PresentationPage = () => {
                   <div className="concept-item d-flex p-3">
                     <i className="bi bi-patch-check gold-text fs-2 me-4"></i>
                     <div>
-                      <h4 className="text-white">Sélection Dames</h4>
+                      <h4 className="text-white">{t.rule_women_title}</h4>
                       <p className="text-muted mb-0">
-                        Par souci de sécurité, les profils féminins sont validés
-                        et inscrits exclusivement par l'administrateur.
+                        {t.rule_women_desc}
                         <br />
                         <small className="gold-text">
-                          Contact : admin@tonsite.com | 06 XX XX XX XX
+                          {t.rule_women_contact}
                         </small>
                       </p>
                     </div>
@@ -196,13 +192,13 @@ const PresentationPage = () => {
                   <div className="concept-item d-flex p-3">
                     <i className="bi bi-translate gold-text fs-2 me-4"></i>
                     <div>
-                      <h4 className="text-white">Traduction par l'humain</h4>
+                      <h4 className="text-white">{t.rule_trans_title}</h4>
                       <p className="text-muted mb-0">
-                        Communiquez sans limites. Vos messages sont{" "}
+                        {t.rule_trans_desc_part1}{" "}
                         <span className="gold-text">
-                          traduits par des traducteurs qualifiés
+                          {t.rule_trans_desc_highlight}
                         </span>{" "}
-                        pour garantir une fluidité totale dans vos échanges.
+                        {t.rule_trans_desc_part2}
                       </p>
                     </div>
                   </div>
@@ -213,14 +209,20 @@ const PresentationPage = () => {
                   <div className="concept-item d-flex p-3">
                     <i className="bi bi-gem gold-text fs-1 me-4"></i>
                     <div>
-                      <h4 className="text-white">
-                        Esprit Bienveillant
-                      </h4>
+                      <h4 className="text-white">{t.rule_kind_title}</h4>
                       <p className="text-muted mb-0">
-                        Un espace fondé sur <span className="gold-text">le respect mutuel</span> 
-                        , dédié aux personnes recherchant des connexions {" "}
-                        <span className="gold-text">authentiques, sincères</span> {" "} et  
-                        {" "}<span className="gold-text">durables.</span> 
+                        {t.rule_kind_desc_part1}{" "}
+                        <span className="gold-text">
+                          {t.rule_kind_desc_highlight1}
+                        </span>
+                        ,{t.rule_kind_desc_part2}{" "}
+                        <span className="gold-text">
+                          {t.rule_kind_desc_highlight2}
+                        </span>{" "}
+                        {t.rule_kind_desc_part3}{" "}
+                        <span className="gold-text">
+                          {t.rule_kind_desc_highlight3}
+                        </span>
                       </p>
                     </div>
                   </div>
@@ -236,12 +238,8 @@ const PresentationPage = () => {
                       background: "rgba(212, 175, 55, 0.03)",
                     }}
                   >
-                    <h4 className="text-white mb-2">Liberté & Flexibilité</h4>
-                    <p className="text-muted mb-0">
-                      Pas d'abonnement mensuel. Une fois vos crédits de
-                      bienvenue utilisés, rechargez votre compte selon vos
-                      besoins via nos forfaits sécurisés.
-                    </p>
+                    <h4 className="text-white mb-2">{t.rule_flex_title}</h4>
+                    <p className="text-muted mb-0">{t.rule_flex_desc}</p>
                   </div>
                 </div>
               </div>
@@ -255,11 +253,10 @@ const PresentationPage = () => {
         <div className="container">
           <div className="section-header text-center mb-5">
             <h2 className="section-title">
-              Nos nouveaux <span className="gold-text">membres</span>
+              {t.members_title}{" "}
+              <span className="gold-text">{t.members_highlight}</span>
             </h2>
-            <p className="text-muted">
-              Voici les derniers profils ayant rejoint Rebel Refine.
-            </p>
+            <p className="text-muted">{t.members_subtitle}</p>
           </div>
 
           <div className="section-wrapper">
@@ -290,7 +287,7 @@ const PresentationPage = () => {
                         <div className="lab-content p-3 text-center">
                           <h6 className="mb-1 text-white">{member.nickname}</h6>
                           <p className="small text-muted mb-0">
-                            {member.age} ans
+                            {member.age} {t.years_old}
                           </p>
                         </div>
                       </div>
@@ -305,7 +302,7 @@ const PresentationPage = () => {
                 className="lab-btn"
                 style={{ border: "none", cursor: "pointer" }}
               >
-                <span>Découvrir tous les membres</span>
+                <span>{t.members_btn}</span>
               </button>
             </div>
           </div>
@@ -321,37 +318,44 @@ const PresentationPage = () => {
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundAttachment: "fixed",
-          height: "50vh",
-          paddingTop: "10px",
+          // --- CHANGEMENTS ICI ---
+          minHeight: "70vh", // Utilise minHeight au lieu de height
+          display: "flex",
+          alignItems: "center",
+          paddingTop: "80px", // Plus de marge en haut
+          paddingBottom: "80px", // Plus de marge en bas
         }}
       >
         <div className="container">
           <div className="row justify-content-center">
             <div className="col-lg-8 text-center content-concept-box">
               <h2 className="section-title mb-5">
-                À qui s'adresse notre <span className="gold-text">Cercle</span>{" "}
-                ?
+                {t.concept_title}{" "}
+                <span className="gold-text">{t.concept_highlight}</span> ?
               </h2>
 
-              <div className="concept-items-wrapper d-flex flex-column align-items-center">
-                <div className="concept-item d-flex mb-4 text-start">
+              {/* Ajout d'une marge automatique pour centrer et aérer */}
+              <div className="concept-items-wrapper d-flex flex-column align-items-center mt-4">
+                <div className="concept-item d-flex mb-5 text-start w-100 max-width-600">
                   <i className="bi bi-shield-check gold-text fs-1 me-4"></i>
                   <div>
-                    <h4 className="text-white">Sérénité & Sécurité</h4>
-                    <p className="text-muted mb-0">
-                      Profils vérifiés pour une expérience authentique et
-                      protégée.
+                    <h4 className="text-white mb-2">
+                      {t.concept_serenity_title}
+                    </h4>
+                    <p className="text-muted mb-0 lh-lg">
+                      {" "}
+                      {/* lh-lg pour l'espacement des lignes */}
+                      {t.concept_serenity_desc}
                     </p>
                   </div>
                 </div>
 
-                <div className="concept-item d-flex text-start">
+                <div className="concept-item d-flex text-start w-100 max-width-600">
                   <i className="bi bi-gem gold-text fs-1 me-4"></i>
                   <div>
-                    <h4 className="text-white">Exclusivité</h4>
-                    <p className="text-muted mb-0">
-                      Une interaction privilégiée réservée aux membres
-                      authentifiés.
+                    <h4 className="text-white mb-2">{t.concept_exclu_title}</h4>
+                    <p className="text-muted mb-0 lh-lg">
+                      {t.concept_exclu_desc}
                     </p>
                   </div>
                 </div>
@@ -364,13 +368,16 @@ const PresentationPage = () => {
       {/* ================ FOOTER ================= */}
       <footer className="pres-footer py-5 text-center">
         <div className="container">
-          <h3 className="mb-4">Prêt à franchir le pas ?</h3>
+          {/* Titre du footer */}
+          <h3 className="mb-4">{t.footer_ready}</h3>
           <div className="d-flex justify-content-center gap-3">
+            {/* Bouton Inscription */}
             <Link to="/register" className="btn btn-gold-solid px-5 py-3">
-              Créer mon profil
+              {t.footer_register}
             </Link>
+            {/* Bouton Connexion */}
             <Link to="/login" className="btn btn-outline-light px-5 py-3">
-              Se connecter
+              {t.footer_login}
             </Link>
           </div>
         </div>
