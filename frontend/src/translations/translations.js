@@ -22,6 +22,7 @@ export const translations = {
       nav_register: "S'INSCRIRE",
     //#endregion NAVBAR
 
+    
     //#region PRESENTATION-PAGE
       //#region Chargement
       loading_universe: "Chargement de l'univers Rebel Refine...",
@@ -145,6 +146,30 @@ export const translations = {
     register_modal_contact: "Contactez-nous par mail ou téléphone",
     register_modal_btn_back: "RETOUR",
     //#endregion REGISTER-PAGE
+  
+
+    //#region LOGIN-PAGE
+    login_subtitle: "Trouvez votre partenaire idéal",
+    login_error_invalid: "Identifiants incorrects",
+    login_success_verified: "Compte vérifié avec succès ! Bienvenue à Rebel Refine.",
+    
+    login_label_email: "Email",
+    login_label_password: "Mot de passe",
+    login_forgot_password: "Mot de Passe Oublié ?",
+    login_btn_submit: "SE CONNECTER",
+    
+    login_footer_no_account: "Pas encore de compte ?",
+    login_footer_register_link: "Inscrivez-vous dès maintenant et gratuitement en cliquant ICI",
+
+    // Modal Récupération
+    login_modal_title: "Récupération de compte",
+    login_modal_label: "Entrez votre adresse email :",
+    login_modal_btn_send: "Envoyer le lien",
+    login_modal_sending: "Envoi en cours...",
+    //#endregion LOGIN-PAGE
+  
+
+
   },
 
 //#endregion FRANCAIS
@@ -298,7 +323,28 @@ export const translations = {
     //#endregion REGISTER-PAGE EN
     
     
+    //#region LOGIN-PAGE EN
+    login_subtitle: "Find your ideal partner",
+    login_error_invalid: "Invalid credentials",
+    login_success_verified: "Account verified successfully! Welcome to Rebel Refine.",
+    
+    login_label_email: "Email",
+    login_label_password: "Password",
+    login_forgot_password: "Forgot Password?",
+    login_btn_submit: "LOG IN",
+    
+    login_footer_no_account: "Don't have an account yet?",
+    login_footer_register_link: "Register now for free by clicking HERE",
+
+    // Modal Recovery EN
+    login_modal_title: "Account Recovery",
+    login_modal_label: "Enter your email address:",
+    login_modal_btn_send: "Send link",
+    login_modal_sending: "Sending...",
+    //#endregion LOGIN-PAGE EN
   
+
+
     },
 
 

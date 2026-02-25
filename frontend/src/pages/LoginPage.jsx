@@ -4,6 +4,7 @@ import { Modal, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom"; // Import indispensable pour rediriger
 import { useSearchParams } from "react-router-dom";
 import "./LoginPage.css";
+import { useLanguage } from "../translations/hooks/useLanguage";
 
 function LoginPage() {
   //#region STATES
@@ -19,13 +20,14 @@ function LoginPage() {
   const [searchParams] = useSearchParams(); // Pour lire les paramètres dans l'URL (ex: ?verified=true)
   const navigate = useNavigate(); // Outil pour changer de page sans recharger le site
   const isVerified = searchParams.get("verified"); // Vérifie si l'utilisateur vient de confirmer son email
+  const { t } = useLanguage();
   //#endregion
 
   //#region FCT REINITIALISATION MDP
   // --- ÉTAPE 2 : Demande de réinitialisation de mot de passe ---
   const handleForgotPassword = async (e) => {
     e.preventDefault();
-    setStatus({ type: "info", msg: "Envoi en cours..." });
+    setStatus({ type: "info", msg: t.login_modal_sending });
 
     // Appel à la route Symfony qui génère le token de récupération et envoie l'email
     const response = await fetch(
@@ -69,7 +71,7 @@ function LoginPage() {
 
       if (!response.ok) {
         // Le serveur répond une erreur (ex: 401 Unauthorized)
-        throw new Error("Identifiants incorrects");
+        throw new Error(t.login_error_invalid);
       }
 
       // --- ÉTAPE 5 : Stockage des clés d'accès (Token & Profil) ---
@@ -109,7 +111,7 @@ function LoginPage() {
       }
     } catch (err) {
       // --- ÉTAPE 7 : Capture des erreurs (Réseau ou Identifiants) ---
-      setError(err.message);
+      setError(t.login_error_invalid);
     }
   };
   //#endregion
@@ -127,7 +129,7 @@ function LoginPage() {
                     REBEL <span>REFINE</span>
                   </h1>
                   <p className="login-subtitle">
-                    Trouvez votre partenaire idéal
+                    {t.login_subtitle}
                   </p>
                   <div className="gold-divider"></div>
                 </div>
@@ -143,7 +145,7 @@ function LoginPage() {
                 {isVerified && (
                   <div className="alert alert-custom-success text-center mb-4 py-3 shadow-lg">
                     <i className="bi bi-patch-check-fill me-2"></i>
-                    Compte vérifié avec succès ! Bienvenue à Rebel Refine.
+                    {t.login_success_verified}
                   </div>
                 )}
 
@@ -152,14 +154,14 @@ function LoginPage() {
                   {/* Email */}
                   <div className="mb-4">
                     <label className="form-label small text-uppercase fw-bold ms-2 login-label">
-                      Email
+                      {t.login_label_email}
                     </label>
                     <input
                       type="email"
                       className="form-control form-control-lg login-input border-0 shadow-none"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="votre@email.com"
+                      placeholder="email@email.com"
                       required
                     />
                   </div>
@@ -168,7 +170,7 @@ function LoginPage() {
                   <div className="mb-4">
                     <div className="d-flex justify-content-between align-items-center">
                       <label className="form-label small text-uppercase fw-bold ms-2 login-label">
-                        Mot de passe
+                        {t.login_label_password}
                       </label>
                     </div>
                     <input
@@ -200,7 +202,7 @@ function LoginPage() {
                       className="small mb-2 forgot-password-link justify-content-end d-flex"
                       onClick={() => setShowModal(true)}
                     >
-                      Mot de Passe Oublié ?
+                      {t.login_forgot_password}
                     </span>
                   </div>
 
@@ -208,7 +210,7 @@ function LoginPage() {
                     type="submit"
                     className="btn btn-lg w-100 fw-bold py-3 mt-4 text-white border-0 btn-login-submit"
                   >
-                    SE CONNECTER
+                    {t.login_btn_submit}
                   </button>
                 </form>
 
@@ -218,13 +220,12 @@ function LoginPage() {
                     className="mb-0 login-subtitle"
                     style={{ fontSize: "1rem" }}
                   >
-                    Pas encore de compte ? <br />
+                    {t.login_footer_no_account} <br />
                     <Link
                       to="/register"
                       className="fw-bold register-link-highlight"
                     >
-                      Inscrivez-vous dès maintenant et gratuitement en cliquant
-                      ICI
+                      {t.login_footer_register_link}
                     </Link>
                   </p>
                 </div>
@@ -248,7 +249,7 @@ function LoginPage() {
             className="border-0 p-4"
           >
             <Modal.Title className="text-white fw-bold">
-              Récupération de compte
+              {t.login_modal_title}
             </Modal.Title>
           </Modal.Header>
 
@@ -262,7 +263,7 @@ function LoginPage() {
             )}
             <form onSubmit={handleForgotPassword}>
               <label className="mb-2 text-white-50">
-                Entrez votre adresse email :
+                {t.login_modal_label}
               </label>
               <input
                 type="email"
@@ -275,7 +276,7 @@ function LoginPage() {
                 type="submit"
                 className="w-100 fw-bold py-3 border-0 btn-login-submit"
               >
-                Envoyer le lien
+                {t.login_modal_btn_send}
               </Button>
             </form>
           </Modal.Body>
