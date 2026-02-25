@@ -97,7 +97,7 @@ class UserCrudController extends AbstractCrudController
 
             BooleanField::new('isVerified', 'Compte vérifié'),
 
-            ChoiceField::new('country', 'Pays d\'origine')
+            ChoiceField::new('country', 'Langue')
                 ->setChoices([
                     '🇫🇷 France' => 'France',
                     '🇩🇪 Allemagne' => 'Allemagne',

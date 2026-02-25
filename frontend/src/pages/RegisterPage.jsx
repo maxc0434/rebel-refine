@@ -151,7 +151,7 @@ function RegisterPage() {
                   {/* Pays d'origine */}
                   <div className="mb-4">
                     <label className="form-label register-form-label small text-uppercase fw-bold ms-2">
-                      Pays d'origine
+                      Langue :
                     </label>
                     <select
                       className="form-select register-input shadow-none"

@@ -42,7 +42,7 @@ const TranslatorDashboard = () => {
                     pending.map(msg => (
                         <div key={msg.id} className="message-card">
                             <div className="direction-badge">
-                                ↔️ {msg.direction.replace(/([A-Z])/g, ' $1').trim()}
+                                From {":"} {msg.direction.replace(/([A-Z])/g, ' $1').trim()}
                             </div>
                             
                             <div className="label">Message source</div>
