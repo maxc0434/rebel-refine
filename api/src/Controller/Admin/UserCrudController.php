@@ -169,7 +169,9 @@ class UserCrudController extends AbstractCrudController
                     'Buddhiste' => 'buddhiste',
                     'Hindoue' => 'hindoue',
                     'Judaique' => 'judaique',
-                    'Islamiste' => 'islamiste',
+                    'Islam' => 'islam',
+                    'Atheiste' => 'atheiste',
+                    'Spirituel mais non religieux' => 'spirituel mais non religieux',
                     'Autre' => 'autre',
                 ]),
 

@@ -542,6 +542,10 @@ const handleSendMessage = async (receiverId, content) => {
                     <span>{user.marital}</span>
                   </li>
                   <li className="d-flex justify-content-between border-bottom border-secondary py-2">
+                    <span className="text-white-50">Pays</span>{" "}
+                    <span>{user.country}</span>
+                  </li>
+                  <li className="d-flex justify-content-between border-bottom border-secondary py-2">
                     <span className="text-white-50">Enfants</span>{" "}
                     <span>{user.children}</span>
                   </li>

@@ -35,6 +35,7 @@ final class ProfileController extends AbstractController
             'id'         => $user->getId(),
             'nickname'   => $user->getNickname(),
             'age'        => $age,
+            'country'    => $user->getCountry(),
             'gender'     => $user->getGender(),
             'marital'    => $user->getMarital(),
             'children'   => $user->getChildren(),
@@ -68,6 +69,7 @@ final class ProfileController extends AbstractController
         return $this->json([
             'id' => $male->getId(),
             'nickname' => $male->getNickname(),
+            'country' => $male->getCountry(),
             'birthdate' => $male->getBirthdate(),
             'interests' => $male->getInterests(),
             'marital' => $male->getMarital(),

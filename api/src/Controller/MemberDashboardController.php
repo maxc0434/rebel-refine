@@ -62,6 +62,9 @@ class MemberDashboardController extends AbstractController
                 // INFO TARGET : Sa photo de profil
                 'photo' => $firstImage ? $firstImage->getImageName() : null,
 
+                // INFO TARGET : Ses passions
+                'country' => $favorite->getCountry(),
+
 
             ];
         }
@@ -73,6 +76,7 @@ class MemberDashboardController extends AbstractController
                 'id' => $user->getId(),                   // Son identifiant unique
                 'nickname' => $user->getNickname(),       // Son propre pseudo
                 'email' => $user->getUserIdentifier(),    // Son email (identifiant de connexion)
+                'country' => $user->getCountry(),         // Son pays
                 'roles' => $user->getRoles(),             // Ses droits d'accès
                 'marital' => $user->getMarital(),         // Son statut marital
                 'children' => $user->getChildren(),       // Son nombre d'enfants

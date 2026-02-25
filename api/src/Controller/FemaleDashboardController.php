@@ -33,6 +33,7 @@ class FemaleDashboardController extends AbstractController
                 'id' => $user->getId(),
                 'nickname' => $user->getNickname(),
                 'email' => $user->getUserIdentifier(),
+                'country' => $user->getCountry(),
                 'gender' => $user->getGender(),
                 'marital' => $user->getMarital(),
                 'children' => $user->getChildren(),

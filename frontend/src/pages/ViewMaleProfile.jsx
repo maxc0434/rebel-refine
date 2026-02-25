@@ -270,6 +270,10 @@ useEffect(() => {
                     {formatDate(profile.birthdate) || "Non renseigné"}
                   </p>
                   <p>
+                    <strong> Pays :</strong>{" "}
+                    {profile.country || "Non renseigné"}
+                  </p>
+                  <p>
                     <strong>Statut Marital :</strong>{" "}
                     {profile.marital || "Non renseigné"}
                   </p>

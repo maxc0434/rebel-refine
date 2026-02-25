@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./RegisterPage.css";
+import { useLanguage } from "../translations/hooks/useLanguage";
+
 
 function RegisterPage() {
   //#region STATES
@@ -19,6 +21,7 @@ function RegisterPage() {
   const [successMessage, setSuccessMessage] = useState(""); // Message de confirmation
   const [showAdminModal, setShowAdminModal] = useState(false);
   const navigate = useNavigate();
+  const { t } = useLanguage();
   //#endregion
 
   //#region SAISIES ET SOUMISSION
@@ -41,7 +44,7 @@ function RegisterPage() {
 
     // A. Validation locale : Sécurité avant l'appel API
     if (formData.password !== formData.confirmPassword) {
-      setError("Les mots de passe ne correspondent pas");
+      setError(t.register_error_password);
       return;
     }
 
@@ -68,9 +71,7 @@ function RegisterPage() {
       }
 
       // D. Succès : Information utilisateur
-      setSuccessMessage(
-        "Inscription réussie ! Un lien de confirmation vous a été envoyé par email.",
-      );
+      setSuccessMessage(t.register_success);
 
       // E. Redirection programmée : On laisse le temps de lire le message
       setTimeout(() => {
@@ -97,14 +98,12 @@ function RegisterPage() {
                     REBEL <span className="register-logo-refine">REFINE</span>
                   </h1>
                   <p className="register-subtitle">
-                    Rejoignez le groupe exclusif
+                    {t.register_subtitle}
                   </p>
                   <div className="register-divider"></div>
                 </div>
 
-                <h3 className="register-form-title text-center mb-4">
-                  Créer un compte
-                </h3>
+                <h3 className="register-form-title">{t.register_form_title}</h3>
 
                 {/* MESSAGES D'ERREUR OU DE SUCCES */}
                 {successMessage && (
@@ -126,7 +125,7 @@ function RegisterPage() {
                   {/* CHOIX DU GENRE */}
                   <div className="mb-4 text-center">
                     <label className="form-label register-form-label small text-uppercase fw-bold d-block mb-3">
-                      Vous êtes :
+                      {t.register_label_gender}
                     </label>
                     <div className="d-flex justify-content-center gap-4">
                       <div
@@ -135,7 +134,7 @@ function RegisterPage() {
                         }
                         className={`gender-selector gender-male ${formData.gender === "male" ? "active" : ""}`}
                       >
-                        <i className="bi bi-gender-male me-2"></i>un HOMME
+                        <i className="bi bi-gender-male me-2"></i>{t.register_gender_male}
                       </div>
                       <div
                         onClick={() =>
@@ -143,7 +142,7 @@ function RegisterPage() {
                         }
                         className={`gender-selector gender-female ${formData.gender === "female" ? "active" : ""}`}
                       >
-                        <i className="bi bi-gender-female me-2"></i>une FEMME
+                        <i className="bi bi-gender-female me-2"></i>{t.register_gender_female}
                       </div>
                     </div>
                   </div>
@@ -151,7 +150,7 @@ function RegisterPage() {
                   {/* Pays d'origine */}
                   <div className="mb-4">
                     <label className="form-label register-form-label small text-uppercase fw-bold ms-2">
-                      Langue :
+                      {t.register_label_country}
                     </label>
                     <select
                       className="form-select register-input shadow-none"
@@ -160,7 +159,7 @@ function RegisterPage() {
                       onChange={handleChange}
                       required
                     >
-                      <option value="">-- Choisissez votre pays --</option>
+                      <option value="">-- {t.register_country_placeholder} --</option>
                       <option value="France">🇫🇷 France</option>
                       <option value="Allemagne">🇩🇪 Allemagne</option>
                       <option value="Italie">🇮🇹 Italie</option>
@@ -179,12 +178,12 @@ function RegisterPage() {
                   {/* Pseudo */}
                   <div className="mb-4">
                     <label className="form-label register-form-label small text-uppercase fw-bold ms-2">
-                      Pseudo
+                      {t.register_label_nickname}
                     </label>
                     <input
                       type="text"
                       className="form-control register-input shadow-none"
-                      placeholder="Comment devons-nous vous appeler ?"
+                      placeholder={t.register_nickname_placeholder}
                       name="nickname"
                       value={formData.nickname}
                       onChange={handleChange}
@@ -195,7 +194,7 @@ function RegisterPage() {
                   {/* Email */}
                   <div className="mb-4">
                     <label className="form-label register-form-label small text-uppercase fw-bold ms-2">
-                      Votre adresse email prestigieuse
+                      {t.register_label_email}
                     </label>
                     <input
                       type="email"
@@ -212,7 +211,7 @@ function RegisterPage() {
                   <div className="row">
                     <div className="col-md-6 mb-4">
                       <label className="form-label register-form-label small text-uppercase fw-bold ms-2">
-                        Mot de passe
+                        {t.register_label_password}
                       </label>
                       <input
                         type="password"
@@ -227,7 +226,7 @@ function RegisterPage() {
 
                     <div className="col-md-6 mb-4">
                       <label className="form-label register-form-label small text-uppercase fw-bold ms-2">
-                        Confirmation
+                        {t.register_label_confirm}
                       </label>
                       <input
                         type="password"
@@ -246,16 +245,16 @@ function RegisterPage() {
                     type="submit"
                     className="btn btn-register-submit btn-lg w-100 fw-bold py-3 mt-4 text-white border-0"
                   >
-                    DEVENIR MEMBRE
+                    {t.register_btn_submit}
                   </button>
                 </form>
 
                 {/* Lien vers la page de connexion */}
                 <div className="text-center mt-5">
                   <p className="mb-0 login-link-text">
-                    Vous faites déjà partie du groupe ?{" "}
+                    {t.register_footer_text}{" "}
                     <Link to="/" className="login-link">
-                      Se connecter
+                      {t.register_footer_link}
                     </Link>
                   </p>
                 </div>
@@ -265,21 +264,19 @@ function RegisterPage() {
         </div>
       </div>
 
-      {/* Modale Administration */}
+      {/* Modale Contact Administration */}
       {showAdminModal && (
         <div className="admin-modal-overlay">
           <div className="admin-modal-content">
             <h2 style={{ color: "#d4af37", marginBottom: "20px" }}>
-              INSCRIPTION SÉCURISÉE
+              {t.register_modal_title}
             </h2>
             <p className="register-subtitle" style={{ lineHeight: "1.6" }}>
-              Pour garantir l'exclusivité et la sécurité de notre groupe,
-              l'inscription des profils féminins est gérée directement par notre
-              équipe d'administration.
+              {t.register_modal_text}
             </p>
             <div className="contact-info-box">
               <p className="mb-1 small text-uppercase">
-                Contactez-nous par mail ou téléphone
+                {t.register_modal_contact}
               </p>
               <h4 className="text-white">admin@admin.com</h4>
               <h4 className="text-white">+33 X XXX XX XX</h4>
@@ -288,7 +285,7 @@ function RegisterPage() {
               onClick={() => setShowAdminModal(false)}
               className="btn btn-outline-light rounded-pill px-4"
             >
-              RETOUR
+              {t.register_modal_btn_back}
             </button>
           </div>
         </div>

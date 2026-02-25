@@ -739,6 +739,7 @@ useEffect(() => {
                   >
                     <InfoItem label="Pseudo" value={userData.nickname} />
                     <InfoItem label="Email" value={userData.email} />
+                    <InfoItem label="Pays" value={userData.country} />
                     <InfoItem
                       label="Situation"
                       value={userData.marital || "Non renseigné"}
@@ -835,6 +836,25 @@ useEffect(() => {
                         />
                       </div>
 
+                      {/* MARK: Pays */}
+                      <div>
+                        <label className="dashboard-label">Pays (non modifiable)</label>
+                        <input
+                          type="text"
+                          name="country"
+                          value={userData.country || ""}
+                          disabled
+                          className="dashboard-input opacity-50"
+                          style={{
+                            background: "rgba(255, 255, 255, 0.02)",
+                            color: "rgba(255, 255, 255, 0.3)",
+                            borderColor: "rgba(255, 255, 255, 0.05)",
+                            cursor: "not-allowed",
+                            opacity: 1,
+                          }}
+                        />
+                      </div>
+
                       {/* MARK: Date de naissance */}
                       <div>
                         <label className="dashboard-label">
@@ -903,13 +923,14 @@ useEffect(() => {
                         >
                           <option value="">Choisir...</option>
                           <option value="Aucun">Aucun</option>
-                          <option value="Chrétien">Chrétien</option>
-                          <option value="Musulman">Musulman</option>
-                          <option value="Juif">Juif</option>
+                          <option value="Catholique">Catholique</option>
+                          <option value="Orthodoxe">Orthodoxe</option>
+                          <option value="Protestant">Protestant</option>
+                          <option value="Islam">Islam</option>
+                          <option value="Judaique">Judaique</option>
                           <option value="Bouddhiste">Bouddhiste</option>
                           <option value="Hindouiste">Hindouiste</option>
-                          <option value="Athée">Athée</option>
-                          <option value="Agnostique">Agnostique</option>
+                          <option value="Atheiste">Atheiste</option>
                           <option value="Spirituel mais non religieux">
                             Spirituel mais non religieux
                           </option>
