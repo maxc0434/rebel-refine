@@ -98,6 +98,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Transla
     #[ORM\OneToMany(targetEntity: Transaction::class, mappedBy: 'buyer')]
     private Collection $transactions;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $country = null;
+
     public function __construct()
     {
         $this->userImages = new ArrayCollection();
@@ -379,6 +382,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Transla
                 $transaction->setBuyer(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCountry(): ?string
+    {
+        return $this->country;
+    }
+
+    public function setCountry(?string $country): static
+    {
+        $this->country = $country;
 
         return $this;
     }

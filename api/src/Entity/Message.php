@@ -49,6 +49,12 @@ class Message
     #[ORM\Column(length: 255)]
     private ?string $direction = null;
 
+    #[ORM\Column]
+    private bool $deletedBySender = false;
+
+    #[ORM\Column]
+    private bool $deletedByReceiver = false;
+
     public function __construct()
     {
         $this->replies = new ArrayCollection();
@@ -183,6 +189,30 @@ class Message
     public function setDirection(string $direction): static
     {
         $this->direction = $direction;
+
+        return $this;
+    }
+
+    public function isDeletedBySender(): ?bool
+    {
+        return $this->deletedBySender;
+    }
+
+    public function setDeletedBySender(bool $deletedBySender): static
+    {
+        $this->deletedBySender = $deletedBySender;
+
+        return $this;
+    }
+
+    public function isDeletedByReceiver(): ?bool
+    {
+        return $this->deletedByReceiver;
+    }
+
+    public function setDeletedByReceiver(bool $deletedByReceiver): static
+    {
+        $this->deletedByReceiver = $deletedByReceiver;
 
         return $this;
     }

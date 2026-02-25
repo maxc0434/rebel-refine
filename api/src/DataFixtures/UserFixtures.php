@@ -34,6 +34,7 @@ class UserFixtures extends Fixture
         $admin->setEmail('admin@admin.admin');
         $admin->setNickname('SuperAdmin');
         $admin->setRoles(['ROLE_ADMIN']);
+        $admin->setCountry('France');
         $admin->setPassword($this->hasher->hashPassword($admin, 'password'));
         $admin->setBirthdate($faker->dateTimeBetween('-50 years', '-20 years'));
         $admin->setInterests('Administrateur système passionné par la cybersécurité et Symfony.');
@@ -45,19 +46,21 @@ class UserFixtures extends Fixture
         $translator->setEmail('translator@translator.translator');
         $translator->setNickname('Traducteur');
         $translator->setRoles(['ROLE_TRANSLATOR']);
+        $translator->setCountry('France');
         $translator->setPassword($this->hasher->hashPassword($translator, 'password'));
         $translator->setBirthdate($faker->dateTimeBetween('-50 years', '-20 years'));
         $translator->setInterests('Traducteur de texte passionné par la cybersécurité et Symfony.');
         $translator->setIsVerified(true);
         $manager->persist($translator);
 
-        // --- 15 HOMMES ---
-        for ($i = 0; $i < 15; $i++) {
+        // --- 5 HOMMES ---
+        for ($i = 0; $i < 5; $i++) {
             $user = new User();
             $user->setEmail($faker->unique()->email);
             $user->setNickname($faker->userName);
             $user->setGender('male');
             $user->setRoles(['ROLE_MALE']);
+            $user->setCountry($faker->country);
             $user->setPassword($this->hasher->hashPassword($user, 'password'));
             $user->setBirthdate($faker->dateTimeBetween('-40 years', '-18 years'));
             $user->setInterests($faker->sentence(15));;
@@ -65,13 +68,14 @@ class UserFixtures extends Fixture
             $manager->persist($user);
         }
 
-        // --- 25 FEMMES ---
-        for ($i = 0; $i < 25; $i++) {
+        // --- 10 FEMMES ---
+        for ($i = 0; $i < 10; $i++) {
             $user = new User();
             $user->setEmail($faker->unique()->email);
             $user->setNickname($faker->userName);
             $user->setGender('female');
             $user->setRoles(['ROLE_FEMALE']);
+            $user->setCountry($faker->country);
             $user->setPassword($this->hasher->hashPassword($user, 'password'));
             $user->setBirthdate($faker->dateTimeBetween('-40 years', '-18 years'));
             $user->setInterests($faker->sentence(20));;

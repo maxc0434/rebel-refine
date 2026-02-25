@@ -17,6 +17,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use Symfony\Component\Form\FormBuilderInterface;
 
+
 /**
  * CLASSE : UserCrudController
  * Gère l'interface CRUD (Create, Read, Update, Delete) pour l'entité User.
@@ -95,6 +96,40 @@ class UserCrudController extends AbstractCrudController
             DateField::new('birthdate', 'Date de naissance'),
 
             BooleanField::new('isVerified', 'Compte vérifié'),
+
+            ChoiceField::new('country', 'Pays d\'origine')
+                ->setChoices([
+                    '🇫🇷 France' => 'France',
+                    '🇩🇪 Allemagne' => 'Allemagne',
+                    '🇮🇹 Italie' => 'Italie',
+                    '🇪🇸 Espagne' => 'Espagne',
+                    '🇬🇧 Angleterre' => 'Angleterre',
+                    '🇧🇪 Belgique' => 'Belgique',
+                    '🇨🇭 Suisse' => 'Suisse',
+                    '🇨🇳 Chine' => 'Chine',
+                    '🇯🇵 Japon' => 'Japon',
+                    '🇷🇺 Russie' => 'Russie',
+                    '🇹🇭 Thaïlande' => 'Thaïlande',
+                    '🇻🇳 Vietnam' => 'Vietnam',
+                ])
+                // Optionnel : pour afficher les drapeaux aussi dans l'admin
+                ->FormatValue(function ($value, $entity) {
+                    $flags = [
+                        'France' => '🇫🇷',
+                        'Allemagne' => '🇩🇪',
+                        'Italie' => '🇮🇹',
+                        'Espagne' => '🇪🇸',
+                        'Angleterre' => '🇬🇧',
+                        'Belgique' => '🇧🇪',
+                        'Suisse' => '🇨🇭',
+                        'Chine' => '🇨🇳',
+                        'Japon' => '🇯🇵',
+                        'Russie' => '🇷🇺',
+                        'Thaïlande' => '🇹🇭',
+                        'Vietnam' => '🇻🇳'
+                    ];
+                    return isset($flags[$value]) ? $flags[$value] . ' ' . $value : $value;
+                }),
 
             CollectionField::new('userImages', 'Galerie Photos')
                 ->setEntryType(UserImageType::class)

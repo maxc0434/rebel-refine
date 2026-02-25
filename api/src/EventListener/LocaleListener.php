@@ -12,21 +12,27 @@ class LocaleListener implements EventSubscriberInterface
     {
         $request = $event->getRequest();
         
-        // On récupère la langue envoyée dans le Header 'Accept-Language'
-        // Si le header n'existe pas, on garde la locale par défaut (fr)
-        $locale = $request->headers->get('Accept-Language');
-
-        if ($locale) {
-            // On définit la locale pour Symfony et surtout pour Gedmo Translatable
-            $request->setLocale($locale);
+        // 1. GESTION DE L'ADMIN : Si on est dans l'admin, on force l'Anglais
+        if ($request->attributes->get('_admin_context')) {
+            $locale = 'en';
+        } else {
+            // 2. GESTION API : On récupère le header et on ne garde que les 2 premières lettres
+            $header = $request->headers->get('Accept-Language', 'fr');
+            $locale = substr($header, 0, 2); 
         }
+
+        // On applique la locale à la requête
+        $request->setLocale($locale);
+        
+        // On force l'attribut que Gedmo regarde en priorité
+        $request->attributes->set('_locale', $locale);
     }
 
     public static function getSubscribedEvents(): array
     {
         return [
-            // On doit s'exécuter très tôt dans le cycle de vie de la requête
-            KernelEvents::REQUEST => [['onKernelRequest', 20]],
+            // On augmente la priorité à 100 pour passer avant l'initialisation de Doctrine
+            KernelEvents::REQUEST => [['onKernelRequest', 100]],
         ];
     }
 }

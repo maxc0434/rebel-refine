@@ -11,6 +11,7 @@ function RegisterPage() {
     password: "",
     confirmPassword: "",
     gender: "male", // Valeur homme par défaut lorsqu'inscription sur le register du site
+    country: "",
   });
 
   // États pour les retours utilisateur et la navigation
@@ -55,6 +56,7 @@ function RegisterPage() {
           password: formData.password,
           nickname: formData.nickname,
           gender: formData.gender,
+          country: formData.country,
         }),
       });
 
@@ -81,7 +83,7 @@ function RegisterPage() {
   };
   //#endregion
 
-//#region AFFICHAGE DU FORMULAIRE
+  //#region AFFICHAGE DU FORMULAIRE
   return (
     <div className="register-page-container">
       <div className="container">
@@ -89,7 +91,6 @@ function RegisterPage() {
           <div className="col-12 col-sm-11 col-md-9 col-lg-7 col-xl-6">
             <div className="card register-card border-0 shadow-lg">
               <div className="card-body p-4 p-md-5">
-                
                 {/* Header (Logo, titre, sous-titre) */}
                 <div className="text-center mb-5">
                   <h1 className="register-logo-title fw-bold mb-2">
@@ -112,7 +113,7 @@ function RegisterPage() {
                     {successMessage}
                   </div>
                 )}
-                
+
                 {error && (
                   <div className="register-error-msg text-center mb-4">
                     <i className="bi bi-exclamation-triangle-fill me-2"></i>
@@ -122,7 +123,6 @@ function RegisterPage() {
 
                 {/* FORMULAIRE D'INSCRIPTION */}
                 <form className="account-form" onSubmit={handleSubmit}>
-                  
                   {/* CHOIX DU GENRE */}
                   <div className="mb-4 text-center">
                     <label className="form-label register-form-label small text-uppercase fw-bold d-block mb-3">
@@ -130,18 +130,50 @@ function RegisterPage() {
                     </label>
                     <div className="d-flex justify-content-center gap-4">
                       <div
-                        onClick={() => setFormData({ ...formData, gender: "male" })}
+                        onClick={() =>
+                          setFormData({ ...formData, gender: "male" })
+                        }
                         className={`gender-selector gender-male ${formData.gender === "male" ? "active" : ""}`}
                       >
                         <i className="bi bi-gender-male me-2"></i>un HOMME
                       </div>
                       <div
-                        onClick={() => setFormData({ ...formData, gender: "female" })}
+                        onClick={() =>
+                          setFormData({ ...formData, gender: "female" })
+                        }
                         className={`gender-selector gender-female ${formData.gender === "female" ? "active" : ""}`}
                       >
                         <i className="bi bi-gender-female me-2"></i>une FEMME
                       </div>
                     </div>
+                  </div>
+
+                  {/* Pays d'origine */}
+                  <div className="mb-4">
+                    <label className="form-label register-form-label small text-uppercase fw-bold ms-2">
+                      Pays d'origine
+                    </label>
+                    <select
+                      className="form-select register-input shadow-none"
+                      name="country"
+                      value={formData.country}
+                      onChange={handleChange}
+                      required
+                    >
+                      <option value="">-- Choisissez votre pays --</option>
+                      <option value="France">🇫🇷 France</option>
+                      <option value="Allemagne">🇩🇪 Allemagne</option>
+                      <option value="Italie">🇮🇹 Italie</option>
+                      <option value="Espagne">🇪🇸 Espagne</option>
+                      <option value="Angleterre">🇬🇧 Angleterre</option>
+                      <option value="Belgique">🇧🇪 Belgique</option>
+                      <option value="Suisse">🇨🇭 Suisse</option>
+                      <option value="Chine">🇨🇳 Chine</option>
+                      <option value="Japon">🇯🇵 Japon</option>
+                      <option value="Russie">🇷🇺 Russie</option>
+                      <option value="Thaïlande">🇹🇭 Thaïlande</option>
+                      <option value="Vietnam">🇻🇳 Vietnam</option>
+                    </select>
                   </div>
 
                   {/* Pseudo */}

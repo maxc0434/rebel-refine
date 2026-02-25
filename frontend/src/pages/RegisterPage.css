@@ -95,6 +95,12 @@
     color: rgba(255,255,255,0.4);
 }
 
+.form-select.register-input {
+    background-color: rgba(255,255,255,0.1) !important; /* ou la couleur de tes inputs */
+    color: white;
+    border: 1px solid #333;
+}
+
 /* --- SÉLECTEUR DE GENRE --- */
 .gender-selector {
     cursor: pointer;

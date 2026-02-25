@@ -22,7 +22,6 @@ class MessageController extends AbstractController
     #region ENVOYER UN MESSAGE
     #[Route('/send', name: 'app_message_send', methods: ['POST'])]
     #[IsGranted(new Expression("is_granted('ROLE_MALE') or is_granted('ROLE_FEMALE')"), message: 'Accès interdit')]
-
     public function send(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
@@ -32,50 +31,56 @@ class MessageController extends AbstractController
 
         /** @var User $sender */
         $sender = $this->getUser();
-
-        // Si l'utilisateur n'est pas authentifié, on renvoie une erreur
         if (!$sender) {
             return new JsonResponse(['error' => 'Vous devez être authentifié'], 401);
         }
 
-        // Si l'utilisateur n'a pas assez de crédits, on renvoie une erreur...
-        if ($sender->getGender() === 'male') {
-            if ($sender->getCredits() <= 0) {
-                return new JsonResponse(['error' => 'Crédits insuffisants'], 403);
-            }
-            // ...sinon, on déduit 1 crédit
-            $sender->setCredits($sender->getCredits() - 1);
-        }
-
-        // Si le destinataire n'existe pas, on renvoie une erreur
+        // --- 1. RÉCUPÉRATION DU DESTINATAIRE (D'ABORD !) ---
         $receiver = $entityManager->getRepository(User::class)->find($data['receiverId']);
         if (!$receiver) {
             return new JsonResponse(['error' => 'Destinataire introuvable'], 404);
         }
 
+        // --- 2. GESTION DES CRÉDITS ---
+        if ($sender->getGender() === 'male') {
+            if ($sender->getCredits() <= 0) {
+                return new JsonResponse(['error' => 'Crédits insuffisants'], 403);
+            }
+            $sender->setCredits($sender->getCredits() - 1);
+        }
+
+        // --- 3. PRÉPARATION DE LA DIRECTION AVEC DRAPEAUX ---
+        $flags = [
+            'France' => '🇫🇷', 'Allemagne' => '🇩🇪', 'Italie' => '🇮🇹', 
+            'Espagne' => '🇪🇸', 'Angleterre' => '🇬🇧', 'Belgique' => '🇧🇪',
+            'Suisse' => '🇨🇭', 'Chine' => '🇨🇳', 'Japon' => '🇯🇵', 
+            'Russie' => '🇷🇺', 'Thaïlande' => '🇹🇭', 'Vietnam' => '🇻🇳'
+        ];
+
+        $senderCountry = $sender->getCountry() ?? 'Inconnu';
+        $receiverCountry = $receiver->getCountry() ?? 'Inconnu';
+
+        $flagFrom = $flags[$senderCountry] ?? '❓';
+        $flagTo = $flags[$receiverCountry] ?? '❓';
+
+        // --- 4. CRÉATION DU MESSAGE ---
         $message = new Message();
         $message->setContentOriginal($data['content']);
         $message->setSender($sender);
         $message->setReceiver($receiver);
         $message->setStatus(MessageStatus::Pending);
         $message->setCreatedAt(new \DateTimeImmutable());
+        
+        // Maintenant $receiver est connu, on peut faire le setDirection !
+        $message->setDirection(sprintf('%s %s ➔ %s %s', $flagFrom, $senderCountry, $flagTo, $receiverCountry));
 
-        // Logique pour déterminer la direction du message
-        $senderGender = strtolower($sender->getGender());
-        if ($senderGender === 'male') {
-            $message->setDirection('MaleToFemale');
-        } elseif ($senderGender === 'female') {
-            $message->setDirection('FemaleToMale');
-        } else {
-            $message->setDirection('Unknown');
-        }
         $entityManager->persist($message);
         $entityManager->flush();
 
         return new JsonResponse([
             'status' => 'pending_translation',
             'remainingCredits' => $sender->getCredits(),
-            ], 201);
+        ], 201);
     }
     #endregion
 
@@ -94,7 +99,7 @@ class MessageController extends AbstractController
             $data[] = [
                 'id' => $msg->getId(),
                 'original' => $msg->getContentOriginal(),
-                'from' => $msg->getSender()->getEmail(),
+                'from' => $msg->getSender()->getNickname(),
                 'direction' => $msg->getDirection()
             ];
         }
@@ -180,8 +185,8 @@ class MessageController extends AbstractController
 
         $messages = $entityManager->getRepository(Message::class)->createQueryBuilder('m')
             // On récupère les messages entre les deux personnes
-            ->where('(m.sender = :user AND m.receiver = :contact)')
-            ->orWhere('(m.sender = :contact AND m.receiver = :user)')
+            ->where('(m.sender = :user AND m.receiver = :contact AND m.deletedBySender = false)')
+            ->orWhere('(m.sender = :contact AND m.receiver = :user AND m.deletedByReceiver = false)')
             ->setParameter('user', $currentUser)
             ->setParameter('contact', $receiverId)
             ->andWhere('(m.status IN (:statusApproved) OR m.sender = :user)')
@@ -220,7 +225,8 @@ class MessageController extends AbstractController
 
         // On récupère tous les messages où l'utilisateur est impliqué
         $messages = $entityManager->getRepository(Message::class)->createQueryBuilder('m')
-            ->where('m.sender = :user OR m.receiver = :user')
+            ->where('(m.sender = :user AND m.deletedBySender = false)') // Ne pas voir si j'ai supprimé
+            ->orWhere('(m.receiver = :user AND m.deletedByReceiver = false)') // Ne pas voir si j'ai supprimé en recevant
             ->setParameter('user', $currentUser)
             ->orderBy('m.createdAt', 'DESC')
             ->getQuery()
@@ -259,31 +265,30 @@ class MessageController extends AbstractController
 
 
 
-    #region SUPPRIMER UNE CONVERSATION
+    #region SUPPRIMER UNE CONVERSATION (VERSION MASQUAGE/ SOFT DELETE)
     #[Route('/conversation/{contactId}', name: 'app_message_delete_conversation', methods: ['DELETE'])]
     public function deleteConversation(int $contactId, MessageRepository $messageRepo, EntityManagerInterface $em): JsonResponse
     {
-
         /** @var User $currentUser */
         $currentUser = $this->getUser();
-
-        if (!$currentUser) {
-            return new JsonResponse(['error' => 'Non authentifié'], 401);
-        }
-
-        // On cherche tous les messages entre moi et le contact
-        // Assure-toi que cette méthode existe dans ton MessageRepository (voir étape 2)
         $messages = $messageRepo->findConversation($currentUser->getId(), $contactId);
 
-        if (empty($messages)) {
-            return new JsonResponse(['message' => 'Aucun message à supprimer'], 200);
-        }
         foreach ($messages as $message) {
-            $em->remove($message);
-        }
-        $em->flush();
+            // Au lieu de remove(), on marque comme supprimé pour l'utilisateur actuel
+            if ($message->getSender() === $currentUser) {
+                $message->setDeletedBySender(true);
+            } else {
+                $message->setDeletedByReceiver(true);
+            }
 
-        return new JsonResponse(['message' => 'Conversation supprimée avec succès'], 200);
+            // Si les DEUX l'ont supprimé, on peut alors faire un vrai remove()
+            if ($message->isDeletedBySender() && $message->isDeletedByReceiver()) {
+                $em->remove($message);
+            }
+        }
+
+        $em->flush();
+        return new JsonResponse(['message' => 'Conversation masquée pour vous'], 200);
     }
     #endregion
 

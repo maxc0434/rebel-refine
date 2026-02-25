@@ -33,20 +33,21 @@ class RegistrationController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         // ÉTAPE 2 : Validation de la présence des champs obligatoires
-        if (!isset($data['email'], $data['password'], $data['nickname'], $data['gender'])) {
+        if (!isset($data['email'], $data['password'], $data['nickname'], $data['gender'], $data['country'])) {
             return $this->json(['error' => 'Données incomplètes'], 400);
         }
 
         if ($data['gender'] === 'female') {
             return $this->json([
                 'error' => 'L\'inscription des profils féminins nécessite une validation par l\'administrateur.'
-            ], 403); // 403 Forbidden
+            ], 403); 
         }
 
         // ÉTAPE 3 : Création de l'objet User et hydratation des données
         $user = new User();
         $user->setEmail($data['email']);
         $user->setNickname($data['nickname']);
+        $user->setCountry($data['country']);
 
         //Attribution des rôles en fonction du sexe
         $gender = $data['gender'];
