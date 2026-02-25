@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import CountUp from "react-countup";
 import { Heart } from "lucide-react";
+import { useLanguage } from "../translations/hooks/useLanguage";
 
 function HomePage() {
   const navigate = useNavigate();
@@ -13,6 +14,8 @@ function HomePage() {
   const [loading, setLoading] = useState(true); // Gère l'affichage de l'écran de chargement
   const [minAge, setMinAge] = useState("18"); // Filtre âge minimum
   const [maxAge, setMaxAge] = useState("30"); // Filtre âge maximum
+  const { t } = useLanguage();
+
   //#endregion
 
   //#region FCT FORM RECHERCHE
@@ -98,7 +101,7 @@ function HomePage() {
         }));
       }
     } catch (error) {
-      alert("Impossible de mettre à jour le favori.");
+      alert(t.home_favorite_error);
     }
   };
   //#endregion
@@ -120,12 +123,7 @@ function HomePage() {
   }
   //#endregion
 
-
-
-
   //#region AFFICHAGE
-
-
 
   return (
     <>
@@ -156,10 +154,10 @@ function HomePage() {
                   >
                     <div className="intro-form-inner text-white">
                       <h2 className="fw-bold mb-2" style={{ fontSize: "2rem" }}>
-                        Ravi de vous revoir,
+                        {t.home_welcome_back}
                         <br />
                         <span style={{ color: "#d4af37" }}>
-                          {apiData?.user_details?.nickname || "Aventurier"}
+                          {apiData?.user_details?.nickname || t.home_adventurer}
                         </span>
                         .
                       </h2>
@@ -167,7 +165,7 @@ function HomePage() {
                         className="mb-4"
                         style={{ color: "#a5a5cc", fontSize: "1.1rem" }}
                       >
-                        Votre partenaire idéal n'est plus qu'à un clic.
+                        {t.home_subtitle}
                       </p>
 
                       <div
@@ -188,7 +186,7 @@ function HomePage() {
                           color: "#d4af37",
                         }}
                       >
-                        Je recherche une femme
+                        {t.home_search_title}
                       </h6>
 
                       <form className="banner-form" onSubmit={handleSearch}>
@@ -196,7 +194,7 @@ function HomePage() {
                           <div className="right d-flex justify-content-between w-100">
                             {/* SELECT : ÂGE MINIMUM */}
                             <div className="custom-select">
-                              <h5> De... </h5>
+                              <h5> {t.home_search_from} </h5>
                               <select
                                 value={minAge}
                                 onChange={(e) => setMinAge(e.target.value)}
@@ -221,7 +219,7 @@ function HomePage() {
 
                             {/* SELECT : ÂGE MAXIMUM */}
                             <div className="custom-select">
-                              <h5> A... </h5>
+                              <h5> {t.home_search_to} </h5>
                               <select
                                 value={maxAge}
                                 onChange={(e) => setMaxAge(e.target.value)}
@@ -260,7 +258,7 @@ function HomePage() {
                             marginTop: "20px",
                           }}
                         >
-                          Trouver mon partenaire
+                          {t.home_btn_search}
                         </button>
                       </form>
                     </div>
@@ -277,10 +275,9 @@ function HomePage() {
       <section className="member-section padding-tb">
         <div className="container">
           <div className="section-header">
-            <h2>Nos nouveaux membres</h2>
+            <h2>{t.home_new_members_title}</h2>
             <p>
-              Voici les derniers profils ayant rejoint Rebel Refine. Faites le
-              premier pas !
+              {t.home_new_members_desc}
             </p>
           </div>
           <div className="section-wrapper">
@@ -346,7 +343,7 @@ function HomePage() {
                             <i className="icofont-check" title="Vérifié"></i>
                           </Link>
                         </h6>
-                        <p>{member.age} ans</p>
+                        <p>{member.age} {t.age_suffix}</p>
                       </div>
                     </div>
                   </div>
@@ -355,7 +352,7 @@ function HomePage() {
             </div>
             <div className="member-button-group d-flex flex-wrap justify-content-center">
               <Link to="/members/females" className="lab-btn">
-                <span>Découvrir toutes les membres</span>
+                <span>{t.home_btn_discover_all}</span>
               </Link>
             </div>
           </div>
@@ -373,10 +370,9 @@ function HomePage() {
       >
         <div className="container">
           <div className="section-header text-center mb-5">
-            <h2 style={{ color: "white" }}>Tout commence par une rencontre</h2>
+            <h2 style={{ color: "white" }}>{t.home_stats_title}</h2>
             <p>
-              Rejoignez une communauté grandissante et accédez à des milliers de
-              profils.
+              {t.home_stats_desc}
             </p>
           </div>
           <div className="section-wrapper">
@@ -427,7 +423,7 @@ function HomePage() {
                           textTransform: "uppercase",
                         }}
                       >
-                        Membres au Total
+                        {t.home_stat_total}
                       </p>
                     </div>
                   </div>
@@ -479,7 +475,7 @@ function HomePage() {
                           textTransform: "uppercase",
                         }}
                       >
-                        Membres en ligne
+                        {t.home_stat_online}
                       </p>
                     </div>
                   </div>
@@ -531,7 +527,7 @@ function HomePage() {
                           textTransform: "uppercase",
                         }}
                       >
-                        Hommes en ligne
+                        {t.home_stat_males}
                       </p>
                     </div>
                   </div>
@@ -583,7 +579,7 @@ function HomePage() {
                           textTransform: "uppercase",
                         }}
                       >
-                        Femmes en ligne
+                        {t.home_stat_females}
                       </p>
                     </div>
                   </div>

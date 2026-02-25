@@ -12,6 +12,10 @@ export const translations = {
 
     fr: {
 
+    //#region GLOBAL
+      age_suffix: "ans ",
+    //#endregion
+
     //#region NAVBAR
       nav_home: "Accueil",
       nav_members: "Membres",
@@ -22,7 +26,7 @@ export const translations = {
       nav_register: "S'INSCRIRE",
     //#endregion NAVBAR
 
-    
+
     //#region PRESENTATION-PAGE
       //#region Chargement
       loading_universe: "Chargement de l'univers Rebel Refine...",
@@ -169,6 +173,29 @@ export const translations = {
     //#endregion LOGIN-PAGE
   
 
+    //#region HOME-PAGE
+    home_welcome_back: "Ravi de vous revoir,",
+    home_adventurer: "Aventurier",
+    home_subtitle: "Votre partenaire idéal n'est plus qu'à un clic.",
+    home_search_title: "Je recherche une femme",
+    home_search_from: "De...",
+    home_search_to: "A...",
+    home_btn_search: "Trouver mon partenaire",
+
+    // Section Nouveaux Membres
+    home_new_members_title: "Nos nouveaux membres",
+    home_new_members_desc: "Voici les derniers profils ayant rejoint Rebel Refine. Faites le premier pas !",
+    home_btn_discover_all: "Découvrir toutes les membres",
+    home_favorite_error: "Impossible de mettre à jour le favori.",
+
+    // Section Stats (About)
+    home_stats_title: "Tout commence par une rencontre",
+    home_stats_desc: "Rejoignez une communauté grandissante et accédez à des milliers de profils.",
+    home_stat_total: "Membres au Total",
+    home_stat_online: "Membres en ligne",
+    home_stat_males: "Hommes en ligne",
+    home_stat_females: "Femmes en ligne",
+    //#endregion
 
   },
 
@@ -187,6 +214,11 @@ export const translations = {
   
     en: {
 
+    //#region GLOBAL EN
+      age_suffix: "years old",
+    //#endregion GLOBAL EN
+
+    
     //#region NAVBAR EN
       nav_home: "Home",
       nav_members: "Members",
@@ -344,7 +376,31 @@ export const translations = {
     //#endregion LOGIN-PAGE EN
   
 
+    //#region HOME-PAGE EN
+    home_welcome_back: "Nice to see you again,",
+    home_adventurer: "Adventurer",
+    home_subtitle: "Your ideal partner is just a click away.",
+    home_search_title: "I am looking for a woman",
+    home_search_from: "From...",
+    home_search_to: "To...",
+    home_btn_search: "Find my partner",
 
+    // New Members Section EN
+    home_new_members_title: "Our newest members",
+    home_new_members_desc: "Here are the latest profiles to join Rebel Refine. Take the first step!",
+    home_btn_discover_all: "Discover all members",
+    home_favorite_error: "Unable to update favorite.",
+
+    // Stats Section EN
+    home_stats_title: "It all starts with a meeting",
+    home_stats_desc: "Join a growing community and access thousands of profiles.",
+    home_stat_total: "Total Members",
+    home_stat_online: "Members Online",
+    home_stat_males: "Males Online",
+    home_stat_females: "Femmes Online",
+    //#endregion HOME-PAGE EN
+
+    
     },
 
 
