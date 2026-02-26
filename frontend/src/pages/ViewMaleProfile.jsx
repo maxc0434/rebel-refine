@@ -4,6 +4,7 @@ import { User, ArrowLeft, X } from "lucide-react";
 import "./ViewMaleProfile.css";
 import ChatModal from "../components/ChatModal";
 import { apiFetch } from "../api";
+import { useLanguage } from "../translations/hooks/useLanguage";
 
 const ViewMaleProfile = () => {
   const { id } = useParams();
@@ -17,6 +18,8 @@ const ViewMaleProfile = () => {
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
   const userData = JSON.parse(localStorage.getItem("user"));
+
+  const { t } = useLanguage();
 
   // #region ENVOI DE MESSAGE
   const onSendMessage = async (contactId, content) => {
@@ -69,20 +72,19 @@ const ViewMaleProfile = () => {
   // #endregion
 
   // #region RECUPERATION HISTORIQUE
-useEffect(() => {
-  if (isModalOpen && id) {
-    // apiFetch s'occupe de l'URL de base, du token et du .json()
-    apiFetch(`/api/messages/list/${id}`)
-      .then((data) => {
-        setMessages(data); 
-      })
-      .catch((err) => {
-        console.error("Erreur Fetch Messages :", err.message);
-        // Optionnel : tu pourrais ici utiliser t.error_load_history si tu le traduis
-      });
-  }
-}, [isModalOpen, id]); // On enlève 'token' des dépendances, apiFetch le récupère seul
-// #endregion
+  useEffect(() => {
+    if (isModalOpen && id) {
+      // apiFetch s'occupe de l'URL de base, du token et du .json()
+      apiFetch(`/api/messages/list/${id}`)
+        .then((data) => {
+          setMessages(data);
+        })
+        .catch((err) => {
+          console.error("Erreur Fetch Messages :", err.message);
+        });
+    }
+  }, [isModalOpen, id]);
+  // #endregion
 
   // #region GESTION ERREUR
   if (error) {
@@ -99,14 +101,14 @@ useEffect(() => {
       >
         <div className="text-center">
           <h3 className="mb-4" style={{ color: "#f67280" }}>
-            Oups !
+            {t.view_profile_error_title}
           </h3>
           <p>{error}</p>
           <button
             onClick={() => navigate(-1)}
             className="btn btn-outline-light mt-3"
           >
-            Retour au Dashboard
+            {t.view_profile_back}
           </button>
         </div>
       </div>
@@ -140,7 +142,7 @@ useEffect(() => {
   // #endregion
 
   //#region AFFICHAGE du LOADER
-  // 2. Affichage pendant le chargement
+  // Affichage pendant le chargement
   if (loading || !profile) {
     return (
       <div
@@ -155,14 +157,14 @@ useEffect(() => {
         <div className="text-center gold-text" style={{ fontSize: "1.2rem" }}>
           <div className="spinner-border mb-3" role="status"></div>
           <br />
-          Chargement du profil privé...
+          {t.view_profile_loading}
         </div>
       </div>
     );
   }
   //#endregion
 
-  //#region AFFICHAGE PROFIL
+  //#region AFFICHAGE DE LA PAGE
   return (
     <div
       className="view-profile-page"
@@ -181,7 +183,7 @@ useEffect(() => {
           onClick={() => navigate(-1)}
           className="btn btn-outline-light mb-4 d-flex align-items-center"
         >
-          <ArrowLeft size={18} className="me-2" /> Retour au Dashboard
+          <ArrowLeft size={18} className="me-2" /> {t.view_profile_back}
         </button>
 
         <div className="row">
@@ -261,29 +263,35 @@ useEffect(() => {
                 padding: "25px",
               }}
             >
-              <h4 className="gold-text mb-3">Autres Informations</h4>
+              <h4 className="gold-text mb-3">{t.view_profile_other_info}</h4>
 
               <div className="row mt-4">
                 <div className="col-sm-6">
                   <p>
-                    <strong>Date de naissance :</strong>{" "}
-                    {formatDate(profile.birthdate) || "Non renseigné"}
+                    <strong>{t.view_profile_birthdate}</strong>{" "}
+                    {formatDate(profile.birthdate) || t.view_profile_not_found}
                   </p>
                   <p>
-                    <strong> Pays :</strong>{" "}
-                    {profile.country || "Non renseigné"}
+                    <strong>{t.view_profile_country} :</strong>{" "}
+                    {t.database[profile.country] ||
+                      profile.country ||
+                      t.view_profile_not_found}
                   </p>
                   <p>
-                    <strong>Statut Marital :</strong>{" "}
-                    {profile.marital || "Non renseigné"}
+                    <strong>{t.view_profile_status} :</strong>{" "}
+                    {t.database[profile.marital] ||
+                      profile.marital ||
+                      t.view_profile_not_found}
                   </p>
                   <p>
-                    <strong>Enfants :</strong>{" "}
-                    {profile.children || "Non renseigné"}
+                    <strong>{t.view_profile_children} :</strong>{" "}
+                    {profile.children || t.view_profile_not_found}
                   </p>
                   <p>
-                    <strong>Religion :</strong>{" "}
-                    {profile.religion || "Non renseigné"}
+                    <strong>{t.view_profile_religion} :</strong>{" "}
+                    {t.database[profile.religion] ||
+                      profile.religion ||
+                      t.view_profile_not_found}
                   </p>
                 </div>
               </div>
@@ -296,7 +304,7 @@ useEffect(() => {
               {profile.nickname},{" "}
               <span className="gold-text">
                 {profile.age ? profile.age : calculateAge(profile.birthdate)}{" "}
-                ans
+                {t.age_suffix}
               </span>
             </h1>
 
@@ -311,12 +319,12 @@ useEffect(() => {
                 padding: "25px",
               }}
             >
-              <h4 className="gold-text mb-3">À propos</h4>
+              <h4 className="gold-text mb-3">{t.view_profile_about}</h4>
 
               <div
                 className="profile-description"
                 dangerouslySetInnerHTML={{
-                  __html: profile.interests || "Aucune description.",
+                  __html: profile.interests || t.view_profile_no_desc,
                 }}
                 style={{
                   lineHeight: "1.8",
@@ -334,7 +342,7 @@ useEffect(() => {
               }}
               onClick={() => setIsModalOpen(true)}
             >
-              <span>Répondre à {profile.nickname}</span>
+              <span>{t.view_profile_reply} {profile.nickname}</span>
             </button>
 
             {/* MARK: Chat */}

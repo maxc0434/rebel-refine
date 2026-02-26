@@ -8,35 +8,35 @@ export const translations = {
   fr: {
     //#region DATABASE
     database: {
-      "male": "Homme",
-      "female": "Femme",
-      "divorced": "Divorcé(e)",
-      "widowed": "Veuf(ve)",
-      "single": "Célibataire",
+      male: "Homme",
+      female: "Femme",
+      divorced: "Divorcé(e)",
+      widowed: "Veuf(ve)",
+      single: "Célibataire",
       "free couple": "Couple libre",
-      "aucune": "Aucune",
-      "catholique": "Catholique",
-      "orthodoxe": "Orthodoxe",
-      "protestant": "Protestant",
-      "buddhist": "Bouddhiste",
-      "hindoue": "Hindoue",
-      "judaique": "Judaïque",
-      "islam": "Islam",
-      "atheist": "Athée",
+      aucune: "Aucune",
+      catholique: "Catholique",
+      orthodoxe: "Orthodoxe",
+      protestant: "Protestant",
+      buddhist: "Bouddhiste",
+      hindoue: "Hindoue",
+      judaique: "Judaïque",
+      islam: "Islam",
+      atheist: "Athée",
       "spiritual but not religious": "Spirituel mais non religieux",
-      "other": "Autre",
-      "france": "🇫🇷 France",
-      "germany": "🇩🇪 Allemagne",
-      "italy": "🇮🇹 Italie",
-      "spain": "🇪🇸 Espagne",
+      other: "Autre",
+      france: "🇫🇷 France",
+      germany: "🇩🇪 Allemagne",
+      italy: "🇮🇹 Italie",
+      spain: "🇪🇸 Espagne",
       "united-kingdom": "🇬🇧 Angleterre",
-      "belgium": "🇧🇪 Belgique",
-      "switzerland": "🇨🇭 Suisse",
-      "china": "🇨🇳 Chine",
-      "japan": "🇯🇵 Japon",
-      "russia": "🇷🇺 Russie",
-      "thailand": "🇹🇭 Thaïlande",
-      "vietnam": "🇻🇳 Vietnam",
+      belgium: "🇧🇪 Belgique",
+      switzerland: "🇨🇭 Suisse",
+      china: "🇨🇳 Chine",
+      japan: "🇯🇵 Japon",
+      russia: "🇷🇺 Russie",
+      thailand: "🇹🇭 Thaïlande",
+      vietnam: "🇻🇳 Vietnam",
     },
     //#endregion
 
@@ -235,7 +235,7 @@ export const translations = {
     home_stat_males: "Hommes en ligne",
     home_stat_females: "Femmes en ligne",
     //#endregion
-  
+
     //#region SEARCH-PAGE
     search_results_title: "Résultats",
     search_results_subtitle: "de la recherche :",
@@ -272,12 +272,26 @@ export const translations = {
     profile_msg_remaining_credits: "Crédits restants : {{count}}",
     //#endregion
 
+    //#region PROFILE MALE
+    view_profile_back: "Retour au Tableau de bord",
+    view_profile_loading: "Chargement du profil privé...",
+    view_profile_other_info: "Autres Informations",
+    view_profile_birthdate: "Date de naissance",
+    view_profile_country: "Pays",
+    view_profile_status: "Statut Marital",
+    view_profile_children: "Enfants",
+    view_profile_religion: "Religion",
+    view_profile_about: "À propos",
+    view_profile_no_desc: "Aucune description.",
+    view_profile_reply: "Répondre à",
+    view_profile_error_title: "Oups !",
+    view_profile_not_found: "Profil non renseigné",
+    //#endregion
+
 
   },
 
   //#endregion FRANCAIS
-
-
 
   // -------------------------------------------------------------------------------------------------
   // -------------------------------------------- ANGLAIS --------------------------------------------
@@ -288,35 +302,35 @@ export const translations = {
   en: {
     //#region DATABASE EN
     database: {
-      "male": "Male",
-      "female": "Female",
-      "divorced": "Divorced",
-      "widowed": "Widowed",
-      "single": "Single",
+      male: "Male",
+      female: "Female",
+      divorced: "Divorced",
+      widowed: "Widowed",
+      single: "Single",
       "free couple": "Open relationship",
-      "aucune": "None",
-      "catholique": "Catholic",
-      "orthodoxe": "Orthodoxe",
-      "protestant": "Protestant",
-      "buddhist": "Buddhist",
-      "hindoue": "Hindu",
-      "judaique": "Jewish",
-      "islam": "Islam",
-      "atheist": "Atheist",
+      aucune: "None",
+      catholique: "Catholic",
+      orthodoxe: "Orthodoxe",
+      protestant: "Protestant",
+      buddhist: "Buddhist",
+      hindoue: "Hindu",
+      judaique: "Jewish",
+      islam: "Islam",
+      atheist: "Atheist",
       "spiritual but not religious": "Spiritual but not religious",
-      "other": "Other",
-      "france": "🇫🇷 France",
-      "germany": "🇩🇪 Germany",
-      "italy": "🇮🇹 Italy",
-      "spain": "🇪🇸 Spain",
+      other: "Other",
+      france: "🇫🇷 France",
+      germany: "🇩🇪 Germany",
+      italy: "🇮🇹 Italy",
+      spain: "🇪🇸 Spain",
       "united-kingdom": "🇬🇧 United Kingdom",
-      "belgium": "🇧🇪 Belgium",
-      "switzerland": "🇨🇭 Switzerland",
-      "china": "🇨🇳 China",
-      "japan": "🇯🇵 Japan",
-      "russia": "🇷🇺 Russia",
-      "thailand": "🇹🇭 Thailand",
-      "vietnam": "🇻🇳 Vietnam",
+      belgium: "🇧🇪 Belgium",
+      switzerland: "🇨🇭 Switzerland",
+      china: "🇨🇳 China",
+      japan: "🇯🇵 Japan",
+      russia: "🇷🇺 Russia",
+      thailand: "🇹🇭 Thailand",
+      vietnam: "🇻🇳 Vietnam",
     },
     //#endregion
 
@@ -514,14 +528,14 @@ export const translations = {
     home_stat_males: "Males Online",
     home_stat_females: "Femmes Online",
     //#endregion HOME-PAGE EN
-  
+
     //#region SEARCH-PAGE EN
     search_results_title: "Search",
     search_results_subtitle: "results:",
     search_btn_discover: "VIEW PROFILE",
     search_no_results: "No profiles match your criteria.",
     //#endregion SEARCH-PAGE EN
-  
+
     //#region MEMBERS-PAGE EN
     members_title_female: "All our female members",
     //#endregion MEMBERS-PAGE EN
@@ -549,6 +563,22 @@ export const translations = {
     profile_msg_send_btn: "Yes, Send!",
     profile_msg_sent_success: "Sent!",
     profile_msg_remaining_credits: "Remaining credits: {{count}}",
+    //#endregion
+
+    //#region PROFILE MALE EN
+    view_profile_back: "Back to Dashboard",
+    view_profile_loading: "Loading private profile...",
+    view_profile_other_info: "Other Information",
+    view_profile_birthdate: "Birthdate",
+    view_profile_country: "Country",
+    view_profile_status: "Marital Status",
+    view_profile_children: "Children",
+    view_profile_religion: "Religion",
+    view_profile_about: "About",
+    view_profile_no_desc: "No description available.",
+    view_profile_reply: "Reply to",
+    view_profile_error_title: "Oops!",
+    view_profile_not_found: "Not specified",
     //#endregion
 
 
