@@ -3,15 +3,18 @@ import { useNavigate } from "react-router-dom";
 import { Gem, Zap, Crown } from "lucide-react";
 import Swal from "sweetalert2";
 import "./CreditShop.css";
+import { useLanguage } from "../translations/hooks/useLanguage";
+import { apiFetch } from "../api";
 
 const CreditShop = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const token = localStorage.getItem("token");
 
   const formules = [
     {
       id: "pack_50",
-      name: "Découverte",
+      name: t.pack_decouverte,
       credits: 50,
       price: 10,
       icon: <Zap size={40} />,
@@ -19,7 +22,7 @@ const CreditShop = () => {
     },
     {
       id: "pack_80",
-      name: "Passion",
+      name: t.pack_passion,
       credits: 80,
       price: 15,
       icon: <Gem size={40} />,
@@ -27,7 +30,7 @@ const CreditShop = () => {
     },
     {
       id: "pack_120",
-      name: "Élite",
+      name: t.pack_elite,
       credits: 120,
       price: 20,
       icon: <Crown size={40} />,
@@ -37,37 +40,26 @@ const CreditShop = () => {
 
   const handlePurchase = async (packId) => {
     if (!token) {
-      Swal.fire("Erreur", "Vous devez être connecté", "error");
+      Swal.fire("Erreur", t.shop_error_login, "error");
       return;
     }
 
     try {
-      const response = await fetch(
-        "http://localhost:8000/api/payment/create-checkout-session",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ packId }),
-        },
-      );
-
-      const data = await response.json();
+      const data = await apiFetch("/api/payment/create-checkout-session", {
+        method: "POST",
+        body: JSON.stringify({ packId }),
+      });
 
       if (data.url) {
         // Redirection vers Stripe Checkout
         window.location.href = data.url;
       } else {
-        throw new Error(
-          data.message || "Erreur lors de l'initialisation du paiement",
-        );
+        throw new Error(data.message || t.shop_error_init);
       }
     } catch (error) {
       Swal.fire({
         icon: "error",
-        title: "Paiement impossible",
+        title: t.shop_error_payment_title,
         text: error.message,
         background: "#1f2a4d",
         color: "#fff",
@@ -80,12 +72,10 @@ const CreditShop = () => {
       <div className="container">
         <div className="text-center mb-10">
           <h2 className="section-title">
-            Rechargez vos <span className="gold-text">Crédits</span>
+            {t.shop_title}{" "}
+            <span className="gold-text">{t.shop_title_gold}</span>
           </h2>
-          <p className="text-muted">
-            Choisissez la formule qui vous ressemble pour continuer vos
-            échanges.
-          </p>
+          <p className="text-muted subtext">{t.shop_subtitle}</p>
         </div>
 
         <div className="row justify-content-center g-4">
@@ -98,7 +88,7 @@ const CreditShop = () => {
                 <h3 className="text-white mt-3">{pack.name}</h3>
                 <div className="pack-credits mb-2">
                   <span className="gold-text fs-1 fw-bold">{pack.credits}</span>
-                  <p className="text-muted">Crédits</p>
+                  <p className="text-muted">{t.shop_pack_credits}</p>
                 </div>
                 <div className="pack-price fs-3 text-white mb-4">
                   {pack.price}€
@@ -107,7 +97,7 @@ const CreditShop = () => {
                   className="btn-gold w-100"
                   onClick={() => handlePurchase(pack.id)}
                 >
-                  Choisir ce pack
+                  {t.shop_pack_button}
                 </button>
               </div>
             </div>

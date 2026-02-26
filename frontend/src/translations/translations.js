@@ -288,7 +288,21 @@ export const translations = {
     view_profile_not_found: "Profil non renseigné",
     //#endregion
 
-
+    //#region CREDITSHOP
+    shop_title: "Rechargez vos",
+    shop_title_gold: "Crédits",
+    shop_subtitle:
+      "Choisissez la formule qui vous ressemble pour continuer vos échanges.",
+    shop_pack_credits: "Crédits",
+    shop_pack_button: "Choisir ce pack",
+    shop_error_login: "Vous devez être connecté",
+    shop_error_payment_title: "Paiement impossible",
+    shop_error_init: "Erreur lors de l'initialisation du paiement",
+    // Packs
+    pack_decouverte: "Découverte",
+    pack_passion: "Passion",
+    pack_elite: "Élite",
+    //#endregion
   },
 
   //#endregion FRANCAIS
@@ -581,7 +595,21 @@ export const translations = {
     view_profile_not_found: "Not specified",
     //#endregion
 
-
+    //#region CREDITSHOP EN
+    shop_title: "Top up your",
+    shop_title_gold: "Credits",
+    shop_subtitle:
+      "Choose the plan that suits you best to continue your exchanges.",
+    shop_pack_credits: "Credits",
+    shop_pack_button: "Select this pack",
+    shop_error_login: "You must be logged in",
+    shop_error_payment_title: "Payment impossible",
+    shop_error_init: "Error during payment initialization",
+    // Packs
+    pack_decouverte: "Discovery",
+    pack_passion: "Passion",
+    pack_elite: "Elite",
+    //#endregion
   },
 
   //#endregion ANGLAIS
