@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
+import { useLanguage } from "../translations/hooks/useLanguage";
 
 const SearchPage = () => {
   const [searchParams] = useSearchParams();
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { t } = useLanguage();
 
   useEffect(() => {
     setLoading(true); // On remet le chargement à chaque nouvelle recherche
@@ -27,7 +29,7 @@ const SearchPage = () => {
   }, [searchParams]); // On mettra à jour le composant lorsque les paramètres de recherche changent
 
   if (loading)
-    return <div className="text-center mt-5">Chargement des profils...</div>;
+    return <div className="text-center mt-5">{t.loading_profiles}</div>;
 
   return (
     <div
@@ -48,8 +50,8 @@ const SearchPage = () => {
         >
           <div>
             <h2 className="fw-bold m-0" style={{ letterSpacing: "1px" }}>
-              Résultats{" "}
-              <span style={{ color: "#d4af37" }}>de la recherche : </span>
+              {t.search_results_title}{" "}
+              <span style={{ color: "#d4af37" }}>{t.search_results_subtitle} </span>
             </h2>
           </div>
           <div className="text-end">
@@ -60,7 +62,7 @@ const SearchPage = () => {
               className="ms-2 text-uppercase small opacity-50 fw-bold"
               style={{ letterSpacing: "1px" }}
             >
-              Membres
+              {t.members_unit}
             </span>
           </div>
         </div>
@@ -120,7 +122,7 @@ const SearchPage = () => {
                         className="ms-2 fw-light opacity-50"
                         style={{ fontSize: "0.9rem" }}
                       >
-                        • {member.age} ans
+                        • {member.age} {t.age_suffix}
                       </span>
                     </h5>
 
@@ -138,7 +140,7 @@ const SearchPage = () => {
                         display: "inline-block",
                       }}
                     >
-                      DÉCOUVRIR LE PROFIL
+                      {t.search_btn_discover}
                     </Link>
                   </div>
                 </div>
@@ -147,7 +149,7 @@ const SearchPage = () => {
           ) : (
             <div className="col-12 text-center py-5 opacity-25">
               <p className="h5 fw-light">
-                Aucun profil ne correspond à vos critères.
+                {t.search_no_results}
               </p>
             </div>
           )}

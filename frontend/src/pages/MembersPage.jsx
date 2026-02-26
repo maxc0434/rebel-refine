@@ -2,10 +2,13 @@ import { useEffect, useState } from "react";
 import "./MembersPage.css";
 import { Link, useNavigate } from "react-router-dom";
 import { Heart } from "lucide-react";
+import { useLanguage } from "../translations/hooks/useLanguage";
+
 
 function MembersPage() {
   const [members, setMembers] = useState([]); // Stocke la liste des profils reçus du serveur
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   // Récupération de la clé d'accès (Token) stockée lors de la connexion
   const token = localStorage.getItem("token");
@@ -85,7 +88,7 @@ function MembersPage() {
     <section className="member-section-female padding-tb">
       <div className="container">
         <div className="section-header">
-          <h2>Tous nos membres féminins</h2>
+          <h2>{t.members_title_female}</h2>
         </div>
 
         {/* MARK: AFF. PROFILS */}
@@ -192,7 +195,7 @@ function MembersPage() {
                           letterSpacing: "0.5px",
                         }}
                       >
-                        {m.age} ans
+                        {m.age} {t.age_suffix}
                       </p>
                     </div>
                   </div>
