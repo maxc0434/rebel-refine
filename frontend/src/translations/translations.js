@@ -6,10 +6,51 @@ export const translations = {
   //#region FRANCAIS
 
   fr: {
+    //#region DATABASE
+    database: {
+      "male": "Homme",
+      "female": "Femme",
+      "divorced": "Divorcé(e)",
+      "widowed": "Veuf(ve)",
+      "single": "Célibataire",
+      "free couple": "Couple libre",
+      "aucune": "Aucune",
+      "catholique": "Catholique",
+      "orthodoxe": "Orthodoxe",
+      "protestant": "Protestant",
+      "buddhist": "Bouddhiste",
+      "hindoue": "Hindoue",
+      "judaique": "Judaïque",
+      "islam": "Islam",
+      "atheist": "Athée",
+      "spiritual but not religious": "Spirituel mais non religieux",
+      "other": "Autre",
+      "france": "🇫🇷 France",
+      "germany": "🇩🇪 Allemagne",
+      "italy": "🇮🇹 Italie",
+      "spain": "🇪🇸 Espagne",
+      "united-kingdom": "🇬🇧 Angleterre",
+      "belgium": "🇧🇪 Belgique",
+      "switzerland": "🇨🇭 Suisse",
+      "china": "🇨🇳 Chine",
+      "japan": "🇯🇵 Japon",
+      "russia": "🇷🇺 Russie",
+      "thailand": "🇹🇭 Thaïlande",
+      "vietnam": "🇻🇳 Vietnam",
+    },
+    //#endregion
+
     //#region GLOBAL
     age_suffix: "ans ",
     loading_profiles: "Chargement des profils...",
     members_unit: "Membres",
+    save: "Enregistrer",
+    saved: "Enregistré",
+    delete: "Supprimer",
+    deleted: "Supprimé !",
+    cancel: "Annuler",
+    error: "Erreur",
+    error_occured: "Une erreur est survenue.",
     //#endregion
 
     //#region NAVBAR
@@ -206,7 +247,30 @@ export const translations = {
     members_title_female: "Tous nos membres féminins",
     //#endregion
 
-
+    //#region PROFILE-PAGE
+    profile_age_label: "Âge :",
+    profile_gallery_title: "Ma Galerie Photos",
+    profile_no_photo: "Aucune photo dans la galerie.",
+    profile_about_title: "À propos et Détails",
+    profile_no_description: "Pas de description renseignée.",
+    // Détails techniques
+    profile_status: "Situation",
+    profile_country: "Pays",
+    profile_children: "Enfants",
+    profile_religion: "Religion",
+    // Mémo
+    profile_memo_title: "MÉMO PRIVÉ",
+    profile_memo_placeholder: "Écris ta note sur ce membre...",
+    profile_memo_save_success: "Ton mémo a été mis à jour.",
+    profile_memo_delete_confirm: "Supprimer la note ?",
+    profile_memo_delete_warning: "Cette action est irréversible.",
+    // Messages / Crédits
+    profile_msg_confirm_title: "Êtes-vous sûr ?",
+    profile_msg_confirm_text: "Cela vous coûtera 1 crédit.",
+    profile_msg_send_btn: "Oui, Envoyer !",
+    profile_msg_sent_success: "Envoyé !",
+    profile_msg_remaining_credits: "Crédits restants : {{count}}",
+    //#endregion
 
 
   },
@@ -222,10 +286,51 @@ export const translations = {
   //#region ANGLAIS
 
   en: {
+    //#region DATABASE EN
+    database: {
+      "male": "Male",
+      "female": "Female",
+      "divorced": "Divorced",
+      "widowed": "Widowed",
+      "single": "Single",
+      "free couple": "Open relationship",
+      "aucune": "None",
+      "catholique": "Catholic",
+      "orthodoxe": "Orthodoxe",
+      "protestant": "Protestant",
+      "buddhist": "Buddhist",
+      "hindoue": "Hindu",
+      "judaique": "Jewish",
+      "islam": "Islam",
+      "atheist": "Atheist",
+      "spiritual but not religious": "Spiritual but not religious",
+      "other": "Other",
+      "france": "🇫🇷 France",
+      "germany": "🇩🇪 Germany",
+      "italy": "🇮🇹 Italy",
+      "spain": "🇪🇸 Spain",
+      "united-kingdom": "🇬🇧 United Kingdom",
+      "belgium": "🇧🇪 Belgium",
+      "switzerland": "🇨🇭 Switzerland",
+      "china": "🇨🇳 China",
+      "japan": "🇯🇵 Japan",
+      "russia": "🇷🇺 Russia",
+      "thailand": "🇹🇭 Thailand",
+      "vietnam": "🇻🇳 Vietnam",
+    },
+    //#endregion
+
     //#region GLOBAL EN
     age_suffix: "years old",
     loading_profiles: "Loading profiles...",
     members_unit: "Members",
+    save: "Save",
+    saved: "Saved",
+    delete: "Delete",
+    deleted: "Deleted !",
+    cancel: "Cancel",
+    error: "Error",
+    error_occured: "An error has occurred.",
     //#endregion GLOBAL EN
 
     //#region NAVBAR EN
@@ -421,9 +526,32 @@ export const translations = {
     members_title_female: "All our female members",
     //#endregion MEMBERS-PAGE EN
 
+    //#region PROFILE-PAGE EN
+    profile_age_label: "Age:",
+    profile_gallery_title: "My Photo Gallery",
+    profile_no_photo: "No photos in the gallery.",
+    profile_about_title: "About & Details",
+    profile_no_description: "No description provided.",
+    // Détails techniques
+    profile_status: "Status",
+    profile_country: "Country",
+    profile_children: "Children",
+    profile_religion: "Religion",
+    //Memos
+    profile_memo_title: "PRIVATE MEMO",
+    profile_memo_placeholder: "Write your note about this member...",
+    profile_memo_save_success: "Your memo has been updated.",
+    profile_memo_delete_confirm: "Delete note?",
+    profile_memo_delete_warning: "This action cannot be undone.",
+    //Messages / Crédits
+    profile_msg_confirm_title: "Are you sure?",
+    profile_msg_confirm_text: "This will cost 1 credit.",
+    profile_msg_send_btn: "Yes, Send!",
+    profile_msg_sent_success: "Sent!",
+    profile_msg_remaining_credits: "Remaining credits: {{count}}",
+    //#endregion
 
 
-    
   },
 
   //#endregion ANGLAIS

@@ -99,18 +99,18 @@ class UserCrudController extends AbstractCrudController
 
             ChoiceField::new('country', 'Langue')
                 ->setChoices([
-                    '🇫🇷 France' => 'France',
-                    '🇩🇪 Allemagne' => 'Allemagne',
-                    '🇮🇹 Italie' => 'Italie',
-                    '🇪🇸 Espagne' => 'Espagne',
-                    '🇬🇧 Angleterre' => 'Angleterre',
-                    '🇧🇪 Belgique' => 'Belgique',
-                    '🇨🇭 Suisse' => 'Suisse',
-                    '🇨🇳 Chine' => 'Chine',
-                    '🇯🇵 Japon' => 'Japon',
-                    '🇷🇺 Russie' => 'Russie',
-                    '🇹🇭 Thaïlande' => 'Thaïlande',
-                    '🇻🇳 Vietnam' => 'Vietnam',
+                    '🇫🇷 France' => 'france',
+                    '🇩🇪 Allemagne' => 'germany',
+                    '🇮🇹 Italie' => 'italy',
+                    '🇪🇸 Espagne' => 'spain',
+                    '🇬🇧 Angleterre' => 'united-kingdom',
+                    '🇧🇪 Belgique' => 'belgium',
+                    '🇨🇭 Suisse' => 'switzerland',
+                    '🇨🇳 Chine' => 'china',
+                    '🇯🇵 Japon' => 'japan',
+                    '🇷🇺 Russie' => 'russia',
+                    '🇹🇭 Thaïlande' => 'thailand',
+                    '🇻🇳 Vietnam' => 'vietnam',
                 ])
                 // Optionnel : pour afficher les drapeaux aussi dans l'admin
                 ->FormatValue(function ($value, $entity) {
@@ -144,9 +144,10 @@ class UserCrudController extends AbstractCrudController
 
             ChoiceField::new('marital', "Situation matrimoniale")
                 ->setChoices([
-                    'divorcé(e)' => 'divorcé(e)',
-                    'veuf(ve)' => 'veuf(ve)',
-                    'célibataire' => 'célibataire',
+                    'divorcé(e)' => 'divorced',
+                    'veuf(ve)' => 'widowed',
+                    'célibataire' => 'single',
+                    'couple libre' => 'free couple',
                 ]),
 
             ChoiceField::new('children', "Enfants")
@@ -166,13 +167,13 @@ class UserCrudController extends AbstractCrudController
                     'Catholique' => 'catholique',
                     'Orthodoxe' => 'orthodoxe',
                     'Protestant' => 'protestant',
-                    'Buddhiste' => 'buddhiste',
+                    'Buddhiste' => 'buddhist',
                     'Hindoue' => 'hindoue',
-                    'Judaique' => 'judaique',
+                    'Judaique' => 'jewish',
                     'Islam' => 'islam',
-                    'Atheiste' => 'atheiste',
-                    'Spirituel mais non religieux' => 'spirituel mais non religieux',
-                    'Autre' => 'autre',
+                    'Atheiste' => 'atheist',
+                    'Spirituel mais non religieux' => 'spiritual but not religious',
+                    'Autre' => 'other',
                 ]),
 
             TextEditorField::new('interests', "Centres d'intérêts"),

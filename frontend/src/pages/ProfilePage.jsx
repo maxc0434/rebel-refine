@@ -5,6 +5,8 @@ import { Heart, NotebookPen, Mail } from "lucide-react";
 import Swal from "sweetalert2";
 import ChatModal from "../components/ChatModal";
 import { apiFetch } from "../api";
+import { useLanguage } from "../translations/hooks/useLanguage";
+
 
 function ProfilePage() {
   //#region OUTILS & AUTHENTIFICATION
@@ -15,6 +17,8 @@ function ProfilePage() {
   const [currentUser, setCurrentUser] = useState(() => {
     return JSON.parse(localStorage.getItem("user")) || null;
   });
+
+  const { t } = useLanguage();
 
   //#endregion
 
@@ -138,7 +142,7 @@ function ProfilePage() {
       // En cas d'erreur, on affiche une alerte
       Swal.fire({
         title: "Oups...",
-        text: "Impossible de modifier les favoris.",
+        text: t.error_occured,
         icon: "error",
         timer: 2000,
         showConfirmButton: false,
@@ -165,8 +169,8 @@ function ProfilePage() {
 
       // Le succès déclenche l'alerte
       Swal.fire({
-        title: "Enregistré !",
-        text: "Ton mémo a été mis à jour.",
+        title: t.saved,
+        text: t.profile_memo_save_success,
         icon: "success",
         timer: 2000,
         showConfirmButton: false,
@@ -179,7 +183,7 @@ function ProfilePage() {
       console.error("Erreur save memo:", error.message);
       Swal.fire({
         title: "Oups...",
-        text: "Impossible d'enregistrer la note.",
+        text: t.error_occured,
         icon: "error",
         background: "#1e2235",
         color: "#fff",
@@ -191,20 +195,20 @@ function ProfilePage() {
   // --- SUPPRESSION D'UN MEMO ---
   const deleteMemo = async () => {
     const result = await Swal.fire({
-      title: "Supprimer la note ?",
-      text: "Cette action est irréversible.",
+      title: t.profile_memo_delete_confirm,
+      text: t.profile_memo_delete_warning,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#3085d6",
-      confirmButtonText: "Oui, supprimer",
+      confirmButtonText: t.delete,
+      cancelButtonText: t.cancel,
       background: "#1e2235",
       color: "#fff",
     });
 
     if (result.isConfirmed) {
       try {
-        // apiFetch gère la méthode DELETE et le token
         await apiFetch(`/api/member/memo/${user.id}`, {
           method: "DELETE",
         });
@@ -212,14 +216,13 @@ function ProfilePage() {
         setMemo("");
         setShowModal(false);
         Swal.fire({
-          title: "Supprimé !",
+          title: t.deleted,
           icon: "success",
           background: "#1e2235",
           color: "#fff",
         });
       } catch (error) {
         console.error("Erreur delete memo:", error.message);
-        // Optionnel : alerte erreur ici aussi si tu veux
       }
     }
   };
@@ -228,7 +231,6 @@ function ProfilePage() {
   // #region RECUP des MSG
   const fetchMessages = async (contactId) => {
     try {
-      // apiFetch s'occupe de l'URL, du token et du .json()
       const data = await apiFetch(`/api/messages/list/${contactId}`);
 
       // Si l'appel réussit, data contient déjà tes messages
@@ -255,11 +257,11 @@ const handleSendMessage = async (receiverId, content) => {
 
   if (confirmMessageSend) {
     const result = await Swal.fire({
-      title: "Êtes-vous sûr ?",
-      text: "Cela vous coûtera 1 crédit.",
+      title: t.profile_msg_confirm_title,
+      text: t.profile_msg_confirm_text,
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "Oui, Envoyer !",
+      confirmButtonText: t.profile_msg_send_btn,
       background: "#1f2a4d",
       color: "#fff",
     });
@@ -287,8 +289,8 @@ const handleSendMessage = async (receiverId, content) => {
 
     Swal.fire({
       icon: "success",
-      title: "Envoyé !",
-      text: `Crédits restants : ${data.remainingCredits}`,
+      title: t.profile_msg_sent_success,
+      text: t.profile_msg_remaining_credits.replace("{{count}}", data.remainingCredits),
       background: "#1f2a4d",
       color: "#fff",
     });
@@ -300,7 +302,7 @@ const handleSendMessage = async (receiverId, content) => {
     // apiFetch a déjà extrait le message d'erreur du serveur s'il y en avait un
     Swal.fire({
       icon: "error",
-      title: "Erreur",
+      title: t.error,
       text: error.message,
       background: "#1f2a4d",
       color: "#fff",
@@ -452,7 +454,7 @@ const handleSendMessage = async (receiverId, content) => {
                 </div>
                 <div className="profile-name">
                   <h4>{user.nickname}</h4>
-                  <p>Âge : {user.age} ans</p>
+                  <p>{t.profile_age_label} {user.age} {t.age_suffix}</p>
                 </div>
               </div>
             </div>
@@ -469,7 +471,7 @@ const handleSendMessage = async (receiverId, content) => {
                 }}
               >
                 <div className="info-card-title">
-                  <h6 style={{ color: "#d4af37" }}>Ma Galerie Photos</h6>
+                  <h6 style={{ color: "#d4af37" }}>{t.profile_gallery_title}</h6>
                 </div>
                 <div className="info-card-content">
                   <div className="row g-3">
@@ -508,7 +510,7 @@ const handleSendMessage = async (receiverId, content) => {
                       ))
                     ) : (
                       <p className="text-muted ps-2">
-                        Aucune photo dans la galerie.
+                        {t.profile_no_photo}
                       </p>
                     )}
                   </div>
@@ -527,7 +529,7 @@ const handleSendMessage = async (receiverId, content) => {
               }}
             >
               <div className="info-card-title">
-                <h6 style={{ color: "#d4af37" }}>À propos et Détails</h6>
+                <h6 style={{ color: "#d4af37" }}>{t.profile_about_title}</h6>
               </div>
               <div className="info-card-content text-white">
                 <div
@@ -538,20 +540,20 @@ const handleSendMessage = async (receiverId, content) => {
                 />
                 <ul className="info-list list-unstyled">
                   <li className="d-flex justify-content-between border-bottom border-secondary py-2">
-                    <span className="text-white-50">Situation</span>{" "}
-                    <span>{user.marital}</span>
+                    <span className="text-white-50">{t.profile_status}</span>{" "}
+                    <span>{t.database[user.marital] || user.marital}</span>
                   </li>
                   <li className="d-flex justify-content-between border-bottom border-secondary py-2">
-                    <span className="text-white-50">Pays</span>{" "}
-                    <span>{user.country}</span>
+                    <span className="text-white-50">{t.profile_country}</span>{" "}
+                    <span>{t.database[user.country] || user.country}</span>
                   </li>
                   <li className="d-flex justify-content-between border-bottom border-secondary py-2">
-                    <span className="text-white-50">Enfants</span>{" "}
+                    <span className="text-white-50">{t.profile_children}</span>{" "}
                     <span>{user.children}</span>
                   </li>
                   <li className="d-flex justify-content-between py-2">
-                    <span className="text-white-50">Religion</span>{" "}
-                    <span>{user.religion}</span>
+                    <span className="text-white-50">{t.profile_religion}</span>{" "}
+                    <span>{t.database[user.religion] || user.religion}</span>
                   </li>
                 </ul>
               </div>
@@ -664,7 +666,7 @@ const handleSendMessage = async (receiverId, content) => {
             }}
           >
             <div className="info-card-title d-flex justify-content-between align-items-center mb-3">
-              <h6 style={{ color: "#d4af37", margin: 0 }}>MÉMO PRIVÉ</h6>
+              <h6 style={{ color: "#d4af37", margin: 0 }}>{t.profile_memo_title}</h6>
               {/* On utilise ici notre fameux &times; pour fermer ! */}
               <span
                 onClick={() => setShowModal(false)}
@@ -709,7 +711,7 @@ const handleSendMessage = async (receiverId, content) => {
                   cursor: "pointer",
                 }}
               >
-                Supprimer la note
+                {t.profile_memo_delete_confirm}
               </button>
               <button
                 onClick={() => {
@@ -726,7 +728,7 @@ const handleSendMessage = async (receiverId, content) => {
                   cursor: "pointer",
                 }}
               >
-                ENREGISTRER
+                {t.save}
               </button>
             </div>
           </div>
