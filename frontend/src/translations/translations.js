@@ -314,6 +314,13 @@ export const translations = {
       "Succès ! Votre mot de passe est mis à jour.\nRedirection automatique vers la page de connexion...",
     reset_error_default: "Une erreur est survenue.",
     //#endregion
+
+    //#region PAYMENT SUCCESS
+    payment_success_swal_title: "Paiement validé !",
+    payment_processing_title: "Traitement de votre commande...",
+    //#endregion
+
+
   },
 
   //#endregion FRANCAIS
@@ -383,93 +390,93 @@ export const translations = {
     //#endregion NAVBAR EN
 
     //#region PRESENTATION-PAGE EN
-    //#region Chargement EN
-    loading_universe: "Loading the Rebel Refine universe...",
-    //#endregion
+      //#region Chargement EN
+      loading_universe: "Loading the Rebel Refine universe...",
+      //#endregion
 
-    //#region Alertes EN
-    alert_gallery_title: "Gallery Access",
-    alert_gallery_text:
-      "To access the member gallery, profiles, and messaging, you must log in.",
-    alert_gallery_confirm: "Login",
-    alert_gallery_cancel: "Cancel",
-    //#endregion
+      //#region Alertes EN
+      alert_gallery_title: "Gallery Access",
+      alert_gallery_text:
+        "To access the member gallery, profiles, and messaging, you must log in.",
+      alert_gallery_confirm: "Login",
+      alert_gallery_cancel: "Cancel",
+      //#endregion
 
-    //#region Banner Slider EN
-    banner_1_title: "REBEL REFINE",
-    banner_1_subtitle: "Dare the Orient, Live the Unforgettable.",
-    banner_1_desc:
-      "Meet authentic women seeking a modern European man. A bridge between two worlds, built on respect.",
-    banner_1_btn: "START THE ADVENTURE",
+      //#region Banner Slider EN
+      banner_1_title: "REBEL REFINE",
+      banner_1_subtitle: "Dare the Orient, Live the Unforgettable.",
+      banner_1_desc:
+        "Meet authentic women seeking a modern European man. A bridge between two worlds, built on respect.",
+      banner_1_btn: "START THE ADVENTURE",
 
-    banner_2_subtitle: "The Meeting of Two Worlds.",
-    banner_2_desc:
-      "Discover authentic and refined female profiles, selected for a demanding man seeking a serious story.",
-    banner_2_btn: "CREATE THE LINK",
-    //#endregion
+      banner_2_subtitle: "The Meeting of Two Worlds.",
+      banner_2_desc:
+        "Discover authentic and refined female profiles, selected for a demanding man seeking a serious story.",
+      banner_2_btn: "CREATE THE LINK",
+      //#endregion
 
-    //#region Section Règles EN
-    rules_title: "Our Community",
-    rules_highlight: "Rules",
+      //#region Section Règles EN
+      rules_title: "Our Community",
+      rules_highlight: "Rules",
 
-    // Règle 1
-    rule_men_title: "Gentlemen's Access",
-    rule_men_title: "Gentlemen's Access",
-    rule_men_desc_part1: "Register freely and enjoy",
-    rule_men_desc_highlight: "5 free credits",
-    rule_men_desc_part2: "to start your first exchanges today.",
+      // Règle 1
+      rule_men_title: "Gentlemen's Access",
+      rule_men_title: "Gentlemen's Access",
+      rule_men_desc_part1: "Register freely and enjoy",
+      rule_men_desc_highlight: "5 free credits",
+      rule_men_desc_part2: "to start your first exchanges today.",
 
-    // Règle 2
-    rule_women_title: "Ladies' Selection",
-    rule_women_desc:
-      "For security reasons, female profiles are validated and registered exclusively by the administrator.",
-    rule_women_contact: "Contact: admin@yoursite.com | 06 XX XX XX XX",
+      // Règle 2
+      rule_women_title: "Ladies' Selection",
+      rule_women_desc:
+        "For security reasons, female profiles are validated and registered exclusively by the administrator.",
+      rule_women_contact: "Contact: admin@yoursite.com | 06 XX XX XX XX",
 
-    // Règle 3
-    rule_trans_title: "Human Translation",
-    rule_trans_desc_part1: "Communicate without limits. Your messages are",
-    rule_trans_desc_highlight: "translated by qualified translators",
-    rule_trans_desc_part2: "to ensure total fluidity in your exchanges.",
+      // Règle 3
+      rule_trans_title: "Human Translation",
+      rule_trans_desc_part1: "Communicate without limits. Your messages are",
+      rule_trans_desc_highlight: "translated by qualified translators",
+      rule_trans_desc_part2: "to ensure total fluidity in your exchanges.",
 
-    // Règle 4
-    rule_kind_title: "Benevolent Spirit",
-    rule_kind_desc_part1: "A space based on",
-    rule_kind_desc_highlight1: "mutual respect",
-    rule_kind_desc_part2: " dedicated to people seeking",
-    rule_kind_desc_highlight2: "authentic, sincere",
-    rule_kind_desc_part3: "and",
-    rule_kind_desc_highlight3: "lasting connections.",
+      // Règle 4
+      rule_kind_title: "Benevolent Spirit",
+      rule_kind_desc_part1: "A space based on",
+      rule_kind_desc_highlight1: "mutual respect",
+      rule_kind_desc_part2: " dedicated to people seeking",
+      rule_kind_desc_highlight2: "authentic, sincere",
+      rule_kind_desc_part3: "and",
+      rule_kind_desc_highlight3: "lasting connections.",
 
-    // Argument Final
-    rule_flex_title: "Freedom & Flexibility",
-    rule_flex_desc:
-      "No monthly subscription. Once your welcome credits are used, top up your account as needed via our secure packages.",
-    //#endregion
+      // Argument Final
+      rule_flex_title: "Freedom & Flexibility",
+      rule_flex_desc:
+        "No monthly subscription. Once your welcome credits are used, top up your account as needed via our secure packages.",
+      //#endregion
 
-    //#region Section Membres EN
-    members_title: "Our new",
-    members_highlight: "members",
-    members_subtitle: "Here are the latest profiles to join Rebel Refine.",
-    members_btn: "Discover all members",
-    years_old: "years old",
-    //#endregion
+      //#region Section Membres EN
+      members_title: "Our new",
+      members_highlight: "members",
+      members_subtitle: "Here are the latest profiles to join Rebel Refine.",
+      members_btn: "Discover all members",
+      years_old: "years old",
+      //#endregion
 
-    //#region Section Concept EN
-    concept_title: "Who is our",
-    concept_highlight: "Circle for",
-    concept_serenity_title: "Serenity & Security",
-    concept_serenity_desc:
-      "Verified profiles for an authentic and protected experience.",
-    concept_exclu_title: "Exclusivity",
-    concept_exclu_desc:
-      "A privileged interaction reserved for authenticated members.",
-    //#endregion
+      //#region Section Concept EN
+      concept_title: "Who is our",
+      concept_highlight: "Circle for",
+      concept_serenity_title: "Serenity & Security",
+      concept_serenity_desc:
+        "Verified profiles for an authentic and protected experience.",
+      concept_exclu_title: "Exclusivity",
+      concept_exclu_desc:
+        "A privileged interaction reserved for authenticated members.",
+      //#endregion
 
-    //#region Footer EN
-    footer_ready: "Ready to take the plunge?",
-    footer_register: "Create my profile",
-    footer_login: "Login",
-    //#endregion
+      //#region Footer EN
+      footer_ready: "Ready to take the plunge?",
+      footer_register: "Create my profile",
+      footer_login: "Login",
+      //#endregion
 
     //#endregion PRESENTATION-PAGE EN
 
@@ -631,6 +638,15 @@ export const translations = {
       "Success! Your password has been updated.\nAutomatic redirection to the login page...",
     reset_error_default: "An error has occurred.",
     //#endregion
+  
+    //#region PAYMENTSUCCESS EN
+    payment_success_swal_title: "Payment validated!",
+    payment_processing_title: "Processing your order...",
+    //#endregion
+
+
+
+
   },
 
   //#endregion ANGLAIS
