@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useLanguage } from "../translations/hooks/useLanguage";
+import { apiFetch } from "../api";
+
 
 const ResetPasswordPage = () => {
   // 1. On récupère le "token" présent dans l'URL (ex: /reset-password/abc123...)
@@ -12,33 +15,27 @@ const ResetPasswordPage = () => {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const { t } = useLanguage();
 
 
   //#region SOUMISSION DU FORMULAIRE
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Empêche le rechargement de la page
+    e.preventDefault();
+    setError(""); // On vide l'erreur à chaque tentative
 
-    // 4. Appel à l'API Symfony (Route configurée dans ResetPasswordController)
-    const response = await fetch(
-      `http://localhost:8000/api/reset-password/reset/${token}`,
-      {
+    try {
+      // Utilisation de apiFetch pour l'endpoint spécifique
+      await apiFetch(`/api/reset-password/reset/${token}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password: password }), // On envoie le nouveau mot de passe
-      },
-    );
+        body: JSON.stringify({ password: password }),
+      });
 
-    const data = await response.json();
-
-    if (response.ok) {
-      // 5. En cas de succès : affichage du message et redirection après 3 secondes
-      setMessage(
-        "Succès ! Votre mot de passe est mis à jour.\nRedirection automatique vers la page de connexion...",
-      );
+      // Si apiFetch ne jette pas d'erreur, c'est que c'est OK
+      setMessage(t.reset_success);
       setTimeout(() => navigate("/login"), 3000);
-    } else {
-      // 6. En cas d'erreur (ex: token expiré) : affichage du message d'erreur de l'API
-      setError(data.error || "Une erreur est survenue.");
+    } catch (err) {
+      // On affiche l'erreur envoyée par Symfony ou notre message par défaut
+      setError(err.message || t.reset_error_default);
     }
   };
 
@@ -58,10 +55,10 @@ const ResetPasswordPage = () => {
         }}
       >
         <h2 className="text-white text-center fw-bold mb-4">
-          Nouveau mot de passe
+          {t.reset_title}
         </h2>
         <p className="text-white-50 text-center mb-4 small">
-          Choisissez un mot de passe robuste pour sécuriser votre compte.
+          {t.reset_subtitle}
         </p>
         {message && (
           <div
@@ -89,7 +86,7 @@ const ResetPasswordPage = () => {
         )}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="text-white-50 small mb-2">MOT DE PASSE</label>
+            <label className="text-white-50 small mb-2">{t.reset_label}</label>
             <input
               type="password"
               className="form-control text-white border-0 py-3"
@@ -113,7 +110,7 @@ const ResetPasswordPage = () => {
               boxShadow: "0 10px 20px rgba(246, 114, 128, 0.2)",
             }}
           >
-            VALIDER LE CHANGEMENT
+            {t.reset_btn}
           </button>
         </form>
       </div>

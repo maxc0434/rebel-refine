@@ -303,6 +303,17 @@ export const translations = {
     pack_passion: "Passion",
     pack_elite: "Élite",
     //#endregion
+
+    //#region RESETPASSWORD
+    reset_title: "Nouveau mot de passe",
+    reset_subtitle:
+      "Choisissez un mot de passe robuste pour sécuriser votre compte.",
+    reset_label: "MOT DE PASSE",
+    reset_btn: "VALIDER LE CHANGEMENT",
+    reset_success:
+      "Succès ! Votre mot de passe est mis à jour.\nRedirection automatique vers la page de connexion...",
+    reset_error_default: "Une erreur est survenue.",
+    //#endregion
   },
 
   //#endregion FRANCAIS
@@ -609,6 +620,16 @@ export const translations = {
     pack_decouverte: "Discovery",
     pack_passion: "Passion",
     pack_elite: "Elite",
+    //#endregion
+
+    //#region RESETPASSWORD EN
+    reset_title: "New Password",
+    reset_subtitle: "Choose a strong password to secure your account.",
+    reset_label: "PASSWORD",
+    reset_btn: "VALIDATE CHANGE",
+    reset_success:
+      "Success! Your password has been updated.\nAutomatic redirection to the login page...",
+    reset_error_default: "An error has occurred.",
     //#endregion
   },
 
