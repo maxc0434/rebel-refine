@@ -5,6 +5,8 @@ import Swal from "sweetalert2";
 import "./FemaleDashboardPage.css";
 import ChatModal from "../components/ChatModal";
 import { apiFetch } from "../api";
+import { useLanguage } from "../translations/hooks/useLanguage";
+
 
   //#region STATES
 function FemaleDashboardPage() {
@@ -17,6 +19,8 @@ function FemaleDashboardPage() {
   const [messages, setMessages] = useState([]);
   const [conversations, setConversations] = useState([]);
   const messagesEndRef = useRef(null);
+
+  const { t } = useLanguage();
   //#endregion
   
   // #region RECUP des CONVERSATIONS
@@ -43,8 +47,8 @@ function FemaleDashboardPage() {
     if (passwordData.newPassword !== passwordData.confirmPassword) {
       Swal.fire({
         icon: "error",
-        title: "Oups...",
-        text: "Les mots de passe ne correspondent pas",
+        title: "Oops...",
+        text: t.db_alert_pwd_mismatch,
         background: "#1f2a4d",
         color: "#fff",
       });
@@ -63,7 +67,7 @@ function FemaleDashboardPage() {
 
       Swal.fire({
         icon: "success",
-        title: "Mot de passe mis à jour !",
+        title: t.db_alert_pwd_success,
         background: "#1f2a4d",
         confirmButtonColor: "#d4af37",
         color: "#fff",
@@ -164,14 +168,14 @@ const handleMarkAsRead = async (contactId) => {
  //#region SUPPR CONVERSATION
 const handleDeleteConversation = async (contactId) => {
   const result = await Swal.fire({
-    title: "Supprimer la conversation ?",
-    text: "Tous les messages avec ce contact seront effacés définitivement.",
+    title: t.db_alert_del_title,
+    text: t.db_alert_del_text,
     icon: "warning",
     showCancelButton: true,
     confirmButtonColor: "#d33",
     cancelButtonColor: "#3085d6",
-    confirmButtonText: "Oui, supprimer",
-    cancelButtonText: "Annuler",
+    confirmButtonText: t.db_alert_del_confirm,
+    cancelButtonText: t.db_alert_del_cancel,
     background: "#1f2a4d",
     color: "#fff",
   });
@@ -185,7 +189,7 @@ const handleDeleteConversation = async (contactId) => {
 
       // Succès (on arrive ici seulement si response.ok)
       Swal.fire({
-        title: "Supprimé !",
+        title: t.db_alert_deleted,
         icon: "success",
         timer: 1500,
         showConfirmButton: false,
@@ -246,7 +250,7 @@ const handleDeleteConversation = async (contactId) => {
           fontSize: "1.5rem",
         }}
       >
-        Chargement de votre espace...
+        {t.loading_universe}
       </div>
     );
   }
@@ -263,7 +267,7 @@ const handleDeleteConversation = async (contactId) => {
           fontSize: "1.5rem",
         }}
       >
-        Impossible de charger vos informations. Veuillez réessayer.
+        {t.db_error_load}
       </div>
     );
   }
@@ -275,17 +279,17 @@ const handleDeleteConversation = async (contactId) => {
         {/* MARK: En-tête de la page */}
         <header className="dashboard-header">
           <h1>
-            Mon Espace Privé{" "}
+            {t.db_title}{" "}
             <span style={{ fontSize: "0.8em", verticalAlign: "middle" }}>
               ♀️
             </span>
           </h1>
           <p className="subtitle">
-            Bienvenue,{" "}
+            {t.db_welcome}{" "}
             <span className="nickname-highlight">
               {userData.nickname || "Chère membre"}
             </span>
-            . Voici votre tableau de bord exclusif.
+            . {t.db_subtitle}
           </p>
         </header>
 
@@ -297,21 +301,21 @@ const handleDeleteConversation = async (contactId) => {
                 className={`nav-button ${activeTab === "messagerie" ? "active" : ""}`}
                 onClick={() => handleTabChange("messagerie")}
               >
-                <MessageSquare size={18} /> Ma Messagerie
+                <MessageSquare size={18} /> {t.db_tab_messages}
               </button>
 
               <button
                 className={`nav-button ${activeTab === "profil" ? "active" : ""}`}
                 onClick={() => handleTabChange("profil")}
               >
-                <User size={18} /> Mon Profil
+                <User size={18} /> {t.db_tab_profile}
               </button>
 
               <button
                 className={`nav-button ${activeTab === "security" ? "active" : ""}`}
                 onClick={() => handleTabChange("security")}
               >
-                <Shield size={18} /> Sécurité
+                <Shield size={18} /> {t.db_tab_security}
               </button>
             </nav>
           </aside>
@@ -321,11 +325,11 @@ const handleDeleteConversation = async (contactId) => {
             {/* MARK: Messagerie */}
             {activeTab === "messagerie" && (
               <div>
-                <h3 className="section-title">Mes Conversations</h3>
+                <h3 className="section-title">{t.db_section_convs}</h3>
                 {conversations.length === 0 ? (
                   <div className="empty-state">
                     <p style={{ color: "rgba(255,255,255,0.6)" }}>
-                      Vous n'avez pas encore de messages.
+                      {t.db_no_messages}
                     </p>
                     <p
                       style={{
@@ -333,8 +337,7 @@ const handleDeleteConversation = async (contactId) => {
                         color: "rgba(255,255,255,0.4)",
                       }}
                     >
-                      Contactez un membre depuis son profil pour démarrer une
-                      discussion !
+                      {t.db_contact_hint}
                     </p>
                   </div>
                 ) : (
@@ -358,7 +361,7 @@ const handleDeleteConversation = async (contactId) => {
                             {contact.nickname || "Utilisateur"}
                           </strong>
                           <div className="conversation-age">
-                            {contact.age} ans
+                            {contact.age} {t.age_suffix}
                           </div>
                         </div>
 
@@ -371,16 +374,16 @@ const handleDeleteConversation = async (contactId) => {
                             }}
                             className="view-profile-btn"
                           >
-                            Voir son profil
+                            {t.db_view_profile}
                           </span>
                         </div>
 
                         {/* Bloc droite */}
                         <div className="conversation-right">
                           {contact.hasNewMessages ? (
-                            <span className="badge-new">NOUVEAU</span>
+                            <span className="badge-new">{t.db_badge_new}</span>
                           ) : (
-                            <span className="reply-link">→ Répondre </span>
+                            <span className="reply-link">{t.db_reply}</span>
                           )}
                         </div>
 
@@ -404,7 +407,7 @@ const handleDeleteConversation = async (contactId) => {
                               cursor: "pointer",
                               padding: "5px",
                             }}
-                            title="Supprimer la conversation"
+                            title={t.msg_delete_title}
                           >
                             <Trash2 size={20} />
                           </button>
@@ -437,28 +440,27 @@ const handleDeleteConversation = async (contactId) => {
                     marginBottom: "20px",
                   }}
                 >
-                  Voici vos informations personnelles visibles par les hommes
-                  qui voient votre profil :
+                  {t.db_profile_intro}
                 </p>
-                <h3 className="section-title">Mes Informations Personnelles</h3>
+                <h3 className="section-title">{t.db_my_info}</h3>
 
                 <div className="info-grid">
-                  <InfoBox label="Pseudo" value={userData.nickname} />
-                  <InfoBox label="Statut Marital" value={userData.marital} />
-                  <InfoBox label="Enfants" value={userData.children} />
-                  <InfoBox label="Religion" value={userData.religion} />
+                  <InfoBox label={t.db_label_pseudo} value={userData.nickname} />
+                  <InfoBox label={t.db_label_marital} value={userData.marital} />
+                  <InfoBox label={t.db_label_children} value={userData.children} />
+                  <InfoBox label={t.db_label_religion} value={userData.religion} />
                 </div>
 
                 <div className="info-grid" style={{ marginTop: "15px" }}>
                   <InfoBox
-                    label="Centres d'intérêt"
+                    label={t.db_label_interests}
                     value={userData.interests}
                   />
                 </div>
 
                 {/* Section : Ma Galerie Photo */}
                 <div style={{ marginTop: "30px" }}>
-                  <h3 className="section-title">Ma Galerie Photo</h3>
+                  <h3 className="section-title">{t.db_gallery}</h3>
 
                   <div className="photo-gallery">
                     {userData.photos && userData.photos.length > 0 ? (
@@ -478,7 +480,7 @@ const handleDeleteConversation = async (contactId) => {
                           gridColumn: "1 / -1",
                         }}
                       >
-                        Aucune photo ajoutée pour le moment.
+                        {t.db_no_photos}
                       </p>
                     )}
                   </div>
@@ -489,10 +491,10 @@ const handleDeleteConversation = async (contactId) => {
             {/* MARK: Security */}
             {activeTab === "security" && (
               <div className="security-section">
-                <h3 style={{ marginBottom: "20px" }}>Sécurité du compte</h3>
+                <h3 style={{ marginBottom: "20px" }}>{t.db_sec_title}</h3>
 
                 <div className="info-item-container">
-                  <span className="info-item-label">Email de connexion</span>
+                  <span className="info-item-label">{t.db_sec_email}</span>
                   <span className="info-item-value">{userData.email}</span>
                 </div>
 
@@ -508,12 +510,12 @@ const handleDeleteConversation = async (contactId) => {
                       color: "#f94d80",
                     }}
                   >
-                    Changer le mot de passe
+                    {t.db_sec_change_pwd}
                   </h4>
 
                   <div className="password-input-group">
                     <label className="dashboard-label">
-                      Ancien mot de passe
+                      {t.db_sec_old_pwd}
                     </label>
                     <input
                       type="password"
@@ -532,7 +534,7 @@ const handleDeleteConversation = async (contactId) => {
 
                   <div className="password-input-group">
                     <label className="dashboard-label">
-                      Nouveau mot de passe
+                      {t.db_sec_new_pwd}
                     </label>
                     <input
                       type="password"
@@ -551,7 +553,7 @@ const handleDeleteConversation = async (contactId) => {
 
                   <div className="password-input-group">
                     <label className="dashboard-label">
-                      Confirmer le nouveau mot de passe
+                      {t.db_sec_conf_pwd}
                     </label>
                     <input
                       type="password"
@@ -573,7 +575,7 @@ const handleDeleteConversation = async (contactId) => {
                     className="btn-gold"
                     style={{ width: "100%", marginTop: "10px" }}
                   >
-                    METTRE À JOUR LE MOT DE PASSE
+                    {t.db_sec_btn}
                   </button>
                 </form>
               </div>

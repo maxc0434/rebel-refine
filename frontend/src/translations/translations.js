@@ -456,6 +456,54 @@ export const translations = {
       "Votre solde est épuisé. Rechargez vos crédits pour poursuivre cette belle rencontre.",
     chat_shop_btn: "Boutique",
     //#endregion
+
+    //#region FEMALE DASHBOARD
+    db_title: "Mon Espace Privé",
+    db_welcome: "Bienvenue,",
+    db_subtitle: "Voici votre tableau de bord exclusif.",
+    db_tab_messages: "Ma Messagerie",
+    db_tab_profile: "Mon Profil",
+    db_tab_security: "Sécurité",
+    db_section_convs: "Mes Conversations",
+    db_no_messages: "Vous n'avez pas encore de messages.",
+    db_contact_hint:
+      "Contactez un membre depuis son profil pour démarrer une discussion !",
+    db_view_profile: "Voir son profil",
+    db_reply: "→ Répondre",
+    db_badge_new: "NOUVEAU",
+
+    // Profil & Galerie
+    db_profile_intro:
+      "Voici vos informations personnelles visibles par les hommes :",
+    db_my_info: "Mes Informations Personnelles",
+    db_gallery: "Ma Galerie Photo",
+    db_no_photos: "Aucune photo ajoutée pour le moment.",
+    db_label_pseudo: "Pseudo",
+    db_label_marital: "Statut Marital",
+    db_label_children: "Enfants",
+    db_label_religion: "Religion",
+    db_label_interests: "Centres d'intérêt",
+
+    // Sécurité
+    db_sec_title: "Sécurité du compte",
+    db_sec_email: "Email de connexion",
+    db_sec_change_pwd: "Changer le mot de passe",
+    db_sec_old_pwd: "Ancien mot de passe",
+    db_sec_new_pwd: "Nouveau mot de passe",
+    db_sec_conf_pwd: "Confirmer le nouveau mot de passe",
+    db_sec_btn: "METTRE À JOUR LE MOT DE PASSE",
+
+    // Alertes (Swal)
+    db_alert_error_title: "Oups...",
+    db_alert_pwd_mismatch: "Les mots de passe ne correspondent pas",
+    db_alert_pwd_success: "Mot de passe mis à jour !",
+    db_alert_del_title: "Supprimer la conversation ?",
+    db_alert_del_text:
+      "Tous les messages avec ce contact seront effacés définitivement.",
+    db_alert_del_confirm: "Oui, supprimer",
+    db_alert_del_cancel: "Annuler",
+    db_alert_deleted: "Supprimé !",
+    //#endregion
   },
 
   //#endregion FRANCAIS
@@ -915,6 +963,58 @@ export const translations = {
     chat_alert_empty:
       "Your balance is empty. Top up your credits to continue this beautiful encounter.",
     chat_shop_btn: "Shop",
+
+    //#region FEMALE DASHBOARD
+    db_title: "My Private Space",
+    db_welcome: "Welcome,",
+    db_subtitle: "Here is your exclusive dashboard.",
+    db_tab_messages: "My Messages",
+    db_tab_profile: "My Profile",
+    db_tab_security: "Security",
+    db_section_convs: "My Conversations",
+    db_no_messages: "You don't have any messages yet.",
+    db_contact_hint:
+      "Contact a member from their profile to start a discussion!",
+    db_view_profile: "View profile",
+    db_reply: "→ Reply",
+    db_badge_new: "NEW",
+
+    // Profile & Gallery
+    db_profile_intro:
+      "Here is your personal information as seen by men visiting your profile:",
+    db_my_info: "My Personal Information",
+    db_gallery: "My Photo Gallery",
+    db_no_photos: "No photos added yet.",
+    db_label_pseudo: "Nickname",
+    db_label_marital: "Marital Status",
+    db_label_children: "Children",
+    db_label_religion: "Religion",
+    db_label_interests: "Interests",
+
+    // Security
+    db_sec_title: "Account Security",
+    db_sec_email: "Login Email",
+    db_sec_change_pwd: "Change Password",
+    db_sec_old_pwd: "Old Password",
+    db_sec_new_pwd: "New Password",
+    db_sec_conf_pwd: "Confirm New Password",
+    db_sec_btn: "UPDATE PASSWORD",
+
+    // Alerts (Swal)
+    db_alert_error_title: "Oops...",
+    db_alert_pwd_mismatch: "Passwords do not match",
+    db_alert_pwd_success: "Password updated successfully!",
+    db_alert_del_title: "Delete conversation?",
+    db_alert_del_text:
+      "All messages with this contact will be permanently deleted.",
+    db_alert_del_confirm: "Yes, delete it",
+    db_alert_del_cancel: "Cancel",
+    db_alert_deleted: "Deleted!",
+
+    // Loader & Fallbacks
+    db_loading: "Loading your space...",
+    db_error_load: "Unable to load your information. Please try again.",
+    db_not_set: "Not specified",
   },
 
   //#endregion ANGLAIS
