@@ -18,7 +18,6 @@ import ChatModal from "../components/ChatModal";
 import { apiFetch } from "../api";
 import { useLanguage } from "../translations/hooks/useLanguage";
 
-
 function MemberDashboardPage() {
   // #region STATES
   // --- LES STATES ---
@@ -89,8 +88,8 @@ function MemberDashboardPage() {
       if (response.ok) {
         Swal.fire({
           icon: "success",
-          title: "Profil mis à jour !",
-          text: "Vos modifications ont été enregistrées avec succès.",
+          title: t.db_update_success_title,
+          text: t.db_update_success_text,
           background: "#1f2a4d",
           color: "#fff",
           confirmButtonColor: "#d4af37",
@@ -100,7 +99,7 @@ function MemberDashboardPage() {
         Swal.fire({
           icon: "error",
           title: "Oups...",
-          text: data.message || "Une erreur est survenue.",
+          text: data.message || t.db_update_error,
           background: "#1f2a4d",
           color: "#fff",
         });
@@ -108,8 +107,8 @@ function MemberDashboardPage() {
     } catch (error) {
       Swal.fire({
         icon: "error",
-        title: "Erreur réseau",
-        text: "Impossible de joindre le serveur.",
+        title: t.db_update_error,
+        text: t.db_net_error,
       });
     }
   };
@@ -129,8 +128,8 @@ function MemberDashboardPage() {
     if (passwordData.newPassword !== passwordData.confirmPassword) {
       Swal.fire({
         icon: "error",
-        title: "Oups...",
-        text: "Les mots de passe ne correspondent pas.",
+        title: "Oops...",
+        text: t.db_pwd_mismatch,
         background: "#1f2a4d",
         color: "#fff",
       });
@@ -150,8 +149,8 @@ function MemberDashboardPage() {
       // 3. Succès (on arrive ici seulement si ok)
       Swal.fire({
         icon: "success",
-        title: "Mot de passe mis à jour !",
-        text: "Votre mot de passe a bien été mis à jour.",
+        title: t.db_pwd_success_title,
+        text: t.db_pwd_success_text,
         background: "#1f2a4d",
         confirmButtonColor: "#d4af37",
         color: "#fff",
@@ -168,8 +167,8 @@ function MemberDashboardPage() {
       console.error("Erreur API:", error.message);
       Swal.fire({
         icon: "error",
-        title: "Oups...",
-        text: error.message || "Une erreur est survenue.",
+        title: "Oops...",
+        text: error.message || t.db_update_error,
         background: "#1f2a4d",
         color: "#fff",
       });
@@ -235,7 +234,7 @@ function MemberDashboardPage() {
           photos: prev.photos.filter((p) => p.id !== photoId),
         }));
       } else {
-        alert("Erreur lors de la suppression");
+        alert(t.db_photo_del_error);
       }
     } catch (error) {
       console.error("Erreur suppression:", error);
@@ -245,13 +244,13 @@ function MemberDashboardPage() {
 
   // #region RECUP des CONVERSATIONS
   const fetchConversations = async () => {
-  try {
-    const data = await apiFetch("/api/messages/conversations");
-    setConversations(data);
-  } catch (error) {
-    console.error("Erreur conversations:", error);
-  }
-};
+    try {
+      const data = await apiFetch("/api/messages/conversations");
+      setConversations(data);
+    } catch (error) {
+      console.error("Erreur conversations:", error);
+    }
+  };
 
   // On déclenche le chargement dès que l'onglet "messagerie" est actif
   useEffect(() => {
@@ -281,16 +280,15 @@ function MemberDashboardPage() {
   // #endregion
 
   // #region RECUP des MSG
-const fetchMessages = async (contactId) => {
-  try {
-    const data = await apiFetch(`/api/messages/list/${contactId}`);
-    setMessages(data);
-  } catch (error) {
-    console.error("Erreur historique:", error);
-  }
-};
-// #endregion
-
+  const fetchMessages = async (contactId) => {
+    try {
+      const data = await apiFetch(`/api/messages/list/${contactId}`);
+      setMessages(data);
+    } catch (error) {
+      console.error("Erreur historique:", error);
+    }
+  };
+  // #endregion
 
   // #region ALERT CONFIRM ENVOI
   const handleToggleConfirmation = () => {
@@ -301,95 +299,50 @@ const fetchMessages = async (contactId) => {
   // #endregion
 
   // #region ENVOI MSG
-const handleSendMessage = async (receiverId, content) => {
-  if (!content.trim()) return false;
+  const handleSendMessage = async (receiverId, content) => {
+    if (!content.trim()) return false;
 
-  let isConfirmed = true;
+    let isConfirmed = true;
 
-  if (confirmMessageSend) {
-    const result = await Swal.fire({
-      title: "Êtes-vous sûr ?",
-      text: "Cela vous coûtera 1 crédit.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Oui, Envoyer !",
-      background: "#1f2a4d",
-      color: "#fff",
-    });
-    isConfirmed = result.isConfirmed;
-  }
-  if (!isConfirmed) return false;
-
-  try {
-    const data = await apiFetch("/api/messages/send", {
-      method: "POST",
-      body: JSON.stringify({ content, receiverId }),
-    });
-
-    // Succès (data.remainingCredits vient directement du JSON)
-    if (data.remainingCredits !== undefined) {
-      setUserData((prev) => {
-        const updated = { ...prev, credits: data.remainingCredits };
-        localStorage.setItem("user", JSON.stringify(updated));
-        return updated;
+    if (confirmMessageSend) {
+      const result = await Swal.fire({
+        title: t.msg_confirm_title,
+        text: t.msg_confirm_text,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: t.msg_confirm_btn,
+        background: "#1f2a4d",
+        color: "#fff",
       });
+      isConfirmed = result.isConfirmed;
     }
+    if (!isConfirmed) return false;
 
-    Swal.fire({
-      icon: "success",
-      title: "Envoyé !",
-      text: `Crédits restants : ${data.remainingCredits}`,
-      background: "#1f2a4d",
-      color: "#fff",
-    });
-
-    fetchMessages(receiverId);
-    return true;
-  } catch (error) {
-    Swal.fire({
-      icon: "error",
-      title: "Erreur",
-      text: error.message,
-      background: "#1f2a4d",
-      color: "#fff",
-    });
-    return false;
-  }
-};
-// #endregion
-
-
-  //#region SUPPR CONVERSATION
-const handleDeleteConversation = async (contactId) => {
-  const result = await Swal.fire({
-    title: "Supprimer la conversation ?",
-    text: "Tous les messages avec ce contact seront effacés définitivement.",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#d33",
-    cancelButtonColor: "#3085d6",
-    confirmButtonText: "Oui, supprimer",
-    cancelButtonText: "Annuler",
-    background: "#1f2a4d",
-    color: "#fff",
-  });
-
-  if (result.isConfirmed) {
     try {
-      await apiFetch(`/api/messages/conversation/${contactId}`, {
-        method: "DELETE",
+      const data = await apiFetch("/api/messages/send", {
+        method: "POST",
+        body: JSON.stringify({ content, receiverId }),
       });
+
+      // Succès (data.remainingCredits vient directement du JSON)
+      if (data.remainingCredits !== undefined) {
+        setUserData((prev) => {
+          const updated = { ...prev, credits: data.remainingCredits };
+          localStorage.setItem("user", JSON.stringify(updated));
+          return updated;
+        });
+      }
 
       Swal.fire({
-        title: "Supprimé !",
         icon: "success",
-        timer: 1500,
-        showConfirmButton: false,
+        title: t.msg_sent_title,
+        text: `${t.msg_credits_left} ${data.remainingCredits}`,
         background: "#1f2a4d",
         color: "#fff",
       });
 
-      fetchConversations();
+      fetchMessages(receiverId);
+      return true;
     } catch (error) {
       Swal.fire({
         icon: "error",
@@ -398,29 +351,71 @@ const handleDeleteConversation = async (contactId) => {
         background: "#1f2a4d",
         color: "#fff",
       });
-    }
-  }
-};
-//#endregion
-
-
-  //#region HISTO MES ACHATS
-useEffect(() => {
-  const fetchPurchases = async () => {
-    try {
-      const data = await apiFetch("/api/transactions");
-      setPurchases(data);
-    } catch (error) {
-      console.error("Erreur lors de la récupération des achats:", error);
+      return false;
     }
   };
+  // #endregion
 
-  if (activeTab === "purchases") {
-    fetchPurchases();
-  }
-}, [activeTab]);
-//#endregion
+  //#region SUPPR CONVERSATION
+  const handleDeleteConversation = async (contactId) => {
+    const result = await Swal.fire({
+      title: t.msg_del_conv_title,
+      text: t.msg_del_conv_text,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: t.msg_del_confirm_btn,
+      cancelButtonText: t.msg_del_cancel_btn,
+      background: "#1f2a4d",
+      color: "#fff",
+    });
 
+    if (result.isConfirmed) {
+      try {
+        await apiFetch(`/api/messages/conversation/${contactId}`, {
+          method: "DELETE",
+        });
+
+        Swal.fire({
+          title: t.msg_del_success,
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false,
+          background: "#1f2a4d",
+          color: "#fff",
+        });
+
+        fetchConversations();
+      } catch (error) {
+        Swal.fire({
+          icon: "error",
+          title: "Erreur",
+          text: error.message,
+          background: "#1f2a4d",
+          color: "#fff",
+        });
+      }
+    }
+  };
+  //#endregion
+
+  //#region HISTO MES ACHATS
+  useEffect(() => {
+    const fetchPurchases = async () => {
+      try {
+        const data = await apiFetch("/api/transactions");
+        setPurchases(data);
+      } catch (error) {
+        console.error("Erreur lors de la récupération des achats:", error);
+      }
+    };
+
+    if (activeTab === "purchases") {
+      fetchPurchases();
+    }
+  }, [activeTab]);
+  //#endregion
 
   //#region CHARG. PAGE
   useEffect(() => {
@@ -435,9 +430,8 @@ useEffect(() => {
         setUserData(data.userData);
         setFavorites(data.favorites);
         setLoading(false);
-        
-        await fetchConversations();
 
+        await fetchConversations();
       } catch (error) {
         console.error("Erreur chargement dashboard", error);
         setLoading(false);
@@ -483,17 +477,17 @@ useEffect(() => {
       >
         <header style={{ marginBottom: "40px" }}>
           <h1 style={{ fontFamily: "Montserrat", fontWeight: "700" }}>
-            Mon Tableau de Bord
+            {t.db_title}
           </h1>
           {userData && (
             <div className="d-flex align-items-center mb-4">
-              <h2 className="me-3">Bienvenue, {userData.nickname} !</h2>
+              <h2 className="me-3">{t.db_welcome} {userData.nickname} !</h2>
             </div>
           )}
-          <h5>Votre solde :</h5>
+          <h5>{t.db_balance}</h5>
           <div className="badge bg-dark border border-warning text-warning p-2">
             <i className="bi bi-coin me-2"></i>
-            {userData.credits ?? 0} Crédits
+            {userData.credits ?? 0} {t.db_credits}
           </div>
         </header>
 
@@ -509,7 +503,7 @@ useEffect(() => {
               height: "fit-content",
             }}
           >
-            <h5 style={{ marginBottom: "20px" }}>Navigation</h5>
+            <h5 style={{ marginBottom: "20px" }}>{t.db_nav_title}</h5>
             {/* MARK: - Onglets de Navigation */}
             <nav
               style={{ display: "flex", flexDirection: "column", gap: "10px" }}
@@ -518,32 +512,32 @@ useEffect(() => {
                 onClick={() => handleTabChange("infos")}
                 className={`nav-button ${activeTab === "infos" ? "active" : ""}`}
               >
-                <User size={18} /> Mes Informations
+                <User size={18} /> {t.db_tab_infos}
               </button>
               <button
                 style={navButtonStyle(activeTab === "messagerie")}
                 onClick={() => handleTabChange("messagerie")}
               >
-                <MessageSquare size={18} /> Ma Messagerie
+                <MessageSquare size={18} /> {t.db_tab_msg}
               </button>
               <button
                 onClick={() => handleTabChange("favs")}
                 className={`nav-button ${activeTab === "favs" ? "active" : ""}`}
               >
-                <Heart size={18} /> Mes Favoris
+                <Heart size={18} /> {t.db_tab_favs}
               </button>
               <button
                 onClick={() => handleTabChange("purchases")}
                 className={`nav-button ${activeTab === "purchases" ? "active" : ""}`}
               >
-                <BadgeCent size={18} /> Mes Achats
+                <BadgeCent size={18} /> {t.db_tab_purchases}
               </button>
 
               <button
                 onClick={() => handleTabChange("security")}
                 className={`nav-button ${activeTab === "security" ? "active" : ""}`}
               >
-                <Settings size={18} /> Sécurité
+                <Settings size={18} /> {t.db_tab_security}
               </button>
             </nav>
           </aside>
@@ -572,7 +566,7 @@ useEffect(() => {
                   }}
                 >
                   <h3 style={{ fontFamily: "Montserrat", margin: 0 }}>
-                    Mes Informations
+                    {t.db_tab_infos}
                   </h3>
 
                   {!isEditing && (
@@ -595,7 +589,7 @@ useEffect(() => {
                         size={14}
                         style={{ marginRight: "5px", verticalAlign: "middle" }}
                       />{" "}
-                      Modifier mes infos
+                      {t.db_edit_btn}
                     </button>
                   )}
                 </div>
@@ -610,7 +604,7 @@ useEffect(() => {
                       fontFamily: "Montserrat",
                     }}
                   >
-                    Ma Galerie Photo ({userData.photos?.length || 0} / 3)
+                    {t.db_gallery_title} ({userData.photos?.length || 0} / 3)
                   </p>
 
                   <div
@@ -741,24 +735,24 @@ useEffect(() => {
                       gap: "30px",
                     }}
                   >
-                    <InfoItem label="Pseudo" value={userData.nickname} />
-                    <InfoItem label="Email" value={userData.email} />
-                    <InfoItem label="Pays" value={userData.country} />
+                    <InfoItem label={t.db_label_pseudo} value={userData.nickname} />
+                    <InfoItem label={t.db_label_email} value={userData.email} />
+                    <InfoItem label={t.db_label_country} value={userData.country} />
                     <InfoItem
-                      label="Situation"
-                      value={userData.marital || "Non renseigné"}
+                      label={t.db_label_marital}
+                      value={userData.marital || t.db_not_set}
                     />
                     <InfoItem
-                      label="Enfants"
-                      value={userData.children || "Non renseigné"}
+                      label={t.db_label_children}
+                      value={userData.children || t.db_not_set}
                     />
                     <InfoItem
-                      label="Religion"
-                      value={userData.religion || "Non renseigné"}
+                      label={t.db_label_religion}
+                      value={userData.religion || t.db_not_set}
                     />
                     <InfoItem
-                      label="Date de naissance"
-                      value={userData.birthDate || "Non renseigné"}
+                      label={t.db_label_birth}
+                      value={userData.birthDate || t.db_not_set}
                     />
                     <div style={{ gridColumn: "1 / -1", marginTop: "20px" }}>
                       <span
@@ -770,7 +764,7 @@ useEffect(() => {
                           marginBottom: "8px",
                         }}
                       >
-                        Intérêts
+                        {t.db_label_interests}
                       </span>
                       <div
                         className="quill-content-view"
@@ -785,7 +779,7 @@ useEffect(() => {
                           lineHeight: "1.6",
                         }}
                         dangerouslySetInnerHTML={{
-                          __html: userData.interests || "Non renseigné",
+                          __html: userData.interests || t.db_not_set,
                         }}
                       />
                     </div>
@@ -812,7 +806,7 @@ useEffect(() => {
                     >
                       {/* MARK: Pseudo & email */}
                       <div>
-                        <label className="dashboard-label">Pseudo</label>
+                        <label className="dashboard-label">{t.db_label_pseudo}</label>
                         <input
                           type="text"
                           name="nickname"
@@ -823,7 +817,7 @@ useEffect(() => {
                       </div>
                       <div>
                         <label className="dashboard-label">
-                          Email (non modifiable)
+                          {t.db_label_email}
                         </label>
                         <input
                           type="text"
@@ -842,7 +836,9 @@ useEffect(() => {
 
                       {/* MARK: Pays */}
                       <div>
-                        <label className="dashboard-label">Pays (non modifiable)</label>
+                        <label className="dashboard-label">
+                          {t.db_label_country}
+                        </label>
                         <input
                           type="text"
                           name="country"
@@ -862,7 +858,7 @@ useEffect(() => {
                       {/* MARK: Date de naissance */}
                       <div>
                         <label className="dashboard-label">
-                          Date de naissance
+                          {t.db_label_birth}
                         </label>
                         <input
                           type="date"
@@ -882,7 +878,7 @@ useEffect(() => {
                       {/* MARK: Statut marital & enfants */}
                       <div>
                         <label className="dashboard-label">
-                          Situation Maritale
+                          {t.db_label_marital}
                         </label>
                         <select
                           name="marital"
@@ -890,10 +886,11 @@ useEffect(() => {
                           onChange={handleInputChange}
                           className="dashboard-input"
                         >
-                          <option value="">Choisir...</option>
-                          <option value="célibataire">Célibataire</option>
-                          <option value="divorcé(e)">Divorcé(e)</option>
-                          <option value="veuf(ve)">Veuf(ve)</option>
+                          <option value="">{t.opts_choose}</option>
+                          <option value="célibataire">{t.opts_single}</option>
+                          <option value="divorcé(e)">{t.opts_divorced}</option>
+                          <option value="veuf(ve)">{t.opts_widowed}</option>
+                          <option value="couple libre">{t.opts_free_couple}</option>
                         </select>
                       </div>
                       <div>
@@ -904,20 +901,20 @@ useEffect(() => {
                           onChange={handleInputChange}
                           className="dashboard-input"
                         >
-                          <option value="">Choisir...</option>
-                          <option value="aucun">Aucun</option>
-                          <option value="1">1 enfant</option>
-                          <option value="2">2 enfants</option>
-                          <option value="3">3 enfants</option>
-                          <option value="4">4 enfants</option>
-                          <option value="5+">5 enfants ou plus</option>
+                          <option value="">{t.opts_choose}</option>
+                          <option value="aucun">{t.opts_none}</option>
+                          <option value="1">{t.opts_child_1}</option>
+                          <option value="2">{t.opts_child_2}</option>
+                          <option value="3">{t.opts_child_3}</option>
+                          <option value="4">{t.opts_child_4}</option>
+                          <option value="5+">{t.opts_child_5plus}</option>
                         </select>
                       </div>
 
                       {/* MARK: Religion */}
                       <div style={{ flex: 1, minWidth: "250px" }}>
                         <label className="dashboard-label">
-                          Religion / Spiritualité
+                          {t.db_label_religion}
                         </label>
                         <select
                           name="religion"
@@ -925,8 +922,8 @@ useEffect(() => {
                           onChange={handleInputChange}
                           className="dashboard-input"
                         >
-                          <option value="">Choisir...</option>
-                          <option value="Aucun">Aucun</option>
+                          <option value="">{t.opts_choose}</option>
+                          <option value="Aucun">{t.opts_none}</option>
                           <option value="Catholique">Catholique</option>
                           <option value="Orthodoxe">Orthodoxe</option>
                           <option value="Protestant">Protestant</option>
@@ -936,16 +933,16 @@ useEffect(() => {
                           <option value="Hindouiste">Hindouiste</option>
                           <option value="Atheiste">Atheiste</option>
                           <option value="Spirituel mais non religieux">
-                            Spirituel mais non religieux
+                            {t.opts_religion}
                           </option>
-                          <option value="Autre">Autre</option>
+                          <option value="Autre">{t.opts_religion_other}</option>
                         </select>
                       </div>
 
                       {/* MARK: Interests */}
                       <div style={{ flex: "1 1 100%", marginTop: "10px" }}>
                         <label className="dashboard-label">
-                          Ma Présentation & Intérêts
+                          {t.db_label_interests}
                         </label>
                         <div className="editor-container">
                           {" "}
@@ -979,7 +976,7 @@ useEffect(() => {
                       }}
                     >
                       <button type="submit" className="btn-gold">
-                        SAUVEGARDER
+                        {t.btn_save}
                       </button>
 
                       <button
@@ -990,7 +987,7 @@ useEffect(() => {
                           setIsEditing(false);
                         }}
                       >
-                        ANNULER
+                        {t.btn_cancel}
                       </button>
                     </div>
                   </form>
@@ -1010,7 +1007,7 @@ useEffect(() => {
                     marginBottom: "20px",
                   }}
                 >
-                  Mes Conversations
+                  {t.msg_title}
                 </h3>
                 {conversations.length === 0 ? (
                   <div
@@ -1022,7 +1019,7 @@ useEffect(() => {
                     }}
                   >
                     <p style={{ color: "rgba(255,255,255,0.6)" }}>
-                      Vous n'avez pas encore de messages.
+                      {t.msg_empty}
                     </p>
                     <p
                       style={{
@@ -1030,8 +1027,7 @@ useEffect(() => {
                         color: "rgba(255,255,255,0.4)",
                       }}
                     >
-                      Contactez un membre depuis son profil pour démarrer une
-                      discussion !
+                      {t.msg_empty_sub}
                     </p>
                   </div>
                 ) : (
@@ -1054,10 +1050,10 @@ useEffect(() => {
                         {/* Bloc gauche */}
                         <div className="conversation-left">
                           <strong className="conversation-name">
-                            {contact.nickname || "Utilisateur"}
+                            {contact.nickname || t.msg_user_default}
                           </strong>
                           <div className="conversation-age">
-                            {contact.age} ans
+                            {contact.age} {t.age_suffix}
                           </div>
                         </div>
 
@@ -1070,16 +1066,16 @@ useEffect(() => {
                             }}
                             className="view-profile-btn"
                           >
-                            Voir son profil
+                            {t.msg_view_profile}
                           </span>
                         </div>
 
                         {/* Bloc droite */}
                         <div className="conversation-right">
                           {contact.hasNewMessages ? (
-                            <span className="badge-new">NOUVEAU</span>
+                            <span className="badge-new">{t.msg_badge_new}</span>
                           ) : (
-                            <span className="reply-link"> → Répondre </span>
+                            <span className="reply-link"> {t.msg_reply} </span>
                           )}
                         </div>
 
@@ -1103,7 +1099,7 @@ useEffect(() => {
                               cursor: "pointer",
                               padding: "5px",
                             }}
-                            title="Supprimer la conversation"
+                            title={t.msg_delete_title}
                           >
                             <Trash2 size={20} />
                           </button>
@@ -1139,7 +1135,7 @@ useEffect(() => {
                   }}
                 >
                   <h3 style={{ fontFamily: "Montserrat", margin: 0 }}>
-                    Mes Coups de Cœur
+                    {t.fav_title}
                   </h3>
                   <span
                     style={{
@@ -1149,7 +1145,7 @@ useEffect(() => {
                       fontSize: "0.8rem",
                     }}
                   >
-                    {favorites.length} membres
+                    {favorites.length} {t.fav_count}
                   </span>
                 </div>
 
@@ -1215,7 +1211,7 @@ useEffect(() => {
                             fontSize: "0.9rem",
                           }}
                         >
-                          {fav.age} ans • {fav.marital}
+                          {fav.age} {t.age_suffix} • {fav.marital}
                         </p>
                         <button
                           onClick={() => navigate(`/profile/${fav.id}`)}
@@ -1230,7 +1226,7 @@ useEffect(() => {
                             width: "100%",
                           }}
                         >
-                          Voir le profil
+                          {t.fav_view_btn}
                         </button>
                       </div>
                     </div>
@@ -1252,17 +1248,17 @@ useEffect(() => {
                   }}
                 >
                   <h3 style={{ fontFamily: "Montserrat", margin: 0 }}>
-                    Historique de mes recharges
+                    {t.buy_title}
                   </h3>
                   <span
                     style={{
-                      background: "#f94d80", // On garde ton accent rose
+                      background: "#f94d80",
                       padding: "4px 12px",
                       borderRadius: "20px",
                       fontSize: "0.8rem",
                     }}
                   >
-                    {purchases.length} transactions
+                    {purchases.length} {t.buy_count}
                   </span>
                 </div>
 
@@ -1320,7 +1316,7 @@ useEffect(() => {
                                 fontSize: "1.1rem",
                               }}
                             >
-                              +{tx.creditsAdded} crédits
+                              +{tx.creditsAdded} {t.buy_added}
                             </h5>
                             <p
                               style={{
@@ -1329,7 +1325,7 @@ useEffect(() => {
                                 margin: 0,
                               }}
                             >
-                              Le{" "}
+                              {t.buy_date_prefix}{" "}
                               {new Date(tx.createdAt).toLocaleDateString(
                                 "fr-FR",
                                 {
@@ -1367,7 +1363,7 @@ useEffect(() => {
                               borderRadius: "4px",
                             }}
                           >
-                            {tx.status === "completed" ? "Accepté" : tx.status}
+                            {tx.status === "completed" ? t.buy_status_ok : tx.status}
                           </span>
                         </div>
                       </div>
@@ -1380,7 +1376,7 @@ useEffect(() => {
                         color: "rgba(255,255,255,0.3)",
                       }}
                     >
-                      <p>Vous n'avez pas encore effectué d'achats.</p>
+                      <p>{t.buy_empty}</p>
                     </div>
                   )}
                 </div>
@@ -1398,10 +1394,10 @@ useEffect(() => {
                   width: "100%",
                 }}
               >
-                <h3 style={{ marginBottom: "20px" }}>Sécurité du compte</h3>
+                <h3 style={{ marginBottom: "20px" }}>{t.sec_title}</h3>
 
                 <div className="info-item-container">
-                  <span className="info-item-label">Email de connexion</span>
+                  <span className="info-item-label">{t.sec_email_label}</span>
                   <span className="info-item-value">{userData.email}</span>
                 </div>
 
@@ -1414,7 +1410,7 @@ useEffect(() => {
                     borderRadius: "15px",
                   }}
                 >
-                  <h4 style={{ marginBottom: "15px" }}>Préférences d'envoi</h4>
+                  <h4 style={{ marginBottom: "15px" }}>{t.sec_pref_title}</h4>
                   <div
                     style={{
                       display: "flex",
@@ -1423,7 +1419,7 @@ useEffect(() => {
                     }}
                   >
                     <span style={{ marginRight: "15px" }}>
-                      Confirmer avant d'envoyer un message (1 crédit){" "}
+                      {t.sec_pref_confirm}{" "}
                     </span>
 
                     <div
@@ -1467,12 +1463,12 @@ useEffect(() => {
                       color: "#f94d80",
                     }}
                   >
-                    Changer le mot de passe
+                    {t.sec_pwd_change_title}
                   </h4>
 
                   <div className="password-input-group">
                     <label className="dashboard-label">
-                      Ancien mot de passe
+                      {t.sec_pwd_old}
                     </label>
                     <input
                       type="password"
@@ -1491,7 +1487,7 @@ useEffect(() => {
 
                   <div className="password-input-group">
                     <label className="dashboard-label">
-                      Nouveau mot de passe
+                      {t.sec_pwd_new}
                     </label>
                     <input
                       type="password"
@@ -1510,7 +1506,7 @@ useEffect(() => {
 
                   <div className="password-input-group">
                     <label className="dashboard-label">
-                      Confirmer le nouveau mot de passe
+                      {t.sec_pwd_confirm}
                     </label>
                     <input
                       type="password"
@@ -1532,7 +1528,7 @@ useEffect(() => {
                     className="btn-gold"
                     style={{ width: "100%", marginTop: "10px" }}
                   >
-                    METTRE À JOUR LE MOT DE PASSE
+                    {t.sec_pwd_btn}
                   </button>
                 </form>
               </div>

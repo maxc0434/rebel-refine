@@ -332,6 +332,114 @@ export const translations = {
     translator_success_msg: "Le message a été envoyé avec succès.",
     translator_error_empty: "Veuillez saisir une traduction avant de valider.",
     //#endregion
+
+    //#region DASHBOARD
+    //BEFORE RENDER
+    // Dashboard
+    db_loading: "Chargement de votre profil...",
+    db_error_load: "Erreur de connexion : impossible de récupérer vos données.",
+    db_update_success_title: "Profil mis à jour !",
+    db_update_success_text:
+      "Vos modifications ont été enregistrées avec succès.",
+    db_update_error: "Une erreur est survenue.",
+    db_net_error: "Impossible de joindre le serveur.",
+    db_pwd_mismatch: "Les mots de passe ne correspondent pas.",
+    db_pwd_success_title: "Mot de passe mis à jour !",
+    db_pwd_success_text: "Votre mot de passe a bien été mis à jour.",
+    db_photo_del_error: "Erreur lors de la suppression",
+    // Messagerie & Crédits
+    msg_confirm_title: "Êtes-vous sûr ?",
+    msg_confirm_text: "Cela vous coûtera 1 crédit.",
+    msg_confirm_btn: "Oui, Envoyer !",
+    msg_sent_title: "Envoyé !",
+    msg_credits_left: "Crédits restants : ",
+    msg_del_conv_title: "Supprimer la conversation ?",
+    msg_del_conv_text:
+      "Tous les messages avec ce contact seront effacés définitivement.",
+    msg_del_confirm_btn: "Oui, supprimer",
+    msg_del_cancel_btn: "Annuler",
+    msg_del_success: "Supprimé !",
+
+    //AFTER RENDER
+    // Navigation & Header
+    db_title: "Mon Tableau de Bord",
+    db_welcome: "Bienvenue,",
+    db_balance: "Votre solde :",
+    db_credits: "Crédits",
+    db_nav_title: "Navigation",
+    db_tab_infos: "Mes Informations",
+    db_tab_msg: "Ma Messagerie",
+    db_tab_favs: "Mes Favoris",
+    db_tab_purchases: "Mes Achats",
+    db_tab_security: "Sécurité",
+
+    // Profil & Galerie
+    db_edit_btn: "Modifier mes infos",
+    db_gallery_title: "Ma Galerie Photo",
+    db_not_set: "Non renseigné",
+    db_label_pseudo: "Pseudo",
+    db_label_email: "Email (non modifiable)",
+    db_label_country: "Pays (non modifiable)",
+    db_label_birth: "Date de naissance",
+    db_label_marital: "Situation Maritale",
+    db_label_children: "Enfants",
+    db_label_religion: "Religion / Spiritualité",
+    db_label_interests: "Ma Présentation & Intérêts",
+
+    // Options Select
+    opts_choose: "Choisir...",
+    opts_single: "Célibataire",
+    opts_divorced: "Divorcé(e)",
+    opts_widowed: "Veuf(ve)",
+    opts_free_couple: "Couple libre",
+    opts_none: "Aucun",
+    opts_child_1: "1 enfant",
+    opts_child_2: "2 enfants",
+    opts_child_3: "3 enfants",
+    opts_child_4: "4 enfants",
+    opts_child_5plus: "5 enfants ou plus",
+    opts_religion: "Spirituel mais non religieux",
+    opts_religion_other: "Autre",
+
+    // Boutons
+    btn_save: "SAUVEGARDER",
+    btn_cancel: "ANNULER",
+
+    // Messagerie
+    msg_title: "Mes Conversations",
+    msg_empty: "Vous n'avez pas encore de messages.",
+    msg_empty_sub:
+      "Contactez un membre depuis son profil pour démarrer une discussion !",
+    msg_user_default: "Utilisateur",
+    msg_view_profile: "Voir son profil",
+    msg_badge_new: "NOUVEAU",
+    msg_reply: "→ Répondre",
+    msg_delete_title: "Supprimer la conversation",
+
+    // Favoris
+    fav_title: "Mes Coups de Cœur",
+    fav_count: "membres",
+    fav_view_btn: "Voir le profil",
+
+    // Achats / Historique
+    buy_title: "Historique de mes achats",
+    buy_count: "transactions",
+    buy_added: "crédits",
+    buy_date_prefix: "Le",
+    buy_status_ok: "Accepté",
+    buy_empty: "Vous n'avez pas encore effectué d'achats.",
+
+    // Sécurité
+    sec_title: "Sécurité du compte",
+    sec_email_label: "Email de connexion",
+    sec_pref_title: "Préférences d'envoi",
+    sec_pref_confirm: "Confirmer avant d'envoyer un message",
+    sec_pwd_change_title: "Changer le mot de passe",
+    sec_pwd_old: "Ancien mot de passe",
+    sec_pwd_new: "Nouveau mot de passe",
+    sec_pwd_confirm: "Confirmer le nouveau mot de passe",
+    sec_pwd_btn: "METTRE À JOUR LE MOT DE PASSE",
+    //#endregion
   },
 
   //#endregion FRANCAIS
@@ -666,6 +774,119 @@ export const translations = {
     translator_success_title: "Translation validated",
     translator_success_msg: "The message has been sent successfully.",
     translator_error_empty: "Please enter a translation before validating.",
+    //#endregion
+
+    //#region DASHBOARD EN
+    //BEFORE RENDER
+    // Dashboard
+    db_loading: "Loading your profile...",
+    db_error_load: "Connection error: unable to retrieve your data.",
+    db_update_success_title: "Profile updated!",
+    db_update_success_text: "Your changes have been saved successfully.",
+    db_update_error: "An error occurred.",
+    db_net_error: "Unable to reach the server.",
+    db_pwd_mismatch: "Passwords do not match.",
+    db_pwd_success_title: "Password updated!",
+    db_pwd_success_text: "Your password has been successfully updated.",
+    db_photo_del_error: "Error during deletion",
+    // Messaging & Credits
+    msg_confirm_title: "Are you sure?",
+    msg_confirm_text: "This will cost you 1 credit.",
+    msg_confirm_btn: "Yes, Send!",
+    msg_sent_title: "Sent!",
+    msg_credits_left: "Remaining credits: ",
+    msg_del_conv_title: "Delete conversation?",
+    msg_del_conv_text:
+      "All messages with this contact will be permanently deleted.",
+    msg_del_confirm_btn: "Yes, delete",
+    msg_del_cancel_btn: "Cancel",
+    msg_del_success: "Deleted!",
+
+    //AFTER RENDER
+    // Navigation & Header
+    db_title: "My Dashboard",
+    db_welcome: "Welcome,",
+    db_balance: "Your balance:",
+    db_credits: "Credits",
+    db_nav_title: "Navigation",
+    db_tab_infos: "My Information",
+    db_tab_msg: "My Messages",
+    db_tab_favs: "My Favorites",
+    db_tab_purchases: "My Purchases",
+    db_tab_security: "Security",
+
+    // Profile & Gallery
+    db_edit_btn: "Edit my info",
+    db_gallery_title: "My Photo Gallery",
+    db_not_set: "Not specified",
+    db_label_pseudo: "Username",
+    db_label_email: "Email (read-only)",
+    db_label_country: "Country (read-only)",
+    db_label_birth: "Date of Birth",
+    db_label_marital: "Marital Status",
+    db_label_children: "Children",
+    db_label_religion: "Religion / Spirituality",
+    db_label_interests: "My Bio & Interests",
+
+    // Options Select
+    opts_choose: "Choose...",
+    opts_single: "Single",
+    opts_divorced: "Divorced",
+    opts_widowed: "Widowed",
+    opts_free_couple: "Free couple",
+    opts_none: "None",
+    opts_child_1: "1 child",
+    opts_child_2: "2 children",
+    opts_child_3: "3 children",
+    opts_child_4: "4 children",
+    opts_child_5plus: "5 or more children",
+    opts_religion: "Spiritual but not religious",
+    opts_religion_other: "other",
+
+    // Boutons
+    btn_save: "SAVE CHANGES",
+    btn_cancel: "CANCEL",
+
+    // SweetAlert (Rappel du message précédent)
+    msg_sent_title: "Success!",
+    msg_credits_left: "Remaining credits:",
+
+
+    // Messaging
+    msg_title: "My Conversations",
+    msg_empty: "You don't have any messages yet.",
+    msg_empty_sub: "Contact a member from their profile to start a discussion!",
+    msg_user_default: "User",
+    msg_view_profile: "View profile",
+    msg_badge_new: "NEW",
+    msg_reply: "→ Reply",
+    msg_delete_title: "Delete conversation",
+
+    // Favorites
+    fav_title: "My Favorites",
+    fav_count: "members",
+    fav_view_btn: "View profile",
+
+    // Purchases / History
+    buy_title: "Top-up History",
+    buy_count: "transactions",
+    buy_added: "credits",
+    buy_date_prefix: "On",
+    buy_status_ok: "Completed",
+    buy_empty: "You haven't made any purchases yet.",
+
+    // Security
+    sec_title: "Account Security",
+    sec_email_label: "Login Email",
+    sec_pref_title: "Sending Preferences",
+    sec_pref_confirm: "Confirm before sending a message",
+    sec_pwd_change_title: "Change Password",
+    sec_pwd_old: "Old Password",
+    sec_pwd_new: "New Password",
+    sec_pwd_confirm: "Confirm New Password",
+    sec_pwd_btn: "UPDATE PASSWORD",
+
+    //#endregion
   },
 
   //#endregion ANGLAIS
