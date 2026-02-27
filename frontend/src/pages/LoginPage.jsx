@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom"; // Import indispensable pour red
 import { useSearchParams } from "react-router-dom";
 import "./LoginPage.css";
 import { useLanguage } from "../translations/hooks/useLanguage";
+import { apiFetch } from "../api";
+
 
 function LoginPage() {
   //#region STATES
@@ -24,63 +26,45 @@ function LoginPage() {
   //#endregion
 
   //#region FCT REINITIALISATION MDP
-  // --- ÉTAPE 2 : Demande de réinitialisation de mot de passe ---
+  // --- ÉTAPE 2 : Soumission du formulaire de reinitialisation du mot de passe ---
   const handleForgotPassword = async (e) => {
     e.preventDefault();
     setStatus({ type: "info", msg: t.login_modal_sending });
 
-    // Appel à la route Symfony qui génère le token de récupération et envoie l'email
-    const response = await fetch(
-      "http://localhost:8000/api/reset-password/request",
-      {
+    try {
+      // apiFetch s'occupe de l'URL, du POST et du JSON
+      const data = await apiFetch("/api/reset-password/request", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: forgotEmail }), // On emballe l'email dans le "carton" JSON
-      },
-    );
-    const data = await response.json();
-    setStatus({ type: "success", msg: data.message }); // Affiche le message de confirmation du serveur
+        body: JSON.stringify({ email: forgotEmail }),
+      });
+
+      setStatus({ type: "success", msg: data.message });
+    } catch (error) {
+      // En cas d'email inconnu ou erreur serveur, apiFetch lève une erreur
+      setStatus({ type: "error", msg: error.message });
+    }
   };
   //#endregion
 
   //#region FCT LOGIN
-  // --- ÉTAPE 3 : Soumission du formulaire de connexion ---
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Bloque le rechargement par défaut du navigateur
-    setError(""); // Efface les erreurs précédentes
+    e.preventDefault();
+    setError("");
 
     try {
-      // Envoi des identifiants au point d'entrée de sécurité de Symfony (login_check)
-      const response = await fetch("http://localhost:8000/api/login", {
+      // apiFetch gère l'envoi et la transformation en JSON
+      const data = await apiFetch("/api/login", {
         method: "POST",
-        credentials: "include", // Permet d'inclure les cookies de session si nécessaire
-        headers: { "Content-Type": "application/json" },
+        credentials: "include", // Permet d'obtenir les cookies
         body: JSON.stringify({
-          username: email, // Note : Symfony attend souvent la clé "username" par défaut
+          username: email,
           password: password,
         }),
       });
 
-      // --- ÉTAPE 4 : Vérification de la réponse du serveur ---
-      if (response.status === 403) {
-        // Le serveur refuse l'accès (ex: compte non vérifié)
-        const data = await response.json();
-        setError(data.message);
-        return;
-      }
-
-      if (!response.ok) {
-        // Le serveur répond une erreur (ex: 401 Unauthorized)
-        throw new Error(t.login_error_invalid);
-      }
-
-      // --- ÉTAPE 5 : Stockage des clés d'accès (Token & Profil) ---
-      const data = await response.json();
-
-      // On sauvegarde le JWT pour prouver l'identité sur les prochaines requêtes
+      // --- STOCKAGE ---
       localStorage.setItem("token", data.token);
 
-      // On sauvegarde les infos de base pour l'affichage (évite des appels API inutiles)
       const userToStore = {
         id: data.id,
         roles: data.roles,
@@ -90,28 +74,24 @@ function LoginPage() {
       };
       localStorage.setItem("user", JSON.stringify(userToStore));
 
-      // --- ÉTAPE 6 : Dispatching (Redirection selon le rôle) ---
-      // Cas A : L'utilisateur est un Admin (on sort de React vers EasyAdmin)
+      // --- REDIRECTION ---
       if (data.redirectToAdmin) {
         window.location.href = data.redirectToAdmin;
       } else {
         const roles = data.roles || [];
 
-        // 1. On vérifie d'abord si c'est un traducteur
         if (roles.includes("ROLE_TRANSLATOR")) {
           navigate("/translator-dashboard");
-        }
-        // 2. Sinon, on gère les redirections par genre
-        else if (roles.includes("ROLE_FEMALE")) {
+        } else if (roles.includes("ROLE_FEMALE")) {
           navigate("/female-dashboard");
         } else {
-          // Par défaut (ROLE_MALE ou autre), redirection vers le flux principal
           navigate("/home");
         }
       }
     } catch (err) {
-      // --- ÉTAPE 7 : Capture des erreurs (Réseau ou Identifiants) ---
-      setError(t.login_error_invalid);
+      // Si c'est une 401 (mauvais identifiants) ou 403, 
+      // le message d'erreur sera celui envoyé par ton backend Symfony
+      setError(err.message || t.login_error_invalid);
     }
   };
   //#endregion

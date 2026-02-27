@@ -5,6 +5,8 @@ import { Navigation, Autoplay, Pagination, EffectFade } from "swiper/modules";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../translations/hooks/useLanguage";
+import { apiFetch } from "../api";
+
 
 // Import Swiper styles
 import "swiper/css";
@@ -43,20 +45,20 @@ const PresentationPage = () => {
   useEffect(() => {
     const fetchMembers = async () => {
       try {
-        const response = await fetch("http://localhost:8000/api/home");
-        const data = await response.json();
+        // apiFetch s'occupe de l'URL, du Token et du .json()
+        const data = await apiFetch("/api/home");
 
         // On vérifie si last_members existe, sinon on met un tableau vide
         if (data && data.last_members) {
           setApiData(data.last_members);
         }
       } catch (error) {
-        console.error("Erreur de connexion à l'API PHP:", error);
+        // L'erreur est automatiquement capturée ici (401, 500, ou erreur réseau)
+        console.error("Erreur de connexion à l'API PHP:", error.message);
       } finally {
         setLoading(false);
       }
     };
-
     fetchMembers();
   }, []);
 

@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./RegisterPage.css";
 import { useLanguage } from "../translations/hooks/useLanguage";
+import { apiFetch } from "../api";
+
 
 
 function RegisterPage() {
@@ -33,27 +35,26 @@ function RegisterPage() {
 
   // --- 3. SOUMISSION DU FORMULAIRE ---
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Bloque le rechargement de la page
-    setError(""); // Efface les erreurs précédentes
+    e.preventDefault();
+    setError("");
 
     // INTERCEPTION FEMME
     if (formData.gender === "female") {
       setShowAdminModal(true);
-      return; // On arrête tout ici, pas d'appel fetch
+      return; 
     }
 
-    // A. Validation locale : Sécurité avant l'appel API
+    // A. Validation locale
     if (formData.password !== formData.confirmPassword) {
       setError(t.register_error_password);
       return;
     }
 
     try {
-      // B. Appel API vers Symfony (Inscription)
-      const response = await fetch("http://localhost:8000/api/register", {
+      // B. Appel API avec apiFetch
+      // Pas besoin de Headers, l'URL est simplifiée, le JSON est automatique
+      await apiFetch("/api/register", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        // Envoi des données (on ne transmet pas la confirmation, inutile pour le serveur)
         body: JSON.stringify({
           email: formData.email,
           password: formData.password,
@@ -63,22 +64,17 @@ function RegisterPage() {
         }),
       });
 
-      // C. Analyse de la réponse du serveur
-      if (!response.ok) {
-        const errorData = await response.json();
-        // On récupère l'erreur précise de Symfony (ex: "Cet email est déjà utilisé")
-        throw new Error(errorData.error || "Erreur lors de l'inscription");
-      }
-
-      // D. Succès : Information utilisateur
+      // D. Succès (si on arrive ici, c'est que la réponse était "ok")
       setSuccessMessage(t.register_success);
 
-      // E. Redirection programmée : On laisse le temps de lire le message
+      // E. Redirection programmée
       setTimeout(() => {
         navigate("/");
       }, 6000);
+
     } catch (err) {
-      // Capture et affiche l'erreur (soit réseau, soit lancée par le bloc 'throw')
+      // Le catch récupère directement le message d'erreur envoyé par Symfony
+      // (ex: "Cet email est déjà utilisé") grâce à la logique de ton api.js
       setError(err.message);
     }
   };

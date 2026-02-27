@@ -3,6 +3,8 @@ import "./MembersPage.css";
 import { Link, useNavigate } from "react-router-dom";
 import { Heart } from "lucide-react";
 import { useLanguage } from "../translations/hooks/useLanguage";
+import { apiFetch } from "../api";
+
 
 
 function MembersPage() {
@@ -14,71 +16,55 @@ function MembersPage() {
   const token = localStorage.getItem("token");
 
   //#region FCT MONTAGE DU COMPOSANT
-  // --- CHARGEMENT DES DONNÉES AU MONTAGE DU COMPOSANT ---
   useEffect(() => {
-    // Sécurité : si le visiteur n'est pas connecté, retour immédiat à l'accueil
     if (!token) {
       navigate("/");
       return;
     }
 
-    // Appel à l'API pour récupérer la liste des profils féminins
-    fetch("http://localhost:8000/api/members/females", {
-      headers: { Authorization: `Bearer ${token}` }, // On envoie le token pour prouver l'identité
-    })
-      .then((res) => {
-        // Si le serveur répond 401 (Token expiré ou invalide), on déconnecte l'utilisateur
-        if (res.status === 401) {
-          localStorage.removeItem("token");
-          navigate("/");
-          return;
-        }
-        return res.json();
-      })
-      .then((data) => {
-        if (data) setMembers(data); // On remplit notre état avec les membres reçus
-      })
-      .catch((err) => console.error("Erreur chargement membres:", err));
+    const fetchMembers = async () => {
+      try {
+        // apiFetch gère l'URL de base, le header Authorization et le JSON
+        const data = await apiFetch("/api/members/females");
+        setMembers(data);
+      } catch (err) {
+        // Si apiFetch reçoit une 401, il lance une erreur.
+        // On nettoie et on redirige.
+        console.error("Erreur chargement membres:", err.message);
+        localStorage.removeItem("token");
+        navigate("/");
+      }
+    };
 
-    // Le tableau vide [] garantit que la liste ne se charge qu'une seule fois au début
+    fetchMembers();
   }, [navigate, token]);
   //#endregion
 
   //#region FCT FAVORIS
-  // --- ACTION : AJOUTER OU RETIRER UN FAVORI ---
   const toggleFavorite = async (e, targetId) => {
-    e.preventDefault(); // Empêche la redirection vers le profil
-    e.stopPropagation(); // Empêche le clic de "traverser" vers les éléments parents
+    e.preventDefault();
+    e.stopPropagation();
 
     if (!token) return;
 
     try {
-      const response = await fetch(
-        `http://localhost:8000/api/member/favorite/${targetId}`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        },
-      );
-      const data = await response.json();
+      // On spécifie juste la méthode POST, apiFetch fait le reste
+      const data = await apiFetch(`/api/member/favorite/${targetId}`, {
+        method: "POST",
+      });
 
-      // Mise à jour de l'interface "en temps réel" (Reactivité)
+      // Mise à jour de l'interface (Logique identique à ton original)
       if (data.status === "added" || data.status === "removed") {
         setMembers((prevMembers) =>
-          prevMembers.map((member) => {
-            // Si c'est le membre sur lequel on a cliqué, on change l'état du cœur
-            if (member.id === targetId) {
-              return { ...member, isFavorite: data.status === "added" };
-            }
-            return member; // Les autres membres restent inchangés
-          }),
+          prevMembers.map((member) =>
+            member.id === targetId
+              ? { ...member, isFavorite: data.status === "added" }
+              : member
+          )
         );
       }
     } catch (error) {
-      console.error("Erreur favoris:", error);
+      console.error("Erreur favoris:", error.message);
     }
   };
   //#endregion

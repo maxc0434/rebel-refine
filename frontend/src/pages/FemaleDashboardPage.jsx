@@ -4,7 +4,7 @@ import { User, MessageSquare, Shield, Trash2 } from "lucide-react";
 import Swal from "sweetalert2";
 import "./FemaleDashboardPage.css";
 import ChatModal from "../components/ChatModal";
-import { apiFetch } from "../apiFemale";
+import { apiFetch } from "../api";
 
   //#region STATES
 function FemaleDashboardPage() {
@@ -40,12 +40,11 @@ function FemaleDashboardPage() {
   const handleUpdatePassword = async (e) => {
     e.preventDefault();
 
-    // 1. Vérification locale avant l'appel
     if (passwordData.newPassword !== passwordData.confirmPassword) {
       Swal.fire({
         icon: "error",
         title: "Oups...",
-        text: "Les mots de passe ne correspondent pas.",
+        text: "Les mots de passe ne correspondent pas",
         background: "#1f2a4d",
         color: "#fff",
       });
@@ -53,57 +52,33 @@ function FemaleDashboardPage() {
     }
 
     try {
-      // 2. L'appel API avec fetch
-      const response = await fetch(
-        "http://localhost:8000/api/auth/update-password",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            // On récupère ton token de session stocké au moment du login
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify({
-            oldPassword: passwordData.oldPassword,
-            newPassword: passwordData.newPassword,
-          }),
-        },
-      );
+      // UTILISATION DE APIFETCH ICI AUSSI
+      await apiFetch("/api/auth/update-password", {
+        method: "POST",
+        body: JSON.stringify({
+          oldPassword: passwordData.oldPassword,
+          newPassword: passwordData.newPassword,
+        }),
+      });
 
-      // 3. Transformation de la réponse en JSON
-      const data = await response.json();
-
-      // 4. Si echec, affichage de l'erreur
-      if (!response.ok) {
-        Swal.fire({
-          icon: "error",
-          title: "Oups...",
-          text: data.message || "Une erreur est survenue.",
-          background: "#1f2a4d",
-          color: "#fff",
-        });
-        return;
-      }
-      // 5. Succès
       Swal.fire({
         icon: "success",
         title: "Mot de passe mis à jour !",
-        text: "Votre mot de passe a bien été mis à jour.",
         background: "#1f2a4d",
         confirmButtonColor: "#d4af37",
         color: "#fff",
         timer: 3000,
       });
-      setPasswordData({
-        oldPassword: "",
-        newPassword: "",
-        confirmPassword: "",
-      });
-      navigate("/female-dashboard");
+
+      setPasswordData({ oldPassword: "", newPassword: "", confirmPassword: "" });
     } catch (error) {
-      // 6. Gestion des erreurs (Ancien mot de passe faux, problème serveur, etc.)
-      console.error("Erreur API:", error.message);
-      alert(error.message);
+      Swal.fire({
+        icon: "error",
+        title: "Erreur",
+        text: error.message,
+        background: "#1f2a4d",
+        color: "#fff",
+      });
     }
   };
   //#endregion

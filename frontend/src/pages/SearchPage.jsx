@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useLanguage } from "../translations/hooks/useLanguage";
+import { apiFetch } from "../api";
+
 
 const SearchPage = () => {
   const [searchParams] = useSearchParams();
@@ -9,24 +11,28 @@ const SearchPage = () => {
   const { t } = useLanguage();
 
   useEffect(() => {
-    setLoading(true); // On remet le chargement à chaque nouvelle recherche
+    // 1. On définit la fonction asynchrone pour la recherche
+    const performSearch = async () => {
+      setLoading(true);
 
-    // On extrait les paramètres de recherche de l'URL
-    const min = searchParams.get("min") || 18;
-    const max = searchParams.get("max") || 60;
+      const min = searchParams.get("min") || 18;
+      const max = searchParams.get("max") || 60;
 
-    // On effectue la recherche en utilisant les paramètres extraits de l'URL
-    fetch(`http://localhost:8000/api/members/search?min=${min}&max=${max}`)
-      .then((response) => response.json())
-      .then((data) => {
+      try {
+        // 2. apiFetch gère l'URL de base et la transformation JSON
+        const data = await apiFetch(`/api/members/search?min=${min}&max=${max}`);
         setMembers(data);
+      } catch (error) {
+        console.error("Erreur lors de la recherche:", error.message);
+        // Optionnel : tu pourrais vider la liste des membres en cas d'erreur
+        setMembers([]);
+      } finally {
         setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Erreur lors de la recherche:", error);
-        setLoading(false);
-      });
-  }, [searchParams]); // On mettra à jour le composant lorsque les paramètres de recherche changent
+      }
+    };
+
+    performSearch();
+  }, [searchParams]);
 
   if (loading)
     return <div className="text-center mt-5">{t.loading_profiles}</div>;

@@ -3,6 +3,8 @@ import { useNavigate, Link } from "react-router-dom";
 import CountUp from "react-countup";
 import { Heart } from "lucide-react";
 import { useLanguage } from "../translations/hooks/useLanguage";
+import { apiFetch } from "../api";
+
 
 function HomePage() {
   const navigate = useNavigate();
@@ -36,64 +38,47 @@ function HomePage() {
   };
   //#endregion
 
-  //#region FCT HOME
-  // --- ÉTAPE 3 : Chargement initial des données (useEffect) ---
+  //#region FCT CHARGEMENT
+  // --- ÉTAPE 3 : Chargement des données ---
   useEffect(() => {
-    // Si pas de token, on renvoie à l'accueil (sécurité front-end)
     if (!token) {
       navigate("/");
       return;
     }
 
-    fetch("http://localhost:8000/api/home", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`, // On prouve qui on est
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Erreur de session"); // Si le token est expiré par exemple
-        return res.json();
-      })
-      .then((data) => {
-        setApiData(data); // On range les données reçues
-        setLoading(false); // On enlève le loader
-      })
-      .catch((err) => {
-        localStorage.clear(); // En cas de gros souci, on déconnecte par sécurité
+    const loadHomeData = async () => {
+      try {
+        // apiFetch gère l'URL de base, le token et le Content-Type
+        const data = await apiFetch("/api/home");
+        setApiData(data);
+        setLoading(false);
+      } catch (err) {
+        console.error("Erreur de session:", err);
+        localStorage.clear(); 
         navigate("/");
-      });
+      }
+    };
+
+    loadHomeData();
   }, [navigate, token]);
   //#endregion
 
   //#region FCT FAVORIS
-  // --- ÉTAPE 4 : Gestion des Favoris (Ajouter/Retirer) ---
   const toggleFavorite = async (e, targetId) => {
-    e.preventDefault(); // Empêche de cliquer sur le profil par erreur
-    e.stopPropagation(); // Stop la propagation du clic aux éléments parents
+    e.preventDefault(); 
+    e.stopPropagation(); 
 
     try {
-      const response = await fetch(
-        `http://localhost:8000/api/member/favorite/${targetId}`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        },
-      );
+      // Pas besoin de headers, apiFetch s'en occupe
+      const data = await apiFetch(`/api/member/favorite/${targetId}`, {
+        method: "POST",
+      });
 
-      if (!response.ok) throw new Error("Erreur serveur");
-      const data = await response.json();
-
-      // Mise à jour visuelle immédiate sans recharger la page
+      // Mise à jour visuelle immédiate
       if (data.status === "added" || data.status === "removed") {
         setApiData((prevData) => ({
           ...prevData,
           last_members: prevData.last_members.map((member) =>
-            // On cherche le membre cliqué et on change juste son état "isFavorite"
             member.id === targetId
               ? { ...member, isFavorite: data.status === "added" }
               : member,
@@ -101,6 +86,7 @@ function HomePage() {
         }));
       }
     } catch (error) {
+      console.error("Erreur favoris:", error);
       alert(t.home_favorite_error);
     }
   };
