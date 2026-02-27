@@ -86,6 +86,7 @@ class MemberDashboardController extends AbstractController
                 'interests' => $user->getInterests(),     // Ses passions
                 'photos' => $userPhotos,                   // Sa photo de profil
                 'credits' => $user->getCredits(),         // Ses crédits
+                'confirmMessageSend' => $user->isConfirmMessageSend(),
 
             ],
             // BLOC DES TARGETS : La liste des profils favoris extraite plus haut
@@ -158,12 +159,20 @@ class MemberDashboardController extends AbstractController
         if (isset($data['nickname'])) $user->setNickname($data['nickname']);
         if (isset($data['marital'])) $user->setMarital($data['marital']);
         if (isset($data['religion'])) $user->setReligion($data['religion']);
-        if (isset($data['children'])) $user->setChildren($data['children']);
-        if (isset($data['birthDate'])) $user->setBirthDate(new \DateTime($data['birthDate']));
-        if (isset($data['interests'])) $user->setInterests($data['interests']);
-        $translationService->autoTranslate($user, 'interests', $data['interests']);
+        if (isset($data['children'])) $user->setChildren((int)$data['children']);
+        if (isset($data['birthDate']) && !empty($data['birthDate'])) {
+            $user->setBirthDate(new \DateTime($data['birthDate']));
+        }
+        if (isset($data['confirmMessageSend'])) {
+            $user->setConfirmMessageSend((bool)$data['confirmMessageSend']);
+        }
+        if (isset($data['interests'])) {
+            $user->setInterests($data['interests']);
+            if (!empty($data['interests'])) {
+                $translationService->autoTranslate($user, 'interests', $data['interests']);
+            }
+        }
 
-        // On enregistre les modifications en base de données
         $em->flush();
 
         return $this->json([
@@ -177,6 +186,7 @@ class MemberDashboardController extends AbstractController
                 'religion' => $user->getReligion(),
                 'children' => $user->getChildren(),
                 'birthDate' => $user->getBirthDate() ? $user->getBirthDate()->format('Y-m-d') : null,
+                'confirmMessageSend' => $user->isConfirmMessageSend(),
             ]
         ]);
     }

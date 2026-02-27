@@ -32,12 +32,9 @@ function MemberDashboardPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [purchases, setPurchases] = useState([]);
+  const [confirmMessageSend, setConfirmMessageSend] = useState(true);
 
   const messagesEndRef = useRef(null);
-
-  const [confirmMessageSend, setConfirmMessageSend] = useState(
-    localStorage.getItem("confirmMessageSend") !== "false",
-  );
 
   const { t } = useLanguage();
 
@@ -293,10 +290,23 @@ function MemberDashboardPage() {
   // #endregion
 
   // #region ALERT CONFIRM ENVOI
-  const handleToggleConfirmation = () => {
+  const handleToggleConfirmation = async () => {
     const newValue = !confirmMessageSend;
     setConfirmMessageSend(newValue);
-    localStorage.setItem("confirmMessageSend", newValue);
+
+    try {
+      // On utilise la route existante /update-profile
+      await apiFetch("/api/member/update-profile", {
+        method: "POST",
+        body: JSON.stringify({ confirmMessageSend: newValue }),
+      });
+
+      // On met à jour le userData local pour rester synchro
+      setUserData((prev) => ({ ...prev, confirmMessageSend: newValue }));
+    } catch (error) {
+      console.error("Erreur sauvegarde préférence:", error);
+      setConfirmMessageSend(!newValue); // Retour arrière en cas d'erreur
+    }
   };
   // #endregion
 
@@ -430,6 +440,7 @@ function MemberDashboardPage() {
       try {
         const data = await apiFetch("/api/member/dashboard");
         setUserData(data.userData);
+        setConfirmMessageSend(data.userData.confirmMessageSend);
         setFavorites(data.favorites);
         setLoading(false);
 

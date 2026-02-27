@@ -101,6 +101,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Transla
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $country = null;
 
+    #[ORM\Column]
+    private ?bool $confirmMessageSend = true;
+
     public function __construct()
     {
         $this->userImages = new ArrayCollection();
@@ -394,6 +397,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Transla
     public function setCountry(?string $country): static
     {
         $this->country = $country;
+
+        return $this;
+    }
+
+    public function isConfirmMessageSend(): ?bool
+    {
+        return $this->confirmMessageSend;
+    }
+
+    public function setConfirmMessageSend(bool $confirmMessageSend): static
+    {
+        $this->confirmMessageSend = $confirmMessageSend;
 
         return $this;
     }
