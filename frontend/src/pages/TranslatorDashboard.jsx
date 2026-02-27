@@ -56,7 +56,7 @@ const TranslatorDashboard = () => {
       // Feedback discret
       const Toast = Swal.mixin({
         toast: true,
-        position: "bottom-end", 
+        position: "bottom-end",
         showConfirmButton: false,
         timer: 1500,
         timerProgressBar: true,
@@ -100,7 +100,24 @@ const TranslatorDashboard = () => {
           pending.map((msg) => (
             <div key={msg.id} className="message-card">
               <div className="direction-badge">
-                {msg.direction?.replace(/([A-Z])/g, " $1").trim()}
+                {msg.direction
+                  ? msg.direction
+                      .split(/➔|->|to/i)
+                      .map((part, index) => {
+                        const cleanKey = part
+                          .replace(/[^a-zA-Z]/g, "")
+                          .toLowerCase()
+                          .trim();
+                        const translation = t.database[cleanKey] || part;
+
+                        return (
+                          <span key={index}>
+                            {translation}
+                            {index === 0 ? " ➔ " : ""}
+                          </span>
+                        );
+                      })
+                  : "🌐"}
               </div>
 
               <div className="label">{t.translator_label_source}</div>

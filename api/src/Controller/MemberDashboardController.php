@@ -168,10 +168,11 @@ class MemberDashboardController extends AbstractController
         }
         if (isset($data['interests'])) {
             $user->setInterests($data['interests']);
-            if (!empty($data['interests'])) {
+            if (!empty($data['interests']) && isset($data['locale']) && $data['locale'] === 'en') {
                 $translationService->autoTranslate($user, 'interests', $data['interests']);
             }
         }
+
 
         $em->flush();
 

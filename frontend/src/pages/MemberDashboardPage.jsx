@@ -36,7 +36,7 @@ function MemberDashboardPage() {
 
   const messagesEndRef = useRef(null);
 
-  const { t } = useLanguage();
+  const { t, currentLang } = useLanguage();
 
   //#endregion
 
@@ -77,6 +77,7 @@ function MemberDashboardPage() {
           religion: userData.religion,
           children: userData.children,
           birthDate: userData.birthDate,
+          locale: currentLang,
         }),
       });
 

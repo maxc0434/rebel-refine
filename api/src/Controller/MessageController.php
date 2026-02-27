@@ -100,7 +100,7 @@ class MessageController extends AbstractController
                 'id' => $msg->getId(),
                 'original' => $msg->getContentOriginal(),
                 'from' => $msg->getSender()->getNickname(),
-                'direction' => $msg->getDirection()
+                'direction' => strtolower($msg->getDirection())
             ];
         }
         return new JsonResponse($data);
