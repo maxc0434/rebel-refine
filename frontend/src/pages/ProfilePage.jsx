@@ -33,9 +33,7 @@ function ProfilePage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const messagesEndRef = useRef(null);
-  const [confirmMessageSend, setConfirmMessageSend] = useState(
-    localStorage.getItem("confirmMessageSend") !== "false",
-  );
+
   //#endregion
 
   // #region SYNC USER
@@ -241,21 +239,16 @@ function ProfilePage() {
   };
   // #endregion
 
-  //#region ALERT CONFIRM ENVOI
-  const handleToggleConfirmation = () => {
-    const newValue = !confirmMessageSend;
-    setConfirmMessageSend(newValue);
-    localStorage.setItem("confirmMessageSend", newValue);
-  };
-  // #endregion
 
   // #region ENVOI MSG
 const handleSendMessage = async (receiverId, content) => {
   if (!content.trim()) return false;
 
+  const shouldConfirm = currentUser?.confirmMessageSend !== false;
+
   let isConfirmed = true;
 
-  if (confirmMessageSend) {
+  if (shouldConfirm) {
     const result = await Swal.fire({
       title: t.profile_msg_confirm_title,
       text: t.profile_msg_confirm_text,

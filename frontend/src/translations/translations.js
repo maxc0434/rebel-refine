@@ -333,7 +333,7 @@ export const translations = {
     translator_label_source: "Message source",
     translator_label_translation: "Traduction",
     translator_placeholder:
-      "Saisissez la traduction ici... (Ctrl+Entrée pour valider)",
+      "Saisissez la traduction ici... ",
     translator_btn_send: "Valider et Envoyer",
     translator_success_title: "Traduction validée",
     translator_success_msg: "Le message a été envoyé avec succès.",
@@ -482,7 +482,7 @@ export const translations = {
     // Profil & Galerie
     db_profile_intro:
       "Voici vos informations personnelles visibles par les hommes :",
-    db_my_info: "Mes Informations Personnelles",
+    db_my_info: "Mes Informations Personnelles *",
     db_gallery: "Ma Galerie Photo",
     db_no_photos: "Aucune photo ajoutée pour le moment.",
     db_label_pseudo: "Pseudo",
@@ -490,6 +490,7 @@ export const translations = {
     db_label_children: "Enfants",
     db_label_religion: "Religion",
     db_label_interests: "Centres d'intérêt",
+    db_contact_admin: "* Pour toute modification de donnée sur votre profil, contactez l'administrateur du site au 06XXXXXX ou par mail  admin@admin.com",
 
     // Sécurité
     db_sec_title: "Sécurité du compte",
@@ -847,7 +848,7 @@ export const translations = {
     translator_label_source: "Source message",
     translator_label_translation: "Translation",
     translator_placeholder:
-      "Enter translation here... (Ctrl+Enter to validate)",
+      "Enter translation here... ",
     translator_btn_send: "Validate and Send",
     translator_success_title: "Translation validated",
     translator_success_msg: "The message has been sent successfully.",
@@ -996,7 +997,7 @@ export const translations = {
     // Profile & Gallery
     db_profile_intro:
       "Here is your personal information as seen by men visiting your profile:",
-    db_my_info: "My Personal Information",
+    db_my_info: "My Personal Information *",
     db_gallery: "My Photo Gallery",
     db_no_photos: "No photos added yet.",
     db_label_pseudo: "Nickname",
@@ -1004,6 +1005,8 @@ export const translations = {
     db_label_children: "Children",
     db_label_religion: "Religion",
     db_label_interests: "Interests",
+    db_contact_admin: "* For any changes to the information on your profile, please contact the site administrator at 06XXXXXX or by email at admin@admin.com",
+
 
     // Security
     db_sec_title: "Account Security",

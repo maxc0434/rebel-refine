@@ -7,7 +7,6 @@ import "./LoginPage.css";
 import { useLanguage } from "../translations/hooks/useLanguage";
 import { apiFetch } from "../api";
 
-
 function LoginPage() {
   //#region STATES
 
@@ -89,9 +88,14 @@ function LoginPage() {
         }
       }
     } catch (err) {
-      // Si c'est une 401 (mauvais identifiants) ou 403, 
-      // le message d'erreur sera celui envoyé par ton backend Symfony
-      setError(err.message || t.login_error_invalid);
+      // --- ICI ON CHANGE LE MESSAGE ---
+      if (err.message.includes("401")) {
+        setError(t.login_error_invalid || "Email ou mot de passe incorrect.");
+      } else if (err.message.includes("403")) {
+        setError("Votre compte n'est pas encore vérifié.");
+      } else {
+        setError("Une erreur est survenue. Veuillez réessayer.");
+      }
     }
   };
   //#endregion
@@ -108,9 +112,7 @@ function LoginPage() {
                   <h1 className="fw-bold mb-2 login-brand">
                     REBEL <span>REFINE</span>
                   </h1>
-                  <p className="login-subtitle">
-                    {t.login_subtitle}
-                  </p>
+                  <p className="login-subtitle">{t.login_subtitle}</p>
                   <div className="gold-divider"></div>
                 </div>
 
@@ -153,34 +155,39 @@ function LoginPage() {
                         {t.login_label_password}
                       </label>
                     </div>
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      className="form-control form-control-lg login-input border-0 shadow-none mb-4"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="••••••••"
-                      required
-                    />
+
+                    <div style={{ position: "relative" }}>
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        className="form-control form-control-lg login-input border-0 shadow-none"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="••••••••"
+                        required
+                      />
+                      <span
+                        onClick={() => setShowPassword(!showPassword)}
+                        style={{
+                          position: "absolute",
+                          right: "15px",
+                          top: "50%",
+                          transform: "translateY(-50%)",
+                          cursor: "pointer",
+                          color: "#b4aeae",
+                          zIndex: 10,
+                          fontSize: "1.2rem",
+                        }}
+                      >
+                        <i
+                          className={`bi ${showPassword ? "bi-eye-slash-fill" : "bi-eye-fill"}`}
+                        ></i>
+                      </span>
+                    </div>
+
                     <span
-                      onClick={() => setShowPassword(!showPassword)}
-                      style={{
-                        position: "absolute",
-                        right: "10%",
-                        top: "54%",
-                        transform: "translateY(-50%)",
-                        cursor: "pointer",
-                        color: "#b4aeae",
-                        zIndex: 10,
-                        fontSize: "1.2rem",
-                      }}
-                    >
-                      <i
-                        className={`bi ${showPassword ? "bi-eye-slash-fill" : "bi-eye-fill"}`}
-                      ></i>
-                    </span>
-                    <span
-                      className="small mb-2 forgot-password-link justify-content-end d-flex"
+                      className="small mt-2 forgot-password-link justify-content-end d-flex"
                       onClick={() => setShowModal(true)}
+                      style={{ cursor: "pointer" }} // Ajouté pour le confort
                     >
                       {t.login_forgot_password}
                     </span>

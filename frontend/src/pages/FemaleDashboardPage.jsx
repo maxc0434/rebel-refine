@@ -291,6 +291,7 @@ const handleDeleteConversation = async (contactId) => {
             </span>
             . {t.db_subtitle}
           </p>
+          
         </header>
 
         <div className="dashboard-layout">
@@ -459,7 +460,7 @@ const handleDeleteConversation = async (contactId) => {
                 </div>
 
                 {/* Section : Ma Galerie Photo */}
-                <div style={{ marginTop: "30px" }}>
+                <div style={{ marginTop: "30px", marginBottom: "30px" }}>
                   <h3 className="section-title">{t.db_gallery}</h3>
 
                   <div className="photo-gallery">
@@ -485,6 +486,13 @@ const handleDeleteConversation = async (contactId) => {
                     )}
                   </div>
                 </div>
+                <div style={{
+                          color: "rgba(255,255,255,0.5)",
+                          gridColumn: "1 / -1",
+                        }} className="mt-5 d-flex justify-content-center">
+                  <p className="subtitle col-5">{t.db_contact_admin}</p>
+                </div>
+                
               </div>
             )}
 
