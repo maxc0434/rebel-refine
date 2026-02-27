@@ -67,11 +67,11 @@ function MemberDashboardPage() {
       [name]: value,
     });
   };
-  // --- GESTION DE l'UPDATE du PROFIL ---
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
     try {
-      const response = await apiFetch("/api/member/update-profile", {
+      // apiFetch renvoie directement le contenu du JSON
+      const data = await apiFetch("/api/member/update-profile", {
         method: "POST",
         body: JSON.stringify({
           nickname: userData.nickname,
@@ -83,36 +83,34 @@ function MemberDashboardPage() {
         }),
       });
 
-      const data = await response.json();
+      // Si on arrive ici, c'est que c'est un succès (200 OK)
+      Swal.fire({
+        icon: "success",
+        title: t.db_update_success_title,
+        text: t.db_update_success_text,
+        background: "#1f2a4d",
+        color: "#fff",
+        confirmButtonColor: "#d4af37",
+        timer: 3000,
+      });
 
-      if (response.ok) {
-        Swal.fire({
-          icon: "success",
-          title: t.db_update_success_title,
-          text: t.db_update_success_text,
-          background: "#1f2a4d",
-          color: "#fff",
-          confirmButtonColor: "#d4af37",
-          timer: 3000,
-        });
-      } else {
-        Swal.fire({
-          icon: "error",
-          title: "Oups...",
-          text: data.message || t.db_update_error,
-          background: "#1f2a4d",
-          color: "#fff",
-        });
-      }
+      // On met à jour le state local avec les nouvelles données renvoyées par le serveur
+      setUserData((prev) => ({
+        ...prev,
+        ...(data.userData || data),
+      }));
+      setIsEditing(false);
     } catch (error) {
+      // Si l'API renvoie une erreur (400, 500...), elle est captée ici
       Swal.fire({
         icon: "error",
-        title: t.db_update_error,
-        text: t.db_net_error,
+        title: "Oups...",
+        text: error.message || t.db_update_error,
+        background: "#1f2a4d",
+        color: "#fff",
       });
     }
   };
-  // #endregion
 
   // #region UPDATE du PASSWORD ---
   const [passwordData, setPasswordData] = useState({
@@ -180,32 +178,38 @@ function MemberDashboardPage() {
   // --- GESTION DE l'UPLOAD d'une PHOTO ---
   const onDrop = useCallback(
     async (acceptedFiles) => {
-      // 1. Calcule la place restante pour ne pas dépasser 3 photos
       const filesToUpload = acceptedFiles.slice(0, 3 - userData.photos.length);
 
       for (const file of filesToUpload) {
-        // 2. Prépare l'enveloppe (FormData) pour envoyer le fichier...
         const formData = new FormData();
-        // ... et ajoute le fichier
         formData.append("photo", file);
 
         try {
-          const response = await apiFetch("/api/member/upload-photo", {
+          // 1. Appelle apiFetch.
+          // Rappel : apiFetch renvoie directement l'objet JSON si tout va bien.
+          const data = await apiFetch("/api/member/upload-photo", {
             method: "POST",
             body: formData,
           });
 
-          const data = await response.json();
-
-          if (response.ok) {
-            // 3. Ajoute la nouvelle photo à l'écran sans recharger la page
-            setUserData((prev) => ({
-              ...prev,
-              photos: [...prev.photos, data.photo],
-            }));
-          }
+          // 2. Si on est ici, c'est que la réponse était OK (ex: 200 ou 201).
+          // On utilise 'data' directement, sans appeler .json()
+          setUserData((prev) => ({
+            ...prev,
+            photos: [...prev.photos, data.photo],
+          }));
         } catch (error) {
-          console.error("Erreur upload:", error);
+          // 3. Les erreurs (400, 500, etc.) sont gérées ici par apiFetch
+          console.error("Erreur upload:", error.message);
+
+          // Optionnel : Alerte bilingue pour l'utilisateur
+          Swal.fire({
+            icon: "error",
+            title: t.db_alert_error_title,
+            text: error.message,
+            background: "#1f2a4d",
+            color: "#fff",
+          });
         }
       }
     },
@@ -221,23 +225,21 @@ function MemberDashboardPage() {
 
   // #region SUPPR. PHOTO ---
   const handleDeletePhoto = async (photoId) => {
-    // 1. Appel à l'API Symfony
     try {
-      const response = await apiFetch(`/api/member/delete-photo/${photoId}`, {
+      // 1. apiFetch renvoie les données ou jette une erreur si !response.ok
+      await apiFetch(`/api/member/delete-photo/${photoId}`, {
         method: "DELETE",
       });
 
-      if (response.ok) {
-        // On met à jour le state local pour faire disparaître la photo immédiatement
-        setUserData((prev) => ({
-          ...prev,
-          photos: prev.photos.filter((p) => p.id !== photoId),
-        }));
-      } else {
-        alert(t.db_photo_del_error);
-      }
+      // 2. Si on arrive ici, c'est que c'est réussi (pas d'erreur jetée)
+      setUserData((prev) => ({
+        ...prev,
+        photos: prev.photos.filter((p) => p.id !== photoId),
+      }));
     } catch (error) {
+      // 3. C'est ici que l'erreur est capturée si le serveur répond 400, 500, etc.
       console.error("Erreur suppression:", error);
+      alert(t.db_photo_del_error || "Erreur lors de la suppression");
     }
   };
   //#endregion
@@ -481,7 +483,9 @@ function MemberDashboardPage() {
           </h1>
           {userData && (
             <div className="d-flex align-items-center mb-4">
-              <h2 className="me-3">{t.db_welcome} {userData.nickname} !</h2>
+              <h2 className="me-3">
+                {t.db_welcome} {userData.nickname} !
+              </h2>
             </div>
           )}
           <h5>{t.db_balance}</h5>
@@ -735,12 +739,22 @@ function MemberDashboardPage() {
                       gap: "30px",
                     }}
                   >
-                    <InfoItem label={t.db_label_pseudo} value={userData.nickname} />
+                    <InfoItem
+                      label={t.db_label_pseudo}
+                      value={userData.nickname}
+                    />
                     <InfoItem label={t.db_label_email} value={userData.email} />
-                    <InfoItem label={t.db_label_country} value={userData.country} />
+                    <InfoItem
+                      label={t.db_label_country}
+                      value={t.database[userData.country] || userData.country}
+                    />
                     <InfoItem
                       label={t.db_label_marital}
-                      value={userData.marital || t.db_not_set}
+                      value={
+                        t.database[userData.marital] ||
+                        userData.marital ||
+                        t.db_not_set
+                      }
                     />
                     <InfoItem
                       label={t.db_label_children}
@@ -748,7 +762,11 @@ function MemberDashboardPage() {
                     />
                     <InfoItem
                       label={t.db_label_religion}
-                      value={userData.religion || t.db_not_set}
+                      value={
+                        t.database[userData.religion] ||
+                        userData.religion ||
+                        t.db_not_set
+                      }
                     />
                     <InfoItem
                       label={t.db_label_birth}
@@ -806,7 +824,9 @@ function MemberDashboardPage() {
                     >
                       {/* MARK: Pseudo & email */}
                       <div>
-                        <label className="dashboard-label">{t.db_label_pseudo}</label>
+                        <label className="dashboard-label">
+                          {t.db_label_pseudo}
+                        </label>
                         <input
                           type="text"
                           name="nickname"
@@ -887,14 +907,19 @@ function MemberDashboardPage() {
                           className="dashboard-input"
                         >
                           <option value="">{t.opts_choose}</option>
-                          <option value="célibataire">{t.opts_single}</option>
-                          <option value="divorcé(e)">{t.opts_divorced}</option>
-                          <option value="veuf(ve)">{t.opts_widowed}</option>
-                          <option value="couple libre">{t.opts_free_couple}</option>
+                          {/* On met le slug en value, mais on affiche la trad à l'utilisateur */}
+                          <option value="single">{t.opts_single}</option>
+                          <option value="divorced">{t.opts_divorced}</option>
+                          <option value="widowed">{t.opts_widowed}</option>
+                          <option value="free_couple">
+                            {t.opts_free_couple}
+                          </option>
                         </select>
                       </div>
                       <div>
-                        <label className="dashboard-label">Enfants</label>
+                        <label className="dashboard-label">
+                          {t.profile_children}
+                        </label>
                         <select
                           name="children"
                           value={userData.children || ""}
@@ -923,19 +948,19 @@ function MemberDashboardPage() {
                           className="dashboard-input"
                         >
                           <option value="">{t.opts_choose}</option>
-                          <option value="Aucun">{t.opts_none}</option>
-                          <option value="Catholique">Catholique</option>
-                          <option value="Orthodoxe">Orthodoxe</option>
-                          <option value="Protestant">Protestant</option>
-                          <option value="Islam">Islam</option>
-                          <option value="Judaique">Judaique</option>
-                          <option value="Bouddhiste">Bouddhiste</option>
-                          <option value="Hindouiste">Hindouiste</option>
-                          <option value="Atheiste">Atheiste</option>
-                          <option value="Spirituel mais non religieux">
+                          <option value="aucune">{t.opts_none}</option>
+                          <option value="catholique">Catholique</option>
+                          <option value="orthodoxe">Orthodoxe</option>
+                          <option value="protestant">Protestant</option>
+                          <option value="islam">Islam</option>
+                          <option value="judaique">Judaïque</option>
+                          <option value="buddhist">Bouddhiste</option>
+                          <option value="hindoue">Hindouiste</option>
+                          <option value="atheist">Athéiste</option>
+                          <option value="spiritual_but_not_religious">
                             {t.opts_religion}
                           </option>
-                          <option value="Autre">{t.opts_religion_other}</option>
+                          <option value="other">{t.opts_religion_other}</option>
                         </select>
                       </div>
 
@@ -1363,7 +1388,9 @@ function MemberDashboardPage() {
                               borderRadius: "4px",
                             }}
                           >
-                            {tx.status === "completed" ? t.buy_status_ok : tx.status}
+                            {tx.status === "completed"
+                              ? t.buy_status_ok
+                              : tx.status}
                           </span>
                         </div>
                       </div>
@@ -1467,9 +1494,7 @@ function MemberDashboardPage() {
                   </h4>
 
                   <div className="password-input-group">
-                    <label className="dashboard-label">
-                      {t.sec_pwd_old}
-                    </label>
+                    <label className="dashboard-label">{t.sec_pwd_old}</label>
                     <input
                       type="password"
                       className="dashboard-input"
@@ -1486,9 +1511,7 @@ function MemberDashboardPage() {
                   </div>
 
                   <div className="password-input-group">
-                    <label className="dashboard-label">
-                      {t.sec_pwd_new}
-                    </label>
+                    <label className="dashboard-label">{t.sec_pwd_new}</label>
                     <input
                       type="password"
                       className="dashboard-input"

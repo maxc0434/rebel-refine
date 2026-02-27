@@ -4,8 +4,6 @@ import "./RegisterPage.css";
 import { useLanguage } from "../translations/hooks/useLanguage";
 import { apiFetch } from "../api";
 
-
-
 function RegisterPage() {
   //#region STATES
   // --- 1. ÉTATS DU FORMULAIRE ---
@@ -41,7 +39,7 @@ function RegisterPage() {
     // INTERCEPTION FEMME
     if (formData.gender === "female") {
       setShowAdminModal(true);
-      return; 
+      return;
     }
 
     // A. Validation locale
@@ -71,7 +69,6 @@ function RegisterPage() {
       setTimeout(() => {
         navigate("/");
       }, 6000);
-
     } catch (err) {
       // Le catch récupère directement le message d'erreur envoyé par Symfony
       // (ex: "Cet email est déjà utilisé") grâce à la logique de ton api.js
@@ -93,9 +90,7 @@ function RegisterPage() {
                   <h1 className="register-logo-title fw-bold mb-2">
                     REBEL <span className="register-logo-refine">REFINE</span>
                   </h1>
-                  <p className="register-subtitle">
-                    {t.register_subtitle}
-                  </p>
+                  <p className="register-subtitle">{t.register_subtitle}</p>
                   <div className="register-divider"></div>
                 </div>
 
@@ -130,7 +125,8 @@ function RegisterPage() {
                         }
                         className={`gender-selector gender-male ${formData.gender === "male" ? "active" : ""}`}
                       >
-                        <i className="bi bi-gender-male me-2"></i>{t.register_gender_male}
+                        <i className="bi bi-gender-male me-2"></i>
+                        {t.register_gender_male}
                       </div>
                       <div
                         onClick={() =>
@@ -138,7 +134,8 @@ function RegisterPage() {
                         }
                         className={`gender-selector gender-female ${formData.gender === "female" ? "active" : ""}`}
                       >
-                        <i className="bi bi-gender-female me-2"></i>{t.register_gender_female}
+                        <i className="bi bi-gender-female me-2"></i>
+                        {t.register_gender_female}
                       </div>
                     </div>
                   </div>
@@ -155,19 +152,21 @@ function RegisterPage() {
                       onChange={handleChange}
                       required
                     >
-                      <option value="">-- {t.register_country_placeholder} --</option>
-                      <option value="France">🇫🇷 France</option>
-                      <option value="Allemagne">🇩🇪 Allemagne</option>
-                      <option value="Italie">🇮🇹 Italie</option>
-                      <option value="Espagne">🇪🇸 Espagne</option>
-                      <option value="Angleterre">🇬🇧 Angleterre</option>
-                      <option value="Belgique">🇧🇪 Belgique</option>
-                      <option value="Suisse">🇨🇭 Suisse</option>
-                      <option value="Chine">🇨🇳 Chine</option>
-                      <option value="Japon">🇯🇵 Japon</option>
-                      <option value="Russie">🇷🇺 Russie</option>
-                      <option value="Thaïlande">🇹🇭 Thaïlande</option>
-                      <option value="Vietnam">🇻🇳 Vietnam</option>
+                      <option value="">
+                        -- {t.register_country_placeholder} --
+                      </option>
+                      <option value="france">🇫🇷 France</option>
+                      <option value="germany">🇩🇪 Allemagne</option>
+                      <option value="italy">🇮🇹 Italie</option>
+                      <option value="spain">🇪🇸 Espagne</option>
+                      <option value="united_kingdom">🇬🇧 Angleterre</option>
+                      <option value="belgium">🇧🇪 Belgique</option>
+                      <option value="switzerland">🇨🇭 Suisse</option>
+                      <option value="china">🇨🇳 Chine</option>
+                      <option value="japan">🇯🇵 Japon</option>
+                      <option value="russia">🇷🇺 Russie</option>
+                      <option value="thailand">🇹🇭 Thaïlande</option>
+                      <option value="vietnam">🇻🇳 Vietnam</option>
                     </select>
                   </div>
 
