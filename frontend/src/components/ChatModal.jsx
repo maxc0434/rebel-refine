@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { X, Lock } from "lucide-react";
 import "./ChatModal.css";
 import {  useNavigate } from "react-router-dom";
+import { useLanguage } from "../translations/hooks/useLanguage";
 
 
 const ChatModal = ({
@@ -21,6 +22,8 @@ const ChatModal = ({
   const hasNoCredits =
     isMale && (userData?.credits === null || userData?.credits <= 0); // On considère l'homme bloqué si credits est 0 ou null
   const MAX_CHARS = 500;
+
+  const { t } = useLanguage();
 
   // Gestion du défilement des messages vers le bas automatiquement
   useEffect(() => {
@@ -42,7 +45,7 @@ const ChatModal = ({
             <h4 style={{ margin: 0, color: "#f67280" }}>
               {selectedContact.nickname}
             </h4>
-            <small style={{ color: "gray" }}>Conversation privée</small>
+            <small style={{ color: "gray" }}>{t.chat_private}</small>
           </div>
           {/* RAPPEL DES CRÉDITS (Uniquement pour l'homme) */}
           {isMale && (
@@ -54,7 +57,7 @@ const ChatModal = ({
               }}
             >
               <span style={{ color: hasNoCredits ? "#ff4d4d" : "#d4af37" }}>
-                {hasNoCredits ? "Solde épuisé" : " Crédit(s)"} : {" "}
+                {hasNoCredits ? t.chat_no_credits : t.chat_credits} : {" "}
                 <strong style={{marginRight: "5px" }}>{userData?.credits ?? 0}</strong>
                 <i className="bi bi-coin me-2"></i>
               </span>
@@ -83,7 +86,7 @@ const ChatModal = ({
 
                   {isSentByMe && msg.status === "pending" && (
                     <div className="pending-translation">
-                      🕒 En attente de traduction...
+                      {t.chat_waiting_trans}
                     </div>
                   )}
 
@@ -107,7 +110,7 @@ const ChatModal = ({
               className="text-center mt-5"
               style={{ opacity: 0.5, color: "white", textAlign: "center" }}
             >
-              Aucun message. Envoyez le premier message !
+              {t.chat_no_messages}
             </div>
           )}
           <div ref={messagesEndRef} />
@@ -119,8 +122,8 @@ const ChatModal = ({
             id="chatInput"
             placeholder={
               hasNoCredits
-                ? "Vous n'avez plus de crédits pour envoyer un message..."
-                : "Écrivez votre message..."
+                ? t.chat_placeholder_blocked
+                : t.chat_placeholder
             }
             className="dashboard-textarea"
             rows="3"
@@ -154,10 +157,10 @@ const ChatModal = ({
           >
             {hasNoCredits ? (
               <span className="d-flex align-items-center gap-2">
-                <Lock size={16} /> Bloqué
+                <Lock size={16} /> {t.chat_blocked_btn}
               </span>
             ) : (
-              "Envoyer"
+              t.chat_send_btn
             )}
           </button>
           {/* Compteur de caractères */}
@@ -175,15 +178,14 @@ const ChatModal = ({
               <div className="alert-content">
                 
                 <p>
-                  Votre solde est épuisé. Rechargez vos crédits pour poursuivre
-                  cette belle rencontre.
+                  {t.chat_alert_empty}
                 </p>
               </div>
               <button
                 className="btn-recharge-quick"
                 onClick={() => navigate("/credit-shop")}
               >
-                Boutique
+                {t.chat_shop_btn}
               </button>
             </div>
           )}

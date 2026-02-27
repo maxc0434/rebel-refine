@@ -440,6 +440,22 @@ export const translations = {
     sec_pwd_confirm: "Confirmer le nouveau mot de passe",
     sec_pwd_btn: "METTRE À JOUR LE MOT DE PASSE",
     //#endregion
+
+    //#region ChatModal
+    chat_private: "Conversation privée",
+    chat_credits: " Crédit(s)",
+    chat_no_credits: "Solde épuisé",
+    chat_waiting_trans: "🕒 En attente de traduction...",
+    chat_no_messages: "Aucun message. Envoyez le premier message !",
+    chat_placeholder: "Écrivez votre message...",
+    chat_placeholder_blocked:
+      "Vous n'avez plus de crédits pour envoyer un message...",
+    chat_send_btn: "Envoyer",
+    chat_blocked_btn: "Bloqué",
+    chat_alert_empty:
+      "Votre solde est épuisé. Rechargez vos crédits pour poursuivre cette belle rencontre.",
+    chat_shop_btn: "Boutique",
+    //#endregion
   },
 
   //#endregion FRANCAIS
@@ -851,7 +867,6 @@ export const translations = {
     msg_sent_title: "Success!",
     msg_credits_left: "Remaining credits:",
 
-
     // Messaging
     msg_title: "My Conversations",
     msg_empty: "You don't have any messages yet.",
@@ -885,8 +900,21 @@ export const translations = {
     sec_pwd_new: "New Password",
     sec_pwd_confirm: "Confirm New Password",
     sec_pwd_btn: "UPDATE PASSWORD",
-
     //#endregion
+
+    //#region ChatModal
+    chat_private: "Private conversation",
+    chat_credits: "Credit(s)",
+    chat_no_credits: "Balance exhausted",
+    chat_waiting_trans: "🕒 Waiting for translation...",
+    chat_no_messages: "No messages yet. Send the first message!",
+    chat_placeholder: "Write your message...",
+    chat_placeholder_blocked: "You have no credits left to send a message...",
+    chat_send_btn: "Send",
+    chat_blocked_btn: "Blocked",
+    chat_alert_empty:
+      "Your balance is empty. Top up your credits to continue this beautiful encounter.",
+    chat_shop_btn: "Shop",
   },
 
   //#endregion ANGLAIS
