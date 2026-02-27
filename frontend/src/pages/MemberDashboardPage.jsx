@@ -16,6 +16,8 @@ import { useDropzone } from "react-dropzone";
 import { useCallback } from "react";
 import ChatModal from "../components/ChatModal";
 import { apiFetch } from "../api";
+import { useLanguage } from "../translations/hooks/useLanguage";
+
 
 function MemberDashboardPage() {
   // #region STATES
@@ -37,6 +39,8 @@ function MemberDashboardPage() {
   const [confirmMessageSend, setConfirmMessageSend] = useState(
     localStorage.getItem("confirmMessageSend") !== "false",
   );
+
+  const { t } = useLanguage();
 
   //#endregion
 

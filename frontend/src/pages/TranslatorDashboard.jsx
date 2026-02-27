@@ -1,74 +1,125 @@
 import { useState, useEffect } from "react";
-import './TranslatorDashboard.css';
-import { apiFetch } from "../api"; // N'oublie pas l'import !
+import "./TranslatorDashboard.css";
+import { apiFetch } from "../api";
+import Swal from "sweetalert2";
+import { useLanguage } from "../translations/hooks/useLanguage";
 
 const TranslatorDashboard = () => {
   const [pending, setPending] = useState([]);
+  const [translations, setTranslations] = useState({});
 
-  // --- 1. CHARGEMENT DES MESSAGES ---
+  const { t } = useLanguage();
+
   useEffect(() => {
     const fetchPendingMessages = async () => {
       try {
         const data = await apiFetch("/api/messages/pending");
         setPending(data);
       } catch (err) {
-        console.error("Erreur chargement messages:", err.message);
+        console.error("Erreur:", err.message);
       }
     };
-
     fetchPendingMessages();
   }, []);
 
-  // --- 2. VALIDATION D'UNE TRADUCTION ---
-  const handleValidate = async (id, translatedText) => {
+  const handleInputChange = (id, value) => {
+    setTranslations((prev) => ({ ...prev, [id]: value }));
+  };
+
+  const handleValidate = async (id) => {
+    const text = translations[id];
+    if (!text || !text.trim()) {
+      Swal.fire({
+        icon: "warning",
+        title: "Attention",
+        text: t.translator_error_empty,
+        background: "#24282e",
+        color: "#fff",
+      });
+      return;
+    }
+
     try {
-      // apiFetch gère le PUT, les headers et le JSON automatiquement
       await apiFetch(`/api/messages/${id}/validate`, {
         method: "PUT",
-        body: JSON.stringify({ translated_content: translatedText }),
+        body: JSON.stringify({ translated_content: text }),
       });
 
-      // Si l'API répond OK, on retire le message de la liste
-      setPending(prev => prev.filter((msg) => msg.id !== id));
-      
+      // Animation de sortie : on filtre la liste
+      setPending((prev) => prev.filter((msg) => msg.id !== id));
+
+      // Nettoyage de l'état de saisie
+      const newTranslations = { ...translations };
+      delete newTranslations[id];
+      setTranslations(newTranslations);
+
+      // Feedback discret
+      const Toast = Swal.mixin({
+        toast: true,
+        position: "bottom-end", 
+        showConfirmButton: false,
+        timer: 1500,
+        timerProgressBar: true,
+        background: "#24282e",
+        color: "#e1e1e1",
+        iconColor: "#6c8e84",
+        didOpen: (toast) => {
+          toast.addEventListener("mouseenter", Swal.stopTimer);
+          toast.addEventListener("mouseleave", Swal.resumeTimer);
+        },
+      });
+
+      Toast.fire({
+        icon: "success",
+        title: t.translator_success_title,
+        text: t.translator_success_msg,
+      });
     } catch (err) {
-      alert("Erreur lors de la validation : " + err.message);
+      Swal.fire({
+        icon: "error",
+        title: "Erreur",
+        text: err.message,
+        background: "#24282e",
+        color: "#fff",
+      });
     }
   };
 
   return (
     <div className="translator-container">
       <h1 className="translator-title">
-        <span>📑</span> Espace Modération & Traduction
+        <span>📑</span> {t.translator_main_title}
       </h1>
-      
+
       <div className="translator-grid">
         {pending.length === 0 ? (
           <div className="empty-state">
-            <p>Aucun message en attente. Tout est à jour ! ☕</p>
+            <p>{t.translator_empty_state} ☕</p>
           </div>
         ) : (
-          pending.map(msg => (
+          pending.map((msg) => (
             <div key={msg.id} className="message-card">
               <div className="direction-badge">
-                From {":"} {msg.direction.replace(/([A-Z])/g, ' $1').trim()}
+                {msg.direction?.replace(/([A-Z])/g, " $1").trim()}
               </div>
-              
-              <div className="label">Message source</div>
+
+              <div className="label">{t.translator_label_source}</div>
               <div className="original-text-box">{msg.original}</div>
-              
-              <div className="label">Traduction</div>
-              <textarea 
+
+              <div className="label">{t.translator_label_translation}</div>
+              <textarea
                 className="translation-area"
-                id={`trans-${msg.id}`} 
-                placeholder="Saisissez la traduction ici..."
+                value={translations[msg.id] || ""}
+                onChange={(e) => handleInputChange(msg.id, e.target.value)}
+                placeholder={t.translator_placeholder}
               />
-              
-              <button 
+
+              <button
                 className="btn-validate"
-                onClick={() => handleValidate(msg.id, document.getElementById(`trans-${msg.id}`).value)}
+                disabled={!translations[msg.id]?.trim()}
+                onClick={() => handleValidate(msg.id)}
               >
-                Valider et Envoyer
+                {t.translator_btn_send}
               </button>
             </div>
           ))
