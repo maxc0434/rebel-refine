@@ -16,6 +16,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use Symfony\Component\Form\FormBuilderInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
+use Doctrine\ORM\QueryBuilder;
+
 
 
 /**
@@ -255,4 +260,56 @@ class UserCrudController extends AbstractCrudController
         }
         // 3. Si c'est vide, on ne fait rien. L'entité garde son ancien mot de passe intact.
     }
+
+    /**
+     * ÉTAPE 8 : CONFIGURATION DE LA LISTE
+     * Filtre pour ne pas afficher les membres "soft-deleted" dans la liste EasyAdmin
+     */
+    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
+    {
+        $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
+
+        $qb->andWhere($qb->getRootAliases()[0] . '.deletedAt IS NULL');
+
+        return $qb;
+    }
+
+    /**
+     * SURCHARGE DE LA SUPPRESSION
+     * On anonymise AVANT que Gedmo ne marque l'utilisateur comme supprimé.
+     */
+    public function delete(AdminContext $context)
+    {
+        $user = $context->getEntity()->getInstance();
+        $entityManager = $this->container->get('doctrine')->getManager();
+
+        if ($user instanceof User) {
+            // 1. Anonymisation des données critiques
+            $user->setEmail('deleted-' . uniqid() . '@rebel-refine.fr');
+            $user->setNickname('Utilisateur supprimé');
+            $user->setPassword('DELETED_ACCOUNT_' . bin2hex(random_bytes(5)));
+            
+            // 2. Vidage des données personnelles
+            $user->setBirthdate(null);
+            $user->setInterests(null);
+            $user->setGender(null);
+            $user->setChildren(null);
+            $user->setReligion(null);
+            $user->setMarital(null);
+            $user->setCountry(null);
+            $user->setIsVerified(false);
+
+            // 3. Nettoyage des images (orphanRemoval fera le reste)
+            foreach ($user->getUserImages() as $image) {
+                $user->removeUserImage($image);
+            }
+
+            // 4. On force la sauvegarde des modifications d'anonymisation
+            $entityManager->flush();
+        }
+
+        // 5. On laisse EasyAdmin et Gedmo finir le travail (ajout du deletedAt)
+        return parent::delete($context);
+    }
+
 }

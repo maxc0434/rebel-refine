@@ -12,15 +12,23 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\Translatable\Translatable;
+use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[UniqueEntity(fields: ['email'], message: 'Il existe déjà un compte avec cet email')]
+#[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface, Translatable
 {
+    use SoftDeleteableEntity;
+
+   
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    protected $deletedAt;
+
     private $locale;
 
-    // 2. Ajoute ce setter spécifique pour Gedmo
     public function setTranslatableLocale($locale)
     {
         $this->locale = $locale;
