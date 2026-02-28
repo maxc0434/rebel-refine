@@ -242,6 +242,57 @@ function MemberDashboardPage() {
   };
   //#endregion
 
+  //#region SUPPR COMPTE
+  const handleDeleteAccount = async () => {
+    const result = await Swal.fire({
+      title: `<span style="color: #f67280">${t.delete_confirm_1 || "Supprimer le compte ?"}</span>`,
+      text:
+        t.delete_confirm_2 ||
+        "Dernier avertissement : tes photos et données seront définitivement anonymisées.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#f67280",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: t.delete_btn_confirm || "Oui, supprimer !",
+      cancelButtonText: t.nav_cancel || "Annuler",
+      background: "#161f3d",
+      color: "#fff",
+      borderRadius: "15px",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await apiFetch("/api/account/delete", {
+          method: "POST",
+        });
+
+        // Alerte de succès
+        await Swal.fire({
+          title: "Adieu !",
+          text: t.delete_success || "Ton compte a été anonymisé avec succès.",
+          icon: "success",
+          background: "#161f3d",
+          color: "#fff",
+          confirmButtonColor: "#d4af37",
+        });
+
+        // Nettoyage et sortie
+        localStorage.clear();
+        window.location.href = "/";
+      } catch (error) {
+        console.error("Erreur lors de la suppression:", error.message);
+        Swal.fire({
+          title: "Erreur",
+          text: error.message || "Une erreur est survenue.",
+          icon: "error",
+          background: "#161f3d",
+          color: "#fff",
+        });
+      }
+    }
+  };
+  //#endregion
+
   // #region RECUP des CONVERSATIONS
   const fetchConversations = async () => {
     try {
@@ -1566,6 +1617,63 @@ function MemberDashboardPage() {
                     {t.sec_pwd_btn}
                   </button>
                 </form>
+                
+                {/* MARK: - ZONE DE DANGER (Suppression) */}
+                <div
+                  style={{
+                    marginTop: "40px",
+                    padding: "20px",
+                    border: "1px solid #f94d80",
+                    borderRadius: "15px",
+                    width: "100%",
+                    maxWidth: "400px",
+                    textAlign: "center",
+                    background: "rgba(249, 77, 128, 0.05)",
+                  }}
+                >
+                  <h4
+                    style={{
+                      color: "#f94d80",
+                      marginBottom: "10px",
+                      fontSize: "0.9rem",
+                    }}
+                  >
+                    {t.sec_delete_title || "SUPPRESSION du Compte"}
+                  </h4>
+                  <p
+                    style={{
+                      fontSize: "0.8rem",
+                      color: "#ccc",
+                      marginBottom: "15px",
+                    }}
+                  >
+                    {t.sec_delete_text ||
+                      "Cette action anonymisera vos données et désactivera votre compte de façon permanente."}
+                  </p>
+                  <button
+                    onClick={handleDeleteAccount}
+                    style={{
+                      background: "transparent",
+                      color: "#f94d80",
+                      border: "1px solid #f94d80",
+                      padding: "8px 20px",
+                      borderRadius: "20px",
+                      cursor: "pointer",
+                      fontSize: "0.8rem",
+                      transition: "0.3s",
+                    }}
+                    onMouseEnter={(e) => (
+                      (e.target.style.background = "#f94d80"),
+                      (e.target.style.color = "white")
+                    )}
+                    onMouseLeave={(e) => (
+                      (e.target.style.background = "transparent"),
+                      (e.target.style.color = "#f94d80")
+                    )}
+                  >
+                    {t.sec_delete_btn || "Supprimer mon compte"}
+                  </button>
+                </div>
               </div>
             )}
           </main>
@@ -1573,6 +1681,7 @@ function MemberDashboardPage() {
       </div>
     </div>
   );
+
   //#endregion
 }
 

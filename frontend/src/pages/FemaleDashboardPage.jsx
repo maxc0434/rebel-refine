@@ -7,8 +7,7 @@ import ChatModal from "../components/ChatModal";
 import { apiFetch } from "../api";
 import { useLanguage } from "../translations/hooks/useLanguage";
 
-
-  //#region STATES
+//#region STATES
 function FemaleDashboardPage() {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -22,7 +21,7 @@ function FemaleDashboardPage() {
 
   const { t } = useLanguage();
   //#endregion
-  
+
   // #region RECUP des CONVERSATIONS
   const fetchConversations = async () => {
     try {
@@ -74,7 +73,11 @@ function FemaleDashboardPage() {
         timer: 3000,
       });
 
-      setPasswordData({ oldPassword: "", newPassword: "", confirmPassword: "" });
+      setPasswordData({
+        oldPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
     } catch (error) {
       Swal.fire({
         icon: "error",
@@ -99,37 +102,37 @@ function FemaleDashboardPage() {
   // #endregion
 
   // #region RECUP des MSG
-const fetchMessages = async (contactId) => {
-  try {
-    // apiFetch gère GET par défaut, headers, et renvoie directement le JSON
-    const data = await apiFetch(`/api/messages/list/${contactId}`);
+  const fetchMessages = async (contactId) => {
+    try {
+      // apiFetch gère GET par défaut, headers, et renvoie directement le JSON
+      const data = await apiFetch(`/api/messages/list/${contactId}`);
 
-    setMessages(data);
-  } catch (error) {
-    console.error("Erreur historique:", error);
-  }
-};
-// #endregion
+      setMessages(data);
+    } catch (error) {
+      console.error("Erreur historique:", error);
+    }
+  };
+  // #endregion
 
   // #region MARQUER COMME LUS
-const handleMarkAsRead = async (contactId) => {
-  try {
-    // apiFetch fait le POST, ajoute headers/token, et renvoie JSON (même si vide)
-    await apiFetch(`/api/messages/mark-read/${contactId}`, {
-      method: "POST",
-    });
+  const handleMarkAsRead = async (contactId) => {
+    try {
+      // apiFetch fait le POST, ajoute headers/token, et renvoie JSON (même si vide)
+      await apiFetch(`/api/messages/mark-read/${contactId}`, {
+        method: "POST",
+      });
 
-    // 2. Mise à jour locale (pour que le badge disparaisse sans recharger la page)
-    setConversations((prev) =>
-      prev.map((conv) =>
-        conv.id === contactId ? { ...conv, hasNewMessages: false } : conv,
-      ),
-    );
-  } catch (err) {
-    console.error("Erreur lors du marquage comme lu", err);
-  }
-};
-// #endregion
+      // 2. Mise à jour locale (pour que le badge disparaisse sans recharger la page)
+      setConversations((prev) =>
+        prev.map((conv) =>
+          conv.id === contactId ? { ...conv, hasNewMessages: false } : conv,
+        ),
+      );
+    } catch (err) {
+      console.error("Erreur lors du marquage comme lu", err);
+    }
+  };
+  // #endregion
 
   // #region SCROLL AUTO
   const scrollToBottom = () => {
@@ -165,52 +168,103 @@ const handleMarkAsRead = async (contactId) => {
   };
   // #endregion
 
- //#region SUPPR CONVERSATION
-const handleDeleteConversation = async (contactId) => {
-  const result = await Swal.fire({
-    title: t.db_alert_del_title,
-    text: t.db_alert_del_text,
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#d33",
-    cancelButtonColor: "#3085d6",
-    confirmButtonText: t.db_alert_del_confirm,
-    cancelButtonText: t.db_alert_del_cancel,
-    background: "#1f2a4d",
-    color: "#fff",
-  });
+  //#region SUPPR CONVERSATION
+  const handleDeleteConversation = async (contactId) => {
+    const result = await Swal.fire({
+      title: t.db_alert_del_title,
+      text: t.db_alert_del_text,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: t.db_alert_del_confirm,
+      cancelButtonText: t.db_alert_del_cancel,
+      background: "#1f2a4d",
+      color: "#fff",
+    });
 
-  if (result.isConfirmed) {
-    try {
-      // apiFetch fait le DELETE, ajoute token, et lève erreur si pas ok
-      await apiFetch(`/api/messages/conversation/${contactId}`, {
-        method: "DELETE",
-      });
+    if (result.isConfirmed) {
+      try {
+        // apiFetch fait le DELETE, ajoute token, et lève erreur si pas ok
+        await apiFetch(`/api/messages/conversation/${contactId}`, {
+          method: "DELETE",
+        });
 
-      // Succès (on arrive ici seulement si response.ok)
-      Swal.fire({
-        title: t.db_alert_deleted,
-        icon: "success",
-        timer: 1500,
-        showConfirmButton: false,
-        background: "#1f2a4d",
-        color: "#fff",
-      });
+        // Succès (on arrive ici seulement si response.ok)
+        Swal.fire({
+          title: t.db_alert_deleted,
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false,
+          background: "#1f2a4d",
+          color: "#fff",
+        });
 
-      // Rafraîchir la liste (inchangé)
-      fetchConversations();
-    } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Erreur",
-        text: error.message, // message d'erreur de l'API ou fallback
-        background: "#1f2a4d",
-        color: "#fff",
-      });
+        // Rafraîchir la liste (inchangé)
+        fetchConversations();
+      } catch (error) {
+        Swal.fire({
+          icon: "error",
+          title: "Erreur",
+          text: error.message, // message d'erreur de l'API ou fallback
+          background: "#1f2a4d",
+          color: "#fff",
+        });
+      }
     }
-  }
-};
-//#endregion
+  };
+  //#endregion
+
+  //#region SUPPR COMPTE
+  const handleDeleteAccount = async () => {
+    const result = await Swal.fire({
+      title: `<span style="color: #f67280">${t.delete_confirm_1 || "Supprimer le compte ?"}</span>`,
+      text:
+        t.delete_confirm_2 ||
+        "Dernier avertissement : tes photos et données seront définitivement anonymisées.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#f67280",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: t.delete_btn_confirm || "Oui, supprimer !",
+      cancelButtonText: t.nav_cancel || "Annuler",
+      background: "#161f3d",
+      color: "#fff",
+      borderRadius: "15px",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await apiFetch("/api/account/delete", {
+          method: "POST",
+        });
+
+        // Alerte de succès
+        await Swal.fire({
+          title: "Adieu !",
+          text: t.delete_success || "Ton compte a été anonymisé avec succès.",
+          icon: "success",
+          background: "#161f3d",
+          color: "#fff",
+          confirmButtonColor: "#d4af37",
+        });
+
+        // Nettoyage et sortie
+        localStorage.clear();
+        window.location.href = "/";
+      } catch (error) {
+        console.error("Erreur lors de la suppression:", error.message);
+        Swal.fire({
+          title: "Erreur",
+          text: error.message || "Une erreur est survenue.",
+          icon: "error",
+          background: "#161f3d",
+          color: "#fff",
+        });
+      }
+    }
+  };
+  //#endregion
 
   //#region MONTAGE DU COMPOSANT et CHARGEMENT DES DONNÉES
   useEffect(() => {
@@ -291,7 +345,6 @@ const handleDeleteConversation = async (contactId) => {
             </span>
             . {t.db_subtitle}
           </p>
-          
         </header>
 
         <div className="dashboard-layout">
@@ -446,10 +499,22 @@ const handleDeleteConversation = async (contactId) => {
                 <h3 className="section-title">{t.db_my_info}</h3>
 
                 <div className="info-grid">
-                  <InfoBox label={t.db_label_pseudo} value={userData.nickname} />
-                  <InfoBox label={t.db_label_marital} value={userData.marital} />
-                  <InfoBox label={t.db_label_children} value={userData.children} />
-                  <InfoBox label={t.db_label_religion} value={userData.religion} />
+                  <InfoBox
+                    label={t.db_label_pseudo}
+                    value={userData.nickname}
+                  />
+                  <InfoBox
+                    label={t.db_label_marital}
+                    value={userData.marital}
+                  />
+                  <InfoBox
+                    label={t.db_label_children}
+                    value={userData.children}
+                  />
+                  <InfoBox
+                    label={t.db_label_religion}
+                    value={userData.religion}
+                  />
                 </div>
 
                 <div className="info-grid" style={{ marginTop: "15px" }}>
@@ -486,13 +551,15 @@ const handleDeleteConversation = async (contactId) => {
                     )}
                   </div>
                 </div>
-                <div style={{
-                          color: "rgba(255,255,255,0.5)",
-                          gridColumn: "1 / -1",
-                        }} className="mt-5 d-flex justify-content-center">
+                <div
+                  style={{
+                    color: "rgba(255,255,255,0.5)",
+                    gridColumn: "1 / -1",
+                  }}
+                  className="mt-5 d-flex justify-content-center"
+                >
                   <p className="subtitle col-5">{t.db_contact_admin}</p>
                 </div>
-                
               </div>
             )}
 
@@ -586,6 +653,63 @@ const handleDeleteConversation = async (contactId) => {
                     {t.db_sec_btn}
                   </button>
                 </form>
+
+                {/* MARK: - ZONE DE DANGER (Suppression) */}
+                <div
+                  style={{
+                    marginTop: "40px",
+                    padding: "20px",
+                    border: "1px solid #f94d80",
+                    borderRadius: "15px",
+                    width: "100%",
+                    maxWidth: "400px",
+                    textAlign: "center",
+                    background: "rgba(249, 77, 128, 0.05)",
+                  }}
+                >
+                  <h4
+                    style={{
+                      color: "#f94d80",
+                      marginBottom: "10px",
+                      fontSize: "0.9rem",
+                    }}
+                  >
+                    {t.sec_delete_title || "SUPPRESSION du Compte"}
+                  </h4>
+                  <p
+                    style={{
+                      fontSize: "0.8rem",
+                      color: "#ccc",
+                      marginBottom: "15px",
+                    }}
+                  >
+                    {t.sec_delete_text ||
+                      "Cette action anonymisera vos données et désactivera votre compte de façon permanente."}
+                  </p>
+                  <button
+                    onClick={handleDeleteAccount}
+                    style={{
+                      background: "transparent",
+                      color: "#f94d80",
+                      border: "1px solid #f94d80",
+                      padding: "8px 20px",
+                      borderRadius: "20px",
+                      cursor: "pointer",
+                      fontSize: "0.8rem",
+                      transition: "0.3s",
+                    }}
+                    onMouseEnter={(e) => (
+                      (e.target.style.background = "#f94d80"),
+                      (e.target.style.color = "white")
+                    )}
+                    onMouseLeave={(e) => (
+                      (e.target.style.background = "transparent"),
+                      (e.target.style.color = "#f94d80")
+                    )}
+                  >
+                    {t.sec_delete_btn || "Supprimer mon compte"}
+                  </button>
+                </div>
               </div>
             )}
           </main>

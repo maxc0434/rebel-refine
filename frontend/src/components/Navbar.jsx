@@ -90,7 +90,7 @@ function Navbar() {
             </div>
             <div className="menu-area">
               <ul className="menu">
-                {!isFemale && !isTranslator && isUser && (
+                {token && !isFemale && !isTranslator && isUser && (
                   <>
                     <li>
                       <Link to="/home" style={navItemStyle}>
