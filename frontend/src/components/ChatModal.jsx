@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { X, Lock } from "lucide-react";
 import "./ChatModal.css";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../translations/hooks/useLanguage";
-
 
 const ChatModal = ({
   isOpen,
@@ -57,8 +56,10 @@ const ChatModal = ({
               }}
             >
               <span style={{ color: hasNoCredits ? "#ff4d4d" : "#d4af37" }}>
-                {hasNoCredits ? t.chat_no_credits : t.chat_credits} : {" "}
-                <strong style={{marginRight: "5px" }}>{userData?.credits ?? 0}</strong>
+                {hasNoCredits ? t.chat_no_credits : t.chat_credits} :{" "}
+                <strong style={{ marginRight: "5px" }}>
+                  {userData?.credits ?? 0}
+                </strong>
                 <i className="bi bi-coin me-2"></i>
               </span>
             </div>
@@ -118,51 +119,80 @@ const ChatModal = ({
 
         {/* Footer / Input */}
         <div className="chat-footer" style={{ flexDirection: "column" }}>
-          <textarea
-            id="chatInput"
-            placeholder={
-              hasNoCredits
-                ? t.chat_placeholder_blocked
-                : t.chat_placeholder
-            }
-            className="dashboard-textarea"
-            rows="3"
-            maxLength={MAX_CHARS}
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            disabled={hasNoCredits} // Désactive le champ si plus de crédits
-            style={hasNoCredits ? { opacity: 0.6, cursor: "not-allowed" } : {}}
-          ></textarea>
+          {/* CAS 1 : L'INTERLOCUTEUR A SUPPRIMÉ SON COMPTE */}
+          {selectedContact?.isDeleted ? (
+            <div
+              className="account-deleted-notice"
+              style={{
+                padding: "20px",
+                textAlign: "center",
+                background: "rgba(246, 114, 128, 0.05)", // Rouge très léger
+                border: "1px dashed #f67280",
+                borderRadius: "12px",
+                color: "#f67280",
+                width: "100%",
+                margin: "10px 0",
+              }}
+            >
+              <X size={30} style={{ marginBottom: "10px", opacity: 0.8 }} />
+              <h5 style={{ fontWeight: "bold" }}>
+                {t.chat_finished || "Discussion terminée"}
+              </h5>
+              <p style={{ fontSize: "0.9rem", margin: 0 }}>
+                {t.chat_account_deleted_detail ||
+                  "Cet utilisateur a supprimé son compte. Vous ne pouvez plus lui envoyer de messages."}
+              </p>
+            </div>
+          ) : (
+            // CAS 2 : L'INTERLOCUTEUR N'A PAS SUPPRIMÉ SON COMPTE
+            <>
+              <textarea
+                id="chatInput"
+                placeholder={
+                  hasNoCredits ? t.chat_placeholder_blocked : t.chat_placeholder
+                }
+                className="dashboard-textarea"
+                rows="3"
+                maxLength={MAX_CHARS}
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                disabled={hasNoCredits} // Désactive le champ si plus de crédits
+                style={
+                  hasNoCredits ? { opacity: 0.6, cursor: "not-allowed" } : {}
+                }
+              ></textarea>
 
-          <button
-            className={hasNoCredits ? "btn-disabled mt-2" : "btn-gold mt-2"}
-            style={{
-              alignSelf: "flex-end",
-              padding: "8px 25px",
-              backgroundColor: hasNoCredits ? "#666" : "", // Gris si bloqué
-              cursor: hasNoCredits ? "not-allowed" : "pointer",
-            }}
-            disabled={hasNoCredits || !newMessage.trim()}
-            onClick={async () => {
-              if (hasNoCredits) return;
+              <button
+                className={hasNoCredits ? "btn-disabled mt-2" : "btn-gold mt-2"}
+                style={{
+                  alignSelf: "flex-end",
+                  padding: "8px 25px",
+                  backgroundColor: hasNoCredits ? "#666" : "", // Gris si bloqué
+                  cursor: hasNoCredits ? "not-allowed" : "pointer",
+                }}
+                disabled={hasNoCredits || !newMessage.trim()}
+                onClick={async () => {
+                  if (hasNoCredits) return;
 
-              const success = await handleSendMessage(
-                selectedContact.id,
-                newMessage,
-              );
-              if (success) {
-                setNewMessage("");
-              }
-            }}
-          >
-            {hasNoCredits ? (
-              <span className="d-flex align-items-center gap-2">
-                <Lock size={16} /> {t.chat_blocked_btn}
-              </span>
-            ) : (
-              t.chat_send_btn
-            )}
-          </button>
+                  const success = await handleSendMessage(
+                    selectedContact.id,
+                    newMessage,
+                  );
+                  if (success) {
+                    setNewMessage("");
+                  }
+                }}
+              >
+                {hasNoCredits ? (
+                  <span className="d-flex align-items-center gap-2">
+                    <Lock size={16} /> {t.chat_blocked_btn}
+                  </span>
+                ) : (
+                  t.chat_send_btn
+                )}
+              </button>
+            </>
+          )}
           {/* Compteur de caractères */}
           <small
             style={{
@@ -176,10 +206,7 @@ const ChatModal = ({
           {hasNoCredits && (
             <div className="no-credits-alert">
               <div className="alert-content">
-                
-                <p>
-                  {t.chat_alert_empty}
-                </p>
+                <p>{t.chat_alert_empty}</p>
               </div>
               <button
                 className="btn-recharge-quick"

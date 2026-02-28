@@ -136,6 +136,8 @@ class MessageController extends AbstractController
         /** @var User $currentUser */
         $currentUser = $this->getUser();
 
+        $entityManager->getFilters()->disable('softdeleteable');
+
         // 1. On récupère d'abord uniquement les IDs des contacts
         $query = $entityManager->createQuery(
             // DISTINCT : On ne veut pas avoir des doublons
@@ -169,7 +171,7 @@ class MessageController extends AbstractController
                 ];
             }
         }
-
+        $entityManager->getFilters()->enable('softdeleteable');
         return new JsonResponse($data);
     }
     #endregion
@@ -182,6 +184,8 @@ class MessageController extends AbstractController
     {
         /** @var User $currentUser */
         $currentUser = $this->getUser();
+
+        $entityManager->getFilters()->disable('softdeleteable');
 
         $messages = $entityManager->getRepository(Message::class)->createQueryBuilder('m')
             // On récupère les messages entre les deux personnes
@@ -209,6 +213,7 @@ class MessageController extends AbstractController
                 'createdAt' => $msg->getCreatedAt()->format('c'),
             ];
         }
+        $entityManager->getFilters()->enable('softdeleteable');
         return new JsonResponse($data);
     }
     // #endregion
@@ -223,6 +228,9 @@ class MessageController extends AbstractController
         /** @var User $currentUser */
         $currentUser = $this->getUser();
 
+        //On désactive le filtre et on autorise à voir les utilisateurs supprimés (anonymisés) ---
+        $entityManager->getFilters()->disable('softdeleteable');
+
         // On récupère tous les messages où l'utilisateur est impliqué
         $messages = $entityManager->getRepository(Message::class)->createQueryBuilder('m')
             ->where('(m.sender = :user AND m.deletedBySender = false)') // Ne pas voir si j'ai supprimé
@@ -236,7 +244,6 @@ class MessageController extends AbstractController
         foreach ($messages as $msg) {
             $senderId = $msg->getSender()->getId();
             $currentId = $currentUser->getId();
-
             // On identifie l'autre personne de façon sûre (par ID)
             $otherUser = ($senderId === $currentId) ? $msg->getReceiver() : $msg->getSender();
 
@@ -252,13 +259,14 @@ class MessageController extends AbstractController
 
                 $contacts[$otherUser->getId()] = [
                     'id'             => $otherUser->getId(),
-                    'nickname'       => $otherUser->getNickname(),
+                    'nickname'       => $otherUser->getNickname() ?? 'utilisateur supprimé',
                     'age'            => $otherUser->getBirthDate() ? $otherUser->getBirthDate()->diff(new \DateTime())->y : null,
                     'hasNewMessages' => ($hasNew !== null),
+                    'isDeleted'      => ($otherUser->getDeletedAt() !== null),
                 ];
             }
         }
-
+        $entityManager->getFilters()->enable('softdeleteable');
         return new JsonResponse(array_values($contacts));
     }
     #endregion
