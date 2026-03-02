@@ -24,7 +24,7 @@ function Navbar() {
   const handleLanguageChange = (e) => {
     const newLang = e.target.value;
     localStorage.setItem("app_lang", newLang);
-    window.location.reload(); // Force la mise à jour avec ton système actuel
+    window.location.reload(); // Force la mise à jour
   };
 
 
@@ -200,15 +200,15 @@ function Navbar() {
                   value={currentLang}
                   onChange={handleLanguageChange}
                   style={{
-                    backgroundColor: "#1a1a1a", // Fond sombre pour coller à l'univers "Rebel Refine"
+                    backgroundColor: "#1a1a1a", 
                     color: "#fff",
-                    border: "1px solid rgba(255, 215, 0, 0.3)", // Une petite touche dorée ?
+                    border: "1px solid rgba(255, 215, 0, 0.3)", 
                     borderRadius: "4px",
                     padding: "4px 8px",
                     cursor: "pointer",
                     outline: "none",
                     fontSize: "14px",
-                    fontFamily: "serif", // Pour le côté "Refine"
+                    fontFamily: "gillsans, sans-serif", 
                   }}
                 >
                   <option value="fr">🇫🇷 FR</option>

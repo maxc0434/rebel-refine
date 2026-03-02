@@ -1,6 +1,7 @@
 import LoginPage from "./pages/LoginPage";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 import RegisterPage from "./pages/RegisterPage";
 import HomePage from "./pages/HomePage";
 import MembersPage from "./pages/MembersPage";
@@ -51,6 +52,7 @@ function App() {
           <Route path="/payment/success" element={<PaymentSuccess />} />
 
         </Routes>
+      <Footer/>
     </Router>
   );
 }
