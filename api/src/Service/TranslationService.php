@@ -5,6 +5,7 @@ namespace App\Service;
 use Doctrine\ORM\EntityManagerInterface;
 use Gedmo\Translatable\Entity\Translation;
 use Stichoza\GoogleTranslate\GoogleTranslate;
+use App\Entity\User;
 
 class TranslationService
 {
@@ -12,32 +13,36 @@ class TranslationService
         private EntityManagerInterface $entityManager
     ) {}
 
-    public function autoTranslate($entity, string $field, string $text): void
-{
-    try {
-        $tr = new GoogleTranslate();
-        // Laisse Google détecter la langue source automatiquement
-        $translatedText = $tr->setTarget('en')->translate($text);
-        $detectedLanguage = $tr->getLastDetectedSource(); // Récupère la langue détectée
-
-        if ($detectedLanguage === 'en') {
-            // Si l'admin a tapé de l'anglais, on traduit vers le FRANÇAIS
-            $frText = $tr->setSource('en')->setTarget('fr')->translate($text);
-            $this->addTranslation($entity, $field, 'fr', $frText);
-            
-            // On s'assure aussi que la version 'en' existe officiellement
-            $this->addTranslation($entity, $field, 'en', $text);
-        } else {
-            // Si c'est du français (ou autre), on traduit vers l'ANGLAIS
-            // (Ton comportement actuel)
-            $this->addTranslation($entity, $field, 'en', $translatedText);
+    public function autoTranslate($entity, string $field, string $text, string $sourceLocale): void
+    {
+        if (!$entity instanceof User) {
+            return;
         }
 
-    } catch (\Exception $e) {
-        // Fallback simple en cas d'erreur API
-        $this->addTranslation($entity, $field, 'en', $text . ' [EN]');
+        try {
+            $tr = new GoogleTranslate();
+            
+            
+
+            // RÈGLE : Si la source est FR, on traduit vers EN. Sinon, on traduit vers FR.
+            $targetLocale = ($sourceLocale === 'fr') ? 'en' : 'fr';
+
+            // On configure Google Translate
+            $tr->setSource($sourceLocale);
+            $tr->setTarget($targetLocale);
+            
+            $translatedText = $tr->translate($text);
+
+            // 1. On enregistre la version traduite dans la table ext_translations
+            $this->addTranslation($entity, $field, $targetLocale, $translatedText);
+
+            // 2. On s'assure que la version originale est bien enregistrée dans sa propre langue
+            $this->addTranslation($entity, $field, $sourceLocale, $text);
+
+        } catch (\Exception $e) {
+            // Log l'erreur si besoin, mais évite de bloquer l'enregistrement
+        }
     }
-}
 
     public function addTranslation($entity, string $field, string $locale, string $value): void
     {

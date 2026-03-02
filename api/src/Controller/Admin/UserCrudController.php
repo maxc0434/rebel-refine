@@ -2,15 +2,17 @@
 
 namespace App\Controller\Admin;
 
+/** * ÉTAPE 1 : Les Imports
+ * On importe les composants Symfony, EasyAdmin et nos propres services/entités.
+ */
+
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Vich\UploaderBundle\Form\Type\VichImageType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Field\{IdField, EmailField, TextField, DateField, BooleanField, ChoiceField, TextEditorField};
+use EasyCorp\Bundle\EasyAdminBundle\Field\{IdField, EmailField, TextField, DateField, BooleanField, ChoiceField, TextEditorField, CollectionField};
 use App\Form\UserImageType;
-use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use App\Service\TranslationService;
 use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
@@ -21,23 +23,15 @@ use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use Doctrine\ORM\QueryBuilder;
 
-
-
-/**
- * CLASSE : UserCrudController
- * Gère l'interface CRUD (Create, Read, Update, Delete) pour l'entité User.
- */
 class UserCrudController extends AbstractCrudController
 {
-    // ÉTAPE 1 : Déclaration d'une propriété privée pour stocker le service de hachage.
-    // Cela permet d'utiliser l'outil $passwordHasher dans toutes les méthodes de cette classe.
     private UserPasswordHasherInterface $passwordHasher;
     private TranslationService $translationService;
 
     /**
-     * ÉTAPE 2 : LE CONSTRUCTEUR (Moment de l'initialisation)
-     * Appelé une seule fois au chargement du contrôleur. 
-     * Symfony "injecte" ici l'outil UserPasswordHasherInterface pour qu'on puisse l'utiliser plus tard.
+     * ÉTAPE 2 : Le Constructeur
+     * On injecte le service de hachage de mot de passe et notre service de traduction
+     * pour les utiliser plus tard dans le cycle de vie de l'entité.
      */
     public function __construct(UserPasswordHasherInterface $passwordHasher, TranslationService $translationService)
     {
@@ -45,51 +39,56 @@ class UserCrudController extends AbstractCrudController
         $this->translationService = $translationService;
     }
 
-    /**
-     * MÉTHODE OBLIGATOIRE : Définit sur quelle entité travaille ce contrôleur.
-     */
     public static function getEntityFqcn(): string
     {
         return User::class;
     }
 
+    /**
+     * ÉTAPE 3 : Logique Métier Linguistique
+     * Cette méthode privée définit si l'utilisateur est 'fr' ou 'en' selon son pays.
+     * C'est la "source de vérité" pour nos traductions.
+     */
+    private function getLocaleFromCountry(User $user): string
+    {
+        $country = strtolower($user->getCountry() ?? '');
+        $frenchCountries = ['france', 'belgium', 'switzerland', 'belgique', 'suisse'];
 
+        return in_array($country, $frenchCountries) ? 'fr' : 'en';
+    }
+
+    /**
+     * ÉTAPE 4 : Initialisation du Formulaire
+     * Avant d'afficher le formulaire d'édition, on définit la locale de l'entité.
+     * Cela permet à Gedmo de charger le bon texte (FR ou EN) dans les champs.
+     */
     public function createEditFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface
     {
         $entity = $entityDto->getInstance();
         if ($entity instanceof User) {
-            // On force la locale AVANT que le parent ne construise le formulaire
-            $entity->setTranslatableLocale('en');
+            $entity->setTranslatableLocale($this->getLocaleFromCountry($entity));
         }
 
         return parent::createEditFormBuilder($entityDto, $formOptions, $context);
     }
 
     /**
-     * ÉTAPE 3 : CONFIGURATION DES CHAMPS (Moment de l'affichage)
-     * Cette méthode est lue par Symfony à chaque fois qu'il doit dessiner la page (Liste, Création ou Édition).
+     * ÉTAPE 5 : Configuration des Champs de l'Interface
      */
     public function configureFields(string $pageName): iterable
     {
         return [
-            // Champ ID : on le cache dans les formulaires car la BDD le gère seule.
             IdField::new('id')->hideOnForm(),
-
             EmailField::new('email', 'Email'),
 
-            // CHAMP PASSWORD : 
+            // Gestion sécurisée du mot de passe (non mappé pour ne pas écraser si vide)
             TextField::new('password', 'Mot de passe')
-                ->setFormType(PasswordType::class) // Cache les caractères (●●●●).
-                ->onlyOnForms()                    // Ne pas l'afficher dans la liste globale.
-                ->setRequired($pageName === 'new') // Obligatoire si "New", optionnel si "Edit".
-
-                // mapped => false : C'est ici qu'on empêche Symfony de lier automatiquement le champ 
-                // à l'entité, évitant ainsi d'envoyer du "null" en BDD si le champ est vide.
+                ->setFormType(PasswordType::class)
+                ->onlyOnForms()
+                ->setRequired($pageName === 'new')
                 ->setFormTypeOption('mapped', false)
-
                 ->setFormTypeOptions([
                     'attr' => [
-                        // Placeholder : Aide visuelle à l'intérieur de la case.
                         'placeholder' => $pageName === 'edit' ?
                             'Laissez vide pour conserver le mot de passe actuel' :
                             'Entrez un mot de passe',
@@ -97,12 +96,11 @@ class UserCrudController extends AbstractCrudController
                 ]),
 
             TextField::new('nickname', 'Pseudo'),
-
             DateField::new('birthdate', 'Date de naissance'),
-
             BooleanField::new('isVerified', 'Compte vérifié'),
 
-            ChoiceField::new('country', 'Langue')
+            // Liste des pays avec émojis
+            ChoiceField::new('country', 'Pays')
                 ->setChoices([
                     '🇫🇷 France' => 'france',
                     '🇩🇪 Allemagne' => 'germany',
@@ -116,55 +114,27 @@ class UserCrudController extends AbstractCrudController
                     '🇷🇺 Russie' => 'russia',
                     '🇹🇭 Thaïlande' => 'thailand',
                     '🇻🇳 Vietnam' => 'vietnam',
-                ])
-                // Optionnel : pour afficher les drapeaux aussi dans l'admin
-                ->FormatValue(function ($value, $entity) {
-                    $flags = [
-                        'France' => '🇫🇷',
-                        'Allemagne' => '🇩🇪',
-                        'Italie' => '🇮🇹',
-                        'Espagne' => '🇪🇸',
-                        'Angleterre' => '🇬🇧',
-                        'Belgique' => '🇧🇪',
-                        'Suisse' => '🇨🇭',
-                        'Chine' => '🇨🇳',
-                        'Japon' => '🇯🇵',
-                        'Russie' => '🇷🇺',
-                        'Thaïlande' => '🇹🇭',
-                        'Vietnam' => '🇻🇳'
-                    ];
-                    return isset($flags[$value]) ? $flags[$value] . ' ' . $value : $value;
-                }),
+                ]),
 
+            // Galerie photo via un formulaire imbriqué
             CollectionField::new('userImages', 'Galerie Photos')
                 ->setEntryType(UserImageType::class)
-                ->setFormTypeOption('by_reference', false) // INDISPENSABLE pour lier l'owner automatiquement
-                ->onlyOnForms()
-                ->setHelp('Attention : chaque photo ne doit pas dépasser 2 Mo.'),
+                ->setFormTypeOption('by_reference', false)
+                ->onlyOnForms(),
+
             ChoiceField::new('gender', "Genre")
-                ->setChoices([
-                    '♂️ Homme' => 'male',
-                    '♀️ Femme' => 'female',
-                ]),
+                ->setChoices(['♂️ Homme' => 'male', '♀️ Femme' => 'female']),
 
             ChoiceField::new('marital', "Situation matrimoniale")
                 ->setChoices([
                     'divorcé(e)' => 'divorced',
                     'veuf(ve)' => 'widowed',
                     'célibataire' => 'single',
-                    'couple libre' => 'free couple',
+                    'couple libre' => 'free couple'
                 ]),
 
             ChoiceField::new('children', "Enfants")
-                ->setChoices([
-                    '0' => '0',
-                    '1' => '1',
-                    '2' => '2',
-                    '3' => '3',
-                    '4' => '4',
-                    '5' => '5',
-                    '5+' => '5+',
-                ]),
+                ->setChoices(['0' => '0', '1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5', '5+' => '5+']),
 
             ChoiceField::new('religion', "Religion")
                 ->setChoices([
@@ -183,100 +153,103 @@ class UserCrudController extends AbstractCrudController
 
             TextEditorField::new('interests', "Centres d'intérêts"),
 
-            /**
-             * ÉTAPE 4 : CONFIGURATION DES RÔLES
-             * Gère le tableau JSON des rôles dans PostgreSQL
-             */
+            // Rôles avec affichage étendu (checkboxes)
             ChoiceField::new('roles', 'Rôles')
                 ->setChoices([
                     '👑 Administrateur' => 'ROLE_ADMIN',
-                    '👤 Traducteur'     => 'ROLE_TRANSLATOR',
-                    '♂️ Utilisateur Homme'          => 'ROLE_MALE',
-                    '♀️ Utilisateur Femme'          => 'ROLE_FEMALE',
+                    '👤 Traducteur' => 'ROLE_TRANSLATOR',
+                    '♂️ Utilisateur Homme' => 'ROLE_MALE',
+                    '♀️ Utilisateur Femme' => 'ROLE_FEMALE',
                 ])
-                ->allowMultipleChoices() // Crucial pour stocker un tableau de rôles.
-                ->renderExpanded(),      // Affiche des cases à cocher au lieu d'une liste.
+                ->allowMultipleChoices()
+                ->renderExpanded(),
         ];
     }
 
     /**
-     * ÉTAPE 5 : PERSIST (Moment de la création)
-     * Appelé UNIQUEMENT quand tu cliques sur "Create User".
+     * ÉTAPE 6 : Création (Persist)
+     * Actions effectuées quand on crée un NOUVEL utilisateur.
      */
     public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
         if ($entityInstance instanceof User) {
-            $entityInstance->setTranslatableLocale('en'); // On force avant toute action
+            // RÈGLE : Cadeau de bienvenue pour les hommes
+            if (in_array('ROLE_MALE', $entityInstance->getRoles())) {
+                $entityInstance->setCredits(5);
+            }
+            // On fixe la langue par rapport au pays
+            $entityInstance->setTranslatableLocale($this->getLocaleFromCountry($entityInstance));
         }
-        $this->hashPassword($entityInstance);
-        $this->translateInterests($entityInstance);
+
+        $this->hashPassword($entityInstance); // Hachage MDP
+        $this->translateInterests($entityInstance); // Traduction automatique
+
         parent::persistEntity($entityManager, $entityInstance);
     }
 
     /**
-     * ÉTAPE 6 : UPDATE (Moment de la modification)
-     * Appelé UNIQUEMENT quand tu cliques sur "Save changes" en édition.
+     * ÉTAPE 7 : Mise à jour (Update)
+     * Actions effectuées quand on modifie un utilisateur existant.
      */
     public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
         if ($entityInstance instanceof User) {
-            $entityInstance->setTranslatableLocale('en'); // On force avant toute action
+            $this->hashPassword($entityInstance);
+            $this->translateInterests($entityInstance);
         }
-        $this->hashPassword($entityInstance);
-        $this->translateInterests($entityInstance);
+
         parent::updateEntity($entityManager, $entityInstance);
     }
 
+    /**
+     * ÉTAPE 8 : Service de Traduction
+     * Synchronise la locale de l'entité et appelle Google Translate via notre service.
+     */
     private function translateInterests($entity): void
     {
-        // On vérifie que c'est bien un User et qu'il a des intérêts remplis
         if ($entity instanceof User && $entity->getInterests()) {
-            $entity->setTranslatableLocale('en');
+            $locale = $this->getLocaleFromCountry($entity);
+            $entity->setTranslatableLocale($locale);
+
             $this->translationService->autoTranslate(
                 $entity,
                 'interests',
-                $entity->getInterests()
+                $entity->getInterests(),
+                $locale
             );
         }
     }
 
     /**
-     * ÉTAPE 7 : LOGIQUE DE HACHAGE (Méthode utilitaire privée)
-     * Appelée par persistEntity et updateEntity. Elle contient toute l'intelligence manuelle.
+     * ÉTAPE 9 : Sécurité du Mot de Passe
+     * On récupère manuellement le MDP du formulaire pour le hacher avant la BDD.
      */
     private function hashPassword($entityInstance): void
     {
-        // 1. On intercepte la requête HTTP pour lire manuellement le champ 'password'.
         $request = $this->getContext()->getRequest();
         $formData = $request->request->all('User');
         $plainPassword = $formData['password'] ?? null;
 
-        // 2. Si le mot de passe n'est pas vide (Nouvel utilisateur ou changement voulu) :
         if (!empty($plainPassword)) {
-            // On hache le texte brut pour le sécuriser.
             $hashedPassword = $this->passwordHasher->hashPassword($entityInstance, $plainPassword);
-            // On l'injecte "à la main" dans l'entité.
             $entityInstance->setPassword($hashedPassword);
         }
-        // 3. Si c'est vide, on ne fait rien. L'entité garde son ancien mot de passe intact.
     }
 
     /**
-     * ÉTAPE 8 : CONFIGURATION DE LA LISTE
-     * Filtre pour ne pas afficher les membres "soft-deleted" dans la liste EasyAdmin
+     * ÉTAPE 10 : Filtre de l'index
+     * On masque les utilisateurs supprimés (SoftDelete) de la liste principale.
      */
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
     {
         $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
-
         $qb->andWhere($qb->getRootAliases()[0] . '.deletedAt IS NULL');
-
         return $qb;
     }
 
     /**
-     * SURCHARGE DE LA SUPPRESSION
-     * On anonymise AVANT que Gedmo ne marque l'utilisateur comme supprimé.
+     * ÉTAPE 11 : Suppression (RGPD / Soft Delete)
+     * Au lieu de supprimer la ligne, on anonymise les données sensibles.
      */
     public function delete(AdminContext $context)
     {
@@ -284,32 +257,14 @@ class UserCrudController extends AbstractCrudController
         $entityManager = $this->container->get('doctrine')->getManager();
 
         if ($user instanceof User) {
-            // 1. Anonymisation des données critiques
+            $user->setTranslatableLocale($this->getLocaleFromCountry($user));
             $user->setEmail('deleted-' . uniqid() . '@rebel-refine.fr');
             $user->setNickname('Utilisateur supprimé');
-            $user->setPassword('DELETED_ACCOUNT_' . bin2hex(random_bytes(5)));
-            
-            // 2. Vidage des données personnelles
-            $user->setBirthdate(null);
             $user->setInterests(null);
-            $user->setGender(null);
-            $user->setChildren(null);
-            $user->setReligion(null);
-            $user->setMarital(null);
             $user->setCountry(null);
-            $user->setIsVerified(false);
-
-            // 3. Nettoyage des images (orphanRemoval fera le reste)
-            foreach ($user->getUserImages() as $image) {
-                $user->removeUserImage($image);
-            }
-
-            // 4. On force la sauvegarde des modifications d'anonymisation
             $entityManager->flush();
         }
 
-        // 5. On laisse EasyAdmin et Gedmo finir le travail (ajout du deletedAt)
         return parent::delete($context);
     }
-
 }
