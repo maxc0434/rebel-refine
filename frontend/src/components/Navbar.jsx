@@ -1,10 +1,11 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useLanguage } from "../translations/hooks/useLanguage"; // N'oublie pas l'import
+import { useLanguage } from "../translations/hooks/useLanguage";
+
 
 function Navbar() {
   const navigate = useNavigate();
-  const { t } = useLanguage(); // On initialise les traductions
+  const { t, i18n } = useLanguage();
   const token = localStorage.getItem("token");
 
   const userData = JSON.parse(localStorage.getItem("user") || "{}");
@@ -20,10 +21,13 @@ function Navbar() {
 
   const currentLang = localStorage.getItem("app_lang") || "fr";
 
-  const changeLanguage = (lang) => {
-    localStorage.setItem("app_lang", lang);
-    window.location.reload();
+  const handleLanguageChange = (e) => {
+    const newLang = e.target.value;
+    localStorage.setItem("app_lang", newLang);
+    window.location.reload(); // Force la mise à jour avec ton système actuel
   };
+
+
 
   const btnStyle = (lang) => ({
     background: "none",
@@ -34,6 +38,7 @@ function Navbar() {
     fontSize: "1rem",
     margin: "0 5px",
     textDecoration: currentLang === lang ? "underline" : "none",
+    transition: "0.2s",
   });
 
   const navItemStyle = {
@@ -56,7 +61,8 @@ function Navbar() {
     borderRadius: "45px",
     color: "#4A3121",
     textShadow: "0px 1px 1px rgba(255, 255, 255, 0.4)",
-    background: "linear-gradient(45deg, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C)",
+    background:
+      "linear-gradient(45deg, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C)",
     boxShadow: "0 4px 15px rgba(191, 149, 63, 0.3)",
     transition: "all 0.3s ease",
     cursor: "pointer",
@@ -182,22 +188,37 @@ function Navbar() {
                 </>
               )}
 
-              <div className="language-switcher" style={{ marginLeft: "25px" }}> {/* Margin augmenté pour aérer */}
-                <button
-                  onClick={() => changeLanguage("fr")}
-                  style={btnStyle("fr")}
-                  title="Passer en Français"
+              <div
+                className="language-container"
+                style={{
+                  marginLeft: "20px",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <select
+                  value={currentLang}
+                  onChange={handleLanguageChange}
+                  style={{
+                    backgroundColor: "#1a1a1a", // Fond sombre pour coller à l'univers "Rebel Refine"
+                    color: "#fff",
+                    border: "1px solid rgba(255, 215, 0, 0.3)", // Une petite touche dorée ?
+                    borderRadius: "4px",
+                    padding: "4px 8px",
+                    cursor: "pointer",
+                    outline: "none",
+                    fontSize: "14px",
+                    fontFamily: "serif", // Pour le côté "Refine"
+                  }}
                 >
-                  FR
-                </button>
-                <span style={{ color: "rgba(255,255,255,0.3)" }}>|</span>
-                <button
-                  onClick={() => changeLanguage("en")}
-                  style={btnStyle("en")}
-                  title="Switch to English"
-                >
-                  EN
-                </button>
+                  <option value="fr">🇫🇷 FR</option>
+                  <option value="en">🇬🇧 EN</option>
+                  <option value="de">🇩🇪 DE</option>
+                  <option value="zh">🇨🇳 ZH</option>
+                  <option value="it">🇮🇹 IT</option>
+                  <option value="es">🇪🇸 ES</option>
+                  <option value="ru">🇷🇺 RU</option>
+                </select>
               </div>
 
               {/* Toggles Mobile */}

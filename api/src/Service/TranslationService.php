@@ -24,6 +24,10 @@ class TranslationService
             // SANS supprimer les balises <p>, <br>, etc.
             $richText = html_entity_decode($text, ENT_QUOTES, 'UTF-8');
 
+            // On définit la liste des langues cibles du projet (sauf la langue source)
+            $locales = ['fr', 'en', 'de', 'zh', 'it', 'ru', 'es' ];
+            $targetLocales = array_diff($locales, [$sourceLocale]);
+
             if ($field === 'interests') {
                 $entity->setInterests($richText);
                 $this->entityManager->getConnection()->executeStatement(
@@ -33,21 +37,17 @@ class TranslationService
             }
 
             $tr = new GoogleTranslate();
-            $targetLocale = ($sourceLocale === 'fr') ? 'en' : 'fr';
-
             $tr->setSource($sourceLocale);
-            $tr->setTarget($targetLocale);
-            
-            // 2. On traduit le texte AVEC ses balises HTML. 
-            // Google Translate conservera les <p> et </p> au bon endroit.
-            $translatedText = $tr->translate($richText);
 
-            // 3. Enregistrement de la version TRADUITE (riche en HTML)
-            $this->addTranslation($entity, $field, $targetLocale, $translatedText);
+            // 2. Boucle de traduction automatique pour chaque langue cible
+            foreach ($targetLocales as $target) {
+                $tr->setTarget($target);
+                $translatedText = $tr->translate($richText);
+                $this->addTranslation($entity, $field, $target, $translatedText);
+            }
 
-            // 4. Enregistrement de la version ORIGINALE (riche en HTML)
+            // 3. Enregistrement de la version ORIGINALE (riche en HTML)
             $this->addTranslation($entity, $field, $sourceLocale, $richText);
-
         } catch (\Exception $e) {
             // Silence
         }
