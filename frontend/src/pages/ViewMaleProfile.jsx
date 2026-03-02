@@ -11,7 +11,8 @@ const ViewMaleProfile = () => {
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [selectedPhoto, setSelectedPhoto] = useState(null);
+  const [photoIndex, setPhotoIndex] = useState(null);
+  const currentPhotos = profile?.photos || [];
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const messagesEndRef = useRef(null);
@@ -20,6 +21,30 @@ const ViewMaleProfile = () => {
   const userData = JSON.parse(localStorage.getItem("user"));
 
   const { t } = useLanguage();
+
+  // #region GESTION DES PHOTOS
+  const nextPhoto = (e) => {
+    e.stopPropagation();
+    setPhotoIndex((prev) => (prev + 1) % currentPhotos.length);
+  };
+
+  const prevPhoto = (e) => {
+    e.stopPropagation();
+    setPhotoIndex(
+      (prev) => (prev - 1 + currentPhotos.length) % currentPhotos.length,
+    );
+  };
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (photoIndex === null) return;
+      if (e.key === "ArrowRight") nextPhoto(e);
+      if (e.key === "ArrowLeft") prevPhoto(e);
+      if (e.key === "Escape") setPhotoIndex(null);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [photoIndex]);
+  // #endregion
 
   // #region ENVOI DE MESSAGE
   const onSendMessage = async (contactId, content) => {
@@ -198,11 +223,7 @@ const ViewMaleProfile = () => {
                 cursor: "zoom-in",
                 boxShadow: "0 10px 30px rgba(0,0,0,0.5)",
               }}
-              onClick={() =>
-                setSelectedPhoto(
-                  profile.photos[0]?.imageName || profile.photos[0],
-                )
-              }
+              onClick={() => setPhotoIndex(0)}
             >
               {profile.photos && profile.photos.length > 0 ? (
                 <img
@@ -241,7 +262,7 @@ const ViewMaleProfile = () => {
                     border: "2px solid #d4af37",
                     transition: "transform 0.2s",
                   }}
-                  onClick={() => setSelectedPhoto(photo.imageName || photo)}
+                  onClick={() => setPhotoIndex(index)}
                   onMouseOver={(e) =>
                     (e.currentTarget.style.transform = "scale(1.05)")
                   }
@@ -342,7 +363,9 @@ const ViewMaleProfile = () => {
               }}
               onClick={() => setIsModalOpen(true)}
             >
-              <span>{t.view_profile_reply} {profile.nickname}</span>
+              <span>
+                {t.view_profile_reply} {profile.nickname}
+              </span>
             </button>
 
             {/* MARK: Chat */}
@@ -358,49 +381,106 @@ const ViewMaleProfile = () => {
           </div>
         </div>
       </div>
-      {/* MARK: Photo Zoom */}
-      {selectedPhoto && (
+      {/* MARK: Carrousel Photo Zoom */}
+      {photoIndex !== null && (
         <div
           className="photo-zoom-overlay"
-          onClick={() => setSelectedPhoto(null)}
+          onClick={() => setPhotoIndex(null)}
           style={{
             position: "fixed",
             top: 0,
             left: 0,
             width: "100%",
             height: "100%",
-            background: "rgba(0,0,0,0.9)",
+            background: "rgba(0,0,0,0.95)",
             zIndex: 2000,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            cursor: "zoom-out",
           }}
         >
+          {/* Bouton Fermer */}
           <button
+            className="zoom-close-btn"
+            onClick={() => setPhotoIndex(null)}
             style={{
               position: "absolute",
-              top: "20px",
-              right: "20px",
+              top: "30px",
+              right: "30px",
               background: "none",
               border: "none",
               color: "white",
-              fontSize: "30px",
+              cursor: "pointer",
             }}
-            onClick={() => setSelectedPhoto(null)}
           >
-            ×
+            <X size={40} />
           </button>
-          <img
-            src={`http://localhost:8000/uploads/users/${selectedPhoto}`}
-            alt="Zoom"
-            style={{
-              maxHeight: "90vh",
-              maxWidth: "90vw",
-              borderRadius: "10px",
-              boxShadow: "0 0 20px rgba(212,175,55,0.4)",
-            }}
-          />
+
+          {/* Flèche Gauche */}
+          {currentPhotos.length > 1 && (
+            <button
+              onClick={prevPhoto}
+              style={{
+                position: "absolute",
+                left: "20px",
+                background: "rgba(255,255,255,0.1)",
+                border: "none",
+                color: "white",
+                borderRadius: "50%",
+                padding: "15px",
+                cursor: "pointer",
+              }}
+            >
+              <ArrowLeft size={30} />
+            </button>
+          )}
+
+          {/* Photo Actuelle */}
+          <div className="zoom-card" style={{ textAlign: "center" }}>
+            <img
+              src={`http://localhost:8000/uploads/users/${currentPhotos[photoIndex]?.imageName || currentPhotos[photoIndex]}`}
+              alt="Zoom"
+              style={{
+                maxHeight: "85vh",
+                maxWidth: "85vw",
+                borderRadius: "10px",
+                boxShadow: "0 0 30px rgba(212,175,55,0.3)",
+                border: "1px solid rgba(212,175,55,0.5)",
+              }}
+              onClick={(e) => e.stopPropagation()} // Empêche de fermer si on clique sur l'image
+            />
+            {/* Indicateur de position (ex: 1 / 3) */}
+            <div
+              style={{
+                marginTop: "15px",
+                color: "#d4af37",
+                fontWeight: "bold",
+                fontSize: "1.1rem",
+              }}
+            >
+              {photoIndex + 1} / {currentPhotos.length}
+            </div>
+          </div>
+
+          {/* Flèche Droite */}
+          {currentPhotos.length > 1 && (
+            <button
+              onClick={nextPhoto}
+              style={{
+                position: "absolute",
+                right: "20px",
+                background: "rgba(255,255,255,0.1)",
+                border: "none",
+                color: "white",
+                borderRadius: "50%",
+                padding: "15px",
+                cursor: "pointer",
+                transform: "rotate(180deg)",
+              }}
+            >
+              <ArrowLeft size={30} />
+            </button>
+          )}
         </div>
       )}
     </div>
