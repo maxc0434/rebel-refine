@@ -674,7 +674,7 @@ function FemaleDashboardPage() {
                       fontSize: "0.9rem",
                     }}
                   >
-                    {t.sec_delete_title || "SUPPRESSION du Compte"}
+                    {t.sec_delete_title }
                   </h4>
                   <p
                     style={{
@@ -683,8 +683,7 @@ function FemaleDashboardPage() {
                       marginBottom: "15px",
                     }}
                   >
-                    {t.sec_delete_text ||
-                      "Cette action anonymisera vos données et désactivera votre compte de façon permanente."}
+                    {t.sec_delete_text}
                   </p>
                   <button
                     onClick={handleDeleteAccount}
@@ -707,7 +706,7 @@ function FemaleDashboardPage() {
                       (e.target.style.color = "#f94d80")
                     )}
                   >
-                    {t.sec_delete_btn || "Supprimer mon compte"}
+                    {t.sec_delete_btn}
                   </button>
                 </div>
               </div>

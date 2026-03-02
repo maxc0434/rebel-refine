@@ -76,7 +76,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Transla
     /**
      * @var Collection<int, UserImage>
      */
-    #[ORM\OneToMany(targetEntity: UserImage::class, mappedBy: 'owner', orphanRemoval: true, cascade: ['persist'])]
+    #[ORM\OneToMany(targetEntity: UserImage::class, mappedBy: 'owner', orphanRemoval: true, cascade: ['persist', 'remove'])]
     private Collection $userImages;
 
     /**

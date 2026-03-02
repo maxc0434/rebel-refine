@@ -9,41 +9,41 @@ export const translations = {
     //#region DATABASE
     database: {
       // Sexe
-      "male": "Homme",
-      "female": "Femme",
+      male: "Homme",
+      female: "Femme",
 
       // État civil (Clés = slugs envoyés par le select)
-      "single": "Célibataire",
-      "divorced": "Divorcé(e)",
-      "widowed": "Veuf(ve)",
-      "free_couple": "Couple libre",
+      single: "Célibataire",
+      divorced: "Divorcé(e)",
+      widowed: "Veuf(ve)",
+      free_couple: "Couple libre",
 
       // Religion
-      "aucune": "Aucune",
-      "catholique": "Catholique",
-      "orthodoxe": "Orthodoxe",
-      "protestant": "Protestant",
-      "buddhist": "Bouddhiste",
-      "hindoue": "Hindoue",
-      "judaique": "Judaïque",
-      "islam": "Islam",
-      "atheist": "Athée",
-      "spiritual_but_not_religious": "Spirituel mais non religieux",
-      "other": "Autre",
+      aucune: "Aucune",
+      catholique: "Catholique",
+      orthodoxe: "Orthodoxe",
+      protestant: "Protestant",
+      buddhist: "Bouddhiste",
+      hindoue: "Hindoue",
+      judaique: "Judaïque",
+      islam: "Islam",
+      atheist: "Athée",
+      spiritual_but_not_religious: "Spirituel mais non religieux",
+      other: "Autre",
 
       // Pays
-      "france": "🇫🇷 France",
-      "germany": "🇩🇪 Allemagne",
-      "italy": "🇮🇹 Italie",
-      "spain": "🇪🇸 Espagne",
-      "united_kingdom": "🇬🇧 Angleterre",
-      "belgium": "🇧🇪 Belgique",
-      "switzerland": "🇨🇭 Suisse",
-      "china": "🇨🇳 Chine",
-      "japan": "🇯🇵 Japon",
-      "russia": "🇷🇺 Russie",
-      "thailand": "🇹🇭 Thaïlande",
-      "vietnam": "🇻🇳 Vietnam",
+      france: "🇫🇷 France",
+      germany: "🇩🇪 Allemagne",
+      italy: "🇮🇹 Italie",
+      spain: "🇪🇸 Espagne",
+      united_kingdom: "🇬🇧 Angleterre",
+      belgium: "🇧🇪 Belgique",
+      switzerland: "🇨🇭 Suisse",
+      china: "🇨🇳 Chine",
+      japan: "🇯🇵 Japon",
+      russia: "🇷🇺 Russie",
+      thailand: "🇹🇭 Thaïlande",
+      vietnam: "🇻🇳 Vietnam",
     },
     //#endregion
 
@@ -332,8 +332,7 @@ export const translations = {
     translator_empty_state: "Aucun message en attente. Tout est à jour !",
     translator_label_source: "Message source",
     translator_label_translation: "Traduction",
-    translator_placeholder:
-      "Saisissez la traduction ici... ",
+    translator_placeholder: "Saisissez la traduction ici... ",
     translator_btn_send: "Valider et Envoyer",
     translator_success_title: "Traduction validée",
     translator_success_msg: "Le message a été envoyé avec succès.",
@@ -446,6 +445,25 @@ export const translations = {
     sec_pwd_new: "Nouveau mot de passe",
     sec_pwd_confirm: "Confirmer le nouveau mot de passe",
     sec_pwd_btn: "METTRE À JOUR LE MOT DE PASSE",
+
+    sec_delete_title: "SUPPRESSION DU COMPTE",
+    sec_delete_text:
+      "Cette action anonymisera vos données et désactivera votre compte de façon permanente conformément au RGPD.",
+    sec_delete_btn: "Supprimer mon compte",
+    sec_delete_confirm:
+      "Êtes-vous absolument sûr ? Cette action est irréversible.",
+
+    //Alertes (Swal) lors de la suppression de compte
+    delete_confirm_1: "Supprimer le compte ?",
+    delete_confirm_2:
+      "Dernier avertissement : tes photos et données seront définitivement anonymisées.",
+    delete_btn_confirm: "Oui, supprimer !",
+    nav_cancel: "Annuler",
+    delete_farewell_title: "Adieu !",
+    delete_success: "Ton compte a été anonymisé avec succès.",
+    delete_error_title: "Erreur",
+    delete_error_text: "Une erreur est survenue lors de la suppression.",
+
     //#endregion
 
     //#region ChatModal
@@ -490,7 +508,8 @@ export const translations = {
     db_label_children: "Enfants",
     db_label_religion: "Religion",
     db_label_interests: "Centres d'intérêt",
-    db_contact_admin: "* Pour toute modification de donnée sur votre profil, contactez l'administrateur du site au 06XXXXXX ou par mail  admin@admin.com",
+    db_contact_admin:
+      "* Pour toute modification de donnée sur votre profil, contactez l'administrateur du site au 06XXXXXX ou par mail  admin@admin.com",
 
     // Sécurité
     db_sec_title: "Sécurité du compte",
@@ -526,41 +545,41 @@ export const translations = {
     //#region DATABASE EN
     database: {
       // Sexe
-      "male": "Male",
-      "female": "Female",
+      male: "Male",
+      female: "Female",
 
       // État civil
-      "single": "Single",
-      "divorced": "Divorced",
-      "widowed": "Widowed",
-      "free_couple": "Open relationship",
+      single: "Single",
+      divorced: "Divorced",
+      widowed: "Widowed",
+      free_couple: "Open relationship",
 
       // Religion
-      "aucune": "None",
-      "catholique": "Catholic",
-      "orthodoxe": "Orthodox",
-      "protestant": "Protestant",
-      "buddhist": "Buddhist",
-      "hindoue": "Hindu",
-      "judaique": "Jewish",
-      "islam": "Islam",
-      "atheist": "Atheist",
-      "spiritual_but_not_religious": "Spiritual but not religious",
-      "other": "Other",
+      aucune: "None",
+      catholique: "Catholic",
+      orthodoxe: "Orthodox",
+      protestant: "Protestant",
+      buddhist: "Buddhist",
+      hindoue: "Hindu",
+      judaique: "Jewish",
+      islam: "Islam",
+      atheist: "Atheist",
+      spiritual_but_not_religious: "Spiritual but not religious",
+      other: "Other",
 
       // Pays
-      "france": "🇫🇷 France",
-      "germany": "🇩🇪 Germany",
-      "italy": "🇮🇹 Italy",
-      "spain": "🇪🇸 Spain",
-      "united_kingdom": "🇬🇧 United Kingdom",
-      "belgium": "🇧🇪 Belgium",
-      "switzerland": "🇨🇭 Switzerland",
-      "china": "🇨🇳 China",
-      "japan": "🇯🇵 Japan",
-      "russia": "🇷🇺 Russia",
-      "thailand": "🇹🇭 Thailand",
-      "vietnam": "🇻🇳 Vietnam",
+      france: "🇫🇷 France",
+      germany: "🇩🇪 Germany",
+      italy: "🇮🇹 Italy",
+      spain: "🇪🇸 Spain",
+      united_kingdom: "🇬🇧 United Kingdom",
+      belgium: "🇧🇪 Belgium",
+      switzerland: "🇨🇭 Switzerland",
+      china: "🇨🇳 China",
+      japan: "🇯🇵 Japan",
+      russia: "🇷🇺 Russia",
+      thailand: "🇹🇭 Thailand",
+      vietnam: "🇻🇳 Vietnam",
     },
     //#endregion
 
@@ -847,8 +866,7 @@ export const translations = {
     translator_empty_state: "No pending messages. Everything is up to date!",
     translator_label_source: "Source message",
     translator_label_translation: "Translation",
-    translator_placeholder:
-      "Enter translation here... ",
+    translator_placeholder: "Enter translation here... ",
     translator_btn_send: "Validate and Send",
     translator_success_title: "Translation validated",
     translator_success_msg: "The message has been sent successfully.",
@@ -963,6 +981,24 @@ export const translations = {
     sec_pwd_new: "New Password",
     sec_pwd_confirm: "Confirm New Password",
     sec_pwd_btn: "UPDATE PASSWORD",
+    sec_delete_title: "ACCOUNT DELETION",
+    sec_delete_text:
+      "This action will anonymize your data and permanently deactivate your account in compliance with GDPR.",
+    sec_delete_btn: "Delete my account",
+    sec_delete_confirm:
+      "Are you absolutely sure? This action cannot be undone.",
+
+    //Alertes (Swal) lors de la suppression
+    delete_confirm_1: "Delete account?",
+    delete_confirm_2:
+      "Final warning: your photos and data will be permanently anonymized.",
+    delete_btn_confirm: "Yes, delete it!",
+    nav_cancel: "Cancel",
+    delete_farewell_title: "Farewell!",
+    delete_success: "Your account has been successfully anonymized.",
+    delete_error_title: "Error",
+    delete_error_text: "An error occurred during deletion.",
+
     //#endregion
 
     //#region ChatModal
@@ -978,6 +1014,7 @@ export const translations = {
     chat_alert_empty:
       "Your balance is empty. Top up your credits to continue this beautiful encounter.",
     chat_shop_btn: "Shop",
+    //#endregion
 
     //#region FEMALE DASHBOARD
     db_title: "My Private Space",
@@ -1005,8 +1042,8 @@ export const translations = {
     db_label_children: "Children",
     db_label_religion: "Religion",
     db_label_interests: "Interests",
-    db_contact_admin: "* For any changes to the information on your profile, please contact the site administrator at 06XXXXXX or by email at admin@admin.com",
-
+    db_contact_admin:
+      "* For any changes to the information on your profile, please contact the site administrator at 06XXXXXX or by email at admin@admin.com",
 
     // Security
     db_sec_title: "Account Security",
@@ -1032,6 +1069,8 @@ export const translations = {
     db_loading: "Loading your space...",
     db_error_load: "Unable to load your information. Please try again.",
     db_not_set: "Not specified",
+
+    //#endregion
   },
 
   //#endregion ANGLAIS
