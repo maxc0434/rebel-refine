@@ -253,18 +253,54 @@ class UserCrudController extends AbstractCrudController
      */
     public function delete(AdminContext $context)
     {
+        /** @var User $user */
         $user = $context->getEntity()->getInstance();
         $entityManager = $this->container->get('doctrine')->getManager();
 
         if ($user instanceof User) {
-            $user->setTranslatableLocale($this->getLocaleFromCountry($user));
-            $user->setEmail('deleted-' . uniqid() . '@rebel-refine.fr');
-            $user->setNickname('Utilisateur supprimé');
-            $user->setInterests(null);
-            $user->setCountry(null);
-            $entityManager->flush();
+            try {
+                // A. NETTOYAGE DES TRADUCTIONS (Comme dans l'AccountController)
+                $entityManager->createQuery('DELETE FROM Gedmo\Translatable\Entity\Translation t WHERE t.foreignKey = :id AND t.objectClass = :class')
+                   ->setParameter('id', (string)$user->getId())
+                   ->setParameter('class', User::class)
+                   ->execute();
+
+                // B. NETTOYAGE TABLE USER (SQL pur pour être sûr)
+                $entityManager->getConnection()->executeStatement(
+                    'UPDATE "user" SET interests = NULL WHERE id = :id',
+                    ['id' => $user->getId()]
+                );
+
+                // C. ANONYMISATION DES DONNÉES SENSIBLES
+                $user->setEmail('deleted-admin-' . uniqid() . '@rebel-refine.fr');
+                $user->setNickname('Utilisateur supprimé (Admin)');
+                $user->setPassword('DELETED_BY_ADMIN_' . bin2hex(random_bytes(10)));
+                
+                $user->setBirthdate(null);
+                $user->setGender(null);
+                $user->setCountry(null);
+                $user->setReligion(null);
+                $user->setMarital(null);
+                $user->setChildren(null);
+                $user->setIsVerified(false);
+
+                // D. SUPPRESSION DES PHOTOS (Liaisons et Fichiers)
+                // Si tes images utilisent VichUploader ou un système similaire, 
+                // le remove s'occupera du fichier si configurer en cascade.
+                foreach ($user->getUserImages() as $image) {
+                    $user->removeUserImage($image);
+                    // Si tu dois supprimer manuellement le fichier physique, c'est ici qu'on l'ajoute
+                }
+
+                // E. ON VALIDE L'ANONYMISATION AVANT LA SUPPRESSION
+                $entityManager->flush();
+
+            } catch (\Exception $e) {
+                // Optionnel : ajouter un flash message d'erreur pour l'admin
+            }
         }
 
+        // F. APPEL AU PARENT (Qui fera le $entityManager->remove($user) et le flush final)
         return parent::delete($context);
     }
 }

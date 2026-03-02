@@ -13,40 +13,53 @@ class TranslationService
         private EntityManagerInterface $entityManager
     ) {}
 
-    public function autoTranslate($entity, string $field, string $text, string $sourceLocale): void
+    public function autoTranslate($entity, string $field, ?string $text, string $sourceLocale): void
     {
-        if (!$entity instanceof User) {
+        // 1. On ne traduit que si l'entité est un User et que le texte n'est pas vide
+        if (!$entity instanceof User || empty(trim($text ?? ''))) {
             return;
         }
 
         try {
-            $tr = new GoogleTranslate();
-            
-            
+            if ($field === 'interests') {
+                $entity->setInterests($text);
+                $this->entityManager->getConnection()->executeStatement(
+                    'UPDATE "user" SET interests = :val WHERE id = :id',
+                    ['val' => $text, 'id' => $entity->getId()]
+                );
+                
+            }
 
+            $tr = new GoogleTranslate();
             // RÈGLE : Si la source est FR, on traduit vers EN. Sinon, on traduit vers FR.
             $targetLocale = ($sourceLocale === 'fr') ? 'en' : 'fr';
 
-            // On configure Google Translate
             $tr->setSource($sourceLocale);
             $tr->setTarget($targetLocale);
             
-            $translatedText = $tr->translate($text);
+            // Nettoyage sommaire du texte (enlever les balises HTML si TextEditor est utilisé)
+            $cleanText = strip_tags($text);
+            $translatedText = $tr->translate($cleanText);
 
-            // 1. On enregistre la version traduite dans la table ext_translations
+            $decodedOriginal = html_entity_decode($text, ENT_QUOTES, 'UTF-8');
+
+            // 2. On enregistre la version TRADUITE
             $this->addTranslation($entity, $field, $targetLocale, $translatedText);
 
-            // 2. On s'assure que la version originale est bien enregistrée dans sa propre langue
-            $this->addTranslation($entity, $field, $sourceLocale, $text);
+            // 3. On enregistre la version ORIGINALE dans ext_translations 
+            // pour que Gedmo la retrouve toujours, peu importe la locale de l'admin
+            $this->addTranslation($entity, $field, $sourceLocale, $decodedOriginal);
 
         } catch (\Exception $e) {
-            // Log l'erreur si besoin, mais évite de bloquer l'enregistrement
+            // On ne bloque pas l'application si Google Translate est indisponible
         }
     }
 
     public function addTranslation($entity, string $field, string $locale, string $value): void
     {
         $repository = $this->entityManager->getRepository(Translation::class);
+        
+        // On utilise la méthode native de Gedmo pour mettre à jour ou créer la traduction
         $repository->translate($entity, $field, $locale, $value);
     }
 }

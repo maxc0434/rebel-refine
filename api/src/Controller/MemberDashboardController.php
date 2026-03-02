@@ -168,13 +168,23 @@ class MemberDashboardController extends AbstractController
         }
         if (isset($data['interests'])) {
             $user->setInterests($data['interests']);
-            if (!empty($data['interests']) && isset($data['locale']) && $data['locale'] === 'en') {
-                $translationService->autoTranslate($user, 'interests', $data['interests']);
+
+            if (!empty($data['interests'])) {
+                // 1. Déterminer la locale source (FR pour France/Suisse/Belgique, sinon EN)
+                $userLocale = (in_array(strtolower($user->getCountry() ?? ''), ['france', 'belgique', 'suisse', 'belgium', 'switzerland'])) ? 'fr' : 'en';
+
+                // 2. Passer les 4 arguments au service
+                $translationService->autoTranslate($user, 'interests', $data['interests'], $userLocale);
+
+                // IMPORTANT : On force l'objet à rester sur la locale de l'utilisateur
+                // pour que la réponse JSON renvoyée au Front-end soit dans la bonne langue
+                $user->setTranslatableLocale($userLocale);
             }
         }
 
 
         $em->flush();
+        $em->refresh($user); // On synchronise avec ce qu'on vient de mettre en BDD
 
         return $this->json([
             'status' => 'success',
