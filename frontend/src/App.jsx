@@ -15,6 +15,8 @@ import PresentationPage from "./pages/PresentationPage";
 import ViewMaleProfile from "./pages/ViewMaleProfile";
 import CreditShop from "./pages/CreditShop";
 import PaymentSuccess from "./pages/PaymentSuccess";
+import PrivacyPage from "./pages/PrivacyPage";
+import TermsPage from "./pages/TermsPage";
 
 function App() {
   return (
@@ -50,6 +52,10 @@ function App() {
           <Route path="/credit-shop" element={<CreditShop />} />
 
           <Route path="/payment/success" element={<PaymentSuccess />} />
+
+          <Route path="/privacy" element={<PrivacyPage />} />
+
+          <Route path="/terms" element={<TermsPage />} />
 
         </Routes>
       <Footer/>
