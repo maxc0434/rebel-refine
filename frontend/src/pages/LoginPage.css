@@ -82,19 +82,56 @@
   text-decoration: underline;
 }
 
-/* Bouton principal */
+/* Bouton principal Refine Style */
 .btn-login-submit {
-  background: linear-gradient(45deg, #f67280, #c06c84);
-  border-radius: 15px;
-  box-shadow: 0 15px 30px rgba(246, 114, 128, 0.3);
+  /* Le dégradé complexe or/champagne/bronze pour l'effet métal brossé */
+  background: linear-gradient(45deg, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C);
+  background-size: 200% auto;
+  
+  /* Forme et espacement */
+  border-radius: 50px;
+  padding: 14px 30px;
+  border: none;
+  
+  /* --- TYPOGRAPHIE CORRIGÉE : BLEU NUIT / NOIR --- */
+  color: #12122d; /* Le bleu nuit profond de ton bouton inscription */
+  font-weight: 900; /* Poids maximum pour la lisibilité */
+  text-transform: uppercase;
   letter-spacing: 2px;
-  font-size: 1.2rem;
-  transition: transform 0.2s;
+  font-size: 1.1rem;
+  
+  /* On enlève l'ombre blanche qui floutait le texte */
+  text-shadow: none; 
+  
+  /* Effets et Ombres */
+  box-shadow: 0 4px 15px rgba(191, 149, 63, 0.4);
+  cursor: pointer;
+  
+  /* Centrage parfait du texte */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+
+  /* Transition fluide */
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .btn-login-submit:hover {
-  transform: translateY(-2px);
-  opacity: 0.9;
+  transform: scale(1.05) translateY(-2px);
+  
+  /* Animation du dégradé au survol */
+  background-position: right center;
+  
+  /* Lueur dorée plus intense */
+  box-shadow: 0 8px 25px rgba(191, 149, 63, 0.6);
+  
+  /* On fonce encore un peu le texte au survol pour être sûr */
+  color: #000000;
+}
+
+.btn-login-submit:active {
+  transform: scale(0.98);
 }
 
 /* Modal */

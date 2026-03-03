@@ -26,23 +26,15 @@ function Navbar() {
     window.location.reload(); // Force la mise à jour
   };
 
-  const btnStyle = (lang) => ({
-    background: "none",
-    border: "none",
-    color: currentLang === lang ? "#d4af37" : "#fff",
-    fontWeight: currentLang === lang ? "bold" : "normal",
-    cursor: "pointer",
-    fontSize: "1rem",
-    margin: "0 5px",
-    textDecoration: currentLang === lang ? "underline" : "none",
-    transition: "0.2s",
-  });
-
-  const navItemStyle = {
+const navItemStyle = {
     fontWeight: "600",
     letterSpacing: "1px",
     textTransform: "uppercase",
     fontSize: "0.9rem",
+    color: "#fff",
+    textDecoration: "none",
+    display: "inline-block",
+    transition: "transform 0.3s ease, color 0.3s ease",
   };
 
   const navShopBtnStyle = {
@@ -58,12 +50,30 @@ function Navbar() {
     borderRadius: "45px",
     color: "#4A3121",
     textShadow: "0px 1px 1px rgba(255, 255, 255, 0.4)",
-    background:
-      "linear-gradient(45deg, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C)",
+    background: "linear-gradient(45deg, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C)",
     boxShadow: "0 4px 15px rgba(191, 149, 63, 0.3)",
-    transition: "all 0.3s ease",
+    transition: "all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)", // Effet ressort léger
     cursor: "pointer",
+    border: "none",
+    padding: "8px 20px",
+    height: "fit-content", // Aligne la hauteur sur le texte
+    marginTop: "8px",
   };
+
+  const handleMouseEnter = (e) => {
+    e.currentTarget.style.transform = "scale(1.08)";
+    if (e.currentTarget.getAttribute('data-type') === 'nav-link') {
+      e.currentTarget.style.color = "#d4af37";
+    }
+  };
+
+  const handleMouseLeave = (e) => {
+    e.currentTarget.style.transform = "scale(1)";
+    if (e.currentTarget.getAttribute('data-type') === 'nav-link') {
+      e.currentTarget.style.color = "#fff";
+    }
+  };
+
 
   return (
     <header
@@ -82,12 +92,12 @@ function Navbar() {
       <div className="header-bottom">
         <div className="container">
           <div className="header-wrapper">
-            <div className="logo">
+           <div className="logo" style={{ transition: "transform 0.3s ease" }} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
               <Link to={isFemale ? "/female-dashboard" : "/home"}>
                 <img
                   src="/assets/images/logo/rebel_refine_logo_resized.png"
                   alt="logo"
-                  style={{ height: "70px", width: "auto" }}
+                  style={{ height: "70px", width: "auto", display: "block" }}
                 />
               </Link>
             </div>
@@ -95,23 +105,42 @@ function Navbar() {
               <ul className="menu">
                 {token && !isFemale && !isTranslator && isUser && (
                   <>
+                    {/* ACCUEIL SUPPRIMÉ ICI */}
                     <li>
-                      <Link to="/home" style={navItemStyle}>
-                        {t.nav_home}
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="/members/females" style={navItemStyle}>
+                      <Link 
+                        to="/members/females" 
+                        style={navItemStyle}
+                        data-type="nav-link"
+                        onMouseEnter={handleMouseEnter}
+                        onMouseLeave={handleMouseLeave}
+                      >
                         {t.nav_members}
                       </Link>
                     </li>
                     <li>
-                      <Link to="/dashboard" style={navItemStyle}>
+                      <Link 
+                        to="/dashboard" 
+                        style={navItemStyle}
+                        data-type="nav-link"
+                        onMouseEnter={handleMouseEnter}
+                        onMouseLeave={handleMouseLeave}
+                      >
                         {t.nav_dashboard}
                       </Link>
                     </li>
                     <li>
-                      <Link to="/credit-shop" style={navShopBtnStyle}>
+                      <Link 
+                        to="/credit-shop" 
+                        style={navShopBtnStyle}
+                        onMouseEnter={(e) => {
+                           e.currentTarget.style.transform = "scale(1.08)";
+                           e.currentTarget.style.boxShadow = "0 6px 20px rgba(191, 149, 63, 0.5)";
+                        }}
+                        onMouseLeave={(e) => {
+                           e.currentTarget.style.transform = "scale(1)";
+                           e.currentTarget.style.boxShadow = "0 4px 15px rgba(191, 149, 63, 0.3)";
+                        }}
+                      >
                         {t.nav_shop}
                       </Link>
                     </li>

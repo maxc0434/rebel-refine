@@ -187,7 +187,7 @@ function LoginPage() {
                     <span
                       className="small mt-2 forgot-password-link justify-content-end d-flex"
                       onClick={() => setShowModal(true)}
-                      style={{ cursor: "pointer" }} // Ajouté pour le confort
+                      style={{ cursor: "pointer" }}
                     >
                       {t.login_forgot_password}
                     </span>
@@ -195,7 +195,7 @@ function LoginPage() {
 
                   <button
                     type="submit"
-                    className="btn btn-lg w-100 fw-bold py-3 mt-4 text-white border-0 btn-login-submit"
+                    className="btn btn-lg w-100 fw-bold py-3 mt-4 border-0 btn-login-submit"
                   >
                     {t.login_btn_submit}
                   </button>
