@@ -1,36 +1,171 @@
+/* --- CONTAINER --- */
 .boutique-container {
-  background-color: #12122d;
-  min-height: 100vh;
-  padding-top: 100px;
+    background-color: #0f1115; /* Fond encore plus sombre pour faire ressortir l'or */
+    min-height: 100vh;
+    padding-top: 80px;
 }
 
-.pack-card {
-  background: rgba(31, 42, 77, 0.5);
-  border: 1px solid rgba(212, 175, 55, 0.2);
-  border-radius: 20px;
-  padding: 40px 30px;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
+/* --- TITRES --- */
+.shop-main-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    color: #ffffff;
+    letter-spacing: 2px;
+    text-transform: uppercase;
 }
 
-.pack-card:hover {
-  transform: translateY(-10px);
-  border-color: #d4af37;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+.gold-gradient-text {
+    background: linear-gradient(135deg, #BF953F 0%, #FCF6BA 50%, #B38728 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 800;
 }
 
-.pack-icon {
-  margin-bottom: 20px;
-  filter: drop-shadow(0 0 10px currentColor);
+.title-divider {
+    width: 60px;
+    height: 2px;
+    background: #d4af37;
+    margin: 20px auto;
 }
 
-.pack-credits p {
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  font-size: 0.8rem;
+.shop-subtext {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 3px;
 }
 
-.subtext{
-  font-size: 1.2rem;
-  margin: 25px ;
+/* --- CARDS PRESTIGE --- */
+.pack-card-prestige {
+    background: linear-gradient(145deg, #1a1d21 0%, #111317 100%);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 40px 30px;
+    position: relative;
+    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+}
+
+/* L'effet de Zoom & Glow au survol */
+.pack-card-prestige:hover {
+    transform: translateY(-15px) scale(1.02);
+    border-color: rgba(212, 175, 55, 0.4);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(212, 175, 55, 0.1);
+}
+
+.pack-card-prestige.featured {
+    border: 1px solid #d4af37;
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.1);
+}
+
+/* --- ELEMENTS DE CARTE --- */
+.icon-wrapper {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: 1px solid;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.tier-label {
+    font-size: 0.7rem;
+    letter-spacing: 4px;
+    color: rgba(255, 255, 255, 0.4);
+    margin-bottom: 10px;
+    display: block;
+}
+
+.pack-name {
+    color: #fff;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 25px;
+}
+
+.price-section {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.credits-amount {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1;
+}
+
+.credits-unit {
+    display: block;
+    color: #d4af37;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.price-tag {
+    margin-top: 10px;
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.pack-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 35px 0;
+    text-align: left;
+    width: 100%;
+}
+
+.pack-features li {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.pack-features li svg {
+    color: #d4af37;
+}
+
+/* --- BOUTON DE PAIEMENT --- */
+.buy-button-prestige {
+    width: 100%;
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid #d4af37;
+    background: transparent;
+    color: #d4af37;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 0.8rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.buy-button-prestige:hover {
+    background: linear-gradient(135deg, #BF953F, #FCF6BA, #B38728);
+    color: #1a1d21;
+    box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
+}
+
+.badge-featured {
+    position: absolute;
+    top: 20px;
+    right: -35px;
+    background: #d4af37;
+    color: #1a1d21;
+    padding: 5px 40px;
+    font-size: 0.6rem;
+    font-weight: 900;
+    transform: rotate(45deg);
 }

@@ -176,24 +176,53 @@ function HomePage() {
 
                       <form className="banner-form" onSubmit={handleSearch}>
                         <div className="age">
-                          <div className="right d-flex justify-content-between w-100">
+                          <div
+                            className="right d-flex justify-content-between w-100"
+                            style={{ gap: "15px" }}
+                          >
                             {/* SELECT : ÂGE MINIMUM */}
-                            <div className="custom-select">
-                              <h5> {t.home_search_from} </h5>
+                            <div className="custom-select" style={{ flex: 1 }}>
+                              <h5
+                                style={{
+                                  fontSize: "0.8rem",
+                                  color: "rgba(255,255,255,0.6)",
+                                  marginBottom: "10px",
+                                  textTransform: "uppercase",
+                                  letterSpacing: "1px",
+                                }}
+                              >
+                                {t.home_search_from}
+                              </h5>
                               <select
                                 value={minAge}
                                 onChange={(e) => setMinAge(e.target.value)}
                                 style={{
-                                  backgroundColor: "#1e1e3c",
-                                  color: "white",
-                                  border: "1px solid #d4af37",
+                                  backgroundColor: "#1a1d21",
+                                  color: "#f5f5f5",
+                                  border: "1px solid rgba(212, 175, 55, 0.3)",
+                                  borderRadius: "8px",
+                                  padding: "10px",
+                                  width: "100%",
+                                  outline: "none",
+                                  cursor: "pointer",
+                                  transition: "all 0.3s ease",
+                                  appearance: "none",
+                                  WebkitAppearance: "none",
+                                  boxShadow: "inset 0 2px 4px rgba(0,0,0,0.3)",
                                 }}
+                                onFocus={(e) =>
+                                  (e.target.style.borderColor = "#d4af37")
+                                }
+                                onBlur={(e) =>
+                                  (e.target.style.borderColor =
+                                    "rgba(212, 175, 55, 0.3)")
+                                }
                               >
                                 <option
                                   value=""
                                   style={{
-                                    backgroundColor: "#1e1e3c",
-                                    color: "white",
+                                    backgroundColor: "#1a1d21",
+                                    color: "#fff",
                                   }}
                                 >
                                   De
@@ -203,25 +232,51 @@ function HomePage() {
                             </div>
 
                             {/* SELECT : ÂGE MAXIMUM */}
-                            <div className="custom-select">
-                              <h5> {t.home_search_to} </h5>
+                            <div className="custom-select" style={{ flex: 1 }}>
+                              <h5
+                                style={{
+                                  fontSize: "0.8rem",
+                                  color: "rgba(255,255,255,0.6)",
+                                  marginBottom: "10px",
+                                  textTransform: "uppercase",
+                                  letterSpacing: "1px",
+                                }}
+                              >
+                                {t.home_search_to}
+                              </h5>
                               <select
                                 value={maxAge}
                                 onChange={(e) => setMaxAge(e.target.value)}
                                 style={{
-                                  backgroundColor: "#1e1e3c",
-                                  color: "white",
-                                  border: "1px solid #d4af37",
+                                  backgroundColor: "#1a1d21",
+                                  color: "#f5f5f5",
+                                  border: "1px solid rgba(212, 175, 55, 0.3)",
+                                  borderRadius: "8px",
+                                  padding: "10px",
+                                  width: "100%",
+                                  outline: "none",
+                                  cursor: "pointer",
+                                  transition: "all 0.3s ease",
+                                  appearance: "none",
+                                  WebkitAppearance: "none",
+                                  boxShadow: "inset 0 2px 4px rgba(0,0,0,0.3)",
                                 }}
+                                onFocus={(e) =>
+                                  (e.target.style.borderColor = "#d4af37")
+                                }
+                                onBlur={(e) =>
+                                  (e.target.style.borderColor =
+                                    "rgba(212, 175, 55, 0.3)")
+                                }
                               >
                                 <option
                                   value=""
                                   style={{
-                                    backgroundColor: "#1e1e3c",
-                                    color: "white",
+                                    backgroundColor: "#1a1d21",
+                                    color: "#fff",
                                   }}
                                 >
-                                  De
+                                  À
                                 </option>
                                 {ageOptions}
                               </select>
@@ -808,7 +863,45 @@ function HomePage() {
             </div>
 
             <div className="text-center mt-5">
-              <Link to="/members" className="lab-btn">
+              <Link
+                to="/members"
+                className="lab-btn-prestige"
+                style={{
+                  background:
+                    "linear-gradient(135deg, #8A6E2F 0%, #BF953F 25%, #FCF6BA 50%, #BF953F 75%, #8A6E2F 100%)",
+                  backgroundSize: "200% auto",
+                  borderRadius: "50px",
+                  padding: "12px 35px",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  border: "none",
+                  color: "#1a1d21", 
+                  fontWeight: "700",
+                  textDecoration: "none",
+                  textTransform: "uppercase",
+                  letterSpacing: "2px",
+                  fontSize: "0.8rem",
+                  boxShadow:
+                    "0 10px 20px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3)",
+                  cursor: "pointer",
+                  transition:
+                    "all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.transform =
+                    "translateY(-3px) scale(1.02)";
+                  e.currentTarget.style.boxShadow =
+                    "0 15px 30px rgba(212, 175, 55, 0.4)";
+                  e.currentTarget.style.backgroundPosition = "right center";
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.transform = "translateY(0) scale(1)";
+                  e.currentTarget.style.boxShadow =
+                    "0 10px 20px rgba(0, 0, 0, 0.4)";
+                  e.currentTarget.style.backgroundPosition = "left center";
+                }}
+              >
                 <span>Search Near You</span>
               </Link>
             </div>
