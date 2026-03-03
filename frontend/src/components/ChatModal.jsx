@@ -73,7 +73,7 @@ const ChatModal = ({
                 marginBottom: "15px",
               }}
             >
-              Accès Restreint
+              {t.chat_restricted_access}
             </h3>
             <p
               style={{
@@ -83,8 +83,7 @@ const ChatModal = ({
                 maxWidth: "300px",
               }}
             >
-              Pour garantir la confidentialité de vos échanges chiffrés,
-              l'activation des paramètres de sécurité est requise.
+              {t.chat_security_desc}
             </p>
             <button
               onClick={() => {
@@ -106,7 +105,7 @@ const ChatModal = ({
                 boxShadow: "0 4px 15px rgba(170, 119, 28, 0.3)",
               }}
             >
-              Mettre à jour mes choix
+              {t.chat_update_choices}
             </button>
             <button
               onClick={onClose}
@@ -120,7 +119,7 @@ const ChatModal = ({
                 textDecoration: "underline",
               }}
             >
-              Plus tard
+              {t.chat_later}
             </button>
           </div>
         )}
@@ -223,11 +222,10 @@ const ChatModal = ({
             >
               <X size={30} style={{ marginBottom: "10px", opacity: 0.8 }} />
               <h5 style={{ fontWeight: "bold" }}>
-                {t.chat_finished || "Discussion terminée"}
+                {t.chat_finished}
               </h5>
               <p style={{ fontSize: "0.9rem", margin: 0 }}>
-                {t.chat_account_deleted_detail ||
-                  "Cet utilisateur a supprimé son compte. Vous ne pouvez plus lui envoyer de messages."}
+                {t.chat_account_deleted_detail}
               </p>
             </div>
           ) : (

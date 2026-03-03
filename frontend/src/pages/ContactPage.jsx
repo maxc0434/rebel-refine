@@ -86,7 +86,7 @@ const ContactPage = () => {
               fontWeight: "400"
             }}
           >
-            {t.contact_title || "Conciergerie"}
+            {t.contact_title}
           </h1>
           <div style={{
               width: "100px",
@@ -105,7 +105,7 @@ const ContactPage = () => {
               color: "rgba(255,255,255,0.95)",
               marginBottom: "25px",
           }}>
-            "L'élégance d'un service sur-mesure."
+            {t.contact_motto}
           </p>
           <p style={{
               maxWidth: "700px",
@@ -115,8 +115,7 @@ const ContactPage = () => {
               fontSize: "1.05rem",
               letterSpacing: "0.5px"
           }}>
-            Notre équipe est dédiée à l'accompagnement de nos membres les plus exigeants. 
-            Toute demande est traitée sous le sceau du secret et de l'excellence.
+            {t.contact_intro}
           </p>
         </div>
 
@@ -143,10 +142,10 @@ const ContactPage = () => {
               <Phone size={38} strokeWidth={1.2} />
             </div>
             <h3 style={{ color: "#fff", fontFamily: fontSerif, fontSize: "1.6rem", marginBottom: "15px" }}>
-                Assistance Directe
+                {t.contact_card_phone_title}
             </h3>
             <p style={{ color: "rgba(212, 175, 55, 0.6)", fontSize: "0.85rem", textTransform: "uppercase", letterSpacing: "2px", marginBottom: "20px" }}>
-                Administration
+                {t.contact_card_phone_sub}
             </p>
             <a href="tel:+33600000000" style={linkStyle}>
               +33 6 00 00 00 00
@@ -173,10 +172,10 @@ const ContactPage = () => {
               <Mail size={38} strokeWidth={1.2} />
             </div>
             <h3 style={{ color: "#fff", fontFamily: fontSerif, fontSize: "1.6rem", marginBottom: "15px" }}>
-                Correspondance
+                {t.contact_card_mail_title}
             </h3>
             <p style={{ color: "rgba(212, 175, 55, 0.6)", fontSize: "0.85rem", textTransform: "uppercase", letterSpacing: "2px", marginBottom: "20px" }}>
-                Privé & Support
+                {t.contact_card_mail_sub}
             </p>
             <a href="mailto:contact@rebel-refine.com" style={{...linkStyle, fontSize: "1.25rem"}}>
               contact@rebel-refine.com
@@ -194,11 +193,11 @@ const ContactPage = () => {
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "12px", marginBottom: "15px" }}>
             <Clock size={20} color="#d4af37" strokeWidth={1.5} />
             <span style={{ color: "rgba(212, 175, 55, 0.7)", fontSize: "0.9rem", letterSpacing: "2px", textTransform: "uppercase" }}>
-                Réponse sous 12 Heures
+                {t.contact_response_time}
             </span>
           </div>
           <p style={{ color: "rgba(255,255,255,0.2)", fontSize: "0.75rem" }}>
-            REBEL REFINE © 2026 — SERVICE CONCIERGERIE
+            REBEL REFINE © 2026 — {t.contact_footer}
           </p>
         </div>
       </div>

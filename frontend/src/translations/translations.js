@@ -296,19 +296,21 @@ export const translations = {
     //#endregion
 
     //#region CREDITSHOP
-    shop_title: "Rechargez vos",
-    shop_title_gold: "Crédits",
-    shop_subtitle:
-      "Choisissez la formule qui vous ressemble pour continuer vos échanges.",
-    shop_pack_credits: "Crédits",
-    shop_pack_button: "Choisir ce pack",
-    shop_error_login: "Vous devez être connecté",
-    shop_error_payment_title: "Paiement impossible",
-    shop_error_init: "Erreur lors de l'initialisation du paiement",
-    // Packs
-    pack_decouverte: "Découverte",
-    pack_passion: "Passion",
-    pack_elite: "Élite",
+    shop_title: "Credit",
+  shop_title_gold: "Boutique",
+  shop_subtitle: "Elevate your experience and multiply exceptional encounters.",
+  pack_decouverte: "Discovery",
+  pack_passion: "Passion",
+  pack_elite: "Elite",
+  shop_pack_credits: "Credits",
+  shop_pack_button: "Acquire",
+  shop_feature_priority: "Priority Access",
+  shop_feature_chat: "Instant Messaging",
+  shop_feature_support: "24/7 VIP Support",
+  shop_error_login: "Please log in to access the shop.",
+  shop_tier_essential: "ESSENTIAL",
+  shop_tier_popular: "MOST POPULAR",
+  shop_tier_prestige: "PRESTIGE",
     //#endregion
 
     //#region RESETPASSWORD
@@ -480,6 +482,14 @@ export const translations = {
     chat_alert_empty:
       "Votre solde est épuisé. Rechargez vos crédits pour poursuivre cette belle rencontre.",
     chat_shop_btn: "Boutique",
+    chat_restricted_access: "Accès Restreint",
+    chat_security_desc:
+      "Pour garantir la confidentialité de vos échanges chiffrés, l'activation des paramètres de sécurité est requise.",
+    chat_update_choices: "Mettre à jour mes choix",
+    chat_later: "Plus tard",
+    chat_finished: "Discussion terminée",
+    chat_account_deleted_detail:
+      "Cet utilisateur a supprimé son compte. Vous ne pouvez plus lui envoyer de messages.",
     //#endregion
 
     //#region FEMALE DASHBOARD
@@ -530,6 +540,88 @@ export const translations = {
     db_alert_del_confirm: "Oui, supprimer",
     db_alert_del_cancel: "Annuler",
     db_alert_deleted: "Supprimé !",
+
+    //#endregion
+
+    //#region FOOTER-PAGE
+    footer_privacy: "Confidentialité",
+    footer_terms: "Conditions",
+    footer_contact: "Contact",
+    footer_rights: "Tous droits réservés.",
+    //#endregion
+
+    //#region SAFETYNOTICE
+    cookie_message:
+      "Ce site utilise des cookies pour assurer votre sécurité et améliorer votre expérience.",
+    cookie_learn_more: "En savoir plus",
+    cookie_accept: "Accepter",
+    cookie_decline: "Décliner",
+    //#endregion
+
+    //#region TERMS-PAGE
+    terms_title: "Conditions Générales",
+    terms_motto:
+      "L'excellence et le respect mutuel sont les piliers de la communauté Rebel Refine.",
+    terms_sec1_title: "1. Objet du service",
+    terms_sec1_text:
+      "Rebel Refine est un cercle privé de mise en relation entre adultes. L'accès à nos services est strictement réservé aux personnes majeures (+18 ans). En utilisant cette plateforme, vous certifiez sur l'honneur l'exactitude de votre âge.",
+    terms_sec2_title: "2. Code de conduite de prestige",
+    terms_sec2_intro:
+      "Pour préserver la qualité de nos membres, vous vous engagez à :",
+    terms_sec2_li1:
+      "Faire preuve d'élégance et de courtoisie dans vos échanges.",
+    terms_sec2_li2:
+      "Proscrire toute forme de harcèlement ou de discrimination.",
+    terms_sec2_li3:
+      "Ne jamais utiliser nos services à des fins de sollicitation commerciale ou de services tarifés.",
+    terms_sec3_title: "3. Responsabilité",
+    terms_sec3_text:
+      "Rebel Refine agit en tant qu'intermédiaire technique. Nous déclinons toute responsabilité quant aux agissements des membres lors de rencontres physiques privées.",
+    terms_sec4_title: "4. Crédits",
+    terms_sec4_text:
+      "Les crédits acquis sont personnels. Aucun remboursement ne pourra être exigé pour des services déjà consommés ou en cas de bannissement pour faute grave.",
+    terms_sec5_title: "5. Suspension & Bannissement",
+    terms_sec5_text:
+      "Toute infraction grave à notre charte de conduite pourra entraîner la fermeture immédiate de votre compte. Rebel Refine se réserve le droit de protéger sa communauté sans préavis.",
+    terms_updated: "MIS À JOUR LE 3 MARS 2026 — REBEL REFINE GOUVERNANCE",
+    //#endregion
+
+    //#region PRIVACY
+    privacy_title: "Confidentialité",
+    privacy_intro:
+      "Chez Rebel Refine, la discrétion est l'essence même de notre service. Votre confiance est notre plus précieux atout.",
+    privacy_sec1_title: "1. Responsable du traitement",
+    privacy_sec1_text:
+      "Le site Rebel Refine est l'unique responsable de la collecte. Contrairement à d'autres plateformes, nous ne revendons jamais vos données à des tiers.",
+    privacy_sec2_title: "2. Données collectées",
+    privacy_sec2_intro:
+      "Nous limitons la collecte au strict nécessaire pour une expérience de prestige :",
+    privacy_sec2_li1: "Identité numérique (Pseudonyme, âge, ville).",
+    privacy_sec2_li2: "Galerie privée et publique sécurisée.",
+    privacy_sec2_li3: "Échanges chiffrés entre membres.",
+    privacy_sec3_title: "3. Vos droits souverains (RGPD)",
+    privacy_sec3_intro: "Vous gardez le contrôle total :",
+    privacy_sec3_rect_title: "Rectification",
+    privacy_sec3_rect_text:
+      "Modifiez vos informations en un clic depuis votre profil.",
+    privacy_sec3_forget_title: "Oubli",
+    privacy_sec3_forget_text:
+      "Suppression instantanée et définitive de votre compte.",
+    privacy_updated:
+      "DERNIÈRE MISE À JOUR : 3 MARS 2026 — REBEL REFINE PRESTIGE",
+    //#endregion
+
+    //#region CONTACT
+    contact_title: "Conciergerie",
+    contact_motto: "L'élégance d'un service sur-mesure.",
+    contact_intro:
+      "Notre équipe est dédiée à l'accompagnement de nos membres les plus exigeants. Toute demande est traitée sous le sceau du secret et de l'excellence.",
+    contact_card_phone_title: "Assistance Directe",
+    contact_card_phone_sub: "Administration",
+    contact_card_mail_title: "Correspondance",
+    contact_card_mail_sub: "Privé & Support",
+    contact_response_time: "Réponse sous 12 Heures",
+    contact_footer: "SERVICE CONCIERGERIE",
     //#endregion
   },
 
@@ -1014,6 +1106,15 @@ export const translations = {
     chat_alert_empty:
       "Your balance is empty. Top up your credits to continue this beautiful encounter.",
     chat_shop_btn: "Shop",
+
+    chat_restricted_access: "Restricted Access",
+    chat_security_desc:
+      "To guarantee the confidentiality of your encrypted exchanges, activation of security settings is required.",
+    chat_update_choices: "Update my choices",
+    chat_later: "Later",
+    chat_finished: "Conversation ended",
+    chat_account_deleted_detail:
+      "This user has deleted their account. You can no longer send messages to them.",
     //#endregion
 
     //#region FEMALE DASHBOARD
@@ -1070,6 +1171,81 @@ export const translations = {
     db_error_load: "Unable to load your information. Please try again.",
     db_not_set: "Not specified",
 
+    //#endregion
+    //#region FOOTER-PAGE
+    footer_privacy: "Privacy",
+    footer_terms: "Terms",
+    footer_contact: "Contact",
+    footer_rights: "All rights reserved.",
+
+    //#region SAFETYNOTICE
+    cookie_message:
+      "This site uses cookies to ensure your security and enhance your experience.",
+    cookie_learn_more: "Learn more",
+    cookie_accept: "Accept",
+    cookie_decline: "Decline",
+    // #endregion
+
+    //#region TERMS
+    terms_title: "Terms & Conditions",
+    terms_motto:
+      "Excellence and mutual respect are the pillars of the Rebel Refine community.",
+    terms_sec1_title: "1. Purpose of Service",
+    terms_sec1_text:
+      "Rebel Refine is a private circle for adult connections. Access to our services is strictly reserved for adults (+18). By using this platform, you certify the accuracy of your age.",
+    terms_sec2_title: "2. Prestige Code of Conduct",
+    terms_sec2_intro:
+      "To preserve the quality of our membership, you agree to:",
+    terms_sec2_li1: "Show elegance and courtesy in your exchanges.",
+    terms_sec2_li2: "Prohibit all forms of harassment or discrimination.",
+    terms_sec2_li3:
+      "Never use our services for commercial solicitation or paid services.",
+    terms_sec3_title: "3. Liability",
+    terms_sec3_text:
+      "Rebel Refine acts as a technical intermediary. We decline all responsibility for the actions of members during private physical meetings.",
+    terms_sec4_title: "4. Credits",
+    terms_sec4_text:
+      "Acquired credits are personal. No refund can be claimed for services already consumed or in case of banishment for serious misconduct.",
+    terms_sec5_title: "5. Suspension & Banning",
+    terms_sec5_text:
+      "Any serious breach of our conduct charter may result in the immediate closure of your account. Rebel Refine reserves the right to protect its community without notice.",
+    terms_updated: "UPDATED MARCH 3, 2026 — REBEL REFINE GOVERNANCE",
+    //#endregion
+
+    //#region PRIVACY
+    privacy_title: "Privacy Policy",
+    privacy_intro:
+      "At Rebel Refine, discretion is the very essence of our service. Your trust is our most precious asset.",
+    privacy_sec1_title: "1. Data Controller",
+    privacy_sec1_text:
+      "The Rebel Refine website is solely responsible for data collection. Unlike other platforms, we never resell your data to third parties.",
+    privacy_sec2_title: "2. Data Collected",
+    privacy_sec2_intro:
+      "We limit collection to the strict minimum required for a prestige experience:",
+    privacy_sec2_li1: "Digital identity (Pseudonym, age, city).",
+    privacy_sec2_li2: "Secure private and public gallery.",
+    privacy_sec2_li3: "Encrypted exchanges between members.",
+    privacy_sec3_title: "3. Your Sovereign Rights (GDPR)",
+    privacy_sec3_intro: "You maintain total control:",
+    privacy_sec3_rect_title: "Rectification",
+    privacy_sec3_rect_text:
+      "Update your information in one click from your profile.",
+    privacy_sec3_forget_title: "Right to be Forgotten",
+    privacy_sec3_forget_text: "Instant and permanent deletion of your account.",
+    privacy_updated: "LAST UPDATE: MARCH 3, 2026 — REBEL REFINE PRESTIGE",
+    //#endregion
+
+    //#region CONTACT
+    contact_title: "Concierge Service",
+    contact_motto: "The elegance of a bespoke service.",
+    contact_intro:
+      "Our team is dedicated to supporting our most discerning members. Every request is handled with the utmost secrecy and excellence.",
+    contact_card_phone_title: "Direct Assistance",
+    contact_card_phone_sub: "Administration",
+    contact_card_mail_title: "Correspondence",
+    contact_card_mail_sub: "Private & Support",
+    contact_response_time: "Response within 12 Hours",
+    contact_footer: "CONCIERGE SERVICE",
     //#endregion
   },
 
@@ -1373,19 +1549,21 @@ export const translations = {
     //#endregion
 
     //#region CREDITSHOP
-    shop_title: "Laden Sie Ihre",
-    shop_title_gold: "Credits auf",
-    shop_subtitle:
-      "Wählen Sie das Paket, das zu Ihnen passt, um Ihre Gespräche fortzusetzen.",
-    shop_pack_credits: "Credits",
-    shop_pack_button: "Dieses Paket wählen",
-    shop_error_login: "Sie müssen angemeldet sein",
-    shop_error_payment_title: "Zahlung nicht möglich",
-    shop_error_init: "Fehler bei der Initialisierung der Zahlung",
-    // Packs
-    pack_decouverte: "Entdeckung",
-    pack_passion: "Leidenschaft",
-    pack_elite: "Elite",
+    shop_title: "Guthaben",
+  shop_title_gold: "Boutique",
+  shop_subtitle: "Steigern Sie Ihr Erlebnis und vervielfachen Sie außergewöhnliche Begegnungen.",
+  pack_decouverte: "Entdeckung",
+  pack_passion: "Leidenschaft",
+  pack_elite: "Elite",
+  shop_pack_credits: "Credits",
+  shop_pack_button: "Erwerben",
+  shop_feature_priority: "Prioritärer Zugang",
+  shop_feature_chat: "Sofort-Chat",
+  shop_feature_support: "24/7 VIP-Support",
+  shop_error_login: "Bitte melden Sie sich an, um den Shop zu besuchen.",
+  shop_tier_essential: "ESSENZIELL",
+  shop_tier_popular: "AM BELIEBTESTEN",
+  shop_tier_prestige: "PRESTIGE",
     //#endregion
 
     //#region RESETPASSWORD
@@ -1555,6 +1733,14 @@ export const translations = {
     chat_alert_empty:
       "Dein Guthaben ist erschöpft. Lade deine Credits auf, um diese schöne Begegnung fortzusetzen.",
     chat_shop_btn: "Shop",
+    chat_restricted_access: "Eingeschränkter Zugriff",
+    chat_security_desc:
+      "Um die Vertraulichkeit Ihres verschlüsselten Austauschs zu gewährleisten, ist die Aktivierung der Sicherheitseinstellungen erforderlich.",
+    chat_update_choices: "Meine Auswahl aktualisieren",
+    chat_later: "Später",
+    chat_finished: "Diskussion beendet",
+    chat_account_deleted_detail:
+      "Dieser Benutzer hat sein Konto gelöscht. Sie können ihm keine Nachrichten mehr senden.",
     //#endregion
 
     //#region FEMALE DASHBOARD
@@ -1605,6 +1791,84 @@ export const translations = {
     db_alert_del_confirm: "Ja, löschen",
     db_alert_del_cancel: "Abbrechen",
     db_alert_deleted: "Gelöscht!",
+    //#endregion
+
+    //#region FOOTER-PAGE
+    footer_privacy: "Datenschutz",
+    footer_terms: "Bedingungen",
+    footer_contact: "Kontakt",
+    footer_rights: "Alle Rechte vorbehalten.",
+    // #endregion
+
+    //#region SAFETYNOTICE
+    cookie_message:
+      "Diese Website verwendet Cookies, um Ihre Sicherheit zu gewährleisten und Ihr Erlebnis zu verbessern.",
+    cookie_learn_more: "Mehr erfahren",
+    cookie_accept: "Akzeptieren",
+    cookie_decline: "Ablehnen",
+    //#endregion
+
+    //#region TERMS
+    terms_title: "Allgemeine Geschäftsbedingungen",
+    terms_motto:
+      "Exzellenz und gegenseitiger Respekt sind die Grundpfeiler der Rebel Refine Gemeinschaft.",
+    terms_sec1_title: "1. Zweck des Dienstes",
+    terms_sec1_text:
+      "Rebel Refine ist ein privater Kreis für Kontakte zwischen Erwachsenen. Der Zugang zu unseren Diensten ist ausschließlich Erwachsenen (+18) vorbehalten. Durch die Nutzung dieser Plattform bestätigen Sie die Richtigkeit Ihres Alters.",
+    terms_sec2_title: "2. Prestige-Verhaltenskodex",
+    terms_sec2_intro:
+      "Um die Qualität unserer Mitglieder zu bewahren, verpflichten Sie sich zu:",
+    terms_sec2_li1: "Eleganz und Höflichkeit in Ihrem Austausch.",
+    terms_sec2_li2: "Verbot jeder Form von Belästigung oder Diskriminierung.",
+    terms_sec2_li3:
+      "Niemals unsere Dienste für kommerzielle Werbung oder kostenpflichtige Dienste zu nutzen.",
+    terms_sec3_title: "3. Haftung",
+    terms_sec3_text:
+      "Rebel Refine fungiert als technischer Vermittler. Wir lehnen jede Verantwortung für die Handlungen der Mitglieder bei privaten physischen Treffen ab.",
+    terms_sec4_title: "4. Guthaben",
+    terms_sec4_text:
+      "Erworbenes Guthaben ist persönlich. Es kann keine Rückerstattung für bereits in Anspruch genommene Dienste oder im Falle eines Ausschlusses wegen schwerwiegenden Fehlverhaltens verlangt werden.",
+    terms_sec5_title: "5. Suspendierung & Sperrung",
+    terms_sec5_text:
+      "Jeder schwerwiegende Verstoß gegen unsere Verhaltensregeln kann zur sofortigen Schließung Ihres Kontos führen. Rebel Refine behält sich das Recht vor, seine Gemeinschaft ohne Vorankündigung zu schützen.",
+    terms_updated: "AKTUALISIERT AM 3. MÄRZ 2026 — REBEL REFINE GOUVERNANCE",
+    //#endregion
+
+    //#region PRIVACY
+    privacy_title: "Datenschutz",
+    privacy_intro:
+      "Bei Rebel Refine ist Diskretion das A und O unseres Service. Ihr Vertrauen ist unser wertvollstes Gut.",
+    privacy_sec1_title: "1. Verantwortlicher",
+    privacy_sec1_text:
+      "Die Rebel Refine Website ist allein für die Datenerhebung verantwortlich. Im Gegensatz zu anderen Plattformen verkaufen wir Ihre Daten niemals an Dritte weiter.",
+    privacy_sec2_title: "2. Erhobene Daten",
+    privacy_sec2_intro:
+      "Wir beschränken die Erhebung auf das absolute Minimum, das für ein erstklassiges Erlebnis erforderlich ist:",
+    privacy_sec2_li1: "Digitale Identität (Pseudonym, Alter, Stadt).",
+    privacy_sec2_li2: "Gesicherte private und öffentliche Galerie.",
+    privacy_sec2_li3: "Verschlüsselter Austausch zwischen Mitgliedern.",
+    privacy_sec3_title: "3. Ihre souveränen Rechte (DSGVO)",
+    privacy_sec3_intro: "Sie behalten die volle Kontrolle:",
+    privacy_sec3_rect_title: "Berichtigung",
+    privacy_sec3_rect_text:
+      "Ändern Sie Ihre Informationen mit einem Klick in Ihrem Profil.",
+    privacy_sec3_forget_title: "Vergessenwerden",
+    privacy_sec3_forget_text: "Sofortige und endgültige Löschung Ihres Kontos.",
+    privacy_updated:
+      "LETZTE AKTUALISIERUNG: 3. MÄRZ 2026 — REBEL REFINE PRESTIGE",
+    //#endregion
+
+    //#region CONTACT
+    contact_title: "Concierge-Service",
+    contact_motto: "Die Eleganz eines maßgeschneiderten Services.",
+    contact_intro:
+      "Unser Team widmet sich der Betreuung unserer anspruchsvollsten Mitglieder. Jede Anfrage wird unter dem Siegel der Verschwiegenheit und Exzellenz bearbeitet.",
+    contact_card_phone_title: "Direkte Hilfe",
+    contact_card_phone_sub: "Verwaltung",
+    contact_card_mail_title: "Korrespondenz",
+    contact_card_mail_sub: "Privat & Support",
+    contact_response_time: "Antwort innerhalb von 12 Stunden",
+    contact_footer: "CONCIERGE-SERVICE",
     //#endregion
   },
   //#endregion
@@ -1893,18 +2157,21 @@ export const translations = {
     //#endregion
 
     //#region CREDITSHOP
-    shop_title: "充值您的",
-    shop_title_gold: "积分",
-    shop_subtitle: "选择适合您的方案以继续交流。",
-    shop_pack_credits: "积分",
-    shop_pack_button: "选择此套餐",
-    shop_error_login: "您必须先登录",
-    shop_error_payment_title: "无法付款",
-    shop_error_init: "初始化付款时出错",
-    // Packs
-    pack_decouverte: "探索版",
-    pack_passion: "激情版",
-    pack_elite: "精英版",
+    shop_title: "积分",
+  shop_title_gold: "精品店",
+  shop_subtitle: "提升您的体验，开启更多卓越的邂逅。",
+  pack_decouverte: "探索礼包",
+  pack_passion: "激情礼包",
+  pack_elite: "精英礼包",
+  shop_pack_credits: "积分",
+  shop_pack_button: "立即获取",
+  shop_feature_priority: "优先访问权",
+  shop_feature_chat: "即时通讯",
+  shop_feature_support: "24/7 VIP 专属客服",
+  shop_error_login: "请登录后访问精品店。",
+  shop_tier_essential: "基础之选",
+  shop_tier_popular: "最受欢迎",
+  shop_tier_prestige: "至尊首选",
     //#endregion
 
     //#region RESETPASSWORD
@@ -2065,6 +2332,12 @@ export const translations = {
     chat_blocked_btn: "已屏蔽",
     chat_alert_empty: "您的余额已用完。请充值积分以继续这段美好的相遇。",
     chat_shop_btn: "商店",
+    chat_restricted_access: "访问受限",
+    chat_security_desc: "为确保您的加密通信机密性，需要激活安全设置。",
+    chat_update_choices: "更新我的选择",
+    chat_later: "稍后",
+    chat_finished: "对话已结束",
+    chat_account_deleted_detail: "该用户已注销账号。您无法再向其发送消息。",
     //#endregion
 
     //#region FEMALE DASHBOARD
@@ -2112,6 +2385,77 @@ export const translations = {
     db_alert_del_confirm: "是的，删除",
     db_alert_del_cancel: "取消",
     db_alert_deleted: "已删除！",
+    //#endregion
+
+    //#region FOOTER-PAGE
+    footer_privacy: "隐私政策",
+    footer_terms: "条款",
+    footer_contact: "联系我们",
+    footer_rights: "版权所有。",
+    //#endregion
+
+    //#region SAFETYNOTICE
+    cookie_message: "本网站使用 Cookie 以确保您的安全并提升您的体验。",
+    cookie_learn_more: "了解更多",
+    cookie_accept: "接受",
+    cookie_decline: "拒绝",
+    //#endregion
+
+    //#region TERMS
+    terms_title: "服务条款",
+    terms_motto: "卓越与相互尊重是 Rebel Refine 社区的基石。",
+    terms_sec1_title: "1. 服务目的",
+    terms_sec1_text:
+      "Rebel Refine 是一个成人社交的私人圈子。我们的服务仅限 18 岁以上成年人使用。使用本平台即表示您确认您的年龄真实无误。",
+    terms_sec2_title: "2. 尊享行为准则",
+    terms_sec2_intro: "为维护会员质量，您承诺：",
+    terms_sec2_li1: "在交流中展现优雅与礼貌。",
+    terms_sec2_li2: "禁止任何形式的骚扰或歧视。",
+    terms_sec2_li3: "严禁将我们的服务用于商业招揽或有偿服务。",
+    terms_sec3_title: "3. 责任限制",
+    terms_sec3_text:
+      "Rebel Refine 仅作为技术中介。我们对会员在私人线下见面期间的行为不承担任何责任。",
+    terms_sec4_title: "4. 积分相关",
+    terms_sec4_text:
+      "所购积分仅限个人使用。对于已消耗的服务或因严重违规被封号的情况，概不退款。",
+    terms_sec5_title: "5. 账号暂停与封禁",
+    terms_sec5_text:
+      "任何严重违反行为准则的行为都可能导致您的账号被立即关闭。Rebel Refine 保留无需预先通知即可保护社区的权利。",
+    terms_updated: "更新于 2026 年 3 月 3 日 — REBEL REFINE 治理团队",
+    //#endregion
+
+    //#region PRIVACY
+    privacy_title: "隐私政策",
+    privacy_intro:
+      "在 Rebel Refine，谨慎是我们服务的核心。您的信任是我们最宝贵的财富。",
+    privacy_sec1_title: "1. 数据处理负责方",
+    privacy_sec1_text:
+      "Rebel Refine 网站是数据收集的唯一责任方。与其他平台不同，我们绝不向第三方转售您的数据。",
+    privacy_sec2_title: "2. 数据收集内容",
+    privacy_sec2_intro: "我们仅收集为您提供尊贵体验所必需的最基本信息：",
+    privacy_sec2_li1: "数字身份（昵称、年龄、城市）。",
+    privacy_sec2_li2: "安全的私人和公共相册。",
+    privacy_sec2_li3: "会员之间的加密交流内容。",
+    privacy_sec3_title: "3. 您的主权权利 (GDPR)",
+    privacy_sec3_intro: "您拥有绝对的控制权：",
+    privacy_sec3_rect_title: "更正权",
+    privacy_sec3_rect_text: "在您的个人资料中一键修改您的信息。",
+    privacy_sec3_forget_title: "被遗忘权",
+    privacy_sec3_forget_text: "立即并永久注销您的账户。",
+    privacy_updated: "最后更新日期：2026 年 3 月 3 日 — REBEL REFINE 尊享团队",
+    //#endregion
+
+    //#region CONTACT
+    contact_title: "礼宾服务",
+    contact_motto: "量身定制的优雅服务。",
+    contact_intro:
+      "我们的团队致力于为最挑剔的会员提供支持。所有咨询均在绝密与卓越的原则下处理。",
+    contact_card_phone_title: "直接协助",
+    contact_card_phone_sub: "行政管理",
+    contact_card_mail_title: "函件往来",
+    contact_card_mail_sub: "私人与支持",
+    contact_response_time: "12 小时内回复",
+    contact_footer: "礼宾部",
     //#endregion
   },
 
@@ -2412,19 +2756,21 @@ export const translations = {
     //#endregion
 
     //#region CREDITSHOP
-    shop_title: "Ricarica i tuoi",
-    shop_title_gold: "Crediti",
-    shop_subtitle:
-      "Scegli la formula più adatta a te per continuare i tuoi scambi.",
-    shop_pack_credits: "Crediti",
-    shop_pack_button: "Scegli questo pack",
-    shop_error_login: "Devi essere collegato",
-    shop_error_payment_title: "Pagamento impossibile",
-    shop_error_init: "Errore durante l'inizializzazione del pagamento",
-    // Packs
-    pack_decouverte: "Scoperta",
-    pack_passion: "Passione",
-    pack_elite: "Elite",
+    shop_title: "Boutique dei",
+  shop_title_gold: "Crediti",
+  shop_subtitle: "Eleva la tua esperienza e moltiplica gli incontri d'eccezione.",
+  pack_decouverte: "Scoperta",
+  pack_passion: "Passione",
+  pack_elite: "Elite",
+  shop_pack_credits: "Crediti",
+  shop_pack_button: "Acquisire",
+  shop_feature_priority: "Accesso prioritario",
+  shop_feature_chat: "Messaggistica istantanea",
+  shop_feature_support: "Supporto VIP 24/7",
+  shop_error_login: "Per favore, effettua l'accesso per visitare la boutique.",
+  shop_tier_essential: "ESSENZIALE",
+  shop_tier_popular: "PIÙ POPOLARE",
+  shop_tier_prestige: "PRESTIGE",
     //#endregion
 
     //#region RESETPASSWORD
@@ -2592,6 +2938,14 @@ export const translations = {
     chat_alert_empty:
       "Il tuo saldo è esaurito. Ricarica i tuoi crediti per continuare questo bell'incontro.",
     chat_shop_btn: "Negozio",
+    chat_restricted_access: "Accesso Limitato",
+    chat_security_desc:
+      "Per garantire la riservatezza dei vostri scambi crittografati, è richiesta l'attivazione delle impostazioni di sicurezza.",
+    chat_update_choices: "Aggiorna le mie scelte",
+    chat_later: "Più tardi",
+    chat_finished: "Discussione terminata",
+    chat_account_deleted_detail:
+      "Questo utente ha cancellato il suo account. Non puoi più inviargli messaggi.",
     //#endregion
 
     //#region FEMALE DASHBOARD
@@ -2642,6 +2996,85 @@ export const translations = {
     db_alert_del_confirm: "Sì, elimina",
     db_alert_del_cancel: "Annulla",
     db_alert_deleted: "Eliminato!",
+    //#endregion
+
+    //#region FOOTER-PAGE
+    footer_privacy: "Privacy",
+    footer_terms: "Termini",
+    footer_contact: "Contatti",
+    footer_rights: "Tutti i diritti riservati.",
+    //#endregion
+
+    //#region SAFETYNOTICE
+    cookie_message:
+      "Questo sito utilizza i cookie per garantire la tua sicurezza e migliorare la tua esperienza.",
+    cookie_learn_more: "Saperne di più",
+    cookie_accept: "Accetta",
+    cookie_decline: "Rifiuta",
+    //#endregion
+
+    //#region TERMS
+    terms_title: "Termini e Condizioni",
+    terms_motto:
+      "L'eccellenza e il rispetto reciproco sono i pilastri della comunità Rebel Refine.",
+    terms_sec1_title: "1. Oggetto del servizio",
+    terms_sec1_text:
+      "Rebel Refine è un circolo privato per il collegamento tra adulti. L'accesso ai nostri servizi è strettamente riservato ai maggiorenni (+18). Utilizzando questa piattaforma, certifichi l'esattezza della tua età.",
+    terms_sec2_title: "2. Codice di Condotta Prestige",
+    terms_sec2_intro:
+      "Per preservare la qualità dei nostri membri, ti impegni a:",
+    terms_sec2_li1: "Dimostrare eleganza e cortesia nei tuoi scambi.",
+    terms_sec2_li2: "Proibire ogni forma di molestia o discriminazione.",
+    terms_sec2_li3:
+      "Non utilizzare mai i nostri servizi per sollecitazioni commerciali o servizi a pagamento.",
+    terms_sec3_title: "3. Responsabilità",
+    terms_sec3_text:
+      "Rebel Refine agisce come intermediario tecnico. Decliniamo ogni responsabilità per le azioni dei membri durante gli incontri fisici privati.",
+    terms_sec4_title: "4. Crediti",
+    terms_sec4_text:
+      "I crediti acquisiti sono personali. Nessun rimborso potrà essere richiesto per servizi già consumati o in caso di espulsione per colpa grave.",
+    terms_sec5_title: "5. Sospensione e Ban",
+    terms_sec5_text:
+      "Qualsiasi grave violazione della nostra carta di condotta potrà comportare la chiusura immediata del tuo account. Rebel Refine si riserva il diritto di proteggere la sua comunità senza preavviso.",
+    terms_updated: "AGGIORNATO IL 3 MARZO 2026 — REBEL REFINE GOVERNANCE",
+    //#endregion
+
+    //#region PRIVACY
+    privacy_title: "Privacy",
+    privacy_intro:
+      "In Rebel Refine, la discrezione è l'essenza stessa del nostro servizio. La vostra fiducia è il nostro bene più prezioso.",
+    privacy_sec1_title: "1. Titolare del trattamento",
+    privacy_sec1_text:
+      "Il sito Rebel Refine è l'unico responsabile della raccolta. A differenza di altre piattaforme, non vendiamo mai i vostri dati a terzi.",
+    privacy_sec2_title: "2. Dati raccolti",
+    privacy_sec2_intro:
+      "Limitiamo la raccolta allo stretto necessario per un'esperienza di prestigio:",
+    privacy_sec2_li1: "Identità digitale (Pseudonimo, età, città).",
+    privacy_sec2_li2: "Galleria privata e pubblica protetta.",
+    privacy_sec2_li3: "Scambi crittografati tra i membri.",
+    privacy_sec3_title: "3. I vostri diritti sovrani (GDPR)",
+    privacy_sec3_intro: "Mantenete il controllo totale:",
+    privacy_sec3_rect_title: "Rettifica",
+    privacy_sec3_rect_text:
+      "Modificate le vostre informazioni con un clic dal vostro profilo.",
+    privacy_sec3_forget_title: "Oblio",
+    privacy_sec3_forget_text:
+      "Cancellazione istantanea e definitiva del vostro account.",
+    privacy_updated:
+      "ULTIMO AGGIORNAMENTO: 3 MARZO 2026 — REBEL REFINE PRESTIGE",
+    //#endregion
+
+    //#region CONTACT
+    contact_title: "Portineria di Lusso",
+    contact_motto: "L'eleganza di un servizio su misura.",
+    contact_intro:
+      "Il nostro team è dedicato all'assistenza dei nostri membri più esigenti. Ogni richiesta viene trattata con la massima riservatezza ed eccellenza.",
+    contact_card_phone_title: "Assistenza Diretta",
+    contact_card_phone_sub: "Amministrazione",
+    contact_card_mail_title: "Corrispondenza",
+    contact_card_mail_sub: "Privato & Supporto",
+    contact_response_time: "Risposta entro 12 Ore",
+    contact_footer: "SERVIZIO CONCIERGERIE",
     //#endregion
   },
 
@@ -2763,8 +3196,7 @@ export const translations = {
     rule_trans_title: "Живой перевод",
     rule_trans_desc_part1: "Общайтесь без границ. Ваши сообщения",
     rule_trans_desc_highlight: "переводятся квалифицированными переводчиками",
-    rule_trans_desc_part2:
-      "для обеспечения полной беглости вашего общения.",
+    rule_trans_desc_part2: "для обеспечения полной беглости вашего общения.",
 
     // Règle 4
     rule_kind_title: "Дух доброжелательности",
@@ -2854,7 +3286,8 @@ export const translations = {
     login_btn_submit: "ВОЙТИ",
 
     login_footer_no_account: "Еще нет аккаунта?",
-    login_footer_register_link: "Зарегистрируйтесь сейчас бесплатно, нажав ЗДЕСЬ",
+    login_footer_register_link:
+      "Зарегистрируйтесь сейчас бесплатно, нажав ЗДЕСЬ",
 
     // Modal Récupération
     login_modal_title: "Восстановление аккаунта",
@@ -2942,19 +3375,21 @@ export const translations = {
     //#endregion
 
     //#region CREDITSHOP
-    shop_title: "Пополните ваши",
-    shop_title_gold: "Кредиты",
-    shop_subtitle:
-      "Выберите подходящий пакет, чтобы продолжить общение.",
-    shop_pack_credits: "Кредитов",
-    shop_pack_button: "Выбрать этот пакет",
-    shop_error_login: "Необходимо войти в систему",
-    shop_error_payment_title: "Оплата невозможна",
-    shop_error_init: "Ошибка инициализации оплаты",
-    // Packs
-    pack_decouverte: "Ознакомительный",
-    pack_passion: "Страсть",
-    pack_elite: "Элитный",
+    shop_title: "Магазин",
+  shop_title_gold: "Кредитов",
+  shop_subtitle: "Повысьте свой уровень и умножьте количество исключительных встреч.",
+  pack_decouverte: "Открытие",
+  pack_passion: "Страсть",
+  pack_elite: "Элита",
+  shop_pack_credits: "Кредитов",
+  shop_pack_button: "Приобрести",
+  shop_feature_priority: "Приоритетный доступ",
+  shop_feature_chat: "Мгновенные сообщения",
+  shop_feature_support: "VIP-поддержка 24/7",
+  shop_error_login: "Пожалуйста, войдите в систему, чтобы войти в магазин.",
+  shop_tier_essential: "БАЗОВЫЙ",
+  shop_tier_popular: "САМЫЙ ПОПУЛЯРНЫЙ",
+  shop_tier_prestige: "ПРЕСТИЖ",
     //#endregion
 
     //#region RESETPASSWORD
@@ -3087,13 +3522,15 @@ export const translations = {
     sec_pwd_btn: "ОБНОВИТЬ ПАРОЛЬ",
 
     sec_delete_title: "УДАЛЕНИЕ АККАУНТА",
-    sec_delete_text: "Это действие анонимизирует ваши данные и навсегда деактивирует аккаунт в соответствии с GDPR.",
+    sec_delete_text:
+      "Это действие анонимизирует ваши данные и навсегда деактивирует аккаунт в соответствии с GDPR.",
     sec_delete_btn: "Удалить мой аккаунт",
     sec_delete_confirm: "Вы абсолютно уверены? Это действие необратимо.",
 
     //Alertes (Swal) lors de la suppression de compte
     delete_confirm_1: "Удалить аккаунт?",
-    delete_confirm_2: "Последнее предупреждение: ваши фото и данные будут окончательно анонимизированы.",
+    delete_confirm_2:
+      "Последнее предупреждение: ваши фото и данные будут окончательно анонимизированы.",
     delete_btn_confirm: "Да, удалить!",
     nav_cancel: "Отмена",
     delete_farewell_title: "Прощайте!",
@@ -3113,8 +3550,17 @@ export const translations = {
     chat_placeholder_blocked: "У вас нет кредитов для отправки сообщения...",
     chat_send_btn: "Отправить",
     chat_blocked_btn: "Заблокировано",
-    chat_alert_empty: "Ваш баланс исчерпан. Пополните счет, чтобы продолжить это прекрасное знакомство.",
+    chat_alert_empty:
+      "Ваш баланс исчерпан. Пополните счет, чтобы продолжить это прекрасное знакомство.",
     chat_shop_btn: "Магазин",
+    chat_restricted_access: "Ограниченный доступ",
+    chat_security_desc:
+      "Для обеспечения конфиденциальности вашей зашифрованной переписки требуется активация настроек безопасности.",
+    chat_update_choices: "Обновить мой выбор",
+    chat_later: "Позже",
+    chat_finished: "Обсуждение завершено",
+    chat_account_deleted_detail:
+      "Этот пользователь удалил свой аккаунт. Вы больше не можете отправлять ему сообщения.",
     //#endregion
 
     //#region FEMALE DASHBOARD
@@ -3163,9 +3609,88 @@ export const translations = {
     db_alert_del_cancel: "Отмена",
     db_alert_deleted: "Удалено!",
     //#endregion
+
+    //#region FOOTER-PAGE
+    footer_privacy: "Конфиденциальность",
+    footer_terms: "Условия",
+    footer_contact: "Контакт",
+    footer_rights: "Все права защищены.",
+    //#endregion
+
+    //#region SAFETYNOTICE
+    cookie_message:
+      "Этот сайт использует куки для обеспечения вашей безопасности и улучшения вашего пользовательского опыта.",
+    cookie_learn_more: "Узнать больше",
+    cookie_accept: "Принять",
+    cookie_decline: "Отклонить",
+    //#endregion
+
+    //#region TERMS
+    terms_title: "Условия использования",
+    terms_motto:
+      "Совершенство и взаимное уважение — основы сообщества Rebel Refine.",
+    terms_sec1_title: "1. Цель услуги",
+    terms_sec1_text:
+      "Rebel Refine — это закрытый круг для знакомства взрослых. Доступ к нашим услугам строго ограничен для лиц старше 18 лет. Используя эту платформу, вы подтверждаете свой возраст.",
+    terms_sec2_title: "2. Престижный кодекс поведения",
+    terms_sec2_intro:
+      "Для поддержания качества нашего сообщества вы обязуетесь:",
+    terms_sec2_li1: "Проявлять элегантность и вежливость в общении.",
+    terms_sec2_li2: "Запрещать любые формы преследования или дискриминации.",
+    terms_sec2_li3:
+      "Никогда не использовать наши услуги в коммерческих целях или для платных услуг.",
+    terms_sec3_title: "3. Ответственность",
+    terms_sec3_text:
+      "Rebel Refine выступает в качестве технического посредника. Мы снимаем с себя любую ответственность за действия участников во время частных физических встреч.",
+    terms_sec4_title: "4. Кредиты",
+    terms_sec4_text:
+      "Приобретенные кредиты являются личными. Возврат средств невозможен за уже потребленные услуги или в случае блокировки за серьезные нарушения.",
+    terms_sec5_title: "5. Приостановка и блокировка",
+    terms_sec5_text:
+      "Любое серьезное нарушение нашего устава может привести к немедленному закрытию вашего аккаунта. Rebel Refine оставляет за собой право защищать свое сообщество без предварительного уведомления.",
+    terms_updated: "ОБНОВЛЕНО 3 МАРТА 2026 Г. — REBEL REFINE GOUVERNANCE",
+    //#endregion
+
+    //#region PRIVACY
+    privacy_title: "Конфиденциальность",
+    privacy_intro:
+      "В Rebel Refine конфиденциальность — это сама суть нашего сервиса. Ваше доверие — наш самый ценный актив.",
+    privacy_sec1_title: "1. Ответственный за обработку данных",
+    privacy_sec1_text:
+      "Сайт Rebel Refine является единственным ответственным за сбор данных. В отличие от других платформ, мы никогда не перепродаем ваши данные третьим лицам.",
+    privacy_sec2_title: "2. Собираемые данные",
+    privacy_sec2_intro:
+      "Мы ограничиваем сбор данных строго необходимым минимумом для обеспечения престижного опыта:",
+    privacy_sec2_li1: "Цифровая личность (Псевдоним, возраст, город).",
+    privacy_sec2_li2: "Защищенная частная и публичная галерея.",
+    privacy_sec2_li3: "Зашифрованная переписка между участниками.",
+    privacy_sec3_title: "3. Ваши суверенные права (GDPR)",
+    privacy_sec3_intro: "Вы сохраняете полный контроль:",
+    privacy_sec3_rect_title: "Исправление",
+    privacy_sec3_rect_text:
+      "Изменяйте свою информацию одним кликом в своем профиле.",
+    privacy_sec3_forget_title: "Забвение",
+    privacy_sec3_forget_text:
+      "Мгновенное и окончательное удаление вашего аккаунта.",
+    privacy_updated:
+      "ПОСЛЕДНЕЕ ОБНОВЛЕНИЕ: 3 МАРТА 2026 Г. — REBEL REFINE PRESTIGE",
+    //#endregion
+
+    //#region CONTACT
+    contact_title: "Консьерж-сервис",
+    contact_motto: "Элегантность индивидуального обслуживания.",
+    contact_intro:
+      "Наша команда посвящена поддержке наших самых взыскательных членов. Каждый запрос обрабатывается под грифом секретности и совершенства.",
+    contact_card_phone_title: "Прямая помощь",
+    contact_card_phone_sub: "Администрация",
+    contact_card_mail_title: "Корреспонденция",
+    contact_card_mail_sub: "Личное и поддержка",
+    contact_response_time: "Ответ в течение 12 часов",
+    contact_footer: "КОНСЬЕРЖ-СЕРВИС",
+    //#endregion
   },
   //#endregion
-   
+
   // -------------------------------------------------------------------------------------------------
   // -------------------------------------------- ESPAGNOL -------------------------------------------
   // -------------------------------------------------------------------------------------------------
@@ -3303,7 +3828,8 @@ export const translations = {
     //#region Section Membres
     members_title: "Nuestros nuevos",
     members_highlight: "miembros",
-    members_subtitle: "Estos son los últimos perfiles que se han unido a Rebel Refine.",
+    members_subtitle:
+      "Estos son los últimos perfiles que se han unido a Rebel Refine.",
     members_btn: "Descubrir todos los miembros",
     years_old: "años",
     //#endregion
@@ -3373,8 +3899,7 @@ export const translations = {
     login_btn_submit: "ENTRAR",
 
     login_footer_no_account: "¿Aún no tienes cuenta?",
-    login_footer_register_link:
-      "Regístrate gratis haciendo clic AQUÍ",
+    login_footer_register_link: "Regístrate gratis haciendo clic AQUÍ",
 
     // Modal Récupération
     login_modal_title: "Recuperación de cuenta",
@@ -3462,19 +3987,21 @@ export const translations = {
     //#endregion
 
     //#region CREDITSHOP
-    shop_title: "Recarga tus",
-    shop_title_gold: "Créditos",
-    shop_subtitle:
-      "Elige el paquete que mejor se adapte a ti para continuar tus intercambios.",
-    shop_pack_credits: "Créditos",
-    shop_pack_button: "Elegir este pack",
-    shop_error_login: "Debes estar conectado",
-    shop_error_payment_title: "Pago imposible",
-    shop_error_init: "Error al iniciar el pago",
-    // Packs
-    pack_decouverte: "Descubrimiento",
-    pack_passion: "Pasión",
-    pack_elite: "Élite",
+   shop_title: "Boutique de",
+  shop_title_gold: "Créditos",
+  shop_subtitle: "Eleve su experiencia y multiplique los encuentros excepcionales.",
+  pack_decouverte: "Descubrimiento",
+  pack_passion: "Pasión",
+  pack_elite: "Élite",
+  shop_pack_credits: "Créditos",
+  shop_pack_button: "Obtener",
+  shop_feature_priority: "Acceso prioritario",
+  shop_feature_chat: "Mensajería instantánea",
+  shop_feature_support: "Soporte VIP 24/7",
+  shop_error_login: "Por favor, inicie sesión para acceder a la boutique.",
+  shop_tier_essential: "ESENCIAL",
+  shop_tier_popular: "MÁS POPULAR",
+  shop_tier_prestige: "PRESTIGIO",
     //#endregion
 
     //#region RESETPASSWORD
@@ -3501,7 +4028,8 @@ export const translations = {
     translator_btn_send: "Validar y Enviar",
     translator_success_title: "Traducción validada",
     translator_success_msg: "El mensaje ha sido enviado con éxito.",
-    translator_error_empty: "Por favor, introduce una traducción antes de validar.",
+    translator_error_empty:
+      "Por favor, introduce una traducción antes de validar.",
     //#endregion
 
     //#region DASHBOARD
@@ -3523,7 +4051,8 @@ export const translations = {
     msg_sent_title: "¡Enviado!",
     msg_credits_left: "Créditos restantes: ",
     msg_del_conv_title: "¿Eliminar conversación?",
-    msg_del_conv_text: "Todos los mensajes con este contacto se borrarán permanentemente.",
+    msg_del_conv_text:
+      "Todos los mensajes con este contacto se borrarán permanentemente.",
     msg_del_confirm_btn: "Sí, eliminar",
     msg_del_cancel_btn: "Cancelar",
     msg_del_success: "¡Eliminado!",
@@ -3575,7 +4104,8 @@ export const translations = {
     // Messagerie
     msg_title: "Mis Conversaciones",
     msg_empty: "Aún no tienes mensajes.",
-    msg_empty_sub: "¡Contacta con un miembro desde su perfil para iniciar un chat!",
+    msg_empty_sub:
+      "¡Contacta con un miembro desde su perfil para iniciar un chat!",
     msg_user_default: "Usuario",
     msg_view_profile: "Ver perfil",
     msg_badge_new: "NUEVO",
@@ -3607,13 +4137,16 @@ export const translations = {
     sec_pwd_btn: "ACTUALIZAR CONTRASEÑA",
 
     sec_delete_title: "ELIMINAR CUENTA",
-    sec_delete_text: "Esta acción anonimizará tus datos y desactivará tu cuenta permanentemente según el RGPD.",
+    sec_delete_text:
+      "Esta acción anonimizará tus datos y desactivará tu cuenta permanentemente según el RGPD.",
     sec_delete_btn: "Eliminar mi cuenta",
-    sec_delete_confirm: "¿Estás absolutamente seguro? Esta acción es irreversible.",
+    sec_delete_confirm:
+      "¿Estás absolutamente seguro? Esta acción es irreversible.",
 
     //Alertes (Swal) lors de la suppression de compte
     delete_confirm_1: "¿Eliminar cuenta?",
-    delete_confirm_2: "Último aviso: tus fotos y datos serán anonimizados definitivamente.",
+    delete_confirm_2:
+      "Último aviso: tus fotos y datos serán anonimizados definitivamente.",
     delete_btn_confirm: "¡Sí, eliminar!",
     nav_cancel: "Cancelar",
     delete_farewell_title: "¡Adiós!",
@@ -3633,8 +4166,17 @@ export const translations = {
     chat_placeholder_blocked: "No tienes créditos para enviar mensajes...",
     chat_send_btn: "Enviar",
     chat_blocked_btn: "Bloqueado",
-    chat_alert_empty: "Saldo agotado. Recarga tus créditos para continuar este encuentro.",
+    chat_alert_empty:
+      "Saldo agotado. Recarga tus créditos para continuar este encuentro.",
     chat_shop_btn: "Tienda",
+    chat_restricted_access: "Acceso Restringido",
+    chat_security_desc:
+      "Para garantizar la confidencialidad de sus intercambios cifrados, es necesario activar la configuración de seguridad.",
+    chat_update_choices: "Actualizar mis opciones",
+    chat_later: "Más tarde",
+    chat_finished: "Conversación finalizada",
+    chat_account_deleted_detail:
+      "Este usuario ha eliminado su cuenta. Ya no puedes enviarle mensajes.",
     //#endregion
 
     //#region FEMALE DASHBOARD
@@ -3646,7 +4188,8 @@ export const translations = {
     db_tab_security: "Seguridad",
     db_section_convs: "Mis Conversaciones",
     db_no_messages: "Aún no tienes mensajes.",
-    db_contact_hint: "¡Contacta con un miembro desde su perfil para iniciar un chat!",
+    db_contact_hint:
+      "¡Contacta con un miembro desde su perfil para iniciar un chat!",
     db_view_profile: "Ver perfil",
     db_reply: "→ Responder",
     db_badge_new: "NUEVO",
@@ -3678,10 +4221,91 @@ export const translations = {
     db_alert_pwd_mismatch: "Las contraseñas no coinciden",
     db_alert_pwd_success: "¡Contraseña actualizada!",
     db_alert_del_title: "¿Eliminar conversación?",
-    db_alert_del_text: "Todos los mensajes con este contacto se borrarán permanentemente.",
+    db_alert_del_text:
+      "Todos los mensajes con este contacto se borrarán permanentemente.",
     db_alert_del_confirm: "Sí, eliminar",
     db_alert_del_cancel: "Cancelar",
     db_alert_deleted: "¡Eliminado!",
+    //#endregion
+
+    //#region
+    footer_privacy: "Privacidad",
+    footer_terms: "Condiciones",
+    footer_contact: "Contacto",
+    footer_rights: "Todos los derechos reservados.",
+    //#endregion
+
+    //#region SAFETYNOTICE
+    cookie_message:
+      "Este sitio utiliza cookies para garantizar su seguridad y mejorar su experiencia.",
+    cookie_learn_more: "Saber más",
+    cookie_accept: "Aceptar",
+    cookie_decline: "Rechazar",
+    //#endregion
+
+    //#region TERMS
+    terms_title: "Términos y Condiciones",
+    terms_motto:
+      "La excelencia y el respeto mutuo son los pilares de la comunidad Rebel Refine.",
+    terms_sec1_title: "1. Objeto del servicio",
+    terms_sec1_text:
+      "Rebel Refine es un círculo privado de conexión entre adultos. El acceso a nuestros servicios está estrictamente reservado a mayores de edad (+18). Al utilizar esta plataforma, usted certifica la exactitud de su edad.",
+    terms_sec2_title: "2. Código de Conducta de Prestigio",
+    terms_sec2_intro:
+      "Para preservar la calidad de nuestros miembros, usted se compromete a:",
+    terms_sec2_li1: "Mostrar elegancia y cortesía en sus intercambios.",
+    terms_sec2_li2: "Prohibir cualquier forma de acoso o discriminación.",
+    terms_sec2_li3:
+      "Nunca utilizar nuestros servicios con fines de solicitud comercial o servicios pagados.",
+    terms_sec3_title: "3. Responsabilidad",
+    terms_sec3_text:
+      "Rebel Refine actúa como intermediario técnico. Declinamos toda responsabilidad por las acciones de los miembros durante encuentros físicos privados.",
+    terms_sec4_title: "4. Créditos",
+    terms_sec4_text:
+      "Los créditos adquiridos son personales. No se podrá exigir ningún reembolso por servicios ya consumidos o en caso de expulsión por falta grave.",
+    terms_sec5_title: "5. Suspensión y Expulsión",
+    terms_sec5_text:
+      "Cualquier infracción grave de nuestra carta de conducta podrá suponer el cierre inmediato de su cuenta. Rebel Refine se reserva el derecho de proteger a su comunidad sin previo aviso.",
+    terms_updated:
+      "ACTUALIZADO EL 3 DE MARZO DE 2026 — REBEL REFINE GOUVERNANCE",
+    //#endregion
+
+    //#region PRIVACY
+    privacy_title: "Privacidad",
+    privacy_intro:
+      "En Rebel Refine, la discreción es la esencia misma de nuestro servicio. Su confianza es nuestro activo más preciado.",
+    privacy_sec1_title: "1. Responsable del tratamiento",
+    privacy_sec1_text:
+      "El sitio Rebel Refine es el único responsable de la recogida de datos. A diferencia de otras plataformas, nunca revendemos sus datos a terceros.",
+    privacy_sec2_title: "2. Datos recopilados",
+    privacy_sec2_intro:
+      "Limitamos la recogida a lo estrictamente necesario para una experiencia de prestigio:",
+    privacy_sec2_li1: "Identidad digital (Seudónimo, edad, ciudad).",
+    privacy_sec2_li2: "Galería privada y pública segura.",
+    privacy_sec2_li3: "Intercambios cifrados entre miembros.",
+    privacy_sec3_title: "3. Sus derechos soberanos (RGPD)",
+    privacy_sec3_intro: "Usted mantiene el control total:",
+    privacy_sec3_rect_title: "Rectificación",
+    privacy_sec3_rect_text:
+      "Modifique su información con un clic desde su perfil.",
+    privacy_sec3_forget_title: "Olvido",
+    privacy_sec3_forget_text:
+      "Eliminación instantánea y definitiva de su cuenta.",
+    privacy_updated:
+      "ÚLTIMA ACTUALIZACIÓN: 3 DE MARZO DE 2026 — REBEL REFINE PRESTIGE",
+    //#endregion
+
+    //#region CONTACT
+    contact_title: "Conserjería",
+    contact_motto: "La elegancia de un servicio a medida.",
+    contact_intro:
+      "Nuestro equipo se dedica a acompañar a nuestros miembros más exigentes. Cada solicitud se gestiona bajo el sello del secreto y la excelencia.",
+    contact_card_phone_title: "Asistencia Directa",
+    contact_card_phone_sub: "Administración",
+    contact_card_mail_title: "Correspondencia",
+    contact_card_mail_sub: "Privado & Soporte",
+    contact_response_time: "Respuesta en menos de 12 Horas",
+    contact_footer: "SERVICIO DE CONSERJERÍA",
     //#endregion
   },
   //#endregion

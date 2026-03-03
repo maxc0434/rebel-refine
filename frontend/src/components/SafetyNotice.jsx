@@ -84,8 +84,7 @@ const SafetyNotice = () => {
             fontStyle: "italic",
           }}
         >
-          {t.cookie_message ||
-            "Ce site utilise des cookies pour assurer votre sécurité et améliorer votre expérience."}{" "}
+          {t.cookie_message}{" "}
           <a
             href="/privacy"
             style={{
@@ -97,7 +96,7 @@ const SafetyNotice = () => {
               transition: "all 0.3s ease",
             }}
           >
-            {t.cookie_learn_more || "En savoir plus"}
+            {t.cookie_learn_more}
           </a>
         </p>
       </div>
@@ -123,7 +122,7 @@ const SafetyNotice = () => {
             e.currentTarget.style.boxShadow = "0 4px 6px rgba(0,0,0,0.3)";
           }}
         >
-          {t.cookie_accept || "Accepter"}
+          {t.cookie_accept}
         </button>
 
         {/* Bouton Refuser (Discret mais visible) */}
@@ -146,7 +145,7 @@ const SafetyNotice = () => {
             e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)";
           }}
         >
-          {t.cookie_decline || "Décliner"}
+          {t.cookie_decline}
         </button>
       </div>
     </div>

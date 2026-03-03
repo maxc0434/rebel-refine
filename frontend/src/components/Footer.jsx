@@ -57,7 +57,7 @@ const Footer = () => {
             onMouseOver={(e) => (e.target.style.color = "#d4af37")}
             onMouseOut={(e) => (e.target.style.color = "#aaa")}
           >
-            {t.privacy || "Confidentialité"}
+            {t.footer_privacy}
           </a>
           <a
             href="/terms"
@@ -69,7 +69,7 @@ const Footer = () => {
             onMouseOver={(e) => (e.target.style.color = "#d4af37")}
             onMouseOut={(e) => (e.target.style.color = "#aaa")}
           >
-            {t.terms || "Conditions"}
+            {t.footer_terms}
           </a>
           <a
             href="/contact"
@@ -81,7 +81,7 @@ const Footer = () => {
             onMouseOver={(e) => (e.target.style.color = "#d4af37")}
             onMouseOut={(e) => (e.target.style.color = "#aaa")}
           >
-            {t.contact || "Contact"}
+            {t.footer_contact}
           </a>
         </div>
 
@@ -93,7 +93,7 @@ const Footer = () => {
             letterSpacing: "1px"
           }}
         >
-          © {currentYear} REBEL REFINE. All rights reserved.
+          © {currentYear} REBEL REFINE. {t.footer_rights}
         </p>
       </div>
     </footer>

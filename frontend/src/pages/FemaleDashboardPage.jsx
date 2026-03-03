@@ -582,7 +582,7 @@ function FemaleDashboardPage() {
                     style={{
                       marginBottom: "15px",
                       fontSize: "0.9rem",
-                      color: "#f94d80",
+                      color: "#d4af37",
                     }}
                   >
                     {t.db_sec_change_pwd}
@@ -722,7 +722,7 @@ const InfoBox = ({ label, value }) => (
     <span
       style={{
         display: "block",
-        color: "#f67280",
+        color: "#bf953f",
         fontSize: "0.85rem",
         textTransform: "uppercase",
         letterSpacing: "1px",

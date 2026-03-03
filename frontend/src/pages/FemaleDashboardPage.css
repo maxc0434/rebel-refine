@@ -20,7 +20,7 @@
 .dashboard-header h1 {
   font-family: "Montserrat", sans-serif;
   font-weight: 700;
-  color: #f67280;
+  color: #bf953f;
 }
 
 .dashboard-header .subtitle {
@@ -29,7 +29,7 @@
 }
 
 .nickname-highlight {
-  color: #f67280;
+  color: #bf953f;
   font-weight: bold;
 }
 
@@ -74,9 +74,8 @@
 }
 
 .nav-button.active {
-  background: #f67280;
+  background: rgba(212, 175, 55, 0.2);
   color: white;
-  box-shadow: 0 5px 15px rgba(246, 114, 128, 0.2);
 }
 
 /* Contenu Principal */
@@ -91,8 +90,8 @@
 
 .section-title {
   margin: 0 0 20px 0;
-  color: #f67280;
-  border-bottom: 1px solid rgba(246, 114, 128, 0.3);
+  color: #bf953f;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
   padding-bottom: 15px;
 }
 

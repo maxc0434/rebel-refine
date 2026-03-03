@@ -57,19 +57,37 @@
 .lab-btn {
     display: inline-block;
     padding: 14px 35px;
-    background: linear-gradient(45deg, #f67280, #c06c84);
-    color: white !important;
-    border-radius: 50px;
-    font-weight: bold;
+    
+    /* Le dégradé complexe or/champagne/bronze (ton identité visuelle) */
+    background: linear-gradient(45deg, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C);
+    background-size: 200% auto;
+    
+    /* --- TYPOGRAPHIE : BLEU NUIT PROFOND --- */
+    color: #12122d !important; 
+    font-weight: 900;
     text-transform: uppercase;
+    letter-spacing: 1.5px;
+    
+    border-radius: 50px;
     transition: 0.3s;
     text-decoration: none;
     border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(191, 149, 63, 0.3);
 }
 
 .lab-btn:hover {
+    /* On garde ta transition verticale originale */
     transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(246, 114, 128, 0.4);
+    
+    /* Lueur dorée au lieu de la lueur rose */
+    box-shadow: 0 10px 20px rgba(191, 149, 63, 0.5);
+    
+    /* Animation du reflet métallique au survol */
+    background-position: right center;
+    
+    /* Le texte passe au noir pur pour un contraste maximal */
+    color: #000000 !important;
 }
 
 /* --- SECTION MEMBRES (CARDS UNIFORMISÉES) --- */
