@@ -224,7 +224,7 @@ export const translations = {
     home_search_title: "Je recherche une femme",
     home_search_from: "De...",
     home_search_to: "A...",
-    home_btn_search: "Trouver mon partenaire",
+    home_btn_search: "Trouver ma partenaire",
 
     // Section Nouveaux Membres
     home_new_members_title: "Nos nouveaux membres",

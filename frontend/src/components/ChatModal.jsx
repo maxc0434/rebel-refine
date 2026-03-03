@@ -24,6 +24,8 @@ const ChatModal = ({
 
   const { t } = useLanguage();
 
+  const hasConsent = localStorage.getItem("rebel_safety_check") === "accepted";
+
   // Gestion du défilement des messages vers le bas automatiquement
   useEffect(() => {
     if (isOpen && messagesEndRef.current) {
@@ -38,10 +40,95 @@ const ChatModal = ({
   return (
     <div className="chat-modal-overlay">
       <div className="chat-modal-container">
+        {/* 2. OVERLAY DE BLOCAGE (Si pas de consentement) */}
+        {!hasConsent && (
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              zIndex: 2000,
+              backdropFilter: "blur(12px)", // Effet de flou prestige
+              backgroundColor: "rgba(5, 5, 16, 0.85)",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              padding: "40px",
+              textAlign: "center",
+              borderRadius: "20px",
+            }}
+          >
+            <Lock
+              size={48}
+              color="#d4af37"
+              style={{ marginBottom: "20px", opacity: 0.8 }}
+            />
+            <h3
+              style={{
+                fontFamily: "Playfair Display",
+                color: "#d4af37",
+                marginBottom: "15px",
+              }}
+            >
+              Accès Restreint
+            </h3>
+            <p
+              style={{
+                color: "rgba(255,255,255,0.7)",
+                fontSize: "1rem",
+                lineHeight: "1.6",
+                maxWidth: "300px",
+              }}
+            >
+              Pour garantir la confidentialité de vos échanges chiffrés,
+              l'activation des paramètres de sécurité est requise.
+            </p>
+            <button
+              onClick={() => {
+                localStorage.removeItem("rebel_safety_check"); // On supprime le refus
+                window.location.reload(); // On recharge la page
+              }}
+              style={{
+                marginTop: "30px",
+                padding: "12px 30px",
+                background: "linear-gradient(135deg, #BF953F, #AA771C)",
+                border: "none",
+                borderRadius: "30px",
+                color: "#1a1d21",
+                fontWeight: "bold",
+                cursor: "pointer",
+                textTransform: "uppercase",
+                letterSpacing: "1px",
+                fontSize: "0.8rem",
+                boxShadow: "0 4px 15px rgba(170, 119, 28, 0.3)",
+              }}
+            >
+              Mettre à jour mes choix
+            </button>
+            <button
+              onClick={onClose}
+              style={{
+                background: "none",
+                border: "none",
+                color: "gray",
+                marginTop: "15px",
+                cursor: "pointer",
+                fontSize: "0.8rem",
+                textDecoration: "underline",
+              }}
+            >
+              Plus tard
+            </button>
+          </div>
+        )}
+
         {/* Header */}
         <div className="chat-header">
           <div>
-            <h4 style={{ margin: 0, color: "#f67280" }}>
+            <h4 style={{ margin: 0, color: "#d4af37" }}>
               {selectedContact.nickname}
             </h4>
             <small style={{ color: "gray" }}>{t.chat_private}</small>

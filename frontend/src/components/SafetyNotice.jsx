@@ -48,25 +48,27 @@ const SafetyNotice = () => {
   return (
     <div
       style={{
-    position: "fixed",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    // On remplace le fond brut par ce mélange :
-    background: "linear-gradient(180deg, rgba(26, 26, 58, 0.95) 0%, rgba(18, 18, 45, 1) 100%)",
-    borderTop: "2px solid #d4af37",
-    
-    // Ajout d'une ombre interne dorée très subtile en haut
-    boxShadow: "0 -10px 30px rgba(0,0,0,0.8), inset 0 1px 0 rgba(212, 175, 55, 0.2)",
-    
-    padding: "25px 50px",
-    zIndex: 9999,
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    fontFamily: "serif",
-}}
+        position: "fixed",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        // On remplace le fond brut par ce mélange :
+        background:
+          "linear-gradient(180deg, rgba(26, 26, 58, 0.95) 0%, rgba(18, 18, 45, 1) 100%)",
+        borderTop: "2px solid #d4af37",
+
+        // Ajout d'une ombre interne dorée très subtile en haut
+        boxShadow:
+          "0 -10px 30px rgba(0,0,0,0.8), inset 0 1px 0 rgba(212, 175, 55, 0.2)",
+
+        padding: "25px 50px",
+        zIndex: 9999,
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        fontFamily: "serif",
+      }}
     >
       {/* Partie Texte (à gauche) */}
       <div style={{ flex: "1", paddingRight: "40px" }}>
@@ -76,11 +78,10 @@ const SafetyNotice = () => {
             fontSize: "16px",
             lineHeight: "1.5",
             color: "#f0f0f0",
-            // On force une police Serif élégante et on ajoute de l'espacement
             fontFamily: "'Playfair Display', 'Cormorant Garamond', serif",
             letterSpacing: "0.5px",
-            fontWeight: "300", // Un peu plus fin pour le côté luxe
-            fontStyle: "italic", // L'italique sur le message de cookie rend souvent mieux
+            fontWeight: "300",
+            fontStyle: "italic",
           }}
         >
           {t.cookie_message ||
@@ -89,8 +90,8 @@ const SafetyNotice = () => {
             href="/privacy"
             style={{
               color: "#d4af37",
-              textDecoration: "none", // On enlève le soulignement moche
-              borderBottom: "1px solid #d4af37", // On met une bordure fine à la place
+              textDecoration: "none",
+              borderBottom: "1px solid #d4af37",
               fontWeight: "600",
               marginLeft: "5px",
               transition: "all 0.3s ease",
@@ -109,7 +110,7 @@ const SafetyNotice = () => {
           style={{
             ...baseButtonStyle,
             background: goldGradient,
-            color: "#4A3121", // Marron foncé pour le texte sur fond doré
+            color: "#4A3121",
             boxShadow: "0 4px 6px rgba(0,0,0,0.3)",
           }}
           onMouseOver={(e) => {
@@ -130,18 +131,22 @@ const SafetyNotice = () => {
           onClick={() => handleConsent("declined")}
           style={{
             ...baseButtonStyle,
-            background: "transparent",
-            border: "1px solid #f67280", // Bordure rouge pastel pour le refus
-            color: "#f67280",
+            background: "rgba(255, 255, 255, 0.05)",
+            border: "1px solid rgba(255, 255, 255, 0.2)",
+            color: "rgba(255, 255, 255, 0.6)",
           }}
           onMouseOver={(e) => {
-            e.currentTarget.style.background = "rgba(246, 114, 128, 0.1)";
+            e.currentTarget.style.background = "rgba(255, 255, 255, 0.1)";
+            e.currentTarget.style.color = "#ffffff";
+            e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.5)";
           }}
           onMouseOut={(e) => {
-            e.currentTarget.style.background = "transparent";
+            e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)";
+            e.currentTarget.style.color = "rgba(255, 255, 255, 0.6)";
+            e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)";
           }}
         >
-          {t.cookie_decline || "Refuser"}
+          {t.cookie_decline || "Décliner"}
         </button>
       </div>
     </div>

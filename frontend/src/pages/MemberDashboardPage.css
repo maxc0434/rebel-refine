@@ -66,9 +66,9 @@
 }
 
 .ql-editor::-webkit-scrollbar-thumb {
-    background: #f94d80 !important;
+    background: #d4af37 !important; 
     border-radius: 10px;
-    border: 2px solid #24283b; /* Crée un petit espace autour */
+    border: 2px solid #24283b;
 }
 
 .ql-editor::-webkit-scrollbar-track {
@@ -109,8 +109,30 @@
 }
 
 .nav-button.active {
-    background: #f94d80;
-    color: white;
+    /* Fond : Or extrêmement estompé (presque transparent) */
+    background: rgba(212, 175, 55, 0.08); 
+    
+    /* Texte : Or pur et lumineux */
+    color: #d4af37;
+    
+    /* Contour : Or vif et affirmé */
+    border: 1px solid #d4af37;
+    
+    /* L'effet de halo : Une lueur diffuse autour de l'onglet */
+    box-shadow: 
+        0 0 15px rgba(212, 175, 55, 0.15), 
+        inset 0 0 10px rgba(212, 175, 55, 0.05);
+    
+    /* Typographie : On garde la signature Rebel Refine */
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    
+    /* Transition fluide pour le changement d'état */
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Pour s'assurer que le bouton semble "élevé" */
+    transform: translateY(-1px);
 }
 
 .btn-gold {
@@ -143,7 +165,7 @@
     background: rgba(0,0,0,0.1);
 }
 .ql-editor::-webkit-scrollbar-thumb {
-    background: #f94d80;
+    background: #d4af37;
     border-radius: 10px;
 }
 
@@ -257,7 +279,8 @@ select.dashboard-input option {
 
 /* Optionnel : couleur au survol dans la liste */
 select.dashboard-input option:hover {
-    background-color: #f94d80 !important;
+    background-color: rgba(212, 175, 55, 0.2) !important; /* Or doux au lieu du rose */
+    color: white;
 }
 
 select.dashboard-input:focus {

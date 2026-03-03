@@ -576,24 +576,31 @@ function MemberDashboardPage() {
               style={{ display: "flex", flexDirection: "column", gap: "10px" }}
             >
               <button
+                style={navButtonStyle(activeTab === "infos")} // Ajouté
                 onClick={() => handleTabChange("infos")}
                 className={`nav-button ${activeTab === "infos" ? "active" : ""}`}
               >
                 <User size={18} /> {t.db_tab_infos}
               </button>
+
               <button
-                style={navButtonStyle(activeTab === "messagerie")}
+                style={navButtonStyle(activeTab === "messagerie")} // Déjà présent
                 onClick={() => handleTabChange("messagerie")}
+                className={`nav-button ${activeTab === "messagerie" ? "active" : ""}`}
               >
                 <MessageSquare size={18} /> {t.db_tab_msg}
               </button>
+
               <button
+                style={navButtonStyle(activeTab === "favs")} // Ajouté
                 onClick={() => handleTabChange("favs")}
                 className={`nav-button ${activeTab === "favs" ? "active" : ""}`}
               >
                 <Heart size={18} /> {t.db_tab_favs}
               </button>
+
               <button
+                style={navButtonStyle(activeTab === "purchases")} // Ajouté
                 onClick={() => handleTabChange("purchases")}
                 className={`nav-button ${activeTab === "purchases" ? "active" : ""}`}
               >
@@ -601,6 +608,7 @@ function MemberDashboardPage() {
               </button>
 
               <button
+                style={navButtonStyle(activeTab === "security")} // Ajouté
                 onClick={() => handleTabChange("security")}
                 className={`nav-button ${activeTab === "security" ? "active" : ""}`}
               >
@@ -609,7 +617,7 @@ function MemberDashboardPage() {
             </nav>
           </aside>
 
-          {/* MARK: - CONTENU DROITE */}
+          {/* MARK: - NAV DROITE */}
           <main
             // --- EN-TETE: Infos + Modification ---
             style={{
@@ -651,6 +659,14 @@ function MemberDashboardPage() {
                         cursor: "pointer",
                         fontSize: "0.9rem",
                       }}
+                      onMouseEnter={(e) => (
+                        (e.target.style.background = "#b38728"),
+                        (e.target.style.color = "white")
+                      )}
+                      onMouseLeave={(e) => (
+                        (e.target.style.background = "transparent"),
+                        (e.target.style.color = "#b38728")
+                      )}
                     >
                       <Settings
                         size={14}
@@ -1227,7 +1243,7 @@ function MemberDashboardPage() {
                   </h3>
                   <span
                     style={{
-                      background: "#f94d80",
+                      background: "#b38728",
                       padding: "4px 12px",
                       borderRadius: "20px",
                       fontSize: "0.8rem",
@@ -1306,13 +1322,21 @@ function MemberDashboardPage() {
                           style={{
                             marginTop: "10px",
                             background: "transparent",
-                            border: "1px solid #f94d80",
-                            color: "#f94d80",
+                            border: "1px solid #b38728",
+                            color: "#b38728",
                             padding: "8px 20px",
                             borderRadius: "25px",
                             cursor: "pointer",
                             width: "100%",
                           }}
+                          onMouseEnter={(e) => (
+                            (e.target.style.background = "#b38728"),
+                            (e.target.style.color = "white")
+                          )}
+                          onMouseLeave={(e) => (
+                            (e.target.style.background = "transparent"),
+                            (e.target.style.color = "#b38728")
+                          )}
                         >
                           {t.fav_view_btn}
                         </button>
@@ -1340,7 +1364,7 @@ function MemberDashboardPage() {
                   </h3>
                   <span
                     style={{
-                      background: "#f94d80",
+                      background: "#b38728",
                       padding: "4px 12px",
                       borderRadius: "20px",
                       fontSize: "0.8rem",
@@ -1550,7 +1574,7 @@ function MemberDashboardPage() {
                     style={{
                       marginBottom: "15px",
                       fontSize: "0.9rem",
-                      color: "#f94d80",
+                      color: "#f5f5f5",
                     }}
                   >
                     {t.sec_pwd_change_title}
@@ -1617,7 +1641,7 @@ function MemberDashboardPage() {
                     {t.sec_pwd_btn}
                   </button>
                 </form>
-                
+
                 {/* MARK: - ZONE DE DANGER (Suppression) */}
                 <div
                   style={{
@@ -1670,7 +1694,7 @@ function MemberDashboardPage() {
                       (e.target.style.color = "#f94d80")
                     )}
                   >
-                    {t.sec_delete_btn }
+                    {t.sec_delete_btn}
                   </button>
                 </div>
               </div>
@@ -1690,15 +1714,28 @@ const navButtonStyle = (isActive) => ({
   gap: "10px",
   padding: "12px 15px",
   borderRadius: "10px",
-  border: "none",
+  border: isActive ? "1px solid #d4af37" : "1px solid transparent", // Contour or si actif
   textAlign: "left",
   cursor: "pointer",
   fontSize: "1rem",
-  transition: "0.3s",
-  background: isActive ? "#f67280" : "transparent",
-  color: isActive ? "white" : "rgba(255,255,255,0.7)",
+  transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
   width: "100%",
-  boxShadow: isActive ? "0 5px 15px rgba(246, 114, 128, 0.2)" : "none",
+
+  // LE CHANGEMENT MAJEUR :
+  background: isActive
+    ? "rgba(212, 175, 55, 0.12)" // Fond or très estompé (brume dorée)
+    : "transparent",
+
+  color: isActive
+    ? "#d4af37" // Texte Or vif
+    : "rgba(255, 255, 255, 0.7)", // Texte gris perle
+
+  boxShadow: isActive
+    ? "0 0 20px rgba(212, 175, 55, 0.15), inset 0 0 10px rgba(212, 175, 55, 0.05)"
+    : "none",
+
+  // Optionnel : Un léger décalage vers le haut pour l'onglet actif
+  transform: isActive ? "translateY(-1px)" : "translateY(0)",
 });
 
 const InfoItem = ({ label, value }) => (

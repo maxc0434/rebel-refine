@@ -5,7 +5,6 @@ import { Heart } from "lucide-react";
 import { useLanguage } from "../translations/hooks/useLanguage";
 import { apiFetch } from "../api";
 
-
 function HomePage() {
   const navigate = useNavigate();
   const token = localStorage.getItem("token"); // Récupération du pass de connexion
@@ -54,7 +53,7 @@ function HomePage() {
         setLoading(false);
       } catch (err) {
         console.error("Erreur de session:", err);
-        localStorage.clear(); 
+        localStorage.clear();
         navigate("/");
       }
     };
@@ -65,8 +64,8 @@ function HomePage() {
 
   //#region FCT FAVORIS
   const toggleFavorite = async (e, targetId) => {
-    e.preventDefault(); 
-    e.stopPropagation(); 
+    e.preventDefault();
+    e.stopPropagation();
 
     try {
       // Pas besoin de headers, apiFetch s'en occupe
@@ -233,15 +232,40 @@ function HomePage() {
                         <button
                           type="submit"
                           style={{
+                            // Utilisation du dégradé multi-points "Or Brossé"
                             background:
-                              "linear-gradient(45deg, #f67280, #c06c84)",
+                              "linear-gradient(135deg, #8A6E2F 0%, #BF953F 25%, #FCF6BA 50%, #BF953F 75%, #8A6E2F 100%)",
+                            backgroundSize: "200% auto",
                             borderRadius: "50px",
-                            padding: "10px 30px",
+                            padding: "12px 30px", // Légèrement plus haut pour le confort
                             border: "none",
-                            color: "white",
+                            color: "#1a1d21", // Texte sombre pour le contraste premium
                             fontWeight: "700",
                             width: "100%",
                             marginTop: "20px",
+                            textTransform: "uppercase",
+                            letterSpacing: "2px",
+                            fontSize: "0.8rem",
+                            boxShadow:
+                              "0 10px 20px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3)",
+                            cursor: "pointer",
+                            transition:
+                              "all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+                          }}
+                          onMouseOver={(e) => {
+                            e.currentTarget.style.transform =
+                              "translateY(-3px)";
+                            e.currentTarget.style.boxShadow =
+                              "0 15px 30px rgba(212, 175, 55, 0.4)";
+                            e.currentTarget.style.backgroundPosition =
+                              "right center";
+                          }}
+                          onMouseOut={(e) => {
+                            e.currentTarget.style.transform = "translateY(0)";
+                            e.currentTarget.style.boxShadow =
+                              "0 10px 20px rgba(0, 0, 0, 0.4)";
+                            e.currentTarget.style.backgroundPosition =
+                              "left center";
                           }}
                         >
                           {t.home_btn_search}
@@ -262,9 +286,7 @@ function HomePage() {
         <div className="container">
           <div className="section-header">
             <h2>{t.home_new_members_title}</h2>
-            <p>
-              {t.home_new_members_desc}
-            </p>
+            <p>{t.home_new_members_desc}</p>
           </div>
           <div className="section-wrapper">
             <div className="row justify-content-center g-3 g-md-4 row-cols-xl-5 row-cols-md-3 row-cols-1">
@@ -329,7 +351,9 @@ function HomePage() {
                             <i className="icofont-check" title="Vérifié"></i>
                           </Link>
                         </h6>
-                        <p>{member.age} {t.age_suffix}</p>
+                        <p>
+                          {member.age} {t.age_suffix}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -337,8 +361,53 @@ function HomePage() {
               ))}
             </div>
             <div className="member-button-group d-flex flex-wrap justify-content-center">
-              <Link to="/members/females" className="lab-btn">
-                <span>{t.home_btn_discover_all}</span>
+              <Link
+                to="/members/females"
+                className="lab-btn-prestige"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: "12px 35px",
+                  borderRadius: "50px",
+                  // Base : Platine / Blanc perle avec une lueur dorée très discrète
+                  background: "rgba(255, 255, 255, 0.03)",
+                  border: "1px solid rgba(212, 175, 55, 0.3)", // Filet d'or léger
+                  color: "#d4af37", // Texte doré
+                  fontWeight: "600",
+                  fontSize: "0.8rem",
+                  textTransform: "uppercase",
+                  letterSpacing: "2px",
+                  textDecoration: "none",
+                  transition: "all 0.5s cubic-bezier(0.23, 1, 0.32, 1)",
+                  position: "relative",
+                  overflow: "hidden",
+                  boxShadow: "0 4px 15px rgba(0, 0, 0, 0.2)",
+                }}
+                onMouseOver={(e) => {
+                  // Transformation en Or Plein au survol
+                  e.currentTarget.style.background =
+                    "linear-gradient(135deg, #BF953F 0%, #FCF6BA 50%, #AA771C 100%)";
+                  e.currentTarget.style.color = "#1a1d21"; // Contraste sombre sur fond clair
+                  e.currentTarget.style.borderColor = "transparent";
+                  e.currentTarget.style.transform =
+                    "scale(1.05) translateY(-2px)";
+                  e.currentTarget.style.boxShadow =
+                    "0 10px 25px rgba(212, 175, 55, 0.4)";
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.background =
+                    "rgba(255, 255, 255, 0.03)";
+                  e.currentTarget.style.color = "#d4af37";
+                  e.currentTarget.style.borderColor = "rgba(212, 175, 55, 0.3)";
+                  e.currentTarget.style.transform = "scale(1) translateY(0)";
+                  e.currentTarget.style.boxShadow =
+                    "0 4px 15px rgba(0, 0, 0, 0.2)";
+                }}
+              >
+                <span style={{ position: "relative", zIndex: 1 }}>
+                  {t.home_btn_discover_all}
+                </span>
               </Link>
             </div>
           </div>
@@ -357,9 +426,7 @@ function HomePage() {
         <div className="container">
           <div className="section-header text-center mb-5">
             <h2 style={{ color: "white" }}>{t.home_stats_title}</h2>
-            <p>
-              {t.home_stats_desc}
-            </p>
+            <p>{t.home_stats_desc}</p>
           </div>
           <div className="section-wrapper">
             <div className="row justify-content-center g-4">
