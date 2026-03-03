@@ -1,46 +1,103 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { useLanguage } from "../translations/hooks/useLanguage";
 
 const Footer = () => {
   const { t } = useLanguage();
+  const currentYear = new Date().getFullYear();
 
   return (
-    <footer style={{
-      backgroundColor: "#12122d",
-      borderTop: "1px solid rgba(212, 175, 55, 0.2)",
-      padding: "30px 0",
-      marginTop: "50px",
-      color: "#fff",
-      fontFamily: "serif"
-    }}>
-      <div style={{ maxWidth: "1140px", margin: "0 auto", textAlign: "center", padding: "0 15px" }}>
-        
-        <div style={{ marginBottom: "15px", color: "#d4af37", fontWeight: "700", letterSpacing: "2px" }}>
+    <footer
+      style={{
+        background: "linear-gradient(180deg, #12122d 0%, #050510 100%)",
+        // MISE À JOUR : Liseré doré identique aux autres composants
+        borderTop: "2px solid #d4af37", 
+        color: "#fff",
+        padding: "60px 20px 30px 20px",
+        fontFamily: "'Playfair Display', serif",
+        textAlign: "center",
+        // Optionnel : ajoute une ombre interne pour plus de profondeur
+        boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.05)", 
+      }}
+    >
+      <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+        {/* Logo stylisé */}
+        <h2
+          style={{
+            margin: "0 0 20px 0",
+            letterSpacing: "4px",
+            fontSize: "22px",
+            background: "linear-gradient(45deg, #BF953F, #FCF6BA, #AA771C)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            textTransform: "uppercase",
+          }}
+        >
           REBEL REFINE
+        </h2>
+
+        {/* Liens épurés */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            gap: "30px",
+            marginBottom: "40px",
+            fontSize: "13px",
+            textTransform: "uppercase",
+            letterSpacing: "1px",
+          }}
+        >
+          <a
+            href="/privacy"
+            style={{
+              color: "#aaa",
+              textDecoration: "none",
+              transition: "0.3s",
+            }}
+            onMouseOver={(e) => (e.target.style.color = "#d4af37")}
+            onMouseOut={(e) => (e.target.style.color = "#aaa")}
+          >
+            {t.privacy || "Confidentialité"}
+          </a>
+          <a
+            href="/terms"
+            style={{
+              color: "#aaa",
+              textDecoration: "none",
+              transition: "0.3s",
+            }}
+            onMouseOver={(e) => (e.target.style.color = "#d4af37")}
+            onMouseOut={(e) => (e.target.style.color = "#aaa")}
+          >
+            {t.terms || "Conditions"}
+          </a>
+          <a
+            href="/contact"
+            style={{
+              color: "#aaa",
+              textDecoration: "none",
+              transition: "0.3s",
+            }}
+            onMouseOver={(e) => (e.target.style.color = "#d4af37")}
+            onMouseOut={(e) => (e.target.style.color = "#aaa")}
+          >
+            {t.contact || "Contact"}
+          </a>
         </div>
 
-        <div style={{ display: "flex", justifyContent: "center", gap: "25px", marginBottom: "15px", fontSize: "0.85rem" }}>
-          <Link to="/privacy" style={{ color: "rgba(255,255,255,0.6)", textDecoration: "none" }}>
-            {t.footer_privacy || "Politique de Confidentialité"}
-          </Link>
-          <span style={{ color: "rgba(255,255,255,0.2)" }}>|</span>
-          <Link to="/terms" style={{ color: "rgba(255,255,255,0.6)", textDecoration: "none" }}>
-            {t.nav_terms || "Conditions"}
-          </Link>
-        </div>
-
-        {/* Texte légal court pour le RGPD */}
-        <p style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.4)", maxWidth: "600px", margin: "0 auto 15px", lineHeight: "1.4" }}>
-          Responsable du traitement : Rebel Refine. Vos données sont cryptées et utilisées uniquement pour la mise en relation. Vous disposez d'un droit d'accès, de rectification et de suppression immédiat via votre profil.
+        <p
+          style={{
+            fontSize: "12px",
+            color: "rgba(255,255,255,0.3)",
+            margin: 0,
+            letterSpacing: "1px"
+          }}
+        >
+          © {currentYear} REBEL REFINE. All rights reserved.
         </p>
-
-        <div style={{ fontSize: "0.7rem", opacity: 0.3, textTransform: "uppercase", letterSpacing: "1px" }}>
-          © 2026 Rebel Refine. {t.footer_rights || "Tous droits réservés"}.
-        </div>
       </div>
     </footer>
   );
 };
 
-export default Footer; 
+export default Footer;

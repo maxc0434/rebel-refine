@@ -22,3 +22,26 @@
     border-radius: 8px !important;
     padding: 10px !important;
 }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #0d0d21; /* Ta couleur sombre pour éviter le flash blanc */
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Utilise toute la hauteur de l'écran */
+  width: 100%;
+}
+
+/* Le conteneur de tes pages (Login, Home, etc.) */
+main, .page-container {
+  flex: 1 0 auto; /* Prend tout l'espace restant et pousse le footer */
+}
+
+footer {
+  flex-shrink: 0; /* Empêche le footer de s'écraser */
+}

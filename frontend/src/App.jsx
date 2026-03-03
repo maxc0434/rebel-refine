@@ -17,6 +17,7 @@ import CreditShop from "./pages/CreditShop";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import PrivacyPage from "./pages/PrivacyPage";
 import TermsPage from "./pages/TermsPage";
+import SafetyNotice from "./components/SafetyNotice";
 
 function App() {
   return (
@@ -58,6 +59,7 @@ function App() {
           <Route path="/terms" element={<TermsPage />} />
 
         </Routes>
+        <SafetyNotice />
       <Footer/>
     </Router>
   );

@@ -7,7 +7,6 @@ import ChatModal from "../components/ChatModal";
 import { apiFetch } from "../api";
 import { useLanguage } from "../translations/hooks/useLanguage";
 
-
 function ProfilePage() {
   //#region OUTILS & AUTHENTIFICATION
   // --- PRÉPARATION ---
@@ -239,71 +238,72 @@ function ProfilePage() {
   };
   // #endregion
 
-
   // #region ENVOI MSG
-const handleSendMessage = async (receiverId, content) => {
-  if (!content.trim()) return false;
+  const handleSendMessage = async (receiverId, content) => {
+    if (!content.trim()) return false;
 
-  const shouldConfirm = currentUser?.confirmMessageSend !== false;
+    const shouldConfirm = currentUser?.confirmMessageSend !== false;
 
-  let isConfirmed = true;
+    let isConfirmed = true;
 
-  if (shouldConfirm) {
-    const result = await Swal.fire({
-      title: t.profile_msg_confirm_title,
-      text: t.profile_msg_confirm_text,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: t.profile_msg_send_btn,
-      background: "#1f2a4d",
-      color: "#fff",
-    });
-    isConfirmed = result.isConfirmed;
-  }
-  
-  if (!isConfirmed) return false;
-
-  try {
-    // apiFetch gère l'URL, le token, le Content-Type et le .json()
-    const data = await apiFetch("/api/messages/send", {
-      method: "POST",
-      body: JSON.stringify({ content, receiverId }),
-    });
-
-    // Si on est ici, c'est que la réponse est ok (status 200)
-    if (data.remainingCredits !== undefined) {
-      // MISE À JOUR DU STATE
-      setCurrentUser((prev) => {
-        const updated = { ...prev, credits: data.remainingCredits };
-        localStorage.setItem("user", JSON.stringify(updated));
-        return updated;
+    if (shouldConfirm) {
+      const result = await Swal.fire({
+        title: t.profile_msg_confirm_title,
+        text: t.profile_msg_confirm_text,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: t.profile_msg_send_btn,
+        background: "#1f2a4d",
+        color: "#fff",
       });
+      isConfirmed = result.isConfirmed;
     }
 
-    Swal.fire({
-      icon: "success",
-      title: t.profile_msg_sent_success,
-      text: t.profile_msg_remaining_credits.replace("{{count}}", data.remainingCredits),
-      background: "#1f2a4d",
-      color: "#fff",
-    });
+    if (!isConfirmed) return false;
 
-    fetchMessages(receiverId);
-    return true;
+    try {
+      // apiFetch gère l'URL, le token, le Content-Type et le .json()
+      const data = await apiFetch("/api/messages/send", {
+        method: "POST",
+        body: JSON.stringify({ content, receiverId }),
+      });
 
-  } catch (error) {
-    // apiFetch a déjà extrait le message d'erreur du serveur s'il y en avait un
-    Swal.fire({
-      icon: "error",
-      title: t.error,
-      text: error.message,
-      background: "#1f2a4d",
-      color: "#fff",
-    });
-    return false;
-  }
-};
-// #endregion
+      // Si on est ici, c'est que la réponse est ok (status 200)
+      if (data.remainingCredits !== undefined) {
+        // MISE À JOUR DU STATE
+        setCurrentUser((prev) => {
+          const updated = { ...prev, credits: data.remainingCredits };
+          localStorage.setItem("user", JSON.stringify(updated));
+          return updated;
+        });
+      }
+
+      Swal.fire({
+        icon: "success",
+        title: t.profile_msg_sent_success,
+        text: t.profile_msg_remaining_credits.replace(
+          "{{count}}",
+          data.remainingCredits,
+        ),
+        background: "#1f2a4d",
+        color: "#fff",
+      });
+
+      fetchMessages(receiverId);
+      return true;
+    } catch (error) {
+      // apiFetch a déjà extrait le message d'erreur du serveur s'il y en avait un
+      Swal.fire({
+        icon: "error",
+        title: t.error,
+        text: error.message,
+        background: "#1f2a4d",
+        color: "#fff",
+      });
+      return false;
+    }
+  };
+  // #endregion
 
   // #region SCROLL AUTO
   const scrollToBottom = () => {
@@ -447,7 +447,9 @@ const handleSendMessage = async (receiverId, content) => {
                 </div>
                 <div className="profile-name">
                   <h4>{user.nickname}</h4>
-                  <p>{t.profile_age_label} {user.age} {t.age_suffix}</p>
+                  <p>
+                    {t.profile_age_label} {user.age} {t.age_suffix}
+                  </p>
                 </div>
               </div>
             </div>
@@ -464,7 +466,9 @@ const handleSendMessage = async (receiverId, content) => {
                 }}
               >
                 <div className="info-card-title">
-                  <h6 style={{ color: "#d4af37" }}>{t.profile_gallery_title}</h6>
+                  <h6 style={{ color: "#d4af37" }}>
+                    {t.profile_gallery_title}
+                  </h6>
                 </div>
                 <div className="info-card-content">
                   <div className="row g-3">
@@ -502,9 +506,7 @@ const handleSendMessage = async (receiverId, content) => {
                         </div>
                       ))
                     ) : (
-                      <p className="text-muted ps-2">
-                        {t.profile_no_photo}
-                      </p>
+                      <p className="text-muted ps-2">{t.profile_no_photo}</p>
                     )}
                   </div>
                 </div>
@@ -533,20 +535,30 @@ const handleSendMessage = async (receiverId, content) => {
                 />
                 <ul className="info-list list-unstyled">
                   <li className="d-flex justify-content-between border-bottom border-secondary py-2">
-                    <span className="text-white-50">{t.profile_status}</span>{" "}
-                    <span>{t.database[user.marital] || user.marital}</span>
+                    <span className="text-white-50">{t.profile_country}</span>
+                    <span>
+                      {/* On remplace le tiret par un underscore pour matcher la clé de trad */}
+                      {t.database?.[user.country?.replaceAll("-", "_")] ||
+                        user.country}
+                    </span>
                   </li>
+
+                  {/* Fais de même pour la Situation (marital) au cas où */}
                   <li className="d-flex justify-content-between border-bottom border-secondary py-2">
-                    <span className="text-white-50">{t.profile_country}</span>{" "}
-                    <span>{t.database[user.country] || user.country}</span>
+                    <span className="text-white-50">{t.profile_status}</span>
+                    <span>
+                      {t.database?.[user.marital?.replaceAll("-", "_")] ||
+                        user.marital}
+                    </span>
                   </li>
-                  <li className="d-flex justify-content-between border-bottom border-secondary py-2">
-                    <span className="text-white-50">{t.profile_children}</span>{" "}
-                    <span>{user.children}</span>
-                  </li>
+
+                  {/* Idem pour la Religion */}
                   <li className="d-flex justify-content-between py-2">
-                    <span className="text-white-50">{t.profile_religion}</span>{" "}
-                    <span>{t.database[user.religion] || user.religion}</span>
+                    <span className="text-white-50">{t.profile_religion}</span>
+                    <span>
+                      {t.database?.[user.religion?.replaceAll("-", "_")] ||
+                        user.religion}
+                    </span>
                   </li>
                 </ul>
               </div>
@@ -659,7 +671,9 @@ const handleSendMessage = async (receiverId, content) => {
             }}
           >
             <div className="info-card-title d-flex justify-content-between align-items-center mb-3">
-              <h6 style={{ color: "#d4af37", margin: 0 }}>{t.profile_memo_title}</h6>
+              <h6 style={{ color: "#d4af37", margin: 0 }}>
+                {t.profile_memo_title}
+              </h6>
               {/* On utilise ici notre fameux &times; pour fermer ! */}
               <span
                 onClick={() => setShowModal(false)}
