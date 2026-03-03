@@ -11,11 +11,16 @@ function Navbar() {
   const isFemale = userData.roles?.includes("ROLE_FEMALE");
   const isTranslator = userData.roles?.includes("ROLE_TRANSLATOR");
   const isUser = userData.roles?.includes("ROLE_USER");
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   const handleLogout = (e) => {
     e.preventDefault();
     localStorage.clear();
     navigate("/");
+  };
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
   };
 
   const currentLang = localStorage.getItem("app_lang") || "fr";
@@ -26,7 +31,7 @@ function Navbar() {
     window.location.reload(); // Force la mise à jour
   };
 
-const navItemStyle = {
+  const navItemStyle = {
     fontWeight: "600",
     letterSpacing: "1px",
     textTransform: "uppercase",
@@ -50,7 +55,8 @@ const navItemStyle = {
     borderRadius: "45px",
     color: "#4A3121",
     textShadow: "0px 1px 1px rgba(255, 255, 255, 0.4)",
-    background: "linear-gradient(45deg, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C)",
+    background:
+      "linear-gradient(45deg, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C)",
     boxShadow: "0 4px 15px rgba(191, 149, 63, 0.3)",
     transition: "all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)", // Effet ressort léger
     cursor: "pointer",
@@ -62,18 +68,17 @@ const navItemStyle = {
 
   const handleMouseEnter = (e) => {
     e.currentTarget.style.transform = "scale(1.08)";
-    if (e.currentTarget.getAttribute('data-type') === 'nav-link') {
+    if (e.currentTarget.getAttribute("data-type") === "nav-link") {
       e.currentTarget.style.color = "#d4af37";
     }
   };
 
   const handleMouseLeave = (e) => {
     e.currentTarget.style.transform = "scale(1)";
-    if (e.currentTarget.getAttribute('data-type') === 'nav-link') {
+    if (e.currentTarget.getAttribute("data-type") === "nav-link") {
       e.currentTarget.style.color = "#fff";
     }
   };
-
 
   return (
     <header
@@ -92,7 +97,13 @@ const navItemStyle = {
       <div className="header-bottom">
         <div className="container">
           <div className="header-wrapper">
-           <div className="logo" style={{ transition: "transform 0.3s ease" }} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+            <div
+              className="logo"
+              style={{ transition: "transform 0.3s ease" }}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+            >
+
               <Link to={isFemale ? "/female-dashboard" : "/home"}>
                 <img
                   src="/assets/images/logo/rebel_refine_logo_resized.png"
@@ -102,13 +113,13 @@ const navItemStyle = {
               </Link>
             </div>
             <div className="menu-area">
-              <ul className="menu">
+              <ul className={`menu ${isMenuOpen ? "active" : ""}`}>
                 {token && !isFemale && !isTranslator && isUser && (
                   <>
-                    {/* ACCUEIL SUPPRIMÉ ICI */}
+                    
                     <li>
-                      <Link 
-                        to="/members/females" 
+                      <Link
+                        to="/members/females"
                         style={navItemStyle}
                         data-type="nav-link"
                         onMouseEnter={handleMouseEnter}
@@ -118,8 +129,8 @@ const navItemStyle = {
                       </Link>
                     </li>
                     <li>
-                      <Link 
-                        to="/dashboard" 
+                      <Link
+                        to="/dashboard"
                         style={navItemStyle}
                         data-type="nav-link"
                         onMouseEnter={handleMouseEnter}
@@ -129,16 +140,18 @@ const navItemStyle = {
                       </Link>
                     </li>
                     <li>
-                      <Link 
-                        to="/credit-shop" 
+                      <Link
+                        to="/credit-shop"
                         style={navShopBtnStyle}
                         onMouseEnter={(e) => {
-                           e.currentTarget.style.transform = "scale(1.08)";
-                           e.currentTarget.style.boxShadow = "0 6px 20px rgba(191, 149, 63, 0.5)";
+                          e.currentTarget.style.transform = "scale(1.08)";
+                          e.currentTarget.style.boxShadow =
+                            "0 6px 20px rgba(191, 149, 63, 0.5)";
                         }}
                         onMouseLeave={(e) => {
-                           e.currentTarget.style.transform = "scale(1)";
-                           e.currentTarget.style.boxShadow = "0 4px 15px rgba(191, 149, 63, 0.3)";
+                          e.currentTarget.style.transform = "scale(1)";
+                          e.currentTarget.style.boxShadow =
+                            "0 4px 15px rgba(191, 149, 63, 0.3)";
                         }}
                       >
                         {t.nav_shop}
@@ -320,7 +333,11 @@ const navItemStyle = {
               </div>
 
               {/* Toggles Mobile */}
-              <div className="header-bar d-lg-none">
+              <div
+                className={`header-bar d-lg-none ${isMenuOpen ? "active" : ""}`}
+                onClick={toggleMenu}
+                style={{ cursor: "pointer" }}
+              >
                 <span style={{ backgroundColor: "#d4af37" }}></span>
                 <span style={{ backgroundColor: "#d4af37" }}></span>
                 <span style={{ backgroundColor: "#d4af37" }}></span>
