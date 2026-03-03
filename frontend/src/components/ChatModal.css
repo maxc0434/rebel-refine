@@ -14,10 +14,10 @@
 }
 
 .close-chat-btn:hover {
-    background: #f67280; /* Rappel de la couleur de ton titre "Bernard" */
-    color: white;
-    transform: rotate(90deg); /* Petit effet sympa à la fermeture */
-    border-color: transparent;
+    background: linear-gradient(135deg, #BF953F, #AA771C); 
+    color: #1a1d21; /* Texte sombre pour contraster avec l'or */
+    transform: rotate(90deg) scale(1.1); 
+    border-color: rgba(252, 246, 186, 0.5);
 }
 
 .chat-header {
@@ -71,8 +71,68 @@
   color: #fff;
 }
 
-.message-sent { align-self: flex-end; background: #f67280; }
-.message-received { align-self: flex-start; background: #25292e; }
+/* Message envoyé par l'utilisateur (Style OR) */
+.message-sent { 
+    align-self: flex-end; 
+    /* Gradient multi-stops pour l'effet "Or Brossé" */
+    background: linear-gradient(
+        135deg, 
+        #8A6E2F 0%,   /* Bronze profond */
+        #BF953F 25%,  /* Or standard */
+        #FCF6BA 50%,  /* Point de brillance (Platine/Or blanc) */
+        #BF953F 75%,  /* Retour à l'or */
+        #8A6E2F 100%  /* Ombre */
+    ); 
+    
+    /* Effet de brillance de surface */
+    background-size: 200% 200%;
+    
+    color: #1a1a1a; /* Texte sombre pour un contraste "Premium" sur fond clair */
+    font-weight: 500;
+    
+    /* Bordure biseautée : plus claire en haut, plus sombre en bas */
+    border-top: 1px solid rgba(255, 255, 255, 0.4);
+    border-left: 1px solid rgba(255, 255, 255, 0.2);
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    
+    border-radius: 18px 18px 2px 18px;
+    
+    /* Ombre portée plus diffuse et élégante */
+    box-shadow: 
+        0 4px 12px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        
+    padding: 12px 18px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Optionnel : Un léger reflet spéculaire par-dessus */
+.message-sent::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        110deg, 
+        transparent 45%, 
+        rgba(255, 255, 255, 0.2) 50%, 
+        transparent 55%
+    );
+    pointer-events: none;
+}
+/* Message reçu (Style PLATINE / SILVER) */
+.message-received { 
+    align-self: flex-start; 
+    background: linear-gradient(135deg, #434343, #282828); /* Anthracite profond */
+    color: #e0e0e0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 18px 18px 18px 4px; /* Angle spécifique pour le côté reçu */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
 
 .pending-translation {
   margin-top: 8px;

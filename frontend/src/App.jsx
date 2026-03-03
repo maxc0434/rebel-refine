@@ -18,6 +18,7 @@ import PaymentSuccess from "./pages/PaymentSuccess";
 import PrivacyPage from "./pages/PrivacyPage";
 import TermsPage from "./pages/TermsPage";
 import SafetyNotice from "./components/SafetyNotice";
+import ContactPage from "./pages/ContactPage";
 
 function App() {
   return (
@@ -57,6 +58,9 @@ function App() {
           <Route path="/privacy" element={<PrivacyPage />} />
 
           <Route path="/terms" element={<TermsPage />} />
+
+          <Route path="/contact" element={<ContactPage />} />
+
 
         </Routes>
         <SafetyNotice />
