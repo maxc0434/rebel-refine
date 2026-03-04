@@ -26,9 +26,9 @@ class PaymentController extends AbstractController
         $packId = $data['packId'] ?? null;
 
         $packs = [
-            'pack_50'  => ['name' => 'Pack Découverte (50 crédits)', 'amount' => 1000, 'credits' => 50],
-            'pack_80'  => ['name' => 'Pack Passion (80 crédits)', 'amount' => 1500, 'credits' => 80],
-            'pack_120' => ['name' => 'Pack Élite (120 crédits)', 'amount' => 2000, 'credits' => 120],
+            'pack_50'  => ['name' => 'Pack Découverte (50 crédits)', 'amount' => 3000, 'credits' => 50],
+            'pack_80'  => ['name' => 'Pack Passion (80 crédits)', 'amount' => 5000, 'credits' => 80],
+            'pack_120' => ['name' => 'Pack Élite (120 crédits)', 'amount' => 7000, 'credits' => 120],
         ];
 
         if (!isset($packs[$packId])) {

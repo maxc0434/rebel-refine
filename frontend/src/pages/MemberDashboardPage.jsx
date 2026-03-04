@@ -388,6 +388,8 @@ function MemberDashboardPage() {
         icon: "warning",
         showCancelButton: true,
         confirmButtonText: t.msg_confirm_btn,
+        confirmButtonColor: "#d4af37",
+        cancelButtonColor: "rgba(255, 255, 255, 0.05)",
         background: "#1f2a4d",
         color: "#fff",
       });
@@ -415,7 +417,10 @@ function MemberDashboardPage() {
         title: t.msg_sent_title,
         text: `${t.msg_credits_left} ${data.remainingCredits}`,
         background: "#1f2a4d",
+        confirmButtonColor: "#d4af37",
         color: "#fff",
+        timer: 1500,
+
       });
 
       fetchMessages(receiverId);
@@ -1138,7 +1143,7 @@ function MemberDashboardPage() {
                   style={{
                     margin: 0,
                     color: "#f5f5f5",
-                    borderBottom: "1px solid rgba(246, 114, 128, 0.3)",
+                    borderBottom: "1px solid rgba(255,255,255,0.4)",
                     paddingBottom: "15px",
                     marginBottom: "20px",
                   }}
@@ -1439,7 +1444,7 @@ function MemberDashboardPage() {
                         >
                           <div
                             style={{
-                              background: "rgba(249, 77, 128, 0.1)",
+                              background: "rgba(191, 149, 63, 0.3)",
                               color: "#d4af37",
                               width: "50px",
                               height: "50px",
@@ -1502,7 +1507,7 @@ function MemberDashboardPage() {
                               fontSize: "0.75rem",
                               textTransform: "uppercase",
                               letterSpacing: "1px",
-                              background: "rgba(249, 77, 128, 0.1)",
+                              background: "rgba(191, 149, 63, 0.3)",
                               padding: "2px 8px",
                               borderRadius: "4px",
                             }}

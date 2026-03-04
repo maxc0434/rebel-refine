@@ -196,8 +196,8 @@ function ProfilePage() {
       text: t.profile_memo_delete_warning,
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
+      confirmButtonColor: "#d4af37",
+      cancelButtonColor: "rgba(255, 255, 255, 0.05)",
       confirmButtonText: t.delete,
       cancelButtonText: t.cancel,
       background: "#1e2235",
@@ -253,6 +253,8 @@ function ProfilePage() {
         icon: "warning",
         showCancelButton: true,
         confirmButtonText: t.profile_msg_send_btn,
+        confirmButtonColor: "#d4af37",
+        cancelButtonColor: "rgba(255, 255, 255, 0.05)",
         background: "#1f2a4d",
         color: "#fff",
       });
@@ -287,6 +289,7 @@ function ProfilePage() {
         ),
         background: "#1f2a4d",
         color: "#fff",
+        confirmButtonColor: "#d4af37",
       });
 
       fetchMessages(receiverId);

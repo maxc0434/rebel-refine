@@ -105,9 +105,9 @@ const ResetPasswordPage = () => {
             type="submit"
             className="btn btn-lg w-100 fw-bold py-3 text-white border-0"
             style={{
-              background: "linear-gradient(45deg, #f67280, #c06c84)",
+              background: "linear-gradient(45deg, #d4af37, #b38728)",
               borderRadius: "12px",
-              boxShadow: "0 10px 20px rgba(246, 114, 128, 0.2)",
+              boxShadow: "0 10px 20px rgba(212, 175, 55, 0.1)",
             }}
           >
             {t.reset_btn}

@@ -305,21 +305,21 @@ export const translations = {
     //#endregion
 
     //#region CREDITSHOP
-    shop_title: "Credit",
-  shop_title_gold: "Boutique",
-  shop_subtitle: "Elevate your experience and multiply exceptional encounters.",
-  pack_decouverte: "Discovery",
-  pack_passion: "Passion",
-  pack_elite: "Elite",
-  shop_pack_credits: "Credits",
-  shop_pack_button: "Acquire",
-  shop_feature_priority: "Priority Access",
-  shop_feature_chat: "Instant Messaging",
-  shop_feature_support: "24/7 VIP Support",
-  shop_error_login: "Please log in to access the shop.",
-  shop_tier_essential: "ESSENTIAL",
-  shop_tier_popular: "MOST POPULAR",
-  shop_tier_prestige: "PRESTIGE",
+    shop_title: "Crédits",
+    shop_title_gold: "Boutique",
+    shop_subtitle: "Sublimez votre expérience et multipliez les rencontres d'exception.",
+    pack_decouverte: "Découverte",
+    pack_passion: "Passion",
+    pack_elite: "Élite",
+    shop_pack_credits: "Crédits",
+    shop_pack_button: "Acquérir",
+    shop_feature_priority: "Accès Prioritaire",
+    shop_feature_chat: "Messagerie Instantanée",
+    shop_feature_support: "Support VIP 24/7",
+    shop_error_login: "Veuillez vous connecter pour accéder à la boutique.",
+    shop_tier_essential: "ESSENTIEL",
+    shop_tier_popular: "LE PLUS POPULAIRE",
+    shop_tier_prestige: "PRESTIGE",
     //#endregion
 
     //#region RESETPASSWORD

@@ -16,7 +16,7 @@ const CreditShop = () => {
     id: "pack_50",
     name: t.pack_decouverte,
     credits: 50,
-    price: 10,
+    price: 30,
     icon: <Zap size={32} />, 
     color: "#e2e8f0",
     tier: t.shop_tier_essential // Dynamique
@@ -25,7 +25,7 @@ const CreditShop = () => {
     id: "pack_80",
     name: t.pack_passion,
     credits: 80,
-    price: 15,
+    price: 50,
     icon: <Gem size={32} />,
     color: "#d4af37",
     tier: t.shop_tier_popular, // Dynamique
@@ -35,7 +35,7 @@ const CreditShop = () => {
     id: "pack_120",
     name: t.pack_elite,
     credits: 120,
-    price: 20,
+    price: 70,
     icon: <Crown size={32} />,
     color: "#FCF6BA",
     tier: t.shop_tier_prestige // Dynamique
