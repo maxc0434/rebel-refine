@@ -7,7 +7,7 @@ import {
   Trash2,
   BadgeCent,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 import "./MemberDashboardPage.css";
@@ -33,6 +33,7 @@ function MemberDashboardPage() {
   const [messages, setMessages] = useState([]);
   const [purchases, setPurchases] = useState([]);
   const [confirmMessageSend, setConfirmMessageSend] = useState(true);
+  const location = useLocation();
 
   const messagesEndRef = useRef(null);
 
@@ -55,6 +56,22 @@ function MemberDashboardPage() {
     localStorage.setItem("activeTab", tabName); // Sauvegarde pour la prochaine fois
   };
   // #endregion
+
+
+
+
+  //#region NAV NEW MSG
+  useEffect(() => {
+  // Si on arrive sur la page avec "openMessages" dans le state
+  if (location.state?.openMessages) {
+    handleTabChange("messagerie"); 
+  }
+}, [location]);
+
+  //#endregion
+
+
+
 
   // #region INPUT et de l'UPDATE du PROFIL ---
   const handleInputChange = (e) => {
@@ -325,6 +342,9 @@ function MemberDashboardPage() {
           c.id === contactId ? { ...c, hasNewMessages: false } : c,
         ),
       );
+      // 3. envoi d'un signal au composant parent (la navbar pour nous)
+    window.dispatchEvent(new Event("messagesRead"));
+
     } catch (err) {
       console.error("Erreur lors du marquage comme lu", err);
     }

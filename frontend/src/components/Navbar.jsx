@@ -1,6 +1,17 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useLanguage } from "../translations/hooks/useLanguage";
+import { apiFetch } from "../api";
+
+const styleTag = document.createElement("style");
+styleTag.innerHTML = `
+  @keyframes pulse-gold {
+    0% { transform: scale(1); filter: brightness(1); }
+    50% { transform: scale(1.1); filter: brightness(1.3); }
+    100% { transform: scale(1); filter: brightness(1); }
+  }
+`;
+document.head.appendChild(styleTag);
 
 function Navbar() {
   const navigate = useNavigate();
@@ -12,25 +23,70 @@ function Navbar() {
   const isTranslator = userData.roles?.includes("ROLE_TRANSLATOR");
   const isUser = userData.roles?.includes("ROLE_USER");
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const [hasUnread, setHasUnread] = React.useState(false);
 
+  //#region LOGOUT
   const handleLogout = (e) => {
     e.preventDefault();
     localStorage.clear();
     navigate("/");
   };
+  //#endregion
 
+  //#region NOTIF NEW MSG
+  React.useEffect(() => {
+    if (!token) return;
+
+    const checkUnreadMessages = async () => {
+      try {
+        const conversations = await apiFetch("/api/messages/conversations");
+        const isUnread = conversations.some((c) => c.hasNewMessages === true);
+        setHasUnread(isUnread);
+      } catch (err) {
+        console.error("Erreur check notifications Navbar", err);
+      }
+    };
+
+    // On crée une petite fonction pour forcer la disparition
+    const handleManualRefresh = () => {
+      // Soit on refait un fetch pour être sûr :
+      checkUnreadMessages();
+      // Soit on cache direct (plus rapide visuellement) :
+      // setHasUnread(false);
+    };
+
+    // 1. Écoute du signal de lecture venant du dashboard
+    window.addEventListener("messagesRead", handleManualRefresh);
+
+    // 2. Refresh automatique toutes les 30s
+    checkUnreadMessages();
+    const interval = setInterval(checkUnreadMessages, 30000);
+
+    // Nettoyage à la fermeture du composant
+    return () => {
+      window.removeEventListener("messagesRead", handleManualRefresh);
+      clearInterval(interval);
+    };
+  }, [token]);
+  //#endregion
+
+  //#region MENU
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+  //#endregion
 
+  //#region LANGUAGE
   const currentLang = localStorage.getItem("app_lang") || "fr";
 
   const handleLanguageChange = (e) => {
     const newLang = e.target.value;
     localStorage.setItem("app_lang", newLang);
-    window.location.reload(); // Force la mise à jour
+    window.location.reload();
   };
+  //#endregion
 
+  //#region STYLES
   const navItemStyle = {
     fontWeight: "600",
     letterSpacing: "1px",
@@ -58,14 +114,16 @@ function Navbar() {
     background:
       "linear-gradient(45deg, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C)",
     boxShadow: "0 4px 15px rgba(191, 149, 63, 0.3)",
-    transition: "all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)", // Effet ressort léger
+    transition: "all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
     cursor: "pointer",
     border: "none",
     padding: "8px 20px",
-    height: "fit-content", // Aligne la hauteur sur le texte
+    height: "fit-content",
     marginTop: "8px",
   };
+  //#endregion
 
+  //#region HOVER
   const handleMouseEnter = (e) => {
     e.currentTarget.style.transform = "scale(1.08)";
     if (e.currentTarget.getAttribute("data-type") === "nav-link") {
@@ -79,6 +137,7 @@ function Navbar() {
       e.currentTarget.style.color = "#fff";
     }
   };
+  //#endregion
 
   return (
     <header
@@ -103,7 +162,6 @@ function Navbar() {
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
             >
-
               <Link to={isFemale ? "/female-dashboard" : "/home"}>
                 <img
                   src="/assets/images/logo/rebel_refine_logo_resized.png"
@@ -116,7 +174,46 @@ function Navbar() {
               <ul className={`menu ${isMenuOpen ? "active" : ""}`}>
                 {token && !isFemale && !isTranslator && isUser && (
                   <>
-                    
+                    {/* ICÔNE NOTIFICATION MESSAGE */}
+                    {token && hasUnread && (
+                      <li
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          marginRight: "15px",
+                        }}
+                      >
+                        <Link
+                          to="/dashboard"
+                          state={{ openMessages: true }}
+                          style={{
+                            color: "#d4af37", 
+                            position: "relative",
+                            display: "flex",
+                            alignItems: "center",
+                            animation: "pulse-gold 2s infinite",
+                            textShadow: "0 0 8px rgba(212, 175, 55, 0.6)",
+                          }}
+                        >
+                          <i
+                            className="icofont-envelope"
+                            style={{ fontSize: "1.4rem" }}
+                          ></i>
+                          <span
+                            style={{
+                              position: "absolute",
+                              top: "2px",
+                              right: "15px",
+                              backgroundColor: "#d4af37",
+                              width: "8px",
+                              height: "8px",
+                              borderRadius: "50%",
+                              boxShadow: "0 0 5px #d4af37",
+                            }}
+                          ></span>
+                        </Link>
+                      </li>
+                    )}
                     <li>
                       <Link
                         to="/members/females"
