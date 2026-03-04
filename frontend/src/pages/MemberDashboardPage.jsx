@@ -66,49 +66,50 @@ function MemberDashboardPage() {
   };
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
+    setLoading(true); // On déclenche le loader dès le clic
+
     try {
-      // apiFetch renvoie directement le contenu du JSON
-      const data = await apiFetch("/api/member/update-profile", {
-        method: "POST",
-        body: JSON.stringify({
-          nickname: userData.nickname,
-          interests: userData.interests,
-          marital: userData.marital,
-          religion: userData.religion,
-          children: userData.children,
-          birthDate: userData.birthDate,
-          locale: currentLang,
-        }),
-      });
+        const data = await apiFetch("/api/member/update-profile", {
+            method: "POST",
+            body: JSON.stringify({
+                nickname: userData.nickname,
+                interests: userData.interests,
+                marital: userData.marital,
+                religion: userData.religion,
+                children: userData.children,
+                birthDate: userData.birthDate,
+                locale: currentLang,
+            }),
+        });
 
-      // Si on arrive ici, c'est que c'est un succès (200 OK)
-      Swal.fire({
-        icon: "success",
-        title: t.db_update_success_title,
-        text: t.db_update_success_text,
-        background: "#1f2a4d",
-        color: "#fff",
-        confirmButtonColor: "#d4af37",
-        timer: 3000,
-      });
+        Swal.fire({
+            icon: "success",
+            title: t.db_update_success_title,
+            text: t.db_update_success_text,
+            background: "#1f2a4d",
+            color: "#fff",
+            confirmButtonColor: "#d4af37",
+            timer: 2000, 
+        });
 
-      // On met à jour le state local avec les nouvelles données renvoyées par le serveur
-      setUserData((prev) => ({
-        ...prev,
-        ...(data.userData || data),
-      }));
-      setIsEditing(false);
+        setUserData((prev) => ({
+            ...prev,
+            ...(data.userData || data),
+        }));
+        setIsEditing(false);
     } catch (error) {
-      // Si l'API renvoie une erreur (400, 500...), elle est captée ici
-      Swal.fire({
-        icon: "error",
-        title: "Oups...",
-        text: error.message || t.db_update_error,
-        background: "#1f2a4d",
-        color: "#fff",
-      });
+        Swal.fire({
+            icon: "error",
+            title: "Oups...",
+            text: error.message || t.db_update_error,
+            background: "#1f2a4d",
+            color: "#fff",
+        });
+    } finally {
+        setLoading(false); // On arrete le loader
     }
-  };
+};
+  // #endregion
 
   // #region UPDATE du PASSWORD ---
   const [passwordData, setPasswordData] = useState({
@@ -506,36 +507,49 @@ function MemberDashboardPage() {
     loadDashboard();
   }, [token, navigate]);
 
-  // --- RENDU CONDITIONNEL ---
-  // Affiche un écran vide avec un message tant que les données ne sont pas là
-  if (loading)
+// --- RENDU CONDITIONNEL MODIFIÉ ---
+  
+  // 1. On ne bloque l'affichage COMPLET que si on n'a vraiment AUCUNE donnée (premier chargement)
+  if (loading && !userData) {
     return (
-      <div style={{ color: "white", textAlign: "center", marginTop: "50px" }}>
-        Chargement de votre profil...
+      <div className="prestige-loader-overlay">
+        <div className="gold-spinner"></div>
+        <div style={{ color: "white", marginTop: "20px" }}>Chargement de votre profil...</div>
       </div>
     );
+  }
 
-  // Sécurité supplémentaire si l'API ne renvoie rien
-  if (!userData)
+  // 2. Sécurité si l'API échoue
+  if (!userData) {
     return (
       <div style={{ color: "white", textAlign: "center", marginTop: "50px" }}>
         Erreur de connexion : impossible de récupérer vos données.
       </div>
     );
-  //#endregion
+  }
 
   //#region AFFICHAGE DE LA PAGE
   return (
     <div
       style={{
-        background:
-          "radial-gradient(circle at center, #162244 0%, #0b1120 100%)",
+        background: "radial-gradient(circle at center, #162244 0%, #0b1120 100%)",
         minHeight: "100vh",
         color: "white",
         padding: "50px 20px",
-        position: "relative",
+        position: "relative", // INDISPENSABLE pour que l'overlay se positionne par rapport à ce div
       }}
     >
+      {/* --- LE LOADER DE SAUVEGARDE (Overlay) --- */}
+      {/* Il n'apparaît que lors des updates (quand userData existe déjà) */}
+      {loading && (
+        <div className="prestige-loader-overlay">
+          <div className="gold-spinner"></div>
+          <div className="loader-text" style={{ color: "#d4af37", marginTop: "15px" }}>
+            Synchronisation et traductions...
+          </div>
+        </div>
+      )}
+
       <div
         className="container"
         style={{ maxWidth: "1100px", margin: "0 auto" }}
@@ -544,13 +558,13 @@ function MemberDashboardPage() {
           <h1 style={{ fontFamily: "Montserrat", fontWeight: "700" }}>
             {t.db_title}
           </h1>
-          {userData && (
-            <div className="d-flex align-items-center mb-4">
-              <h2 className="me-3">
-                {t.db_welcome} {userData.nickname} !
-              </h2>
-            </div>
-          )}
+          
+          <div className="d-flex align-items-center mb-4">
+            <h2 className="me-3">
+              {t.db_welcome} {userData.nickname} !
+            </h2>
+          </div>
+          
           <h5>{t.db_balance}</h5>
           <div className="badge bg-dark border border-warning text-warning p-2">
             <i className="bi bi-coin me-2"></i>
@@ -584,7 +598,7 @@ function MemberDashboardPage() {
               </button>
 
               <button
-                style={navButtonStyle(activeTab === "messagerie")} // Déjà présent
+                style={navButtonStyle(activeTab === "messagerie")} 
                 onClick={() => handleTabChange("messagerie")}
                 className={`nav-button ${activeTab === "messagerie" ? "active" : ""}`}
               >
@@ -592,7 +606,7 @@ function MemberDashboardPage() {
               </button>
 
               <button
-                style={navButtonStyle(activeTab === "favs")} // Ajouté
+                style={navButtonStyle(activeTab === "favs")} 
                 onClick={() => handleTabChange("favs")}
                 className={`nav-button ${activeTab === "favs" ? "active" : ""}`}
               >
@@ -600,7 +614,7 @@ function MemberDashboardPage() {
               </button>
 
               <button
-                style={navButtonStyle(activeTab === "purchases")} // Ajouté
+                style={navButtonStyle(activeTab === "purchases")} 
                 onClick={() => handleTabChange("purchases")}
                 className={`nav-button ${activeTab === "purchases" ? "active" : ""}`}
               >
@@ -608,7 +622,7 @@ function MemberDashboardPage() {
               </button>
 
               <button
-                style={navButtonStyle(activeTab === "security")} // Ajouté
+                style={navButtonStyle(activeTab === "security")} 
                 onClick={() => handleTabChange("security")}
                 className={`nav-button ${activeTab === "security" ? "active" : ""}`}
               >

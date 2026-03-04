@@ -135,26 +135,47 @@
     transform: translateY(-1px);
 }
 
-.btn-gold {
+/* Style de base commun pour les transitions */
+.btn-gold, .btn-cancel {
     flex: 1;
-    background: linear-gradient(45deg, #bf953f, #fcf6ba, #b38728);
-    border: none;
-    color: #12122d;
-    padding: 12px;
-    border-radius: 10px;
-    font-weight: bold;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Courbe pour l'effet rebond */
     cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    outline: none;
 }
 
-.btn-cancel {
-    flex: 1; 
-    background: rgba(255, 255, 255, 0.1);
-    border: none;
-    color: white;
-    padding: 12px 25px;
-    border-radius: 10px;
-    cursor: pointer;
+/* --- Effet HOVER (Survol) --- */
+.btn-gold:hover, .btn-cancel:hover {
+    transform: scale(1.05); /* Zoom de 5% */
+    filter: brightness(1.1); /* Légère augmentation de luminosité */
+}
+
+/* --- Effet ACTIVE (Clic / Rebond) --- */
+.btn-gold:active, .btn-cancel:active {
+    transform: scale(0.92); /* Rétrécissement lors de la pression */
+    transition: all 0.1s;    /* Réponse ultra rapide au clic */
+}
+
+/* Spécificités pour btn-gold si tu ne les as pas déjà */
+.btn-gold {
+    background: linear-gradient(135deg, #BF953F, #FCF6BA, #B38728);
+    color: #1a1d21;
     font-weight: bold;
+    padding: 10px 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Spécificités pour btn-cancel */
+.btn-cancel {
+    background: rgba(255, 255, 255, 0.4);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 10px 25px;
+    border-radius: 8px;
 }
 
 /* Scrollbar stylisée pour ne pas être moche */
@@ -406,4 +427,42 @@ select.dashboard-input:focus {
 
 .badge{
     font-size: 20px;
+}
+
+.prestige-loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 17, 19, 0.8); /* Fond sombre transparent */
+    backdrop-filter: blur(5px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.gold-spinner {
+    width: 50px;
+    height: 50px;
+    border: 3px solid rgba(212, 175, 55, 0.1);
+    border-top: 3px solid #d4af37;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+.loader-text {
+    color: #d4af37;
+    font-family: 'Gillsans', sans-serif;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
