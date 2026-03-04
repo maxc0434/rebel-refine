@@ -58,6 +58,10 @@ export const translations = {
     cancel: "Annuler",
     error: "Erreur",
     error_occured: "Une erreur est survenue.",
+    db_loading_profile: "Chargement de votre profil...",
+    db_error_connection: "Erreur de connexion : impossible de récupérer vos données.",
+    db_saving_sync: "Synchronisation et traductions...",
+
     //#endregion
 
     //#region NAVBAR
@@ -623,6 +627,7 @@ export const translations = {
     contact_response_time: "Réponse sous 12 Heures",
     contact_footer: "SERVICE CONCIERGERIE",
     //#endregion
+  
   },
 
   //#endregion FRANCAIS
@@ -686,6 +691,9 @@ export const translations = {
     cancel: "Cancel",
     error: "Error",
     error_occured: "An error has occurred.",
+    db_loading_profile: "Loading your profile...",
+    db_error_connection: "Connection error: unable to retrieve your data.",
+    db_saving_sync: "Synchronization and translations...",
     //#endregion GLOBAL EN
 
     //#region NAVBAR EN
@@ -1309,6 +1317,9 @@ export const translations = {
     cancel: "Abbrechen",
     error: "Fehler",
     error_occured: "Ein Fehler ist aufgetreten.",
+    db_loading_profile: "Profil wird geladen...",
+    db_error_connection: "Verbindungsfehler: Daten konnten nicht geladen werden.",
+    db_saving_sync: "Synchronisierung und Übersetzungen...",
     //#endregion
 
     //#region NAVBAR
@@ -1931,6 +1942,9 @@ export const translations = {
     cancel: "取消",
     error: "错误",
     error_occured: "发生了一个错误。",
+    db_loading_profile: "正在加载您的个人资料...",
+    db_error_connection: "连接错误：无法检索您的数据。",
+    db_saving_sync: "同步与翻译中...",
     //#endregion
 
     //#region NAVBAR
@@ -2519,6 +2533,9 @@ export const translations = {
     cancel: "Annulla",
     error: "Errore",
     error_occured: "Si è verificato un errore.",
+    db_loading_profile: "Caricamento del profilo...",
+    db_error_connection: "Errore di connessione: impossibile recuperare i dati.",
+    db_saving_sync: "Sincronizzazione e traduzioni...",
     //#endregion
 
     //#region NAVBAR
@@ -3138,6 +3155,9 @@ export const translations = {
     cancel: "Отмена",
     error: "Ошибка",
     error_occured: "Произошла ошибка.",
+    db_loading_profile: "Загрузка вашего профиля...",
+    db_error_connection: "Ошибка подключения: не удалось получить ваши данные.",
+    db_saving_sync: "Синхронизация и перевод...",
     //#endregion
 
     //#region NAVBAR
@@ -3749,6 +3769,9 @@ export const translations = {
     cancel: "Cancelar",
     error: "Error",
     error_occured: "Ha ocurrido un error.",
+    db_loading_profile: "Cargando su perfil...",
+    db_error_connection: "Error de conexión: no se han podido recuperar sus datos.",
+    db_saving_sync: "Sincronización y traducciones...",
     //#endregion
 
     //#region NAVBAR

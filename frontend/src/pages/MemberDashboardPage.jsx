@@ -488,7 +488,7 @@ function MemberDashboardPage() {
       navigate("/");
       return;
     }
-    // Syntaxe async/await cohérente avec le nouveau apiFetch
+    // Chargement des données
     const loadDashboard = async () => {
       try {
         const data = await apiFetch("/api/member/dashboard");
@@ -507,14 +507,14 @@ function MemberDashboardPage() {
     loadDashboard();
   }, [token, navigate]);
 
-// --- RENDU CONDITIONNEL MODIFIÉ ---
+// --- RENDU CONDITIONNEL  ---
   
   // 1. On ne bloque l'affichage COMPLET que si on n'a vraiment AUCUNE donnée (premier chargement)
   if (loading && !userData) {
     return (
       <div className="prestige-loader-overlay">
         <div className="gold-spinner"></div>
-        <div style={{ color: "white", marginTop: "20px" }}>Chargement de votre profil...</div>
+        <div style={{ color: "white", marginTop: "20px" }}>{t.db_loading_profile}</div>
       </div>
     );
   }
@@ -523,7 +523,7 @@ function MemberDashboardPage() {
   if (!userData) {
     return (
       <div style={{ color: "white", textAlign: "center", marginTop: "50px" }}>
-        Erreur de connexion : impossible de récupérer vos données.
+        {t.db_error_connection}
       </div>
     );
   }
@@ -536,7 +536,7 @@ function MemberDashboardPage() {
         minHeight: "100vh",
         color: "white",
         padding: "50px 20px",
-        position: "relative", // INDISPENSABLE pour que l'overlay se positionne par rapport à ce div
+        position: "relative",
       }}
     >
       {/* --- LE LOADER DE SAUVEGARDE (Overlay) --- */}
@@ -545,7 +545,7 @@ function MemberDashboardPage() {
         <div className="prestige-loader-overlay">
           <div className="gold-spinner"></div>
           <div className="loader-text" style={{ color: "#d4af37", marginTop: "15px" }}>
-            Synchronisation et traductions...
+            {t.db_saving_sync}
           </div>
         </div>
       )}
