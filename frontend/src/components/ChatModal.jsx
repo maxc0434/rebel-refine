@@ -165,7 +165,7 @@ const ChatModal = ({
                   key={msg.id}
                   className={`message-bubble ${isSentByMe ? "message-sent" : "message-received"}`}
                 >
-                  <div style={{ fontSize: "1.2rem" }}>
+                  <div style={{ fontSize: "1.2rem", fontWeight: "400", wordBreak: "break-word" }}>
                     {isSentByMe
                       ? msg.content
                       : msg.contentTranslated || msg.content}

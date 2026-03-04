@@ -200,11 +200,11 @@ function MemberDashboardPage() {
           // 3. Les erreurs (400, 500, etc.) sont gérées ici par apiFetch
           console.error("Erreur upload:", error.message);
 
-          // Optionnel : Alerte bilingue pour l'utilisateur
+          // 4. Alerte bilingue pour l'utilisateur
           Swal.fire({
             icon: "error",
             title: t.db_alert_error_title,
-            text: error.message,
+            text: "2Mo max / photo",
             background: "#1f2a4d",
             color: "#fff",
           });
@@ -1105,7 +1105,7 @@ function MemberDashboardPage() {
                 <h3
                   style={{
                     margin: 0,
-                    color: "#f67280",
+                    color: "#f5f5f5",
                     borderBottom: "1px solid rgba(246, 114, 128, 0.3)",
                     paddingBottom: "15px",
                     marginBottom: "20px",

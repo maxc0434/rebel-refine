@@ -65,47 +65,41 @@
 }
 
 .message-bubble {
-  padding: 12px 15px;
-  border-radius: 15px;
-  max-width: 80%;
-  color: #fff;
+    padding: 15px 20px; /* Augmenté pour plus d'espace interne */
+    border-radius: 18px;
+    max-width: 85%;    /* Un peu plus large pour les longs messages */
+    min-width: 120px;   /* Force une taille minimum pour les messages courts comme "hello" */
+    color: #fff;
+    line-height: 1.4;   /* Améliore la lisibilité du texte */
 }
 
 /* Message envoyé par l'utilisateur (Style OR) */
 .message-sent { 
     align-self: flex-end; 
-    /* Gradient multi-stops pour l'effet "Or Brossé" */
-    background: linear-gradient(
-        135deg, 
-        #8A6E2F 0%,   /* Bronze profond */
-        #BF953F 25%,  /* Or standard */
-        #FCF6BA 50%,  /* Point de brillance (Platine/Or blanc) */
-        #BF953F 75%,  /* Retour à l'or */
-        #8A6E2F 100%  /* Ombre */
-    ); 
+    /* Gradient simplifié pour garantir la visibilité */
+    background: linear-gradient(135deg, #BF953F 0%, #8A6E2F 100%);
     
-    /* Effet de brillance de surface */
-    background-size: 200% 200%;
-    
-    color: #1a1a1a; /* Texte sombre pour un contraste "Premium" sur fond clair */
-    font-weight: 500;
-    
-    /* Bordure biseautée : plus claire en haut, plus sombre en bas */
-    border-top: 1px solid rgba(255, 255, 255, 0.4);
-    border-left: 1px solid rgba(255, 255, 255, 0.2);
-    border-right: 1px solid rgba(0, 0, 0, 0.1);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    color: #1a1a1a !important; /* Force le texte en sombre pour contraster avec l'or */
+    font-weight: 600;
     
     border-radius: 18px 18px 2px 18px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     
-    /* Ombre portée plus diffuse et élégante */
-    box-shadow: 
-        0 4px 12px rgba(0, 0, 0, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-        
-    padding: 12px 18px;
+    padding: 15px 20px;
+    margin-right: 5px;
+    min-width: 140px; /* Force une largeur minimale */
+    max-width: 85%;
+    
+    /* Supprime provisoirement l'overflow hidden pour voir si le texte réapparaît */
+    overflow: visible; 
     position: relative;
-    overflow: hidden;
+}
+
+/* On remet le texte bien en avant */
+.message-sent div {
+    color: #1a1a1a !important;
+    position: relative;
+    z-index: 2;
 }
 
 /* Optionnel : Un léger reflet spéculaire par-dessus */
