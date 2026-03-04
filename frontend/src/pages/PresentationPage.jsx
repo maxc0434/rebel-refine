@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../translations/hooks/useLanguage";
 import { apiFetch } from "../api";
 
-
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/navigation";
@@ -88,6 +87,30 @@ const PresentationPage = () => {
           <SwiperSlide>
             <div
               className="banner-section bgimg"
+              style={{ backgroundImage: "url(/assets/images/banner/bg8.jpg)" }}
+            >
+              <div className="container">
+                <div className="banner-content-box2">
+                  <h1 className="display-4 fw-bold">
+                    REBEL <span className="gold-text">REFINE</span>
+                  </h1>
+                  {/* Utilisation des clés du dictionnaire */}
+                  <h2>{t.hero_slogan}</h2>
+                  <p>
+                    {t.hero_text}
+                  </p>
+                  <Link to="/register" className="lab-btn">
+                    {t.hero_cta_start}
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </SwiperSlide>
+
+
+          <SwiperSlide>
+            <div
+              className="banner-section bgimg"
               style={{ backgroundImage: "url(/assets/images/banner/bg3.jpg)" }}
             >
               <div className="container">
@@ -95,7 +118,6 @@ const PresentationPage = () => {
                   <h1 className="display-4 fw-bold">
                     REBEL <span className="gold-text">REFINE</span>
                   </h1>
-                  {/* Utilisation des clés du dictionnaire */}
                   <h2>{t.banner_1_subtitle}</h2>
                   <p>{t.banner_1_desc}</p>
                   <Link to="/register" className="lab-btn">
@@ -106,6 +128,9 @@ const PresentationPage = () => {
             </div>
           </SwiperSlide>
 
+
+          
+
           <SwiperSlide>
             <div
               className="banner-section bgimg"
@@ -115,11 +140,8 @@ const PresentationPage = () => {
                 <div className="row flex-row-reverse">
                   <div className="col-lg-6">
                     <div className="banner-content-box">
-                      {/* Titre traduit */}
                       <h2>{t.banner_2_subtitle}</h2>
-                      {/* Description traduite */}
                       <p>{t.banner_2_desc}</p>
-                      {/* Bouton traduit */}
                       <Link to="/login" className="lab-btn">
                         {t.banner_2_btn}
                       </Link>

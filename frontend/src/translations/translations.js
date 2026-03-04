@@ -98,6 +98,11 @@ export const translations = {
     banner_2_desc:
       "Découvrez des profils féminins authentiques et raffinés, sélectionnés pour un homme exigeant en quête d'une histoire sérieuse.",
     banner_2_btn: "CRÉER LE LIEN",
+
+    hero_slogan: "L'audace a un nom. L'exception a une adresse.",
+    hero_text: " Bienvenue dans l'écrin de ceux qui cultivent l'amour avec raffinement et la courtoisie comme un art de vivre.",
+    hero_cta_start: "Commencer l'histoire",
+    hero_cta_philosophy: "Notre philosophie",
     //#endregion
 
     //#region Section Règles
@@ -730,6 +735,11 @@ export const translations = {
     banner_2_desc:
       "Discover authentic and refined female profiles, selected for a demanding man seeking a serious story.",
     banner_2_btn: "CREATE THE LINK",
+
+    hero_slogan: "Audacity has a name. Excellence has an address.",
+    hero_text: "Welcome to the sanctuary of those who cultivate love with refinement and courtesy as an art of life.",
+    hero_cta_start: "Begin the story",
+    hero_cta_philosophy: "Our philosophy",
     //#endregion
 
     //#region Section Règles EN
@@ -1356,6 +1366,11 @@ export const translations = {
     banner_2_desc:
       "Entdecken Sie authentische und raffinierte Frauenprofile, ausgewählt für den anspruchsvollen Mann auf der Suche nach einer ernsthaften Geschichte.",
     banner_2_btn: "VERBINDUNG AUFBAUEN",
+
+    hero_slogan: "Kühnheit hat einen Namen. Exzellenz hat eine Adresse.",
+    hero_text: "Willkommen im Refugium derer, die Liebe mit Raffinesse und Höflichkeit als Lebenskunst pflegen.",
+    hero_cta_start: "Die Geschichte beginnen",
+    hero_cta_philosophy: "Unsere Philosophie",
     //#endregion
 
     //#region Section Règles
@@ -1979,6 +1994,11 @@ export const translations = {
     banner_2_subtitle: "两个世界的交汇点。",
     banner_2_desc: "为追求严肃故事的高标准男性，发现真实而精致的女性个人资料。",
     banner_2_btn: "建立联系",
+
+    hero_slogan: "大胆有其名，卓越有其所。",
+    hero_text: "尊享每一次以尊重为导向的相遇。欢迎来到那些以优雅培育爱情、以礼貌为生活艺术的人们的殿堂。在这里，非凡源于真诚。",
+    hero_cta_start: "开启故事",
+    hero_cta_philosophy: "我们的哲学",
     //#endregion
 
     //#region Section Règles
@@ -2572,6 +2592,11 @@ export const translations = {
     banner_2_desc:
       "Scopri profili femminili autentici e raffinati, selezionati per un uomo esigente in cerca di una storia seria.",
     banner_2_btn: "CREA IL LEGAME",
+
+    hero_slogan: "L'audacia ha un nome. L'eccellenza ha un indirizzo.",
+    hero_text: "Benvenuti nello scrigno di chi coltiva l'amore con raffinatezza e la cortesia come un'arte di vivere.",
+    hero_cta_start: "Iniziare la storia",
+    hero_cta_philosophy: "La nostra filosofia",
     //#endregion
 
     //#region Section Règles
@@ -3194,6 +3219,11 @@ export const translations = {
     banner_2_desc:
       "Откройте для себя подлинные и изысканные женские профили, отобранные для требовательных мужчин, ищущих серьезную историю.",
     banner_2_btn: "СОЗДАТЬ СВЯЗЬ",
+
+    hero_slogan: "У смелости есть имя. У исключительности есть адрес.",
+    hero_text: "Добро пожаловать в обитель тех, кто взращивает любовь с изысканностью, а вежливость — как искусство жить.",
+    hero_cta_start: "Начать историю",
+    hero_cta_philosophy: "Наша философия",
     //#endregion
 
     //#region Section Règles
@@ -3808,6 +3838,11 @@ export const translations = {
     banner_2_desc:
       "Descubre perfiles femeninos auténticos y refinados, seleccionados para hombres exigentes que buscan una historia seria.",
     banner_2_btn: "CREAR EL VÍNCULO",
+
+    hero_slogan: "La audacia tiene un nombre. La excelencia tiene una dirección.",
+    hero_text: "Bienvenidos al refugio de quienes cultivan el amor con refinamiento y la cortesía como un arte de vivir.",
+    hero_cta_start: "Comenzar la historia",
+    hero_cta_philosophy: "Nuestra filosofía",
     //#endregion
 
     //#region Section Règles

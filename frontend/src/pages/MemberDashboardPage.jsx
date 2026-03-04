@@ -57,22 +57,6 @@ function MemberDashboardPage() {
   };
   // #endregion
 
-
-
-
-  //#region NAV NEW MSG
-  useEffect(() => {
-  // Si on arrive sur la page avec "openMessages" dans le state
-  if (location.state?.openMessages) {
-    handleTabChange("messagerie"); 
-  }
-}, [location]);
-
-  //#endregion
-
-
-
-
   // #region INPUT et de l'UPDATE du PROFIL ---
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -86,46 +70,46 @@ function MemberDashboardPage() {
     setLoading(true); // On déclenche le loader dès le clic
 
     try {
-        const data = await apiFetch("/api/member/update-profile", {
-            method: "POST",
-            body: JSON.stringify({
-                nickname: userData.nickname,
-                interests: userData.interests,
-                marital: userData.marital,
-                religion: userData.religion,
-                children: userData.children,
-                birthDate: userData.birthDate,
-                locale: currentLang,
-            }),
-        });
+      const data = await apiFetch("/api/member/update-profile", {
+        method: "POST",
+        body: JSON.stringify({
+          nickname: userData.nickname,
+          interests: userData.interests,
+          marital: userData.marital,
+          religion: userData.religion,
+          children: userData.children,
+          birthDate: userData.birthDate,
+          locale: currentLang,
+        }),
+      });
 
-        Swal.fire({
-            icon: "success",
-            title: t.db_update_success_title,
-            text: t.db_update_success_text,
-            background: "#1f2a4d",
-            color: "#fff",
-            confirmButtonColor: "#d4af37",
-            timer: 2000, 
-        });
+      Swal.fire({
+        icon: "success",
+        title: t.db_update_success_title,
+        text: t.db_update_success_text,
+        background: "#1f2a4d",
+        color: "#fff",
+        confirmButtonColor: "#d4af37",
+        timer: 2000,
+      });
 
-        setUserData((prev) => ({
-            ...prev,
-            ...(data.userData || data),
-        }));
-        setIsEditing(false);
+      setUserData((prev) => ({
+        ...prev,
+        ...(data.userData || data),
+      }));
+      setIsEditing(false);
     } catch (error) {
-        Swal.fire({
-            icon: "error",
-            title: "Oups...",
-            text: error.message || t.db_update_error,
-            background: "#1f2a4d",
-            color: "#fff",
-        });
+      Swal.fire({
+        icon: "error",
+        title: "Oups...",
+        text: error.message || t.db_update_error,
+        background: "#1f2a4d",
+        color: "#fff",
+      });
     } finally {
-        setLoading(false); // On arrete le loader
+      setLoading(false); // On arrete le loader
     }
-};
+  };
   // #endregion
 
   // #region UPDATE du PASSWORD ---
@@ -343,8 +327,7 @@ function MemberDashboardPage() {
         ),
       );
       // 3. envoi d'un signal au composant parent (la navbar pour nous)
-    window.dispatchEvent(new Event("messagesRead"));
-
+      window.dispatchEvent(new Event("messagesRead"));
     } catch (err) {
       console.error("Erreur lors du marquage comme lu", err);
     }
@@ -361,6 +344,15 @@ function MemberDashboardPage() {
     }
   };
   // #endregion
+
+  //#region NAV NEW MSG
+  useEffect(() => {
+    // Si on arrive sur la page avec "openMessages" dans le state
+    if (location.state?.openMessages) {
+      handleTabChange("messagerie");
+    }
+  }, [location]);
+  //#endregion
 
   // #region ALERT CONFIRM ENVOI
   const handleToggleConfirmation = async () => {
@@ -527,14 +519,16 @@ function MemberDashboardPage() {
     loadDashboard();
   }, [token, navigate]);
 
-// --- RENDU CONDITIONNEL  ---
-  
+  // --- RENDU CONDITIONNEL  ---
+
   // 1. On ne bloque l'affichage COMPLET que si on n'a vraiment AUCUNE donnée (premier chargement)
   if (loading && !userData) {
     return (
       <div className="prestige-loader-overlay">
         <div className="gold-spinner"></div>
-        <div style={{ color: "white", marginTop: "20px" }}>{t.db_loading_profile}</div>
+        <div style={{ color: "white", marginTop: "20px" }}>
+          {t.db_loading_profile}
+        </div>
       </div>
     );
   }
@@ -552,7 +546,8 @@ function MemberDashboardPage() {
   return (
     <div
       style={{
-        background: "radial-gradient(circle at center, #162244 0%, #0b1120 100%)",
+        background:
+          "radial-gradient(circle at center, #162244 0%, #0b1120 100%)",
         minHeight: "100vh",
         color: "white",
         padding: "50px 20px",
@@ -564,7 +559,10 @@ function MemberDashboardPage() {
       {loading && (
         <div className="prestige-loader-overlay">
           <div className="gold-spinner"></div>
-          <div className="loader-text" style={{ color: "#d4af37", marginTop: "15px" }}>
+          <div
+            className="loader-text"
+            style={{ color: "#d4af37", marginTop: "15px" }}
+          >
             {t.db_saving_sync}
           </div>
         </div>
@@ -578,13 +576,13 @@ function MemberDashboardPage() {
           <h1 style={{ fontFamily: "Montserrat", fontWeight: "700" }}>
             {t.db_title}
           </h1>
-          
+
           <div className="d-flex align-items-center mb-4">
             <h2 className="me-3">
               {t.db_welcome} {userData.nickname} !
             </h2>
           </div>
-          
+
           <h5>{t.db_balance}</h5>
           <div className="badge bg-dark border border-warning text-warning p-2">
             <i className="bi bi-coin me-2"></i>
@@ -618,7 +616,7 @@ function MemberDashboardPage() {
               </button>
 
               <button
-                style={navButtonStyle(activeTab === "messagerie")} 
+                style={navButtonStyle(activeTab === "messagerie")}
                 onClick={() => handleTabChange("messagerie")}
                 className={`nav-button ${activeTab === "messagerie" ? "active" : ""}`}
               >
@@ -626,7 +624,7 @@ function MemberDashboardPage() {
               </button>
 
               <button
-                style={navButtonStyle(activeTab === "favs")} 
+                style={navButtonStyle(activeTab === "favs")}
                 onClick={() => handleTabChange("favs")}
                 className={`nav-button ${activeTab === "favs" ? "active" : ""}`}
               >
@@ -634,7 +632,7 @@ function MemberDashboardPage() {
               </button>
 
               <button
-                style={navButtonStyle(activeTab === "purchases")} 
+                style={navButtonStyle(activeTab === "purchases")}
                 onClick={() => handleTabChange("purchases")}
                 className={`nav-button ${activeTab === "purchases" ? "active" : ""}`}
               >
@@ -642,7 +640,7 @@ function MemberDashboardPage() {
               </button>
 
               <button
-                style={navButtonStyle(activeTab === "security")} 
+                style={navButtonStyle(activeTab === "security")}
                 onClick={() => handleTabChange("security")}
                 className={`nav-button ${activeTab === "security" ? "active" : ""}`}
               >
