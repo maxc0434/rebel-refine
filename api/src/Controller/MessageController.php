@@ -13,27 +13,26 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 #[Route('/api/messages')]
 class MessageController extends AbstractController
 {
-    // region ENVOYER UN MESSAGE
+    // #region ENVOYER UN MESSAGE
     #[Route('/send', name: 'app_message_send', methods: ['POST'])]
     #[IsGranted(new Expression("is_granted('ROLE_MALE') or is_granted('ROLE_FEMALE')"), message: 'Accès interdit')]
-    public function send(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    public function send(Request $request, EntityManagerInterface $entityManager, #[CurrentUser] ?User $sender): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
         if (!$data || !isset($data['content'], $data['receiverId'])) {
             return new JsonResponse(['error' => 'Données incomplètes'], 400);
         }
 
-        /** @var User $sender */
-        $sender = $this->getUser();
         if (!$sender) {
             return new JsonResponse(['error' => 'Vous devez être authentifié'], 401);
         }
 
-        // --- 1. RÉCUPÉRATION DU DESTINATAIRE (D'ABORD !) ---
+        // --- 1. RÉCUPÉRATION DU DESTINATAIRE ---
         $receiver = $entityManager->getRepository(User::class)->find($data['receiverId']);
         if (!$receiver) {
             return new JsonResponse(['error' => 'Destinataire introuvable'], 404);
@@ -49,17 +48,30 @@ class MessageController extends AbstractController
 
         // --- 3. PRÉPARATION DE LA DIRECTION AVEC DRAPEAUX ---
         $flags = [
-            'France' => '🇫🇷', 'Allemagne' => '🇩🇪', 'Italie' => '🇮🇹',
-            'Espagne' => '🇪🇸', 'Angleterre' => '🇬🇧', 'Belgique' => '🇧🇪',
-            'Suisse' => '🇨🇭', 'Chine' => '🇨🇳', 'Japon' => '🇯🇵',
-            'Russie' => '🇷🇺', 'Thaïlande' => '🇹🇭', 'Vietnam' => '🇻🇳',
+            'france'         => '🇫🇷',
+            'germany'        => '🇩🇪',
+            'italy'          => '🇮🇹',
+            'spain'          => '🇪🇸',
+            'united-kingdom' => '🇬🇧',
+            'belgium'        => '🇧🇪',
+            'switzerland'    => '🇨🇭',
+            'china'          => '🇨🇳',
+            'japan'          => '🇯🇵',
+            'russia'         => '🇷🇺',
+            'thailand'       => '🇹🇭',
+            'vietnam'        => '🇻🇳',
         ];
 
-        $senderCountry = $sender->getCountry() ?? 'Inconnu';
-        $receiverCountry = $receiver->getCountry() ?? 'Inconnu';
+        // On récupère les valeurs brutes de la BDD (ex: "united-kingdom")
+        $rawSenderCountry = $sender->getCountry() ?? 'inconnu';
+        $rawReceiverCountry = $receiver->getCountry() ?? 'inconnu';
 
-        $flagFrom = $flags[$senderCountry] ?? '❓';
-        $flagTo = $flags[$receiverCountry] ?? '❓';
+        // On force en minuscules pour être SÛR que ça corresponde aux clés du tableau $flags
+        $senderKey = strtolower($rawSenderCountry);
+        $receiverKey = strtolower($rawReceiverCountry);
+
+        $flagFrom = $flags[$senderKey] ?? '❓';
+        $flagTo = $flags[$receiverKey] ?? '❓';
 
         // --- 4. CRÉATION DU MESSAGE ---
         $message = new Message();
@@ -69,8 +81,15 @@ class MessageController extends AbstractController
         $message->setStatus(MessageStatus::Pending);
         $message->setCreatedAt(new \DateTimeImmutable());
 
-        // Maintenant $receiver est connu, on peut faire le setDirection !
-        $message->setDirection(sprintf('%s %s ➔ %s %s', $flagFrom, $senderCountry, $flagTo, $receiverCountry));
+        // On assemble la direction. strtoupper (affiche juste en MAJ sur le rendu)
+        $direction = sprintf(
+            '%s %s ➔ %s %s', 
+            $flagFrom, 
+            strtoupper($rawSenderCountry), 
+            $flagTo, 
+            strtoupper($rawReceiverCountry)
+        );
+        $message->setDirection($direction);
 
         $entityManager->persist($message);
         $entityManager->flush();
@@ -80,29 +99,53 @@ class MessageController extends AbstractController
             'remainingCredits' => $sender->getCredits(),
         ], 201);
     }
-    // endregion
+    // #endregion
 
-    // region TRADUCTION
+    // #region TRADUCTION
     // Route pour obtenir les messages en attente de traduction
     #[Route('/pending', name: 'app_message_pending', methods: ['GET'])]
     #[IsGranted('ROLE_TRANSLATOR', message: 'Réservé aux traducteurs')]
-    public function getPendingMessages(EntityManagerInterface $entityManager): JsonResponse
-    {
+    public function getPendingMessages(
+        EntityManagerInterface $entityManager,
+        #[CurrentUser] ?User $user
+    ): JsonResponse {
+        
+        if (!$user) {
+            return new JsonResponse(['error' => 'Non autorisé'], 401);
+        }
+
         $pendingMessages = $entityManager->getRepository(Message::class)->findBy(['status' => MessageStatus::Pending]);
 
         $data = [];
         foreach ($pendingMessages as $msg) {
-            $data[] = [
-                'id' => $msg->getId(),
-                'original' => $msg->getContentOriginal(),
-                'from' => $msg->getSender()->getNickname(),
-                'direction' => strtolower($msg->getDirection()),
-            ];
+            try {
+                // On récupère l'expéditeur de manière sécurisée
+                $sender = $msg->getSender();
+                $nickname = ($sender) ? $sender->getNickname() : 'Utilisateur supprimé';
+                
+                $data[] = [
+                    'id' => $msg->getId(),
+                    'original' => $msg->getContentOriginal(),
+                    'from' => $nickname,
+                    'direction' => $msg->getDirection() ?? 'Inconnue',
+                ];
+            } catch (\Doctrine\ORM\EntityNotFoundException $e) {
+                // Gestion du cas où l'utilisateur (ex: ID 166) n'existe plus en BDD
+                $data[] = [
+                    'id' => $msg->getId(),
+                    'original' => $msg->getContentOriginal(),
+                    'from' => 'Compte supprimé',
+                    'direction' => $msg->getDirection() ?? 'Inconnue',
+                ];
+            }
         }
 
         return new JsonResponse($data);
     }
+    // #endregion
 
+
+    //#region VALIDER UNE TRADUCTION
     // Route pour valider la traduction d'un message
     #[Route('/{id}/validate', name: 'app_message_validate', methods: ['PUT'])]
     #[IsGranted('ROLE_TRANSLATOR', message: 'Réservé aux traducteurs')]
@@ -122,15 +165,16 @@ class MessageController extends AbstractController
 
         return new JsonResponse(['status' => 'Message traduit et envoyé au destinataire']);
     }
-    // endregion
+    // #endregion
 
-    // region LISTE DES CONTACTS
+    // #region LISTE DES CONTACTS
     #[Route('/contacts', name: 'app_message_contacts', methods: ['GET'])]
     #[IsGranted(new Expression("is_granted('ROLE_MALE') or is_granted('ROLE_FEMALE')"), message: 'Accès interdit')]
-    public function getContacts(EntityManagerInterface $entityManager): JsonResponse
+    public function getContacts(EntityManagerInterface $entityManager, #[CurrentUser] ?User $currentUser): JsonResponse
     {
-        /** @var User $currentUser */
-        $currentUser = $this->getUser();
+        if (!$currentUser) {
+            return new JsonResponse(['error' => 'Vous devez vous authentifier'], 401);
+        }
 
         $entityManager->getFilters()->disable('softdeleteable');
 
@@ -171,14 +215,15 @@ class MessageController extends AbstractController
 
         return new JsonResponse($data);
     }
-    // endregion
+    // #endregion
 
-    // region LISTE DES MESSAGES
+    // #region LISTE DES MESSAGES
     #[Route('/list/{receiverId}', name: 'app_message_list', methods: ['GET'])]
-    public function list(int $receiverId, EntityManagerInterface $entityManager): JsonResponse
+    public function list(int $receiverId, EntityManagerInterface $entityManager, #[CurrentUser] ?User $currentUser): JsonResponse
     {
-        /** @var User $currentUser */
-        $currentUser = $this->getUser();
+        if (!$currentUser) {
+            return new JsonResponse(['error' => 'Vous devez vous authentifier'], 401);
+        }
 
         $entityManager->getFilters()->disable('softdeleteable');
 
@@ -214,13 +259,14 @@ class MessageController extends AbstractController
     }
     // #endregion
 
-    // region CONVERSATIONS
+    // #region CONVERSATIONS
     // Route pour obtenir la liste des conversations
     #[Route('/conversations', name: 'app_message_conversations', methods: ['GET'])]
-    public function getConversations(EntityManagerInterface $entityManager): JsonResponse
+    public function getConversations(EntityManagerInterface $entityManager, #[CurrentUser] ?User $currentUser): JsonResponse
     {
-        /** @var User $currentUser */
-        $currentUser = $this->getUser();
+        if (!$currentUser) {
+            return new JsonResponse(['error' => 'Vous devez vous authentifier'], 401);
+        }
 
         // On désactive le filtre et on autorise à voir les utilisateurs supprimés (anonymisés) ---
         $entityManager->getFilters()->disable('softdeleteable');
@@ -263,14 +309,15 @@ class MessageController extends AbstractController
 
         return new JsonResponse(array_values($contacts));
     }
-    // endregion
+    // #endregion
 
-    // region SUPPRIMER UNE CONVERSATION (VERSION MASQUAGE/ SOFT DELETE)
+    // #region SUPPRIMER UNE CONVERSATION (VERSION MASQUAGE/ SOFT DELETE)
     #[Route('/conversation/{contactId}', name: 'app_message_delete_conversation', methods: ['DELETE'])]
-    public function deleteConversation(int $contactId, MessageRepository $messageRepo, EntityManagerInterface $em): JsonResponse
+    public function deleteConversation(int $contactId, MessageRepository $messageRepo, EntityManagerInterface $em, #[CurrentUser] ?User $currentUser): JsonResponse
     {
-        /** @var User $currentUser */
-        $currentUser = $this->getUser();
+        if (!$currentUser) {
+            return new JsonResponse(['error' => 'Vous devez vous authentifier'], 401);
+        }
         $messages = $messageRepo->findConversation($currentUser->getId(), $contactId);
 
         foreach ($messages as $message) {
@@ -291,15 +338,16 @@ class MessageController extends AbstractController
 
         return new JsonResponse(['message' => 'Conversation masquée pour vous'], 200);
     }
-    // endregion
+    // #endregion
 
-    // region MARQUER UN MESSAGE COMME LU
+    // #region MARQUER UN MESSAGE COMME LU
     // Route pour marquer un message comme lu
     #[Route('/mark-read/{id}', name: 'app_message_mark_read', methods: ['POST'])]
-    public function markAsRead(User $contact, EntityManagerInterface $entityManager): JsonResponse
+    public function markAsRead(User $contact, EntityManagerInterface $entityManager, #[CurrentUser] ?User $currentUser): JsonResponse
     {
-        /** @var User $currentUser */
-        $currentUser = $this->getUser();
+        if (!$currentUser) {
+            return new JsonResponse(['error' => 'Vous devez vous authentifier'], 401);
+        }
 
         // On récupère tous les messages envoyés par ce contact à moi qui sont encore 'approved'
         $messages = $entityManager->getRepository(Message::class)->findBy([
@@ -316,5 +364,5 @@ class MessageController extends AbstractController
 
         return new JsonResponse(['status' => 'success']);
     }
-    // endregion
+    // #endregion
 }

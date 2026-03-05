@@ -11,6 +11,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use App\Entity\User;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 class MemberMemoController extends AbstractController
 {
@@ -21,9 +23,10 @@ class MemberMemoController extends AbstractController
         EntityManagerInterface $em,
         UserRepository $userRepo,
         MemberMemoRepository $memoRepo,
+        #[CurrentUser] ?User $user,
     ): JsonResponse {
+
         // 1. On récupère l'homme connecté (via le Token)
-        $user = $this->getUser();
         if (!$user) {
             return new JsonResponse(['error' => 'Non autorisé'], 401);
         }
@@ -65,7 +68,7 @@ class MemberMemoController extends AbstractController
 
     #[Route('/api/member/memo/{targetId}', name: 'api_member_memo_get', methods: ['GET'])]
     #[IsGranted('ROLE_MALE', message: 'Action non autorisée')]
-    public function getMemo($targetId, MemberMemoRepository $repo): JsonResponse
+    public function getMemo(int $targetId, MemberMemoRepository $repo): JsonResponse
     {
         // On force la conversion en entier pour éviter le TypeError
         $id = (int) $targetId;
@@ -82,8 +85,12 @@ class MemberMemoController extends AbstractController
 
     #[Route('/api/member/memo/{targetId}', name: 'api_member_memo_delete', methods: ['DELETE'])]
     #[IsGranted('ROLE_MALE', message: 'Action non autorisée')]
-    public function deleteMemo(int $targetId, MemberMemoRepository $repo, EntityManagerInterface $em): JsonResponse
+    public function deleteMemo(int $targetId, MemberMemoRepository $repo, EntityManagerInterface $em, #[CurrentUser] ?User $user): JsonResponse
     {
+        if (!$user) {
+            return new JsonResponse(['error' => 'Non autorisé'], 401);
+        }
+
         $memo = $repo->findOneBy([
             'author' => $this->getUser(),
             'target' => $targetId,
