@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 /**
  * Contrôleur gérant l'espace personnel des membres (Dashboard et Favoris).
@@ -22,11 +23,11 @@ class MemberDashboardController extends AbstractController
     // region Dashboard
     #[Route('/dashboard', name: 'dashboard', methods: ['GET'])]
     #[IsGranted('ROLE_MALE')]
-    public function index(): JsonResponse
+    public function index(#[CurrentUser] ?User $user): JsonResponse
     {
-        /** @var User $user */
-        // On récupère l'objet User de la personne actuellement connectée
-        $user = $this->getUser();
+        if (!$user) {
+            return $this->json(['message' => 'Non connecté'], 401);
+        }
         $userPhotos = [];
         foreach ($user->getUserImages() as $image) {
             $userPhotos[] = [
@@ -97,20 +98,20 @@ class MemberDashboardController extends AbstractController
     // region Favoris
     #[Route('/favorite/{id}', name: 'toggle_favorite', methods: ['POST'])]
     #[IsGranted('ROLE_MALE')]
-    public function toggleFavorite(User $targetUser, EntityManagerInterface $em): JsonResponse
+    public function toggleFavorite(User $targetUser, EntityManagerInterface $em, #[CurrentUser] ?User $user): JsonResponse
     {
-        /** @var User $currentUser */
-        // L'utilisateur connecté
-        $currentUser = $this->getUser();
+        if (!$user) {
+            return $this->json(['message' => 'Non connecté'], 401);
+        }
 
         // Si l'utilisateur est déjà dans les favoris, on le retire
-        if ($currentUser->getFavorites()->contains($targetUser)) {
-            $currentUser->removeFavorite($targetUser);
+        if ($user->getFavorites()->contains($targetUser)) {
+            $user->removeFavorite($targetUser);
             $status = 'removed';
         }
         // Sinon, on l'ajoute
         else {
-            $currentUser->addFavorite($targetUser);
+            $user->addFavorite($targetUser);
             $status = 'added';
         }
 
@@ -119,7 +120,7 @@ class MemberDashboardController extends AbstractController
 
         return $this->json([
             'status' => $status,
-            'favoritesCount' => $currentUser->getFavorites()->count(),
+            'favoritesCount' => $user->getFavorites()->count(),
         ]);
     }
     // endregion
@@ -127,10 +128,11 @@ class MemberDashboardController extends AbstractController
     // region Update Profil
     #[Route('/update-profile', name: 'update_profile', methods: ['POST'])]
     #[IsGranted('ROLE_MALE')]
-    public function updateProfile(Request $request, EntityManagerInterface $em, TranslationService $translationService): JsonResponse
+    public function updateProfile(Request $request, EntityManagerInterface $em, TranslationService $translationService, #[CurrentUser] ?User $user): JsonResponse
     {
-        /** @var User $user */
-        $user = $this->getUser(); // On récupère l'utilisateur connecté via le Token
+        if (!$user) {
+            return $this->json(['message' => 'Non connecté'], 401);
+        }
 
         // On récupère les données envoyées par le formulaire React
         $data = json_decode($request->getContent(), true);
@@ -151,7 +153,7 @@ class MemberDashboardController extends AbstractController
             $user->setReligion($data['religion']);
         }
         if (isset($data['children'])) {
-            $user->setChildren((int) $data['children']);
+            $user->setChildren((string) $data['children']);
         }
         if (isset($data['birthDate']) && !empty($data['birthDate'])) {
             $user->setBirthDate(new \DateTime($data['birthDate']));
@@ -198,10 +200,11 @@ class MemberDashboardController extends AbstractController
     // region Upload Photo
     #[Route('/upload-photo', name: 'api_member_upload_photo', methods: ['POST'])]
     #[IsGranted('ROLE_MALE')]
-    public function uploadPhoto(Request $request, EntityManagerInterface $em): JsonResponse
+    public function uploadPhoto(Request $request, EntityManagerInterface $em, #[CurrentUser] ?User $user): JsonResponse
     {
-        /** @var User $user */
-        $user = $this->getUser();
+        if (!$user) {
+            return $this->json(['message' => 'Non connecté'], 401);
+        }
         $file = $request->files->get('photo');
 
         if (!$file) {
@@ -240,10 +243,11 @@ class MemberDashboardController extends AbstractController
     // region Delete Photo
     #[Route('/delete-photo/{id}', name: 'api_member_delete_photo', methods: ['DELETE'])]
     #[IsGranted('ROLE_MALE')]
-    public function deletePhoto(UserImage $userImage, EntityManagerInterface $em): JsonResponse
+    public function deletePhoto(UserImage $userImage, EntityManagerInterface $em, #[CurrentUser] ?User $user): JsonResponse
     {
-        /** @var User $user */
-        $user = $this->getUser();
+        if (!$user) {
+            return $this->json(['message' => 'Non connecté'], 401);
+        }
 
         // Sécurité : on vérifie que la photo appartient bien à l'utilisateur connecté
         if ($userImage->getOwner() !== $user) {
