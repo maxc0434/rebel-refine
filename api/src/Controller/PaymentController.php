@@ -15,11 +15,13 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/api/payment', name: 'api_payment_')]
 class PaymentController extends AbstractController
 {
     #[Route('/create-checkout-session', name: 'create_session', methods: ['POST'])]
+    #[IsGranted('ROLE_MALE', message: 'Seuls les hommes peuvent acheter des crédits')]
     public function createSession(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
@@ -35,7 +37,7 @@ class PaymentController extends AbstractController
             return new JsonResponse(['error' => 'Pack invalide'], 400);
         }
 
-        Stripe::setApiKey($this->getParameter('stripe_secret_key'));
+        Stripe::setApiKey((string)$this->getParameter('stripe_secret_key'));
 
         /** @var User $user */
         $user = $this->getUser();
@@ -54,11 +56,11 @@ class PaymentController extends AbstractController
             ]],
             'mode' => 'payment',
             'success_url' => 'http://localhost:3000/payment/success?session_id={CHECKOUT_SESSION_ID}',
-            'cancel_url' => 'http://localhost:3000/boutique',
+            'cancel_url' => 'http://localhost:3000/credit-shop',
             'metadata' => [
-                'user_id' => $user->getId(),
-                'pack_id' => $packId,
-                'credits' => $packs[$packId]['credits'],
+                'user_id' => (string)$user->getId(),
+                'pack_id' => (string)$packId,
+                'credits' => (string)$packs[$packId]['credits'],
             ],
         ]);
 
@@ -66,6 +68,7 @@ class PaymentController extends AbstractController
     }
 
     #[Route('/verify-session/{sessionId}', name: 'verify_session', methods: ['GET'])]
+    #[IsGranted('ROLE_MALE')]
     public function verifySession(
         string $sessionId,
         EntityManagerInterface $em,
@@ -86,7 +89,9 @@ class PaymentController extends AbstractController
             if ('paid' === $session->payment_status) {
                 /** @var User $user */
                 $user = $this->getUser();
-                $creditsToAmount = (int) $session->metadata->credits;
+
+                
+                $creditsToAmount = isset($session->metadata['credits']) ? (int)$session->metadata['credits'] : 0;
 
                 // 2. Création de l'historique dans la table Transaction
                 $transaction = new Transaction();
