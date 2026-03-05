@@ -5,8 +5,8 @@ namespace App\DataFixtures;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Faker\Factory;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserFixtures extends Fixture
 {
@@ -25,8 +25,8 @@ class UserFixtures extends Fixture
         $maritalOptions = ['divorced', 'widowed', 'single'];
         $childrenOptions = ['0', '1', '2', '3', '4', '5', '5+'];
         $religionOptions = [
-            'catholicism', 'orthodox', 'protestantism', 'buddhism', 
-            'hinduism', 'judaism', 'islam', 'other'
+            'catholicism', 'orthodox', 'protestantism', 'buddhism',
+            'hinduism', 'judaism', 'islam', 'other',
         ];
 
         // --- 1. ADMIN ---
@@ -54,7 +54,7 @@ class UserFixtures extends Fixture
         $manager->persist($translator);
 
         // --- 5 HOMMES ---
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 0; $i < 5; ++$i) {
             $user = new User();
             $user->setEmail($faker->unique()->email);
             $user->setNickname($faker->userName);
@@ -63,13 +63,13 @@ class UserFixtures extends Fixture
             $user->setCountry($faker->country);
             $user->setPassword($this->hasher->hashPassword($user, 'password'));
             $user->setBirthdate($faker->dateTimeBetween('-40 years', '-18 years'));
-            $user->setInterests($faker->sentence(15));;
+            $user->setInterests($faker->sentence(15));
             $user->setIsVerified(true);
             $manager->persist($user);
         }
 
         // --- 10 FEMMES ---
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 10; ++$i) {
             $user = new User();
             $user->setEmail($faker->unique()->email);
             $user->setNickname($faker->userName);
@@ -78,12 +78,12 @@ class UserFixtures extends Fixture
             $user->setCountry($faker->country);
             $user->setPassword($this->hasher->hashPassword($user, 'password'));
             $user->setBirthdate($faker->dateTimeBetween('-40 years', '-18 years'));
-            $user->setInterests($faker->sentence(20));;
+            $user->setInterests($faker->sentence(20));
             $user->setIsVerified(true);
             $user->setMarital($faker->randomElement($maritalOptions));
             $user->setChildren($faker->randomElement($childrenOptions));
             $user->setReligion($faker->randomElement($religionOptions));
-           
+
             $manager->persist($user);
         }
 

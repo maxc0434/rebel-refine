@@ -32,16 +32,16 @@ final class ProfileController extends AbstractController
 
         // On prépare les données détaillées (incluant tes nouveaux champs)
         $data = [
-            'id'         => $user->getId(),
-            'nickname'   => $user->getNickname(),
-            'age'        => $age,
-            'country'    => $user->getCountry(),
-            'gender'     => $user->getGender(),
-            'marital'    => $user->getMarital(),
-            'children'   => $user->getChildren(),
-            'religion'   => $user->getReligion(),
-            'interests'  => $user->getInterests(),
-            'photos'     => $photos,
+            'id' => $user->getId(),
+            'nickname' => $user->getNickname(),
+            'age' => $age,
+            'country' => $user->getCountry(),
+            'gender' => $user->getGender(),
+            'marital' => $user->getMarital(),
+            'children' => $user->getChildren(),
+            'religion' => $user->getReligion(),
+            'interests' => $user->getInterests(),
+            'photos' => $photos,
             'isFavorite' => $currentUser ? $currentUser->getFavorites()->contains($user) : false,
         ];
 
@@ -58,7 +58,7 @@ final class ProfileController extends AbstractController
         // Vérification de sécurité : Est-ce que cet homme a envoyé un message à la femme connectée ?
         $hasContacted = $msgRepo->findOneBy([
             'sender' => $male,
-            'receiver' => $currentUser
+            'receiver' => $currentUser,
         ]);
 
         if (!$hasContacted && !$this->isGranted('ROLE_ADMIN')) {
@@ -75,7 +75,7 @@ final class ProfileController extends AbstractController
             'marital' => $male->getMarital(),
             'children' => $male->getChildren(),
             'religion' => $male->getReligion(),
-            'photos' => array_map(fn($img) => $img->getImageName(), $male->getUserImages()->toArray()),
+            'photos' => array_map(fn ($img) => $img->getImageName(), $male->getUserImages()->toArray()),
         ]);
     }
 }

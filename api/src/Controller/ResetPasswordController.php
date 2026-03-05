@@ -3,8 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Form\ChangePasswordFormType;
-use App\Form\ResetPasswordRequestFormType;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -13,12 +12,9 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\ResetPassword\Controller\ResetPasswordControllerTrait;
 use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
 use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
-use Doctrine\ORM\EntityManagerInterface;
-
 
 #[Route('/api/reset-password')]
 class ResetPasswordController extends AbstractController
@@ -29,10 +25,11 @@ class ResetPasswordController extends AbstractController
         private ResetPasswordHelperInterface $resetPasswordHelper,
         private MailerInterface $mailer,
         private EntityManagerInterface $entityManager,
-    ) {}
+    ) {
+    }
 
     /**
-     * ÉTAPE 1 : Demande de réinitialisation (envoi de l'email)
+     * ÉTAPE 1 : Demande de réinitialisation (envoi de l'email).
      */
     #[Route('/request', name: 'api_forgot_password_request', methods: ['POST'])]
     public function request(Request $request): JsonResponse
@@ -57,12 +54,12 @@ class ResetPasswordController extends AbstractController
                     ->htmlTemplate('reset_password/email.html.twig')
                     ->context([
                         'resetToken' => $resetToken,
-                        'frontendUrl' => $this->getParameter('app.frontend_url') // URL React (localhost:3000)
+                        'frontendUrl' => $this->getParameter('app.frontend_url'), // URL React (localhost:3000)
                     ]);
 
                 $this->mailer->send($emailMessage);
             } catch (ResetPasswordExceptionInterface $e) {
-                /* On ne fait rien ici pour éviter qu'un hacker sache 
+                /* On ne fait rien ici pour éviter qu'un hacker sache
                    si l'email existe en observant le temps de réponse */
             }
         }
@@ -72,10 +69,10 @@ class ResetPasswordController extends AbstractController
     }
 
     /**
-     * ÉTAPE 2 : Validation du token et mise à jour du mot de passe
+     * ÉTAPE 2 : Validation du token et mise à jour du mot de passe.
      */
     #[Route('/reset/{token}', name: 'api_reset_password', methods: ['POST'])]
-    public function reset(Request $request, UserPasswordHasherInterface $userPasswordHasher, string $token = null): JsonResponse
+    public function reset(Request $request, UserPasswordHasherInterface $userPasswordHasher, ?string $token = null): JsonResponse
     {
         // 1. Vérification de la présence du jeton
         if (null === $token) {

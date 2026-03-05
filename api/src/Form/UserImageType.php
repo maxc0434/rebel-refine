@@ -6,8 +6,8 @@ use App\Entity\UserImage; // On dit qu'on travaille avec l'objet UserImage (celu
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Vich\UploaderBundle\Form\Type\VichImageType; // On utilise l'outil Vich pour gérer l'upload
-use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Validator\Constraints\File; // On utilise l'outil Vich pour gérer l'upload
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class UserImageType extends AbstractType
 {
@@ -31,7 +31,7 @@ class UserImageType extends AbstractType
                         'image/webp',
                     ],
                     mimeTypesMessage: 'Veuillez uploader une image valide (JPG, PNG, WEBP)'
-                )
+                ),
             ],
         ]);
     }

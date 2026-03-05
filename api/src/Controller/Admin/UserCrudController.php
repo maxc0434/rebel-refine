@@ -2,26 +2,33 @@
 
 namespace App\Controller\Admin;
 
-/** * ÉTAPE 1 : Les Imports
+/* * ÉTAPE 1 : Les Imports
  * On importe les composants Symfony, EasyAdmin et nos propres services/entités.
  */
 
 use App\Entity\User;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Field\{IdField, EmailField, TextField, DateField, BooleanField, ChoiceField, TextEditorField, CollectionField};
 use App\Form\UserImageType;
 use App\Service\TranslationService;
-use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
-use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
-use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
-use Symfony\Component\Form\FormBuilderInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
-use Doctrine\ORM\QueryBuilder;
+use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserCrudController extends AbstractCrudController
 {
@@ -73,7 +80,7 @@ class UserCrudController extends AbstractCrudController
     }
 
     /**
-     * ÉTAPE 5 : Configuration des Champs de l'Interface
+     * ÉTAPE 5 : Configuration des Champs de l'Interface.
      */
     public function configureFields(string $pageName): iterable
     {
@@ -85,11 +92,11 @@ class UserCrudController extends AbstractCrudController
             TextField::new('password', 'Mot de passe')
                 ->setFormType(PasswordType::class)
                 ->onlyOnForms()
-                ->setRequired($pageName === 'new')
+                ->setRequired('new' === $pageName)
                 ->setFormTypeOption('mapped', false)
                 ->setFormTypeOptions([
                     'attr' => [
-                        'placeholder' => $pageName === 'edit' ?
+                        'placeholder' => 'edit' === $pageName ?
                             'Laissez vide pour conserver le mot de passe actuel' :
                             'Entrez un mot de passe',
                     ],
@@ -122,21 +129,21 @@ class UserCrudController extends AbstractCrudController
                 ->setFormTypeOption('by_reference', false)
                 ->onlyOnForms(),
 
-            ChoiceField::new('gender', "Genre")
+            ChoiceField::new('gender', 'Genre')
                 ->setChoices(['♂️ Homme' => 'male', '♀️ Femme' => 'female']),
 
-            ChoiceField::new('marital', "Situation matrimoniale")
+            ChoiceField::new('marital', 'Situation matrimoniale')
                 ->setChoices([
                     'divorcé(e)' => 'divorced',
                     'veuf(ve)' => 'widowed',
                     'célibataire' => 'single',
-                    'couple libre' => 'free couple'
+                    'couple libre' => 'free couple',
                 ]),
 
-            ChoiceField::new('children', "Enfants")
+            ChoiceField::new('children', 'Enfants')
                 ->setChoices(['0' => '0', '1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5', '5+' => '5+']),
 
-            ChoiceField::new('religion', "Religion")
+            ChoiceField::new('religion', 'Religion')
                 ->setChoices([
                     'Aucune' => 'aucune',
                     'Catholique' => 'catholique',
@@ -243,7 +250,8 @@ class UserCrudController extends AbstractCrudController
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
     {
         $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
-        $qb->andWhere($qb->getRootAliases()[0] . '.deletedAt IS NULL');
+        $qb->andWhere($qb->getRootAliases()[0].'.deletedAt IS NULL');
+
         return $qb;
     }
 
@@ -261,7 +269,7 @@ class UserCrudController extends AbstractCrudController
             try {
                 // A. NETTOYAGE DES TRADUCTIONS (Comme dans l'AccountController)
                 $entityManager->createQuery('DELETE FROM Gedmo\Translatable\Entity\Translation t WHERE t.foreignKey = :id AND t.objectClass = :class')
-                   ->setParameter('id', (string)$user->getId())
+                   ->setParameter('id', (string) $user->getId())
                    ->setParameter('class', User::class)
                    ->execute();
 
@@ -272,10 +280,10 @@ class UserCrudController extends AbstractCrudController
                 );
 
                 // C. ANONYMISATION DES DONNÉES SENSIBLES
-                $user->setEmail('deleted-admin-' . uniqid() . '@rebel-refine.fr');
+                $user->setEmail('deleted-admin-'.uniqid().'@rebel-refine.fr');
                 $user->setNickname('Utilisateur supprimé (Admin)');
-                $user->setPassword('DELETED_BY_ADMIN_' . bin2hex(random_bytes(10)));
-                
+                $user->setPassword('DELETED_BY_ADMIN_'.bin2hex(random_bytes(10)));
+
                 $user->setBirthdate(null);
                 $user->setGender(null);
                 $user->setCountry(null);
@@ -285,7 +293,7 @@ class UserCrudController extends AbstractCrudController
                 $user->setIsVerified(false);
 
                 // D. SUPPRESSION DES PHOTOS (Liaisons et Fichiers)
-                // Si tes images utilisent VichUploader ou un système similaire, 
+                // Si tes images utilisent VichUploader ou un système similaire,
                 // le remove s'occupera du fichier si configurer en cascade.
                 foreach ($user->getUserImages() as $image) {
                     $user->removeUserImage($image);
@@ -294,7 +302,6 @@ class UserCrudController extends AbstractCrudController
 
                 // E. ON VALIDE L'ANONYMISATION AVANT LA SUPPRESSION
                 $entityManager->flush();
-
             } catch (\Exception $e) {
                 // Optionnel : ajouter un flash message d'erreur pour l'admin
             }

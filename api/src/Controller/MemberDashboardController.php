@@ -6,11 +6,11 @@ use App\Entity\User;
 use App\Entity\UserImage;
 use App\Service\TranslationService;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
  * Contrôleur gérant l'espace personnel des membres (Dashboard et Favoris).
@@ -19,20 +19,19 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 #[Route('/api/member', name: 'api_member_')]
 class MemberDashboardController extends AbstractController
 {
-
-    #region Dashboard
+    // region Dashboard
     #[Route('/dashboard', name: 'dashboard', methods: ['GET'])]
     #[IsGranted('ROLE_MALE')]
     public function index(): JsonResponse
     {
         /** @var User $user */
-        // On récupère l'objet User de la personne actuellement connectée 
+        // On récupère l'objet User de la personne actuellement connectée
         $user = $this->getUser();
         $userPhotos = [];
         foreach ($user->getUserImages() as $image) {
             $userPhotos[] = [
                 'id' => $image->getId(),
-                'url' => $image->getImageName()
+                'url' => $image->getImageName(),
             ];
         }
         $favoritesData = [];
@@ -64,10 +63,9 @@ class MemberDashboardController extends AbstractController
 
                 // INFO TARGET : Ses passions
                 'country' => $favorite->getCountry(),
-
-
             ];
         }
+
         return $this->json([
             'status' => 'success',
 
@@ -87,7 +85,6 @@ class MemberDashboardController extends AbstractController
                 'photos' => $userPhotos,                   // Sa photo de profil
                 'credits' => $user->getCredits(),         // Ses crédits
                 'confirmMessageSend' => $user->isConfirmMessageSend(),
-
             ],
             // BLOC DES TARGETS : La liste des profils favoris extraite plus haut
             'favorites' => $favoritesData,
@@ -95,15 +92,9 @@ class MemberDashboardController extends AbstractController
             'favoritesCount' => count($favoritesData),
         ]);
     }
-    #endregion
+    // endregion
 
-
-
-
-
-
-
-    #region Favoris
+    // region Favoris
     #[Route('/favorite/{id}', name: 'toggle_favorite', methods: ['POST'])]
     #[IsGranted('ROLE_MALE')]
     public function toggleFavorite(User $targetUser, EntityManagerInterface $em): JsonResponse
@@ -128,18 +119,12 @@ class MemberDashboardController extends AbstractController
 
         return $this->json([
             'status' => $status,
-            'favoritesCount' => $currentUser->getFavorites()->count()
+            'favoritesCount' => $currentUser->getFavorites()->count(),
         ]);
     }
-    #endregion
+    // endregion
 
-
-
-
-
-
-
-    #region Update Profil
+    // region Update Profil
     #[Route('/update-profile', name: 'update_profile', methods: ['POST'])]
     #[IsGranted('ROLE_MALE')]
     public function updateProfile(Request $request, EntityManagerInterface $em, TranslationService $translationService): JsonResponse
@@ -156,15 +141,23 @@ class MemberDashboardController extends AbstractController
 
         // --- LOGIQUE "UPDATE" DU CRUD ---
         // On met à jour uniquement les champs autorisés
-        if (isset($data['nickname'])) $user->setNickname($data['nickname']);
-        if (isset($data['marital'])) $user->setMarital($data['marital']);
-        if (isset($data['religion'])) $user->setReligion($data['religion']);
-        if (isset($data['children'])) $user->setChildren((int)$data['children']);
+        if (isset($data['nickname'])) {
+            $user->setNickname($data['nickname']);
+        }
+        if (isset($data['marital'])) {
+            $user->setMarital($data['marital']);
+        }
+        if (isset($data['religion'])) {
+            $user->setReligion($data['religion']);
+        }
+        if (isset($data['children'])) {
+            $user->setChildren((int) $data['children']);
+        }
         if (isset($data['birthDate']) && !empty($data['birthDate'])) {
             $user->setBirthDate(new \DateTime($data['birthDate']));
         }
         if (isset($data['confirmMessageSend'])) {
-            $user->setConfirmMessageSend((bool)$data['confirmMessageSend']);
+            $user->setConfirmMessageSend((bool) $data['confirmMessageSend']);
         }
         if (isset($data['interests'])) {
             $user->setInterests($data['interests']);
@@ -182,7 +175,6 @@ class MemberDashboardController extends AbstractController
             }
         }
 
-
         $em->flush();
         $em->refresh($user); // On synchronise avec ce qu'on vient de mettre en BDD
 
@@ -198,19 +190,12 @@ class MemberDashboardController extends AbstractController
                 'children' => $user->getChildren(),
                 'birthDate' => $user->getBirthDate() ? $user->getBirthDate()->format('Y-m-d') : null,
                 'confirmMessageSend' => $user->isConfirmMessageSend(),
-            ]
+            ],
         ]);
     }
-    #endregion
+    // endregion
 
-
-
-
-
-
-
-
-    #region Upload Photo
+    // region Upload Photo
     #[Route('/upload-photo', name: 'api_member_upload_photo', methods: ['POST'])]
     #[IsGranted('ROLE_MALE')]
     public function uploadPhoto(Request $request, EntityManagerInterface $em): JsonResponse
@@ -227,7 +212,7 @@ class MemberDashboardController extends AbstractController
         // On utilise getUserImages() qui est la collection liée à l'utilisateur
         if ($user->getUserImages()->count() >= 3) {
             return $this->json([
-                'message' => 'Limite de 3 photos atteinte. Supprimez-en une pour en ajouter une nouvelle.'
+                'message' => 'Limite de 3 photos atteinte. Supprimez-en une pour en ajouter une nouvelle.',
             ], 400);
         }
 
@@ -246,20 +231,13 @@ class MemberDashboardController extends AbstractController
         return $this->json([
             'photo' => [
                 'id' => $userImage->getId(),
-                'url' => $userImage->getImageName() // Le nom du fichier généré (ex: photo.webp)
-            ]
+                'url' => $userImage->getImageName(), // Le nom du fichier généré (ex: photo.webp)
+            ],
         ]);
     }
-    #endregion
+    // endregion
 
-
-
-
-
-
-
-
-    #region Delete Photo
+    // region Delete Photo
     #[Route('/delete-photo/{id}', name: 'api_member_delete_photo', methods: ['DELETE'])]
     #[IsGranted('ROLE_MALE')]
     public function deletePhoto(UserImage $userImage, EntityManagerInterface $em): JsonResponse
@@ -277,8 +255,8 @@ class MemberDashboardController extends AbstractController
 
         return $this->json([
             'status' => 'success',
-            'message' => 'Photo supprimée avec succès'
+            'message' => 'Photo supprimée avec succès',
         ]);
     }
-    #endregion
+    // endregion
 }

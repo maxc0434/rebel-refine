@@ -19,16 +19,17 @@ use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 #[Route('/api')]
 class RegistrationController extends AbstractController
 {
-    public function __construct(private EmailVerifier $emailVerifier) {}
+    public function __construct(private EmailVerifier $emailVerifier)
+    {
+    }
 
     // --- LOGIQUE D'INSCRIPTION ---
     #[Route('/register', name: 'api_register', methods: ['POST'])]
     public function register(
         Request $request,
         EntityManagerInterface $em,
-        UserPasswordHasherInterface $passwordHasher
+        UserPasswordHasherInterface $passwordHasher,
     ): JsonResponse {
-
         // ÉTAPE 1 : Récupération et décodage des données envoyées par React
         $data = json_decode($request->getContent(), true);
 
@@ -37,10 +38,10 @@ class RegistrationController extends AbstractController
             return $this->json(['error' => 'Données incomplètes'], 400);
         }
 
-        if ($data['gender'] === 'female') {
+        if ('female' === $data['gender']) {
             return $this->json([
-                'error' => 'L\'inscription des profils féminins nécessite une validation par l\'administrateur.'
-            ], 403); 
+                'error' => 'L\'inscription des profils féminins nécessite une validation par l\'administrateur.',
+            ], 403);
         }
 
         // ÉTAPE 3 : Création de l'objet User et hydratation des données
@@ -49,18 +50,18 @@ class RegistrationController extends AbstractController
         $user->setNickname($data['nickname']);
         $user->setCountry($data['country']);
 
-        //Attribution des rôles en fonction du sexe
+        // Attribution des rôles en fonction du sexe
         $gender = $data['gender'];
         $user->setGender($data['gender']);
 
-        if ($gender === 'female') {
+        if ('female' === $gender) {
             $user->setRoles(['ROLE_FEMALE']);
         } else {
             $user->setRoles(['ROLE_MALE']);
         }
 
         // Attribution des crédits en fonction du sexe
-        if ($user->getGender() === 'male') {
+        if ('male' === $user->getGender()) {
             $user->setCredits(5);
         } else {
             $user->setCredits(null);
@@ -69,7 +70,6 @@ class RegistrationController extends AbstractController
         // ÉTAPE 4 : Sécurisation du mot de passe (Hachage)
         $hashedPassword = $passwordHasher->hashPassword($user, $data['password']);
         $user->setPassword($hashedPassword);
-
 
         // ÉTAPE 5 : Persistance en base de données via Doctrine
         $em->persist($user);
@@ -88,7 +88,7 @@ class RegistrationController extends AbstractController
 
         // ÉTAPE 7 : Réponse de succès envoyée au Front-end
         return $this->json([
-            'message' => 'Utilisateur créé. Veuillez vérifier vos emails.'
+            'message' => 'Utilisateur créé. Veuillez vérifier vos emails.',
         ], 201);
     }
 
@@ -96,9 +96,8 @@ class RegistrationController extends AbstractController
     #[Route('/verify/email', name: 'api_verify_email', methods: ['GET'])]
     public function verifyEmail(
         Request $request,
-        UserRepository $userRepository
+        UserRepository $userRepository,
     ): RedirectResponse {
-
         // ÉTAPE 1 : Identification de l'utilisateur via l'ID dans l'URL
         $id = $request->query->get('id');
         $user = $userRepository->find($id);

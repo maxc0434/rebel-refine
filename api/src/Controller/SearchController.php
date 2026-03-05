@@ -25,8 +25,8 @@ final class SearchController extends AbstractController
             $birthdate = $user->getBirthdate();
 
             // Exclusions : absence de date de naissance ou profil non féminin
-            //"Si l'utilisateur n'a pas renseigné sa date de naissance OU s'il n'est pas une femme, alors on l'ignore et on passe directement au suivant."
-            if (!$birthdate || $user->getGender() !== 'female') {
+            // "Si l'utilisateur n'a pas renseigné sa date de naissance OU s'il n'est pas une femme, alors on l'ignore et on passe directement au suivant."
+            if (!$birthdate || 'female' !== $user->getGender()) {
                 continue;
             }
 
@@ -35,9 +35,8 @@ final class SearchController extends AbstractController
 
             // Filtrage par tranche d'âge
             if ($age >= $min && $age <= $max) {
-                
                 // Sélection de la première image ou image par défaut
-                $userImages = $user->getUserImages(); 
+                $userImages = $user->getUserImages();
                 $photoName = !$userImages->isEmpty() // S'il y a au moins une image
                     ? $userImages->first()->getImageName() // On choisit la première
                     : null; // Sinon on choisit null
@@ -45,7 +44,7 @@ final class SearchController extends AbstractController
                 // Construction de l'objet de réponse
                 $result[] = [
                     'id' => $user->getId(),
-                    'nickname' => $user->getNickname() ?? 'Utilisatrice n°' . $user->getId(),
+                    'nickname' => $user->getNickname() ?? 'Utilisatrice n°'.$user->getId(),
                     'age' => $age,
                     'photo' => $photoName,
                 ];

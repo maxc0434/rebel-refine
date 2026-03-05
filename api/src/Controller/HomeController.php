@@ -4,11 +4,11 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
-use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class HomeController extends AbstractController
 {
@@ -42,11 +42,11 @@ final class HomeController extends AbstractController
 
             // On remplit le tableau des membres
             $membersData[] = [
-                'id'       => $lastUser->getId(),
+                'id' => $lastUser->getId(),
                 'nickname' => $lastUser->getNickname(),
-                'gender'   => $lastUser->getGender(),
-                'age'      => $age,
-                'photos'   => $photos, // C'est ce tableau que ton React recevra
+                'gender' => $lastUser->getGender(),
+                'age' => $age,
+                'photos' => $photos, // C'est ce tableau que ton React recevra
                 'isFavorite' => $currentUser ? $currentUser->getFavorites()->contains($lastUser) : false,
             ];
         }
@@ -54,12 +54,12 @@ final class HomeController extends AbstractController
         // --- 2. CRÉATION DU "COLIS" GÉNÉRAL ($data) ---
         // C'est ici qu'on définit les clés que tu utiliseras dans ton fetch React (ex: apiData.app_name)
         $data = [
-            'app_name'      => 'Rebel Refine API',
-            'authenticated' => ($user !== null), // true ou false
+            'app_name' => 'Rebel Refine API',
+            'authenticated' => (null !== $user), // true ou false
             'total_members' => $userRepository->count([]),
             'count_females' => $userRepository->count(['gender' => 'female']),
-            'count_males'   => $userRepository->count(['gender' => 'male']),
-            'last_members'  => $membersData, // On insère la liste des membres préparée plus haut
+            'count_males' => $userRepository->count(['gender' => 'male']),
+            'last_members' => $membersData, // On insère la liste des membres préparée plus haut
         ];
 
         // --- 3. PERSONNALISATION SI L'UTILISATEUR EST CONNECTÉ ---
@@ -70,15 +70,15 @@ final class HomeController extends AbstractController
                 $myPhotos[] = $img->getImageName();
             }
 
-            $data['message'] = "Bonjour " . $user->getNickname() . " !";
+            $data['message'] = 'Bonjour '.$user->getNickname().' !';
             $data['user_details'] = [
                 'nickname' => $user->getNickname(),
-                'email'    => $user->getUserIdentifier(),
-                'photos'   => $myPhotos,
+                'email' => $user->getUserIdentifier(),
+                'photos' => $myPhotos,
             ];
         } else {
             // Message par défaut pour les visiteurs
-            $data['message'] = "Bienvenue ! Veuillez vous connecter.";
+            $data['message'] = 'Bienvenue ! Veuillez vous connecter.';
         }
 
         // --- 4. EXPÉDITION ---

@@ -4,20 +4,20 @@ namespace App\Controller;
 
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class SecurityController extends AbstractController
 {
     #[Route('/login', name: 'app_login')]
     public function redirectLogin(): RedirectResponse
     {
-        // On redirige l'utilisateur vers ton Front-end React (port 3000) 
+        // On redirige l'utilisateur vers ton Front-end React (port 3000)
         return $this->redirect('http://localhost:3000/');
     }
 
@@ -28,13 +28,12 @@ class SecurityController extends AbstractController
         throw new \LogicException('Cette méthode peut rester vide.');
     }
 
-    
     #[Route('/api/auth/update-password', name: 'api_update_password', methods: ['POST'])]
-    #[IsGranted('ROLE_USER')] 
+    #[IsGranted('ROLE_USER')]
     public function updatePassword(
         Request $request,
         UserPasswordHasherInterface $passwordHasher,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
     ): JsonResponse {
         $data = json_decode($request->getContent(), true);
 

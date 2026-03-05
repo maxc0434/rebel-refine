@@ -17,9 +17,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/api/messages')]
 class MessageController extends AbstractController
 {
-
-
-    #region ENVOYER UN MESSAGE
+    // region ENVOYER UN MESSAGE
     #[Route('/send', name: 'app_message_send', methods: ['POST'])]
     #[IsGranted(new Expression("is_granted('ROLE_MALE') or is_granted('ROLE_FEMALE')"), message: 'Accès interdit')]
     public function send(Request $request, EntityManagerInterface $entityManager): JsonResponse
@@ -42,7 +40,7 @@ class MessageController extends AbstractController
         }
 
         // --- 2. GESTION DES CRÉDITS ---
-        if ($sender->getGender() === 'male') {
+        if ('male' === $sender->getGender()) {
             if ($sender->getCredits() <= 0) {
                 return new JsonResponse(['error' => 'Crédits insuffisants'], 403);
             }
@@ -51,10 +49,10 @@ class MessageController extends AbstractController
 
         // --- 3. PRÉPARATION DE LA DIRECTION AVEC DRAPEAUX ---
         $flags = [
-            'France' => '🇫🇷', 'Allemagne' => '🇩🇪', 'Italie' => '🇮🇹', 
+            'France' => '🇫🇷', 'Allemagne' => '🇩🇪', 'Italie' => '🇮🇹',
             'Espagne' => '🇪🇸', 'Angleterre' => '🇬🇧', 'Belgique' => '🇧🇪',
-            'Suisse' => '🇨🇭', 'Chine' => '🇨🇳', 'Japon' => '🇯🇵', 
-            'Russie' => '🇷🇺', 'Thaïlande' => '🇹🇭', 'Vietnam' => '🇻🇳'
+            'Suisse' => '🇨🇭', 'Chine' => '🇨🇳', 'Japon' => '🇯🇵',
+            'Russie' => '🇷🇺', 'Thaïlande' => '🇹🇭', 'Vietnam' => '🇻🇳',
         ];
 
         $senderCountry = $sender->getCountry() ?? 'Inconnu';
@@ -70,7 +68,7 @@ class MessageController extends AbstractController
         $message->setReceiver($receiver);
         $message->setStatus(MessageStatus::Pending);
         $message->setCreatedAt(new \DateTimeImmutable());
-        
+
         // Maintenant $receiver est connu, on peut faire le setDirection !
         $message->setDirection(sprintf('%s %s ➔ %s %s', $flagFrom, $senderCountry, $flagTo, $receiverCountry));
 
@@ -82,11 +80,9 @@ class MessageController extends AbstractController
             'remainingCredits' => $sender->getCredits(),
         ], 201);
     }
-    #endregion
+    // endregion
 
-
-
-    #region TRADUCTION
+    // region TRADUCTION
     // Route pour obtenir les messages en attente de traduction
     #[Route('/pending', name: 'app_message_pending', methods: ['GET'])]
     #[IsGranted('ROLE_TRANSLATOR', message: 'Réservé aux traducteurs')]
@@ -100,11 +96,13 @@ class MessageController extends AbstractController
                 'id' => $msg->getId(),
                 'original' => $msg->getContentOriginal(),
                 'from' => $msg->getSender()->getNickname(),
-                'direction' => strtolower($msg->getDirection())
+                'direction' => strtolower($msg->getDirection()),
             ];
         }
+
         return new JsonResponse($data);
     }
+
     // Route pour valider la traduction d'un message
     #[Route('/{id}/validate', name: 'app_message_validate', methods: ['PUT'])]
     #[IsGranted('ROLE_TRANSLATOR', message: 'Réservé aux traducteurs')]
@@ -124,11 +122,9 @@ class MessageController extends AbstractController
 
         return new JsonResponse(['status' => 'Message traduit et envoyé au destinataire']);
     }
-    #endregion
+    // endregion
 
-
-
-    #region LISTE DES CONTACTS
+    // region LISTE DES CONTACTS
     #[Route('/contacts', name: 'app_message_contacts', methods: ['GET'])]
     #[IsGranted(new Expression("is_granted('ROLE_MALE') or is_granted('ROLE_FEMALE')"), message: 'Accès interdit')]
     public function getContacts(EntityManagerInterface $entityManager): JsonResponse
@@ -172,13 +168,12 @@ class MessageController extends AbstractController
             }
         }
         $entityManager->getFilters()->enable('softdeleteable');
+
         return new JsonResponse($data);
     }
-    #endregion
+    // endregion
 
-
-
-    #region LISTE DES MESSAGES
+    // region LISTE DES MESSAGES
     #[Route('/list/{receiverId}', name: 'app_message_list', methods: ['GET'])]
     public function list(int $receiverId, EntityManagerInterface $entityManager): JsonResponse
     {
@@ -195,8 +190,8 @@ class MessageController extends AbstractController
             ->setParameter('contact', $receiverId)
             ->andWhere('(m.status IN (:statusApproved) OR m.sender = :user)')
             ->setParameter('statusApproved', [
-                \App\Enum\MessageStatus::Approved,
-                \App\Enum\MessageStatus::Read
+                MessageStatus::Approved,
+                MessageStatus::Read,
             ])
             ->orderBy('m.createdAt', 'ASC')
             ->getQuery()
@@ -214,13 +209,12 @@ class MessageController extends AbstractController
             ];
         }
         $entityManager->getFilters()->enable('softdeleteable');
+
         return new JsonResponse($data);
     }
     // #endregion
 
-
-
-    #region CONVERSATIONS
+    // region CONVERSATIONS
     // Route pour obtenir la liste des conversations
     #[Route('/conversations', name: 'app_message_conversations', methods: ['GET'])]
     public function getConversations(EntityManagerInterface $entityManager): JsonResponse
@@ -228,7 +222,7 @@ class MessageController extends AbstractController
         /** @var User $currentUser */
         $currentUser = $this->getUser();
 
-        //On désactive le filtre et on autorise à voir les utilisateurs supprimés (anonymisés) ---
+        // On désactive le filtre et on autorise à voir les utilisateurs supprimés (anonymisés) ---
         $entityManager->getFilters()->disable('softdeleteable');
 
         // On récupère tous les messages où l'utilisateur est impliqué
@@ -249,31 +243,29 @@ class MessageController extends AbstractController
 
             // On évite les doublons dans la liste
             if (!isset($contacts[$otherUser->getId()])) {
-
                 // ON CHERCHE SI LE CONTACT NOUS A ENVOYÉ UN MESSAGE NON LU (STATUS APPROVED)
                 $hasNew = $entityManager->getRepository(Message::class)->findOneBy([
-                    'sender'   => $otherUser,
+                    'sender' => $otherUser,
                     'receiver' => $currentUser,
-                    'status'   => \App\Enum\MessageStatus::Approved,
+                    'status' => MessageStatus::Approved,
                 ]);
 
                 $contacts[$otherUser->getId()] = [
-                    'id'             => $otherUser->getId(),
-                    'nickname'       => $otherUser->getNickname() ?? 'utilisateur supprimé',
-                    'age'            => $otherUser->getBirthDate() ? $otherUser->getBirthDate()->diff(new \DateTime())->y : null,
-                    'hasNewMessages' => ($hasNew !== null),
-                    'isDeleted'      => ($otherUser->getDeletedAt() !== null),
+                    'id' => $otherUser->getId(),
+                    'nickname' => $otherUser->getNickname() ?? 'utilisateur supprimé',
+                    'age' => $otherUser->getBirthDate() ? $otherUser->getBirthDate()->diff(new \DateTime())->y : null,
+                    'hasNewMessages' => (null !== $hasNew),
+                    'isDeleted' => (null !== $otherUser->getDeletedAt()),
                 ];
             }
         }
         $entityManager->getFilters()->enable('softdeleteable');
+
         return new JsonResponse(array_values($contacts));
     }
-    #endregion
+    // endregion
 
-
-
-    #region SUPPRIMER UNE CONVERSATION (VERSION MASQUAGE/ SOFT DELETE)
+    // region SUPPRIMER UNE CONVERSATION (VERSION MASQUAGE/ SOFT DELETE)
     #[Route('/conversation/{contactId}', name: 'app_message_delete_conversation', methods: ['DELETE'])]
     public function deleteConversation(int $contactId, MessageRepository $messageRepo, EntityManagerInterface $em): JsonResponse
     {
@@ -296,13 +288,12 @@ class MessageController extends AbstractController
         }
 
         $em->flush();
+
         return new JsonResponse(['message' => 'Conversation masquée pour vous'], 200);
     }
-    #endregion
+    // endregion
 
-
-
-    #region MARQUER UN MESSAGE COMME LU
+    // region MARQUER UN MESSAGE COMME LU
     // Route pour marquer un message comme lu
     #[Route('/mark-read/{id}', name: 'app_message_mark_read', methods: ['POST'])]
     public function markAsRead(User $contact, EntityManagerInterface $entityManager): JsonResponse
@@ -314,16 +305,16 @@ class MessageController extends AbstractController
         $messages = $entityManager->getRepository(Message::class)->findBy([
             'sender' => $contact,
             'receiver' => $currentUser,
-            'status' => \App\Enum\MessageStatus::Approved,
+            'status' => MessageStatus::Approved,
         ]);
 
         foreach ($messages as $message) {
-            $message->setStatus(\App\Enum\MessageStatus::Read);
+            $message->setStatus(MessageStatus::Read);
         }
 
         $entityManager->flush();
 
         return new JsonResponse(['status' => 'success']);
     }
-    #endregion
+    // endregion
 }

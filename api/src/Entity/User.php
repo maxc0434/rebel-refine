@@ -7,12 +7,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
+use Gedmo\Translatable\Translatable;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Gedmo\Mapping\Annotation as Gedmo;
-use Gedmo\Translatable\Translatable;
-use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -21,8 +21,6 @@ use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 class User implements UserInterface, PasswordAuthenticatedUserInterface, Translatable
 {
     use SoftDeleteableEntity;
-
-   
 
     #[ORM\Column(type: 'datetime', nullable: true)]
     protected $deletedAt;
@@ -130,9 +128,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Transla
     {
         return $this->email;
     }
+
     public function setEmail(string $email): static
     {
         $this->email = $email;
+
         return $this;
     }
 
@@ -147,11 +147,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Transla
     {
         $roles = $this->roles;
         $roles[] = 'ROLE_USER';
+
         return array_unique($roles);
     }
+
     public function setRoles(array $roles): static
     {
         $this->roles = $roles;
+
         return $this;
     }
 
@@ -160,23 +163,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Transla
     {
         return $this->password;
     }
+
     public function setPassword(string $password): static
     {
         $this->password = $password;
+
         return $this;
     }
 
     /** @see UserInterface */
-    public function eraseCredentials(): void {}
+    public function eraseCredentials(): void
+    {
+    }
 
     // --- Champs personnalisés ---
     public function getNickname(): ?string
     {
         return $this->nickname;
     }
+
     public function setNickname(?string $nickname): static
     {
         $this->nickname = $nickname;
+
         return $this;
     }
 
@@ -184,9 +193,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Transla
     {
         return $this->birthdate;
     }
+
     public function setBirthdate(?\DateTimeInterface $birthdate): static
     {
         $this->birthdate = $birthdate;
+
         return $this;
     }
 
@@ -194,9 +205,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Transla
     {
         return $this->interests;
     }
+
     public function setInterests(?string $interests): static
     {
         $this->interests = $interests;
+
         return $this;
     }
 
@@ -204,9 +217,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Transla
     {
         return $this->isVerified;
     }
+
     public function setIsVerified(bool $isVerified): static
     {
         $this->isVerified = $isVerified;
+
         return $this;
     }
 
@@ -214,9 +229,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Transla
     {
         return $this->gender;
     }
+
     public function setGender(?string $gender): static
     {
         $this->gender = $gender;
+
         return $this;
     }
 
@@ -224,9 +241,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Transla
     {
         return $this->religion;
     }
+
     public function setReligion(?string $religion): static
     {
         $this->religion = $religion;
+
         return $this;
     }
 
@@ -234,9 +253,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Transla
     {
         return $this->marital;
     }
+
     public function setMarital(?string $marital): static
     {
         $this->marital = $marital;
+
         return $this;
     }
 
@@ -244,9 +265,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Transla
     {
         return $this->children;
     }
+
     public function setChildren(?string $children): static
     {
         $this->children = $children;
+
         return $this;
     }
 
@@ -264,6 +287,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Transla
             $this->userImages->add($userImage);
             $userImage->setOwner($this);
         }
+
         return $this;
     }
 
@@ -274,6 +298,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Transla
                 $userImage->setOwner(null);
             }
         }
+
         return $this;
     }
 
@@ -315,6 +340,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Transla
             $this->sentMessages->add($message);
             $message->setSender($this);
         }
+
         return $this;
     }
 
@@ -325,6 +351,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Transla
                 $message->setSender(null);
             }
         }
+
         return $this;
     }
 
@@ -342,6 +369,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Transla
             $this->receivedMessages->add($message);
             $message->setReceiver($this);
         }
+
         return $this;
     }
 
@@ -352,6 +380,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Transla
                 $message->setReceiver(null);
             }
         }
+
         return $this;
     }
 

@@ -3,10 +3,10 @@
 namespace App\Controller;
 
 use App\Repository\UserRepository;
-use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class MemberController extends AbstractController
 {
@@ -22,12 +22,12 @@ final class MemberController extends AbstractController
 
         /** @var User $currentUser */
         $currentUser = $this->getUser();
-        
+
         /**
          * ÉTAPE 2 : Requête en Base de Données
-         * On utilise le Repository pour filtrer : 
+         * On utilise le Repository pour filtrer :
          * - Critère : 'gender' => 'female'
-         * - Tri : 'id' => 'DESC' (les plus récentes en premier)
+         * - Tri : 'id' => 'DESC' (les plus récentes en premier).
          */
         $females = $userRepository->findBy(['gender' => 'female'], ['id' => 'DESC']);
 
@@ -39,7 +39,7 @@ final class MemberController extends AbstractController
         $results = [];
         $today = new \DateTime();
 
-        /**
+        /*
          * ÉTAPE 4 : Boucle de traitement (Mapping)
          * On parcourt chaque objet "User" (entité) pour le transformer en tableau simple.
          */
@@ -51,7 +51,7 @@ final class MemberController extends AbstractController
 
             if ($birthday) {
                 /**
-                 * ÉTAPE 5 : Calcul de l'âge à la volée PUIS Extraction des photos
+                 * ÉTAPE 5 : Calcul de l'âge à la volée PUIS Extraction des photos.
                  */
                 $age = $today->diff($birthday)->y;
             }
@@ -61,22 +61,22 @@ final class MemberController extends AbstractController
                 $photos[] = $img->getImageName();
             }
 
-            /**
+            /*
              * ÉTAPE 6 : Construction du tableau de réponse
              * On ne sélectionne que les champs nécessaires pour le front-end.
              * C'est ici que tu peux ajouter 'religion', 'marital', etc.
              */
             $results[] = [
-                'id'       => $female->getId(),
+                'id' => $female->getId(),
                 'nickname' => $female->getNickname(),
-                'gender'   => $female->getGender(),
-                'age'      => $age,
-                'photos'   => $photos,
+                'gender' => $female->getGender(),
+                'age' => $age,
+                'photos' => $photos,
                 'isFavorite' => $currentUser ? $currentUser->getFavorites()->contains($female) : false,
             ];
         }
 
-        /**
+        /*
          * ÉTAPE 7 : Envoi de la réponse JSON
          * Symfony transforme le tableau PHP en format JSON lisible par React (fetch).
          */

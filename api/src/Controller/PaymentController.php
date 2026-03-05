@@ -2,19 +2,19 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
 use App\Entity\Transaction;
+use App\Entity\User;
 use App\Repository\TransactionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Stripe\Checkout\Session;
 use Stripe\Stripe;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mime\Address;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/api/payment', name: 'api_payment_')]
 class PaymentController extends AbstractController
@@ -26,8 +26,8 @@ class PaymentController extends AbstractController
         $packId = $data['packId'] ?? null;
 
         $packs = [
-            'pack_50'  => ['name' => 'Pack Découverte (50 crédits)', 'amount' => 3000, 'credits' => 50],
-            'pack_80'  => ['name' => 'Pack Passion (80 crédits)', 'amount' => 5000, 'credits' => 80],
+            'pack_50' => ['name' => 'Pack Découverte (50 crédits)', 'amount' => 3000, 'credits' => 50],
+            'pack_80' => ['name' => 'Pack Passion (80 crédits)', 'amount' => 5000, 'credits' => 80],
             'pack_120' => ['name' => 'Pack Élite (120 crédits)', 'amount' => 7000, 'credits' => 120],
         ];
 
@@ -58,8 +58,8 @@ class PaymentController extends AbstractController
             'metadata' => [
                 'user_id' => $user->getId(),
                 'pack_id' => $packId,
-                'credits' => $packs[$packId]['credits']
-            ]
+                'credits' => $packs[$packId]['credits'],
+            ],
         ]);
 
         return new JsonResponse(['url' => $session->url]);
@@ -70,7 +70,7 @@ class PaymentController extends AbstractController
         string $sessionId,
         EntityManagerInterface $em,
         TransactionRepository $transactionRepository,
-        MailerInterface $mailer
+        MailerInterface $mailer,
     ): JsonResponse {
         Stripe::setApiKey($this->getParameter('stripe_secret_key'));
 
@@ -83,7 +83,7 @@ class PaymentController extends AbstractController
 
             $session = Session::retrieve($sessionId);
 
-            if ($session->payment_status === 'paid') {
+            if ('paid' === $session->payment_status) {
                 /** @var User $user */
                 $user = $this->getUser();
                 $creditsToAmount = (int) $session->metadata->credits;
@@ -123,7 +123,7 @@ class PaymentController extends AbstractController
                 return new JsonResponse([
                     'status' => 'success',
                     'newBalance' => $user->getCredits(),
-                    'message' => "Bravo ! $creditsToAmount crédits ont été ajoutés."
+                    'message' => "Bravo ! $creditsToAmount crédits ont été ajoutés.",
                 ]);
             }
 

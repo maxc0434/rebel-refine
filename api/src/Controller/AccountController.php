@@ -5,10 +5,10 @@ namespace App\Controller;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\ExpressionLanguage\Expression;
 
 #[Route('/api/account')]
 class AccountController extends AbstractController
@@ -28,7 +28,7 @@ class AccountController extends AbstractController
             // 1. NETTOYAGE DE LA TABLE DES TRADUCTIONS (ext_translations)
             // On supprime physiquement toutes les lignes de traduction liées à cet utilisateur
             $em->createQuery('DELETE FROM Gedmo\Translatable\Entity\Translation t WHERE t.foreignKey = :id AND t.objectClass = :class')
-                ->setParameter('id', (string)$user->getId())
+                ->setParameter('id', (string) $user->getId())
                 ->setParameter('class', User::class)
                 ->execute();
 
@@ -42,9 +42,9 @@ class AccountController extends AbstractController
             $em->refresh($user);
 
             // 4. ANONYMISATION DU RESTE
-            $user->setEmail('deleted-' . uniqid() . '@rebel-refine.fr');
+            $user->setEmail('deleted-'.uniqid().'@rebel-refine.fr');
             $user->setNickname('Utilisateur supprimé');
-            $user->setPassword('DELETED_' . bin2hex(random_bytes(10)));
+            $user->setPassword('DELETED_'.bin2hex(random_bytes(10)));
             $user->setBirthdate(null);
             $user->setGender(null);
             $user->setCountry(null);
@@ -67,7 +67,7 @@ class AccountController extends AbstractController
 
             return new JsonResponse(['message' => 'Votre compte a été supprimé avec succès.']);
         } catch (\Exception $e) {
-            return new JsonResponse(['message' => 'Erreur technique : ' . $e->getMessage()], 500);
+            return new JsonResponse(['message' => 'Erreur technique : '.$e->getMessage()], 500);
         }
     }
 }

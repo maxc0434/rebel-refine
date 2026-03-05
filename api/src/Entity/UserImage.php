@@ -69,18 +69,19 @@ class UserImage
 
         return $this;
     }
+
     public function getImageFile(): ?File
-{
-    return $this->imageFile;
-}
-
-public function setImageFile(?File $imageFile = null): void
-{
-    $this->imageFile = $imageFile;
-
-    if (null !== $imageFile) {
-        // Cela force Doctrine à mettre à jour l'entité même si seul le fichier change
-        $this->updatedAt = new \DateTimeImmutable();
+    {
+        return $this->imageFile;
     }
-}
+
+    public function setImageFile(?File $imageFile = null): void
+    {
+        $this->imageFile = $imageFile;
+
+        if (null !== $imageFile) {
+            // Cela force Doctrine à mettre à jour l'entité même si seul le fichier change
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+    }
 }

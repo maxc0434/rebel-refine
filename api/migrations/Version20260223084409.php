@@ -29,6 +29,5 @@ final class Version20260223084409 extends AbstractMigration
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('DROP TABLE ext_translations');
-
     }
 }

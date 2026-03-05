@@ -3,14 +3,14 @@
 namespace App\Controller;
 
 use App\Entity\MemberMemo;
-use App\Repository\UserRepository;
 use App\Repository\MemberMemoRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class MemberMemoController extends AbstractController
 {
@@ -20,7 +20,7 @@ class MemberMemoController extends AbstractController
         Request $request,
         EntityManagerInterface $em,
         UserRepository $userRepo,
-        MemberMemoRepository $memoRepo
+        MemberMemoRepository $memoRepo,
     ): JsonResponse {
         // 1. On récupère l'homme connecté (via le Token)
         $user = $this->getUser();
@@ -42,7 +42,7 @@ class MemberMemoController extends AbstractController
         // 4. On cherche si un mémo existe déjà pour ce duo
         $memo = $memoRepo->findOneBy([
             'author' => $user,
-            'target' => $target
+            'target' => $target,
         ]);
 
         // 5. Si pas de mémo, on crée une nouvelle "fiche"
@@ -65,7 +65,6 @@ class MemberMemoController extends AbstractController
 
     #[Route('/api/member/memo/{targetId}', name: 'api_member_memo_get', methods: ['GET'])]
     #[IsGranted('ROLE_MALE', message: 'Action non autorisée')]
-
     public function getMemo($targetId, MemberMemoRepository $repo): JsonResponse
     {
         // On force la conversion en entier pour éviter le TypeError
@@ -73,22 +72,21 @@ class MemberMemoController extends AbstractController
 
         $memo = $repo->findOneBy([
             'author' => $this->getUser(),
-            'target' => $id
+            'target' => $id,
         ]);
 
         return $this->json([
-            'content' => $memo ? $memo->getContent() : ''
+            'content' => $memo ? $memo->getContent() : '',
         ]);
     }
 
     #[Route('/api/member/memo/{targetId}', name: 'api_member_memo_delete', methods: ['DELETE'])]
     #[IsGranted('ROLE_MALE', message: 'Action non autorisée')]
-
     public function deleteMemo(int $targetId, MemberMemoRepository $repo, EntityManagerInterface $em): JsonResponse
     {
         $memo = $repo->findOneBy([
             'author' => $this->getUser(),
-            'target' => $targetId
+            'target' => $targetId,
         ]);
 
         if ($memo) {
