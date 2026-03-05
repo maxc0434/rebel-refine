@@ -17,7 +17,7 @@ class AccountController extends AbstractController
     #[IsGranted(new Expression("is_granted('ROLE_MALE') or is_granted('ROLE_FEMALE')"), message: 'Accès interdit')]
     public function deleteAccount(EntityManagerInterface $em): JsonResponse
     {
-        /** @var User $user */
+        /** @var User|null $user */
         $user = $this->getUser();
 
         if (!$user) {

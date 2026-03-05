@@ -30,6 +30,9 @@ use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
+/**
+ * @extends AbstractCrudController<User>
+ */
 class UserCrudController extends AbstractCrudController
 {
     private UserPasswordHasherInterface $passwordHasher;
@@ -158,7 +161,7 @@ class UserCrudController extends AbstractCrudController
                     'Autre' => 'other',
                 ]),
 
-            TextEditorField::new('interests', "Centres d'intérêts"),
+            TextEditorField::new('interests', "Centres d'intérêts EN ANGLAIS IMPERATIVEMENT"),
 
             // Rôles avec affichage étendu (checkboxes)
             ChoiceField::new('roles', 'Rôles')
@@ -179,14 +182,13 @@ class UserCrudController extends AbstractCrudController
      */
     public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
-        if ($entityInstance instanceof User) {
-            // RÈGLE : Cadeau de bienvenue pour les hommes
-            if (in_array('ROLE_MALE', $entityInstance->getRoles())) {
-                $entityInstance->setCredits(5);
-            }
-            // On fixe la langue par rapport au pays
-            $entityInstance->setTranslatableLocale($this->getLocaleFromCountry($entityInstance));
+
+        // Cadeau de bienvenue pour les hommes
+        if (in_array('ROLE_MALE', $entityInstance->getRoles())) {
+            $entityInstance->setCredits(5);
         }
+        // On fixe la langue par rapport au pays
+        $entityInstance->setTranslatableLocale($this->getLocaleFromCountry($entityInstance));
 
         $this->hashPassword($entityInstance); // Hachage MDP
         $this->translateInterests($entityInstance); // Traduction automatique
@@ -200,10 +202,8 @@ class UserCrudController extends AbstractCrudController
      */
     public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
-        if ($entityInstance instanceof User) {
             $this->hashPassword($entityInstance);
             $this->translateInterests($entityInstance);
-        }
 
         parent::updateEntity($entityManager, $entityInstance);
     }
@@ -212,9 +212,9 @@ class UserCrudController extends AbstractCrudController
      * ÉTAPE 8 : Service de Traduction
      * Synchronise la locale de l'entité et appelle Google Translate via notre service.
      */
-    private function translateInterests($entity): void
+    private function translateInterests(User $entity): void
     {
-        if ($entity instanceof User && $entity->getInterests()) {
+        if ($entity->getInterests()) {
             $locale = $this->getLocaleFromCountry($entity);
             $entity->setTranslatableLocale($locale);
 
@@ -231,9 +231,16 @@ class UserCrudController extends AbstractCrudController
      * ÉTAPE 9 : Sécurité du Mot de Passe
      * On récupère manuellement le MDP du formulaire pour le hacher avant la BDD.
      */
-    private function hashPassword($entityInstance): void
+    private function hashPassword(User $entityInstance): void
     {
-        $request = $this->getContext()->getRequest();
+        // Le ?-> dit : "Si getContext() est null, arrête-toi là et mets null dans $request"
+        $request = $this->getContext()?->getRequest();
+
+        // Si pas de requête, on ne peut pas récupérer le mot de passe, donc on sort
+        if (!$request) {
+            return;
+        }
+
         $formData = $request->request->all('User');
         $plainPassword = $formData['password'] ?? null;
 
@@ -250,7 +257,7 @@ class UserCrudController extends AbstractCrudController
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
     {
         $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
-        $qb->andWhere($qb->getRootAliases()[0].'.deletedAt IS NULL');
+        $qb->andWhere($qb->getRootAliases()[0] . '.deletedAt IS NULL');
 
         return $qb;
     }
@@ -261,7 +268,7 @@ class UserCrudController extends AbstractCrudController
      */
     public function delete(AdminContext $context)
     {
-        /** @var User $user */
+
         $user = $context->getEntity()->getInstance();
         $entityManager = $this->container->get('doctrine')->getManager();
 
@@ -269,9 +276,9 @@ class UserCrudController extends AbstractCrudController
             try {
                 // A. NETTOYAGE DES TRADUCTIONS (Comme dans l'AccountController)
                 $entityManager->createQuery('DELETE FROM Gedmo\Translatable\Entity\Translation t WHERE t.foreignKey = :id AND t.objectClass = :class')
-                   ->setParameter('id', (string) $user->getId())
-                   ->setParameter('class', User::class)
-                   ->execute();
+                    ->setParameter('id', (string) $user->getId())
+                    ->setParameter('class', User::class)
+                    ->execute();
 
                 // B. NETTOYAGE TABLE USER (SQL pur pour être sûr)
                 $entityManager->getConnection()->executeStatement(
@@ -280,9 +287,9 @@ class UserCrudController extends AbstractCrudController
                 );
 
                 // C. ANONYMISATION DES DONNÉES SENSIBLES
-                $user->setEmail('deleted-admin-'.uniqid().'@rebel-refine.fr');
+                $user->setEmail('deleted-admin-' . uniqid() . '@rebel-refine.fr');
                 $user->setNickname('Utilisateur supprimé (Admin)');
-                $user->setPassword('DELETED_BY_ADMIN_'.bin2hex(random_bytes(10)));
+                $user->setPassword('DELETED_BY_ADMIN_' . bin2hex(random_bytes(10)));
 
                 $user->setBirthdate(null);
                 $user->setGender(null);
@@ -292,18 +299,14 @@ class UserCrudController extends AbstractCrudController
                 $user->setChildren(null);
                 $user->setIsVerified(false);
 
-                // D. SUPPRESSION DES PHOTOS (Liaisons et Fichiers)
-                // Si tes images utilisent VichUploader ou un système similaire,
-                // le remove s'occupera du fichier si configurer en cascade.
+                // D. SUPPRESSION DES PHOTOS (Liaisons et Fichiers, fait par Vich)
                 foreach ($user->getUserImages() as $image) {
                     $user->removeUserImage($image);
-                    // Si tu dois supprimer manuellement le fichier physique, c'est ici qu'on l'ajoute
                 }
 
                 // E. ON VALIDE L'ANONYMISATION AVANT LA SUPPRESSION
                 $entityManager->flush();
             } catch (\Exception $e) {
-                // Optionnel : ajouter un flash message d'erreur pour l'admin
             }
         }
 
