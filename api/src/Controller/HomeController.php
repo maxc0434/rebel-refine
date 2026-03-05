@@ -13,11 +13,11 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class HomeController extends AbstractController
 {
     #[Route('/api/home', name: 'app_home', methods: ['GET'])]
-    // #[IsGranted('ROLE_MALE', message: 'Accès interdit')]
+    #[IsGranted('ROLE_MALE', message: 'Accès interdit')]
 
     public function index(#[CurrentUser] ?User $user, UserRepository $userRepository): JsonResponse
     {
-        /** @var User $currentUser */
+       
         $currentUser = $this->getUser();
         $today = new \DateTime();
 
@@ -47,7 +47,7 @@ final class HomeController extends AbstractController
                 'gender' => $lastUser->getGender(),
                 'age' => $age,
                 'photos' => $photos, // C'est ce tableau que ton React recevra
-                'isFavorite' => $currentUser ? $currentUser->getFavorites()->contains($lastUser) : false,
+                'isFavorite' => ($currentUser instanceof User) ? $currentUser->getFavorites()->contains($lastUser) : false,
             ];
         }
 
@@ -82,7 +82,7 @@ final class HomeController extends AbstractController
         }
 
         // --- 4. EXPÉDITION ---
-        // La méthode $this->json() transforme tout ce gros tableau PHP en texte JSON
+        // transforme toutes les données en texte JSON
         return $this->json($data);
     }
 }
