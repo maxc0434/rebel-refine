@@ -15,15 +15,21 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+
 
 #[Route('/api/payment', name: 'api_payment_')]
 class PaymentController extends AbstractController
 {
     #[Route('/create-checkout-session', name: 'create_session', methods: ['POST'])]
     #[IsGranted('ROLE_MALE', message: 'Seuls les hommes peuvent acheter des crédits')]
-    public function createSession(Request $request): JsonResponse
+    public function createSession(Request $request, #[CurrentUser] ?User $user): JsonResponse
     {
+        if (!$user) {
+            return new JsonResponse(['error' => 'Utilisateur non trouvé'], 401);
+        }
+
         $data = json_decode($request->getContent(), true);
         $packId = $data['packId'] ?? null;
 
@@ -38,9 +44,6 @@ class PaymentController extends AbstractController
         }
 
         Stripe::setApiKey((string)$this->getParameter('stripe_secret_key'));
-
-        /** @var User $user */
-        $user = $this->getUser();
 
         $session = Session::create([
             'payment_method_types' => ['card'],
@@ -74,8 +77,13 @@ class PaymentController extends AbstractController
         EntityManagerInterface $em,
         TransactionRepository $transactionRepository,
         MailerInterface $mailer,
+        #[CurrentUser] ?User $user
     ): JsonResponse {
-        Stripe::setApiKey($this->getParameter('stripe_secret_key'));
+        Stripe::setApiKey((string)$this->getParameter('stripe_secret_key'));
+
+        if (!$user) {
+            return new JsonResponse(['error' => 'Utilisateur non trouvé'], 401);
+        }
 
         try {
             // 1. Sécurité : On vérifie si la transaction n'existe pas déjà en BDD
@@ -87,16 +95,14 @@ class PaymentController extends AbstractController
             $session = Session::retrieve($sessionId);
 
             if ('paid' === $session->payment_status) {
-                /** @var User $user */
-                $user = $this->getUser();
 
                 
                 $creditsToAmount = isset($session->metadata['credits']) ? (int)$session->metadata['credits'] : 0;
 
                 // 2. Création de l'historique dans la table Transaction
                 $transaction = new Transaction();
-                $transaction->setBuyer($user); // Corrigé : buyer au lieu de user
-                $transaction->setCreditsAdded($creditsToAmount); // Corrigé : creditsAdded au lieu de credits
+                $transaction->setBuyer($user); 
+                $transaction->setCreditsAdded($creditsToAmount);
                 $transaction->setAmount($session->amount_total / 100);
                 $transaction->setStripeSessionId($sessionId);
                 $transaction->setCreatedAt(new \DateTimeImmutable());

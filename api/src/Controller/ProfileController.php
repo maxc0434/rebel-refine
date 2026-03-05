@@ -8,29 +8,26 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Security\Http\Attribute\CurrentUser; // On ajoute l'import
 
 final class ProfileController extends AbstractController
 {
     // VOIR UN PROFIL "FEMALE" pour un homme
     #[Route('/api/profile/{id}', name: 'app_profile_show', methods: ['GET'])]
     #[IsGranted('ROLE_MALE', message: 'Accès interdit')]
-    public function show(User $user): JsonResponse
+    public function show(User $user, #[CurrentUser] ?User $currentUser): JsonResponse
     {
-        // Recupération de l'utilisateur connecté
-        /** @var User $currentUser */
-        $currentUser = $this->getUser();
 
         // Calcul de l'âge à la volée
         $today = new \DateTime();
         $age = $user->getBirthdate() ? $today->diff($user->getBirthdate())->y : null;
 
-        // EXTRACTION DES PHOTOS POUR CHAQUE MEMBRE
+        // EXTRACTION DES PHOTOS
         $photos = [];
         foreach ($user->getUserImages() as $img) {
             $photos[] = $img->getImageName();
         }
 
-        // On prépare les données détaillées (incluant tes nouveaux champs)
         $data = [
             'id' => $user->getId(),
             'nickname' => $user->getNickname(),
@@ -50,12 +47,14 @@ final class ProfileController extends AbstractController
 
     // VOIR UN PROFIL "MALE" pour une femme
     #[Route('/api/profile/male/{id}', name: 'api_view_male_profile', methods: ['GET'])]
-    public function viewMaleProfile(User $male, MessageRepository $msgRepo): JsonResponse
+    #[IsGranted('ROLE_FEMALE')] // Petite sécurité supplémentaire ici ;)
+    public function viewMaleProfile(User $male, MessageRepository $msgRepo, #[CurrentUser] ?User $currentUser): JsonResponse
     {
-        /** @var User $currentUser */
-        $currentUser = $this->getUser();
+        if (!$currentUser) {
+            return new JsonResponse(['error' => 'Vous devez être connecté'], 401);
+        }
 
-        // Vérification de sécurité : Est-ce que cet homme a envoyé un message à la femme connectée ?
+        // Vérification de sécurité
         $hasContacted = $msgRepo->findOneBy([
             'sender' => $male,
             'receiver' => $currentUser,
@@ -65,12 +64,11 @@ final class ProfileController extends AbstractController
             return new JsonResponse(['error' => 'Accès interdit. Cet utilisateur ne vous a pas contacté.'], 403);
         }
 
-        // Si OK, on retourne les données du profil
         return $this->json([
             'id' => $male->getId(),
             'nickname' => $male->getNickname(),
             'country' => $male->getCountry(),
-            'birthdate' => $male->getBirthdate(),
+            'birthdate' => $male->getBirthdate() ? $male->getBirthdate()->format('Y-m-d') : null,
             'interests' => $male->getInterests(),
             'marital' => $male->getMarital(),
             'children' => $male->getChildren(),
