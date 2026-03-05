@@ -2,11 +2,13 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 final class MemberController extends AbstractController
 {
@@ -16,13 +18,8 @@ final class MemberController extends AbstractController
      */
     #[Route('/api/members/females', name: 'app_members_females', methods: ['GET'])]
     #[IsGranted('ROLE_MALE', message: 'Accès interdit')]
-    public function getFemales(UserRepository $userRepository): JsonResponse
+    public function getFemales(UserRepository $userRepository, #[CurrentUser] ?User $currentUser): JsonResponse
     {
-        // On récupère l'objet User de la personne actuellement connectée grace au this
-
-        /** @var User $currentUser */
-        $currentUser = $this->getUser();
-
         /**
          * ÉTAPE 2 : Requête en Base de Données
          * On utilise le Repository pour filtrer :
@@ -72,10 +69,9 @@ final class MemberController extends AbstractController
                 'gender' => $female->getGender(),
                 'age' => $age,
                 'photos' => $photos,
-                'isFavorite' => $currentUser ? $currentUser->getFavorites()->contains($female) : false,
+                'isFavorite' => $currentUser?->getFavorites()->contains($female) ?? false,
             ];
         }
-
         /*
          * ÉTAPE 7 : Envoi de la réponse JSON
          * Symfony transforme le tableau PHP en format JSON lisible par React (fetch).
