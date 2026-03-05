@@ -12,6 +12,7 @@ class MemberMemo
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    /** @var int|null */
     private ?int $id = null;
 
     #[ORM\ManyToOne]
@@ -67,6 +68,11 @@ class MemberMemo
         $this->content = $content;
 
         return $this;
+    }
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTimeImmutable();
     }
 
     public function getCreatedAt(): ?\DateTimeImmutable
