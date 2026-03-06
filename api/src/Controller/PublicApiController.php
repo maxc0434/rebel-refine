@@ -9,7 +9,6 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class PublicApiController extends AbstractController
 {
-    // On injecte le UserRepository via le constructeur
     public function __construct(
         private UserRepository $userRepository
     ) {}
@@ -23,7 +22,7 @@ public function getLatestMembers(): JsonResponse
     $data = array_map(function($user) {
         // Récupère la collection d'images
         $images = $user->getUserImages();
-        // On prend la première image (si elle existe)
+        // On prend la première image
         $firstImage = $images->first(); 
 
         return [

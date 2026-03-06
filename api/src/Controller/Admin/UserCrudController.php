@@ -161,7 +161,7 @@ class UserCrudController extends AbstractCrudController
                     'Autre' => 'other',
                 ]),
 
-            TextEditorField::new('interests', "Centres d'intérêts EN ANGLAIS IMPERATIVEMENT"),
+            TextEditorField::new('interests', "Presentation EN / FR only"),
 
             // Rôles avec affichage étendu (checkboxes)
             ChoiceField::new('roles', 'Rôles')

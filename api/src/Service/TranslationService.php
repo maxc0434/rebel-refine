@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Gedmo\Translatable\Entity\Repository\TranslationRepository;
 use Gedmo\Translatable\Entity\Translation;
 use Stichoza\GoogleTranslate\GoogleTranslate;
 
@@ -11,12 +12,11 @@ class TranslationService
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-    ) {
-    }
+    ) {}
 
-    public function autoTranslate($entity, string $field, ?string $text, string $sourceLocale): void
+    public function autoTranslate(User $entity, string $field, ?string $text, string $sourceLocale): void
     {
-        if (!$entity instanceof User || empty(trim($text ?? ''))) {
+        if (empty(trim($text ?? ''))) {
             return;
         }
 
@@ -50,12 +50,13 @@ class TranslationService
             // 3. Enregistrement de la version ORIGINALE (riche en HTML)
             $this->addTranslation($entity, $field, $sourceLocale, $richText);
         } catch (\Exception $e) {
-            // Silence
+            error_log("Erreur de traduction : " . $e->getMessage());
         }
     }
 
-    public function addTranslation($entity, string $field, string $locale, string $value): void
+    public function addTranslation(User $entity, string $field, string $locale, string $value): void
     {
+        /** @var TranslationRepository $repository */
         $repository = $this->entityManager->getRepository(Translation::class);
         $repository->translate($entity, $field, $locale, $value);
     }
