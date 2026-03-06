@@ -82,6 +82,8 @@ class ResetPasswordController extends AbstractController
         try {
             // 2. Le bundle vérifie si le token est valide et non expiré
             $user = $this->resetPasswordHelper->validateTokenAndFetchUser($token);
+            assert($user instanceof User);
+
         } catch (ResetPasswordExceptionInterface $e) {
             return $this->json(['error' => 'Token invalide ou expiré'], 400);
         }

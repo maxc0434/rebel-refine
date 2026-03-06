@@ -43,7 +43,11 @@ class PaymentController extends AbstractController
             return new JsonResponse(['error' => 'Pack invalide'], 400);
         }
 
-        Stripe::setApiKey((string)$this->getParameter('stripe_secret_key'));
+        $stripeSecretKey = $this->getParameter('stripe_secret_key');
+        if (!is_string($stripeSecretKey)) {
+            throw new \RuntimeException('Le paramètre stripe_secret_key doit être une chaîne de caractères.');
+        }
+        Stripe::setApiKey($stripeSecretKey);
 
         $session = Session::create([
             'payment_method_types' => ['card'],
@@ -79,7 +83,11 @@ class PaymentController extends AbstractController
         MailerInterface $mailer,
         #[CurrentUser] ?User $user
     ): JsonResponse {
-        Stripe::setApiKey((string)$this->getParameter('stripe_secret_key'));
+        $stripeSecretKey = $this->getParameter('stripe_secret_key');
+        if (!is_string($stripeSecretKey)) {
+            throw new \RuntimeException('Le paramètre stripe_secret_key doit être une chaîne de caractères.');
+        }
+        Stripe::setApiKey($stripeSecretKey);
 
         if (!$user) {
             return new JsonResponse(['error' => 'Utilisateur non trouvé'], 401);
@@ -96,12 +104,12 @@ class PaymentController extends AbstractController
 
             if ('paid' === $session->payment_status) {
 
-                
+
                 $creditsToAmount = isset($session->metadata['credits']) ? (int)$session->metadata['credits'] : 0;
 
                 // 2. Création de l'historique dans la table Transaction
                 $transaction = new Transaction();
-                $transaction->setBuyer($user); 
+                $transaction->setBuyer($user);
                 $transaction->setCreditsAdded($creditsToAmount);
                 $transaction->setAmount($session->amount_total / 100);
                 $transaction->setStripeSessionId($sessionId);

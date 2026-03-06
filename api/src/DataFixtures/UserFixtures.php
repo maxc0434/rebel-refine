@@ -10,7 +10,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserFixtures extends Fixture
 {
-    private $hasher;
+    private UserPasswordHasherInterface $hasher;
 
     public function __construct(UserPasswordHasherInterface $hasher)
     {
@@ -21,7 +21,7 @@ class UserFixtures extends Fixture
     {
         $faker = Factory::create('fr_FR');
 
-        // Définition des options basées sur ton CrudController
+        // Définition des options basées sur UserCrudController
         $maritalOptions = ['divorced', 'widowed', 'single'];
         $childrenOptions = ['0', '1', '2', '3', '4', '5', '5+'];
         $religionOptions = [
