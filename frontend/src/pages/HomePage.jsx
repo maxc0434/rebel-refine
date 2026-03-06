@@ -117,9 +117,9 @@ function HomePage() {
         className="banner-section bgimg d-flex align-items-center"
         style={{
           backgroundImage: "url(assets/images/banner/bg.jpg)",
-          minHeight: "80vh", // Donne de l'importance à la bannière
+          minHeight: "80vh",
           backgroundSize: "cover",
-          paddingTop: "100px", // Pour compenser la navbar fixe
+          paddingTop: "100px",
         }}
       >
         <div className="container">

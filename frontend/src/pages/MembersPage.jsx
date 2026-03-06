@@ -5,12 +5,14 @@ import { Heart } from "lucide-react";
 import { useLanguage } from "../translations/hooks/useLanguage";
 import { apiFetch } from "../api";
 
-
-
 function MembersPage() {
-  const [members, setMembers] = useState([]); // Stocke la liste des profils reçus du serveur
+  const [members, setMembers] = useState([]);
   const navigate = useNavigate();
   const { t } = useLanguage();
+
+  const [page, setPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   // Récupération de la clé d'accès (Token) stockée lors de la connexion
   const token = localStorage.getItem("token");
@@ -24,9 +26,14 @@ function MembersPage() {
 
     const fetchMembers = async () => {
       try {
-        // apiFetch gère l'URL de base, le header Authorization et le JSON
-        const data = await apiFetch("/api/members/females");
-        setMembers(data);
+        // apiFetch gère l'URL de base, le header Authorization et le JSON et on ajoute la page
+        const response = await apiFetch(
+          `/api/members/females?page=${currentPage}`,
+        );
+        // On range les utilisateurs dans 'members'
+        setMembers(response.data);
+        // On enregistre le nombre total de pages reçu du serveur
+        setTotalPages(response.meta.pagesCount);
       } catch (err) {
         // Si apiFetch reçoit une 401, il lance une erreur.
         // On nettoie et on redirige.
@@ -37,7 +44,7 @@ function MembersPage() {
     };
 
     fetchMembers();
-  }, [navigate, token]);
+  }, [navigate, token, currentPage]);
   //#endregion
 
   //#region FCT FAVORIS
@@ -59,8 +66,8 @@ function MembersPage() {
           prevMembers.map((member) =>
             member.id === targetId
               ? { ...member, isFavorite: data.status === "added" }
-              : member
-          )
+              : member,
+          ),
         );
       }
     } catch (error) {
@@ -189,6 +196,32 @@ function MembersPage() {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* --- BLOC DE PAGINATION --- */}
+        <div
+          className="pagination-container"
+          style={{ marginTop: "40px", textAlign: "center" }}
+        >
+          <button
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((prev) => prev - 1)}
+            className="btn-pagination"
+          >
+            Précédent
+          </button>
+
+          <span style={{ margin: "0 20px", color: "white" }}>
+            Page {currentPage} sur {totalPages}
+          </span>
+
+          <button
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage((prev) => prev + 1)}
+            className="btn-pagination"
+          >
+            Suivant
+          </button>
         </div>
       </div>
     </section>
