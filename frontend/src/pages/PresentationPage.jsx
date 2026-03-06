@@ -7,12 +7,11 @@ import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../translations/hooks/useLanguage";
 import { apiFetch } from "../api";
 
-// Import Swiper styles
+
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/effect-fade";
-
 import "./PresentationPage.css";
 
 const PresentationPage = () => {
@@ -45,7 +44,7 @@ const PresentationPage = () => {
     const fetchMembers = async () => {
       try {
         // apiFetch s'occupe de l'URL, du Token et du .json()
-        const data = await apiFetch("/api/home");
+        const data = await apiFetch("/api/public/latest-members");
 
         // On vérifie si last_members existe, sinon on met un tableau vide
         if (data && data.last_members) {

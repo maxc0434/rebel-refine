@@ -46,7 +46,7 @@ final class HomeController extends AbstractController
                 'nickname' => $lastUser->getNickname(),
                 'gender' => $lastUser->getGender(),
                 'age' => $age,
-                'photos' => $photos, // C'est ce tableau que ton React recevra
+                'photos' => $photos, 
                 'isFavorite' => ($currentUser instanceof User) ? $currentUser->getFavorites()->contains($lastUser) : false,
             ];
         }
