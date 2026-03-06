@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class SecurityController extends AbstractController
@@ -34,24 +35,28 @@ class SecurityController extends AbstractController
         Request $request,
         UserPasswordHasherInterface $passwordHasher,
         EntityManagerInterface $entityManager,
+        #[CurrentUser] ?User $user,
     ): JsonResponse {
-        $data = json_decode($request->getContent(), true);
+        // On force le contenu en string et on s'assure d'avoir un tableau (même vide)
+        $data = json_decode((string) $request->getContent(), true);
 
-        /** @var User $user */
-        $user = $this->getUser();
 
-        // Sécurité supplémentaire : on vérifie que l'utilisateur est bien là
+        // Sécurité : on vérifie que l'utilisateur est bien là
         if (!$user) {
             return new JsonResponse(['message' => 'Utilisateur non trouvé.'], 401);
         }
 
-        // 1. Vérifier l'ancien mot de passe
-        if (!$passwordHasher->isPasswordValid($user, $data['oldPassword'])) {
+        //  On vérifie que les clés existent AVANT de les utiliser
+        if (!isset($data['oldPassword']) || !isset($data['newPassword'])) {
+            return new JsonResponse(['message' => 'Données manquantes.'], 400);
+        }
+
+        // On utilise les données maintenant qu'on est sûr qu'elles sont là
+        if (!$passwordHasher->isPasswordValid($user, (string) $data['oldPassword'])) {
             return new JsonResponse(['message' => 'L\'ancien mot de passe est incorrect.'], 400);
         }
 
-        // 2. Hasher et enregistrer
-        $hashedPassword = $passwordHasher->hashPassword($user, $data['newPassword']);
+        $hashedPassword = $passwordHasher->hashPassword($user, (string) $data['newPassword']);
         $user->setPassword($hashedPassword);
         $entityManager->flush();
 

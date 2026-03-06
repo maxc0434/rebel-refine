@@ -7,15 +7,14 @@ use App\Repository\TransactionRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 #[Route('/api/transactions', name: 'api_transactions_')]
 class TransactionController extends AbstractController
 {
     #[Route('', name: 'index', methods: ['GET'])]
-    public function index(TransactionRepository $transactionRepository): JsonResponse
+    public function index(TransactionRepository $transactionRepository, #[CurrentUser] ?User $user): JsonResponse
     {
-        /** @var User $user */
-        $user = $this->getUser();
 
         if (!$user) {
             return $this->json(['error' => 'Utilisateur non connecté'], 401);
