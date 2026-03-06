@@ -1,0 +1,131 @@
+/* Conteneur Principal */
+.search-page-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a1a2e 0%, #080808 100%);
+    color: #ffffff;
+    padding-top: 60px;
+    padding-bottom: 80px;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+.search-header {
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3rem;
+    padding-bottom: 1rem;
+}
+
+.search-title {
+    font-weight: bold;
+    margin: 0;
+    letter-spacing: 1px;
+}
+
+.search-accent {
+    color: #d4af37;
+}
+
+/* Cards */
+.custom-card {
+    background-color: #222533;
+    border-radius: 25px;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    height: 100%;
+}
+
+.custom-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.5) !important;
+    border-color: rgba(212, 175, 55, 0.4) !important;
+}
+
+.card-img-container {
+    padding: 1rem;
+}
+
+.member-photo {
+    height: 240px;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.no-photo-placeholder {
+    height: 240px;
+    border-radius: 20px;
+    background-color: #1a1c26;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(212, 175, 55, 0.3);
+    font-size: 5rem;
+}
+
+.btn-discover-link {
+    border-radius: 15px;
+    background: transparent;
+    border: 1px solid #d4af37;
+    color: #d4af37;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    width: 100%;
+    padding: 0.5rem 0;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-discover-link:hover {
+    background-color: #d4af37 !important;
+    color: #1a1a2e !important;
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+    transform: translateY(-2px);
+}
+
+/* Pagination Style Luxe */
+.pagination-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 4rem;
+}
+
+.pagination-btn {
+    background: transparent;
+    border: 1px solid rgba(212, 175, 55, 0.5);
+    color: #d4af37;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background: #d4af37;
+    color: #1a1a2e;
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+}
+
+.pagination-btn:disabled {
+    border-color: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.1);
+    cursor: not-allowed;
+}
+
+.pagination-info {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: #ffffff;
+    font-size: 0.9rem;
+}

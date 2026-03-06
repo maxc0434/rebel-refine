@@ -1,28 +1,27 @@
-
-
+/* --- SECTION PRINCIPALE --- */
 .member-section-female {
-    /* Un dégradé "Aurora" très tamisé : bleu pétrole, prune et noir */
     background: linear-gradient(145deg, #0f172a 0%, #1e1b4b 30%, #2e1065 65%, #000000 100%);
-    
-    /* On ajoute une texture de grain très légère pour le côté "Premium" */
     background-blend-mode: overlay;
     background-attachment: fixed;
     min-height: 100vh;
     padding-bottom: 50px;
 }
 
-/* On peaufine l'en-tête pour qu'il ne soit pas "juste blanc" */
 .member-section-female .section-header h2 {
     color: #ffffff;
     text-transform: uppercase;
     letter-spacing: 2px;
-    background: linear-gradient(to right, #fff, #fda4af); /* Dégradé discret blanc vers rose */
+    background: linear-gradient(to right, #fff, #fda4af);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     margin-bottom: 40px;
 }
 
-/* Le Glassmorphism des cartes : le secret du look moderne */
+/* --- CARTES & GLASSMORPHISM --- */
+.member-card-container {
+    position: relative;
+}
+
 .member-section-female .lab-item {
     background: rgba(255, 255, 255, 0.05) !important;
     backdrop-filter: blur(10px);
@@ -30,6 +29,8 @@
     border-radius: 20px;
     overflow: hidden;
     transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    display: block;
 }
 
 .member-section-female .lab-item:hover {
@@ -39,33 +40,115 @@
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
 }
 
-.member-section-female .lab-content h6 {
-    color: #fff;
-    font-size: 1.2rem;
+.member-thumb img {
+    width: 100%;
+    height: 250px;
+    object-fit: contain;
+    padding-top: 20px;
 }
 
-.member-section-female .lab-content p {
-    color: #fda4af; /* Rose doux pour les intérêts */
-    font-weight: 500;
+.member-content-box {
+    padding: 25px 15px;
+    background: linear-gradient(180deg, #1f2a4d 0%, #161f3d 100%);
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.btn-pagination {
-  background: #f94d80;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 25px;
-  cursor: pointer;
-  transition: 0.3s;
+.member-name {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: #ffffff;
+    text-transform: uppercase;
+    margin-bottom: 8px;
 }
 
-.btn-pagination:disabled {
-  background: #555;
-  cursor: not-allowed;
-  opacity: 0.5;
+.name-underline {
+    width: 30px;
+    height: 2px;
+    background: #d4af37; /* Changé en doré */
+    margin: 0 auto 10px auto;
+    border-radius: 2px;
 }
 
-.btn-pagination:hover:not(:disabled) {
-  background: #ff2e6a;
-  transform: scale(1.05);
+.member-age-text {
+    font-family: 'Lato', sans-serif;
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+}
+
+/* --- BOUTON FAVORIS --- */
+.favorite-btn-overlay {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    z-index: 20;
+    background: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.8;
+    transition: 0.3s;
+}
+
+.favorite-btn-overlay:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* --- PAGINATION STYLE DORÉ (COPIÉ DE SEARCHPAGE) --- */
+.pagination-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 4rem;
+}
+
+.pagination-btn {
+    background: transparent;
+    border: 1px solid rgba(212, 175, 55, 0.5);
+    color: #d4af37;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background: #d4af37;
+    color: #1a1a2e;
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+}
+
+.pagination-btn:disabled {
+    border-color: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.1);
+    cursor: not-allowed;
+}
+
+.pagination-info {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: #ffffff;
+    font-size: 0.9rem;
+}
+
+.accent-gold {
+    color: #d4af37;
 }

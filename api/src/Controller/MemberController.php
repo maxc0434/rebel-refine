@@ -27,7 +27,7 @@ final class MemberController extends AbstractController
          * On récupère la page actuelle et on définit une limite par page.
          */
         $page = max(1, $request->query->getInt('page', 1));
-        $limit = 6;
+        $limit = 8;
         $offset = ($page - 1) * $limit;
 
         /**

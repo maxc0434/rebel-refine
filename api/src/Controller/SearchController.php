@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Repository\UserRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,44 +14,70 @@ final class SearchController extends AbstractController
     #[Route('/api/members/search', name: 'app_members_search', methods: ['GET'])]
     public function search(Request $request, UserRepository $userRepository): JsonResponse
     {
-        // Récupération et typage des paramètres de filtrage
-        $min = (int) $request->query->get('min', 18);
-        $max = (int) $request->query->get('max', 60);
+        /**
+         * ÉTAPE 1 : Récupération des filtres et de la pagination
+         */
+        $minAge = (int) $request->query->get('min', 18);
+        $maxAge = (int) $request->query->get('max', 60);
+        $page = max(1, $request->query->getInt('page', 1));
+        $limit = 8;
+        $offset = ($page - 1) * $limit;
+
+        /**
+         * ÉTAPE 2 : Calcul des dates limites pour l'SQL
+         * Pour avoir 20 ans aujourd'hui, il faut être né entre il y a 21 ans et il y a 20 ans.
+         */
+        $dateMin = (new \DateTime())->modify("-$maxAge years -1 year");
+        $dateMax = (new \DateTime())->modify("-$minAge years");
+
+        /**
+         * ÉTAPE 3 : Construction de la requête QueryBuilder
+         */
+        $queryBuilder = $userRepository->createQueryBuilder('u')
+            ->where('u.gender = :gender')
+            ->andWhere('u.birthdate BETWEEN :dateMin AND :dateMax')
+            ->setParameter('gender', 'female')
+            ->setParameter('dateMin', $dateMin)
+            ->setParameter('dateMax', $dateMax)
+            ->orderBy('u.id', 'DESC')
+            ->setFirstResult($offset)
+            ->setMaxResults($limit);
+
+        /**
+         * ÉTAPE 4 : Exécution de la pagination
+         */
+        $paginator = new Paginator($queryBuilder);
+        $totalItems = count($paginator);
+        $pagesCount = ceil($totalItems / $limit);
+
+        $results = [];
         $today = new \DateTime();
 
-        $allUsers = $userRepository->findAll();
-        $result = [];
-
-        foreach ($allUsers as $user) {
-            $birthdate = $user->getBirthdate();
-
-            // Exclusions : absence de date de naissance ou profil non féminin
-            // "Si l'utilisateur n'a pas renseigné sa date de naissance OU s'il n'est pas une femme, alors on l'ignore et on passe directement au suivant."
-            if (!$birthdate || 'female' !== $user->getGender()) {
-                continue;
-            }
-
-            // Calcul de l'âge exact
-            $age = $today->diff($birthdate)->y;
-
-            // Filtrage par tranche d'âge
-            if ($age >= $min && $age <= $max) {
-                // Sélection de la première image ou image par défaut
-                $userImages = $user->getUserImages();
-                $photoName = !$userImages->isEmpty() // S'il y a au moins une image
-                    ? $userImages->first()->getImageName() // On choisit la première
-                    : null; // Sinon on choisit null
-
-                // Construction de l'objet de réponse
-                $result[] = [
-                    'id' => $user->getId(),
-                    'nickname' => $user->getNickname() ?? 'Utilisatrice n°'.$user->getId(),
-                    'age' => $age,
-                    'photo' => $photoName,
-                ];
-            }
+        /**
+         * ÉTAPE 5 : Mapping des résultats
+         */
+        foreach ($paginator as $user) {
+            $age = $user->getBirthdate() ? $today->diff($user->getBirthdate())->y : null;
+            $userImages = $user->getUserImages();
+            
+            $results[] = [
+                'id' => $user->getId(),
+                'nickname' => $user->getNickname() ?? 'Utilisatrice n°'.$user->getId(),
+                'age' => $age,
+                'photo' => !$userImages->isEmpty() ? $userImages->first()->getImageName() : null,
+            ];
         }
 
-        return $this->json($result);
+        /**
+         * ÉTAPE 6 : Réponse JSON structurée
+         */
+        return $this->json([
+            'data' => $results,
+            'meta' => [
+                'currentPage' => $page,
+                'pagesCount' => $pagesCount,
+                'totalItems' => $totalItems
+            ]
+        ]);
     }
 }
