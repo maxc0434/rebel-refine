@@ -1,0 +1,6 @@
+doctrine:
+    dbal:
+        connections:
+            default:
+                url: '%env(DATABASE_URL)%'
+                server_version: '16'
