@@ -207,6 +207,7 @@ export const translations = {
     //#region LOGIN-PAGE
     login_subtitle: "Trouvez votre partenaire idéal",
     login_error_invalid: "Identifiants incorrects",
+    login_error_verify_email: "Votre compte n'est pas encore vérifié.  Consulter vos emails pour confirmer votre inscription en cliquant sur le lien.",
     login_success_verified:
       "Compte vérifié avec succès ! Bienvenue à Rebel Refine.",
 
@@ -844,6 +845,7 @@ export const translations = {
     //#region LOGIN-PAGE EN
     login_subtitle: "Find your ideal partner",
     login_error_invalid: "Invalid credentials",
+    login_error_verify_email: "Your account is not yet verified. Check your emails to confirm your registration by clicking the link.",
     login_success_verified:
       "Account verified successfully! Welcome to Rebel Refine.",
 
@@ -1476,6 +1478,7 @@ export const translations = {
     //#region LOGIN-PAGE
     login_subtitle: "Finden Sie Ihren idealen Partner",
     login_error_invalid: "Ungültige Anmeldedaten",
+    login_error_verify_email: "Ihr Konto ist noch nicht verifiziert. Überprüfen Sie Ihre E-Mails, um Ihre Registrierung durch Klicken auf den Link zu bestätigen.",
     login_success_verified:
       "Konto erfolgreich verifiziert! Willkommen bei Rebel Refine.",
 
@@ -2097,6 +2100,7 @@ export const translations = {
     //#region LOGIN-PAGE
     login_subtitle: "寻找您的理想伴侣",
     login_error_invalid: "凭据不正确",
+    login_error_verify_email: "您的账户尚未验证。请查看您的电子邮件，点击链接确认注册。",
     login_success_verified: "账户验证成功！欢迎来到 Rebel Refine。",
 
     login_label_email: "电子邮箱",
@@ -2701,6 +2705,7 @@ export const translations = {
     //#region LOGIN-PAGE
     login_subtitle: "Trova il tuo partner ideale",
     login_error_invalid: "Credenziali non corrette",
+    login_error_verify_email: "Il tuo account non è ancora verificato. Controlla le tue email per confermare la registrazione cliccando sul link.",
     login_success_verified:
       "Account verificato con successo! Benvenuto in Rebel Refine.",
 
@@ -3327,6 +3332,7 @@ export const translations = {
     //#region LOGIN-PAGE
     login_subtitle: "Найдите своего идеального партнера",
     login_error_invalid: "Неверные учетные данные",
+    login_error_verify_email: "Ваш аккаунт ещё не подтверждён. Проверьте вашу почту, чтобы подтвердить регистрацию, перейдя по ссылке.",
     login_success_verified:
       "Аккаунт успешно подтвержден! Добро пожаловать в Rebel Refine.",
 
@@ -3948,6 +3954,7 @@ export const translations = {
     //#region LOGIN-PAGE
     login_subtitle: "Encuentra a tu pareja ideal",
     login_error_invalid: "Credenciales incorrectas",
+    login_error_verify_email: "Tu cuenta aún no está verificada. Revisa tus correos para confirmar tu registro haciendo clic en el enlace.",
     login_success_verified:
       "¡Cuenta verificada con éxito! Bienvenido a Rebel Refine.",
 

@@ -88,15 +88,24 @@ function LoginPage() {
         }
       }
     } catch (err) {
-      // --- ICI ON CHANGE LE MESSAGE ---
-      if (err.message.includes("401")) {
-        setError(t.login_error_invalid || "Email ou mot de passe incorrect.");
-      } else if (err.message.includes("403")) {
-        setError("Votre compte n'est pas encore vérifié.");
-      } else {
-        setError("Une erreur est survenue. Veuillez réessayer.");
-      }
-    }
+  // Message d'erreur du backend
+  const errorMessage = err.message;
+  
+  // PRIORITÉ 1 : Compte NON VÉRIFIÉ (code 403 du backend)
+  if (errorMessage.includes("vérifié") || errorMessage.includes("verified")) {
+    setError(t.login_error_verify_email);
+    return;
+  }
+  
+  // PRIORITÉ 2 : Identifiants faux (code 401)
+  if (errorMessage.includes("Identifiants") || errorMessage.includes("invalid") || errorMessage.includes("401")) {
+    setError(t.login_error_invalid);
+    return;
+  }
+  
+  // PRIORITÉ 3 : Erreur générique
+  setError(t.error_occured);
+}
   };
   //#endregion
 
