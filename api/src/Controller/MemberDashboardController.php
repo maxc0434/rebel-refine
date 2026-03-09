@@ -161,21 +161,23 @@ class MemberDashboardController extends AbstractController
         if (isset($data['confirmMessageSend'])) {
             $user->setConfirmMessageSend((bool) $data['confirmMessageSend']);
         }
-        if (isset($data['interests'])) {
-            $user->setInterests($data['interests']);
+       if (isset($data['interests'])) {
+    $user->setInterests($data['interests']);
 
-            if (!empty($data['interests'])) {
-                // 1. Déterminer la locale source (FR pour France/Suisse/Belgique, sinon EN)
-                $userLocale = (in_array(strtolower($user->getCountry() ?? ''), ['france', 'belgique', 'suisse', 'belgium', 'switzerland'])) ? 'fr' : 'en';
+    if (!empty($data['interests'])) {
+        // 1. Calcule une langue de secours basée sur le pays
+        //    (Gedmo chargera le bon texte dans le formulaire,
+        //     et le service de traduction l'utilisera seulement si détection auto échoue)
+        $fallbackLocale = (in_array(strtolower($user->getCountry() ?? ''), ['france', 'belgique', 'suisse', 'belgium', 'switzerland'])) ? 'fr' : 'en';
 
-                // 2. Passer les 4 arguments au service
-                $translationService->autoTranslate($user, 'interests', $data['interests'], $userLocale);
+        // 2. Appelle le service de traduction (il détectera automatiquement
+        //    la vraie langue source et ignorera la supposition si possible)
+        $translationService->autoTranslate($user, 'interests', $data['interests'], $fallbackLocale);
 
-                // IMPORTANT : On force l'objet à rester sur la locale de l'utilisateur
-                // pour que la réponse JSON renvoyée au Front-end soit dans la bonne langue
-                $user->setTranslatableLocale($userLocale);
-            }
-        }
+        // 3. Force la locale de l'entité à celle de l'utilisateur pour la réponse JSON
+        $user->setTranslatableLocale($fallbackLocale);
+    }
+}
 
         $em->flush();
         $em->refresh($user); // On synchronise avec ce qu'on vient de mettre en BDD

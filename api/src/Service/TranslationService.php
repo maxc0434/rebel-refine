@@ -14,21 +14,40 @@ class TranslationService
         private EntityManagerInterface $entityManager,
     ) {}
 
-    public function autoTranslate(User $entity, string $field, ?string $text, string $sourceLocale): void
-    {
+    /**
+     * Traduit automatiquement un champ d'utilisateur vers toutes les langues cibles
+     * via détection automatique de la langue source.
+     */
+    public function autoTranslate(
+        User $entity,
+        string $field,
+        ?string $text,
+        ?string $fallbackLocale = 'en',
+        ?GoogleTranslate $translator = null
+    ): void {
         if (empty(trim($text ?? ''))) {
             return;
         }
 
         try {
-            // 1. On nettoie juste les entités HTML (ex: &nbsp; ou &#39;)
-            // SANS supprimer les balises <p>, <br>, etc.
+            // Nettoie les entités HTML sans toucher aux balises
             $richText = html_entity_decode($text, ENT_QUOTES, 'UTF-8');
-
-            // On définit la liste des langues cibles du projet (sauf la langue source)
+            
             $locales = ['fr', 'en', 'de', 'zh', 'it', 'ru', 'es'];
-            $targetLocales = array_diff($locales, [$sourceLocale]);
+            $tr = $translator ?? new GoogleTranslate();
+            $tr->setSource(); // Active la détection auto
 
+            // Traduction factice pour détecter la langue source
+            $tr->setTarget('en');
+            $tr->translate($richText);
+            
+            $detected = $tr->getLastDetectedSource() 
+                ? strtolower(explode('-', $tr->getLastDetectedSource(), 2)[0])
+                : $fallbackLocale;
+
+            $targets = array_diff($locales, [$detected]);
+
+            // Met à jour le champ interests en base (colonne principale)
             if ('interests' === $field) {
                 $entity->setInterests($richText);
                 $this->entityManager->getConnection()->executeStatement(
@@ -37,23 +56,23 @@ class TranslationService
                 );
             }
 
-            $tr = new GoogleTranslate();
-            $tr->setSource($sourceLocale);
-
-            // 2. Boucle de traduction automatique pour chaque langue cible
-            foreach ($targetLocales as $target) {
+            // Traduit vers chaque langue cible
+            foreach ($targets as $target) {
                 $tr->setTarget($target);
-                $translatedText = $tr->translate($richText);
-                $this->addTranslation($entity, $field, $target, $translatedText);
+                $this->addTranslation($entity, $field, $target, $tr->translate($richText));
             }
 
-            // 3. Enregistrement de la version ORIGINALE (riche en HTML)
-            $this->addTranslation($entity, $field, $sourceLocale, $richText);
+            // Sauvegarde le texte original sous la langue détectée
+            $this->addTranslation($entity, $field, $detected, $richText);
+            
         } catch (\Exception $e) {
             error_log("Erreur de traduction : " . $e->getMessage());
         }
     }
 
+    /**
+     * Enregistre une traduction via Gedmo Translatable.
+     */
     public function addTranslation(User $entity, string $field, string $locale, string $value): void
     {
         /** @var TranslationRepository $repository */

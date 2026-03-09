@@ -57,7 +57,8 @@ class UserCrudController extends AbstractCrudController
     /**
      * ÉTAPE 3 : Logique Métier Linguistique
      * Cette méthode privée définit si l'utilisateur est 'fr' ou 'en' selon son pays.
-     * C'est la "source de vérité" pour nos traductions.
+     * Elle sert à fixer la locale de l'entité (Gedmo) et fonctionne comme
+     * **fallback** lorsque la détection automatique de la langue échoue.
      */
     private function getLocaleFromCountry(User $user): string
     {
@@ -161,7 +162,8 @@ class UserCrudController extends AbstractCrudController
                     'Autre' => 'other',
                 ]),
 
-            TextEditorField::new('interests', "Presentation EN / FR only"),
+            TextEditorField::new('interests', "Centres d'intérêt")
+                ->setHelp('Saisissez les centres d\'intérets de l\'utilisateur. Ils seront automatiquement traduits dans les autres langues.'),
 
             // Rôles avec affichage étendu (checkboxes)
             ChoiceField::new('roles', 'Rôles')
@@ -213,19 +215,24 @@ class UserCrudController extends AbstractCrudController
      * Synchronise la locale de l'entité et appelle Google Translate via notre service.
      */
     private function translateInterests(User $entity): void
-    {
-        if ($entity->getInterests()) {
-            $locale = $this->getLocaleFromCountry($entity);
-            $entity->setTranslatableLocale($locale);
+{
+    if ($entity->getInterests()) {
+        // 1. Détermine une langue de secours basée sur le pays de l'utilisateur
+        //    (le service détectera la vraie langue source automatiquement)
+        $fallbackLocale = $this->getLocaleFromCountry($entity);
+        
+        // 2. Définit la locale translatable de l'entité pour Gedmo
+        $entity->setTranslatableLocale($fallbackLocale);
 
-            $this->translationService->autoTranslate(
-                $entity,
-                'interests',
-                $entity->getInterests(),
-                $locale
-            );
-        }
+        // 3. Lance la traduction automatique du champ interests
+        $this->translationService->autoTranslate(
+            $entity,
+            'interests',
+            $entity->getInterests(),
+            $fallbackLocale
+        );
     }
+}
 
     /**
      * ÉTAPE 9 : Sécurité du Mot de Passe
