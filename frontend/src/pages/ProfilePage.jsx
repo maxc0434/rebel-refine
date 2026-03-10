@@ -540,13 +540,13 @@ function ProfilePage() {
                   <li className="d-flex justify-content-between border-bottom border-secondary py-2">
                     <span className="text-white-50">{t.profile_country}</span>
                     <span>
-                      {/* On remplace le tiret par un underscore pour matcher la clé de trad */}
+                      {/* country - On remplace le tiret par un underscore pour matcher la clé de trad */}
                       {t.database?.[user.country?.replaceAll("-", "_")] ||
                         user.country}
                     </span>
                   </li>
 
-                  {/* Fais de même pour la Situation (marital) au cas où */}
+                  {/* marital */}
                   <li className="d-flex justify-content-between border-bottom border-secondary py-2">
                     <span className="text-white-50">{t.profile_status}</span>
                     <span>
@@ -555,7 +555,7 @@ function ProfilePage() {
                     </span>
                   </li>
 
-                  {/* Idem pour la Religion */}
+                  {/* religion */}
                   <li className="d-flex justify-content-between py-2">
                     <span className="text-white-50">{t.profile_religion}</span>
                     <span>

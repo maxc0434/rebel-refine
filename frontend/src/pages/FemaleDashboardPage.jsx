@@ -505,7 +505,7 @@ function FemaleDashboardPage() {
                   />
                   <InfoBox
                     label={t.db_label_marital}
-                    value={userData.marital}
+                    value={t.database[userData.marital]}
                   />
                   <InfoBox
                     label={t.db_label_children}
@@ -513,7 +513,7 @@ function FemaleDashboardPage() {
                   />
                   <InfoBox
                     label={t.db_label_religion}
-                    value={userData.religion}
+                    value={t.database[userData.religion]}
                   />
                 </div>
 

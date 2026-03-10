@@ -149,7 +149,7 @@ const ViewMaleProfile = () => {
     const date = new Date(dateString);
     return date.toLocaleDateString("fr-FR", {
       day: "2-digit",
-      month: "long",
+      month: "2-digit",
       year: "numeric",
     });
   };

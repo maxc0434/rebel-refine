@@ -1043,7 +1043,7 @@ function MemberDashboardPage() {
                           className="dashboard-input"
                         >
                           <option value="">{t.opts_choose}</option>
-                          <option value="aucun">{t.opts_none}</option>
+                          <option value="0">{t.opts_none}</option>
                           <option value="1">{t.opts_child_1}</option>
                           <option value="2">{t.opts_child_2}</option>
                           <option value="3">{t.opts_child_3}</option>

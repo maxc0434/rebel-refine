@@ -158,7 +158,7 @@ class UserCrudController extends AbstractCrudController
                     'Judaique' => 'jewish',
                     'Islam' => 'islam',
                     'Atheiste' => 'atheist',
-                    'Spirituel mais non religieux' => 'spiritual but not religious',
+                    'Spirituel mais non religieux' => 'spiritual_but_not_religious',
                     'Autre' => 'other',
                 ]),
 

@@ -22,12 +22,12 @@ function HomePage() {
   //#region FCT FORM RECHERCHE
   // --- ÉTAPE 2 : Préparation du formulaire de recherche ---
   const ageOptions = [];
-  for (let i = 18; i <= 60; i++) {
+  for (let i = 18; i <= 70; i++) {
     ageOptions.push(
       <option key={i} value={i}>
         {i}
       </option>,
-    ); // Génère les choix de 18 à 60 ans
+    ); // Génère les choix de 18 à 70 ans
   }
 
   const handleSearch = (e) => {

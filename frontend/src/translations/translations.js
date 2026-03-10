@@ -28,7 +28,7 @@ export const translations = {
       judaique: "Judaïque",
       islam: "Islam",
       atheist: "Athée",
-      spiritual_but_not_religious: "Spirituel mais non religieux",
+      spiritual_but_not_religious: "Spirituel(le) mais non religieux",
       other: "Autre",
 
       // Pays
@@ -61,7 +61,6 @@ export const translations = {
     db_loading_profile: "Chargement de votre profil...",
     db_error_connection: "Erreur de connexion : impossible de récupérer vos données.",
     db_saving_sync: "Synchronisation et traductions...",
-
     //#endregion
 
     //#region NAVBAR
