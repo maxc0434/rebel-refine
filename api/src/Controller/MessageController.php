@@ -14,6 +14,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mailer\MailerInterface;
 
 #[Route('/api/messages')]
 class MessageController extends AbstractController
@@ -149,7 +151,7 @@ class MessageController extends AbstractController
     // Route pour valider la traduction d'un message
     #[Route('/{id}/validate', name: 'app_message_validate', methods: ['PUT'])]
     #[IsGranted('ROLE_TRANSLATOR', message: 'Réservé aux traducteurs')]
-    public function validateTranslation(int $id, Request $request, EntityManagerInterface $entityManager): JsonResponse
+    public function validateTranslation(int $id, Request $request, EntityManagerInterface $entityManager, MailerInterface $mailer): JsonResponse
     {
         $message = $entityManager->getRepository(Message::class)->find($id);
         $data = json_decode($request->getContent(), true);
@@ -160,8 +162,25 @@ class MessageController extends AbstractController
 
         $message->setContentTranslated($data['translated_content']);
         $message->setStatus(MessageStatus::Approved);
-
         $entityManager->flush();
+
+        $sender = $message->getSender();
+        $receiver = $message->getReceiver();
+
+        $email = (new TemplatedEmail())
+        ->from('no-reply@rebel-refine.com')
+        ->to($receiver->getEmail())
+        ->subject('Vous avez reçu un nouveau message')
+        ->htmlTemplate('emails/new_message.html.twig')
+        ->context([
+            'receiver' => $receiver,
+            'sender' => $sender,
+            'messageContent' => $message->getContentTranslated(),
+            'frontendUrl' => $this->getParameter('app.frontend_url'), // same param used for reset password
+        ]);
+
+    $mailer->send($email);
+
 
         return new JsonResponse(['status' => 'Message traduit et envoyé au destinataire']);
     }
