@@ -321,6 +321,7 @@ class MessageController extends AbstractController
                     'age' => $otherUser->getBirthDate() ? $otherUser->getBirthDate()->diff(new \DateTime())->y : null,
                     'hasNewMessages' => (null !== $hasNew),
                     'isDeleted' => (null !== $otherUser->getDeletedAt()),
+                    'isBanned' => $otherUser->isBanned(),
                 ];
             }
         }

@@ -498,7 +498,7 @@ export const translations = {
     chat_later: "Plus tard",
     chat_finished: "Discussion terminée",
     chat_account_deleted_detail:
-      "Cet utilisateur a supprimé son compte. Vous ne pouvez plus lui envoyer de messages.",
+      "Cet utilisateur a supprimé son compte ou a été banni. Vous ne pouvez plus lui envoyer de messages.",
     //#endregion
 
     //#region FEMALE DASHBOARD
@@ -1133,7 +1133,7 @@ export const translations = {
     chat_later: "Later",
     chat_finished: "Conversation ended",
     chat_account_deleted_detail:
-      "This user has deleted their account. You can no longer send messages to them.",
+      "This user has deleted their account or has been banned. You can no longer send them messages.",
     //#endregion
 
     //#region FEMALE DASHBOARD
@@ -1768,7 +1768,7 @@ export const translations = {
     chat_later: "Später",
     chat_finished: "Diskussion beendet",
     chat_account_deleted_detail:
-      "Dieser Benutzer hat sein Konto gelöscht. Sie können ihm keine Nachrichten mehr senden.",
+      "Dieser Nutzer hat sein Konto gelöscht oder wurde gesperrt. Sie können ihm keine Nachrichten mehr senden.",
     //#endregion
 
     //#region FEMALE DASHBOARD
@@ -2374,7 +2374,7 @@ export const translations = {
     chat_update_choices: "更新我的选择",
     chat_later: "稍后",
     chat_finished: "对话已结束",
-    chat_account_deleted_detail: "该用户已注销账号。您无法再向其发送消息。",
+    chat_account_deleted_detail: "该用户已删除账户或已被封禁。您无法再向其发送消息。",
     //#endregion
 
     //#region FEMALE DASHBOARD
@@ -2991,7 +2991,7 @@ export const translations = {
     chat_later: "Più tardi",
     chat_finished: "Discussione terminata",
     chat_account_deleted_detail:
-      "Questo utente ha cancellato il suo account. Non puoi più inviargli messaggi.",
+      "Questo utente ha eliminato il proprio account o è stato bannato. Non puoi più inviargli messaggi.",
     //#endregion
 
     //#region FEMALE DASHBOARD
@@ -3615,7 +3615,7 @@ export const translations = {
     chat_later: "Позже",
     chat_finished: "Обсуждение завершено",
     chat_account_deleted_detail:
-      "Этот пользователь удалил свой аккаунт. Вы больше не можете отправлять ему сообщения.",
+      "Этот пользователь удалил свою учетную запись или был заблокирован. Вы больше не можете отправлять ему сообщения.",
     //#endregion
 
     //#region FEMALE DASHBOARD
@@ -4240,7 +4240,7 @@ export const translations = {
     chat_later: "Más tarde",
     chat_finished: "Conversación finalizada",
     chat_account_deleted_detail:
-      "Este usuario ha eliminado su cuenta. Ya no puedes enviarle mensajes.",
+      "Este usuario ha eliminado su cuenta o ha sido baneado. Ya no puedes enviarle mensajes.",
     //#endregion
 
     //#region FEMALE DASHBOARD

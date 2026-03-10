@@ -205,8 +205,8 @@ const ChatModal = ({
 
         {/* Footer / Input */}
         <div className="chat-footer" style={{ flexDirection: "column" }}>
-          {/* CAS 1 : L'INTERLOCUTEUR A SUPPRIMÉ SON COMPTE */}
-          {selectedContact?.isDeleted ? (
+          {/* CAS 1 : L'INTERLOCUTEUR A SUPPRIMÉ SON COMPTE ou banni*/}
+          {selectedContact?.isDeleted || selectedContact?.isBanned ? (
             <div
               className="account-deleted-notice"
               style={{
