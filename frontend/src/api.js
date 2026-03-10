@@ -26,9 +26,11 @@ export const apiFetch = async (endpoint, options = {}) => {
 
     // Gestion des erreurs
     if (!response.ok) {
-        // On tente de récupérer le message d'erreur du backend
+        // On tente de récupérer le message d'erreur du backend (certains endpoints
+        // renvoient `error` au lieu de `message`, comme le fait json_login).
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `Erreur ${response.status}`);
+        // Prioritise le champ `error` puis `message`.
+        throw new Error(errorData.error || errorData.message || `Erreur ${response.status}`);
     }
 
     // Gestion du succès sans contenu (ex: suppression ou mise à jour réussie sans retour)

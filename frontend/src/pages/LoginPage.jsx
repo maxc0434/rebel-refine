@@ -97,7 +97,13 @@ function LoginPage() {
     return;
   }
   
-  // PRIORITÉ 2 : Identifiants faux (code 401)
+// PRIORITÉ 2 : Compte banni / bloqué (message personnalisé)
+    if (errorMessage.toLowerCase().includes("banni") || errorMessage.toLowerCase().includes("banned")) {
+      setError(errorMessage);
+      return;
+    }
+
+    // PRIORITÉ 3 : Identifiants faux (code 401)
   if (errorMessage.includes("Identifiants") || errorMessage.includes("invalid") || errorMessage.includes("401")) {
     setError(t.login_error_invalid);
     return;

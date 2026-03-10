@@ -17,7 +17,7 @@ class UserChecker implements UserCheckerInterface
             return;
         }
 
-        throw new CustomUserMessageAuthenticationException('Votre compte est banni. Veuillez contacter le support. / Account banned. Please contact support.');
+        throw new CustomUserMessageAuthenticationException("Compte banni. Veuillez contacter le support || Account banned. Please contact support.");
     }
 
     public function checkPostAuth(UserInterface $user, ?TokenInterface $token = null): void
