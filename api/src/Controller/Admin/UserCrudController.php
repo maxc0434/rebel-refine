@@ -22,6 +22,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
@@ -175,6 +176,11 @@ class UserCrudController extends AbstractCrudController
                 ])
                 ->allowMultipleChoices()
                 ->renderExpanded(),
+
+
+            BooleanField::new('isBanned', 'Compte banni'),
+            DateTimeField::new('bannedAt', 'Banni depuis le')
+                ->onlyOnDetail(),
         ];
     }
 
@@ -204,8 +210,8 @@ class UserCrudController extends AbstractCrudController
      */
     public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
-            $this->hashPassword($entityInstance);
-            $this->translateInterests($entityInstance);
+        $this->hashPassword($entityInstance);
+        $this->translateInterests($entityInstance);
 
         parent::updateEntity($entityManager, $entityInstance);
     }
@@ -215,24 +221,24 @@ class UserCrudController extends AbstractCrudController
      * Synchronise la locale de l'entité et appelle Google Translate via notre service.
      */
     private function translateInterests(User $entity): void
-{
-    if ($entity->getInterests()) {
-        // 1. Détermine une langue de secours basée sur le pays de l'utilisateur
-        //    (le service détectera la vraie langue source automatiquement)
-        $fallbackLocale = $this->getLocaleFromCountry($entity);
-        
-        // 2. Définit la locale translatable de l'entité pour Gedmo
-        $entity->setTranslatableLocale($fallbackLocale);
+    {
+        if ($entity->getInterests()) {
+            // 1. Détermine une langue de secours basée sur le pays de l'utilisateur
+            //    (le service détectera la vraie langue source automatiquement)
+            $fallbackLocale = $this->getLocaleFromCountry($entity);
 
-        // 3. Lance la traduction automatique du champ interests
-        $this->translationService->autoTranslate(
-            $entity,
-            'interests',
-            $entity->getInterests(),
-            $fallbackLocale
-        );
+            // 2. Définit la locale translatable de l'entité pour Gedmo
+            $entity->setTranslatableLocale($fallbackLocale);
+
+            // 3. Lance la traduction automatique du champ interests
+            $this->translationService->autoTranslate(
+                $entity,
+                'interests',
+                $entity->getInterests(),
+                $fallbackLocale
+            );
+        }
     }
-}
 
     /**
      * ÉTAPE 9 : Sécurité du Mot de Passe

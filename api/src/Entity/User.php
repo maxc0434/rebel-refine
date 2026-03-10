@@ -110,6 +110,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Transla
     #[ORM\Column]
     private ?bool $confirmMessageSend = true;
 
+    #[ORM\Column]
+    private ?bool $isBanned = false;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $bannedAt = null;
+
     public function __construct()
     {
         $this->userImages = new ArrayCollection();
@@ -172,9 +178,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Transla
     }
 
     /** @see UserInterface */
-    public function eraseCredentials(): void
-    {
-    }
+    public function eraseCredentials(): void {}
 
     // --- Champs personnalisés ---
     public function getNickname(): ?string
@@ -446,6 +450,37 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Transla
     public function setConfirmMessageSend(bool $confirmMessageSend): static
     {
         $this->confirmMessageSend = $confirmMessageSend;
+
+        return $this;
+    }
+
+    public function isBanned(): ?bool
+    {
+        return $this->isBanned;
+    }
+
+    public function setIsBanned(bool $isBanned): self
+    {
+        $this->isBanned = $isBanned;
+
+        if ($isBanned) {
+            $this->bannedAt = new \DateTimeImmutable();
+        } else {
+            $this->bannedAt = null;
+        }
+
+        return $this;
+    }
+
+    public function getBannedAt(): ?\DateTimeImmutable
+    {
+        return $this->bannedAt;
+    }
+
+    public function setBannedAt(?\DateTimeImmutable $bannedAt): static
+    {
+        $this->bannedAt = $bannedAt;
+        $this->isBanned = ($bannedAt !== null);
 
         return $this;
     }
