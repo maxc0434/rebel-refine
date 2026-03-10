@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Heart } from "lucide-react";
 import { useLanguage } from "../translations/hooks/useLanguage";
 import { apiFetch } from "../api";
+import Searcher from "../components/Searcher";
 
 function MembersPage() {
   const [members, setMembers] = useState([]);
@@ -60,11 +61,13 @@ function MembersPage() {
   };
 
   return (
+    <>
     <section className="member-section-female padding-tb">
       <div className="container">
         <div className="section-header">
           <h2>{t.members_title_female}</h2>
         </div>
+    <Searcher />
 
         <div className="row justify-content-center g-3 g-md-4 row-cols-2 row-cols-md-2 row-cols-lg-2">
           {members.map((m) => (
@@ -137,6 +140,7 @@ function MembersPage() {
         )}
       </div>
     </section>
+    </>
   );
 }
 

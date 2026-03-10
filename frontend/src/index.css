@@ -1,47 +1,63 @@
 /* Style personnalisé pour la Modal sans charger tout Bootstrap */
 .modal-content {
-    background-color: #1e1e2f !important; /* Un bleu-nuit très sombre */
-    border: 1px solid #333 !important;
-    border-radius: 15px !important;
-    color: white !important;
+  background: rgba(30, 30, 47, 0.8) !important; /* Semi-transparent */
+  backdrop-filter: blur(15px); /* Effet de flou haut de gamme */
+  border: 1px solid rgba(212, 175, 55, 0.2) !important; /* Bordure or très fine */
+  background-color: #1e1e2f !important; /* Un bleu-nuit très sombre */
+  border: 1px solid #333 !important;
+  border-radius: 15px !important;
+  color: white !important;
 }
 
 .modal-header {
-    border-bottom: 1px solid #333 !important;
+  border-bottom: 1px solid #333 !important;
 }
 
 .modal-header .btn-close {
-    filter: invert(1) grayscale(100%) brightness(200%); /* Rend la croix blanche */
+  filter: invert(1) grayscale(100%) brightness(200%); /* Rend la croix blanche */
 }
 
 /* On personnalise l'input pour qu'il ressemble à tes autres champs */
 .modal-body input {
-    background-color: #2b2b3d !important;
-    border: 1px solid #444 !important;
-    color: white !important;
-    border-radius: 8px !important;
-    padding: 10px !important;
+  background-color: #2b2b3d !important;
+  border: 1px solid #444 !important;
+  color: white !important;
+  border-radius: 8px !important;
+  padding: 10px !important;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   padding: 0;
-  background-color: #0d0d21; /* Ta couleur sombre pour éviter le flash blanc */
+  background:
+    radial-gradient(at 0% 0%, #1a1a2e 0%, transparent 50%),
+    radial-gradient(at 100% 0%, #16213e 0%, transparent 50%),
+    radial-gradient(at 50% 100%, #0f0f1a 0%, transparent 50%);
+  background-color: #0d0d21; /* Couleur de secours */
+  background-attachment: fixed; /* Le fond ne bouge pas au scroll */
+  color: white;
+  font-family:
+    "Inter", sans-serif; /* Si tu as une police propre, c'est le moment */
 }
 
 #root {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Utilise toute la hauteur de l'écran */
+  min-height: 100vh;
   width: 100%;
+  background: transparent;
 }
 
 /* Le conteneur de tes pages (Login, Home, etc.) */
-main, .page-container {
+main,
+.page-container {
   flex: 1 0 auto; /* Prend tout l'espace restant et pousse le footer */
 }
 
 footer {
   flex-shrink: 0; /* Empêche le footer de s'écraser */
 }
+
+

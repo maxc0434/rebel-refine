@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useLanguage } from "../translations/hooks/useLanguage";
 import { apiFetch } from "../api";
-import "./SearchPage.css"; // Importation du CSS
+import "./SearchPage.css"; 
+import Searcher from "../components/Searcher";
+
 
 const SearchPage = () => {
     const [searchParams] = useSearchParams();
@@ -50,6 +52,9 @@ const SearchPage = () => {
                         <span className="ms-2 text-uppercase small opacity-50 fw-bold">{t.members_unit}</span>
                     </div>
                 </div>
+
+                {/* Barre de recherche */}
+                <Searcher />
 
                 {/* Grille de résultats */}
                 <div className="row g-4">

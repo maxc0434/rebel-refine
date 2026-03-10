@@ -162,170 +162,79 @@ function HomePage() {
                         }}
                       ></div>
 
-                      {/* MARK:Form de recherche */}
-                      <h6
-                        className="text-uppercase mb-4"
-                        style={{
-                          letterSpacing: "2px",
-                          fontSize: "0.85rem",
-                          color: "#d4af37",
-                        }}
-                      >
-                        {t.home_search_title}
-                      </h6>
+                      {/* MARK: Form de recherche - Version Définitive */}
+<h6
+  className="text-uppercase mb-4"
+  style={{
+    letterSpacing: "3px",
+    fontSize: "0.8rem",
+    color: "#d4af37",
+    fontWeight: "700",
+    textAlign: "center"
+  }}
+>
+  {t.home_search_title}
+</h6>
 
-                      <form className="banner-form" onSubmit={handleSearch}>
-                        <div className="age">
-                          <div
-                            className="right d-flex justify-content-between w-100"
-                            style={{ gap: "15px" }}
-                          >
-                            {/* SELECT : ÂGE MINIMUM */}
-                            <div className="custom-select" style={{ flex: 1 }}>
-                              <h5
-                                style={{
-                                  fontSize: "0.8rem",
-                                  color: "rgba(255,255,255,0.6)",
-                                  marginBottom: "10px",
-                                  textTransform: "uppercase",
-                                  letterSpacing: "1px",
-                                }}
-                              >
-                                {t.home_search_from}
-                              </h5>
-                              <select
-                                value={minAge}
-                                onChange={(e) => setMinAge(e.target.value)}
-                                style={{
-                                  backgroundColor: "#1a1d21",
-                                  color: "#f5f5f5",
-                                  border: "1px solid rgba(212, 175, 55, 0.3)",
-                                  borderRadius: "8px",
-                                  padding: "10px",
-                                  width: "100%",
-                                  outline: "none",
-                                  cursor: "pointer",
-                                  transition: "all 0.3s ease",
-                                  appearance: "none",
-                                  WebkitAppearance: "none",
-                                  boxShadow: "inset 0 2px 4px rgba(0,0,0,0.3)",
-                                }}
-                                onFocus={(e) =>
-                                  (e.target.style.borderColor = "#d4af37")
-                                }
-                                onBlur={(e) =>
-                                  (e.target.style.borderColor =
-                                    "rgba(212, 175, 55, 0.3)")
-                                }
-                              >
-                                <option
-                                  value=""
-                                  style={{
-                                    backgroundColor: "#1a1d21",
-                                    color: "#fff",
-                                  }}
-                                >
-                                  De
-                                </option>
-                                {ageOptions}
-                              </select>
-                            </div>
+<form className="banner-form" onSubmit={handleSearch} style={{ maxWidth: "450px", margin: "0 auto" }}>
+  <div className="age">
+    <div className="right d-flex justify-content-between w-100" style={{ gap: "20px" }}>
+      
+      {/* SELECT : ÂGE MINIMUM */}
+      <div className="custom-select-container" style={{ flex: 1, position: "relative" }}>
+        <label style={refinedLabelStyle}>{t.home_search_from}</label>
+        <div style={{ position: "relative" }}>
+          <select
+            value={minAge}
+            onChange={(e) => setMinAge(e.target.value)}
+            className="no-select-arrow" // On utilise une classe pour forcer le CSS
+            style={refinedSelectStyle}
+          >
+            <option value="" style={refinedOptionStyle}>De</option>
+            {ageOptions}
+          </select>
+          {/* Notre flèche dorée unique */}
+          <span style={refinedArrowStyle}>▾</span>
+        </div>
+      </div>
 
-                            {/* SELECT : ÂGE MAXIMUM */}
-                            <div className="custom-select" style={{ flex: 1 }}>
-                              <h5
-                                style={{
-                                  fontSize: "0.8rem",
-                                  color: "rgba(255,255,255,0.6)",
-                                  marginBottom: "10px",
-                                  textTransform: "uppercase",
-                                  letterSpacing: "1px",
-                                }}
-                              >
-                                {t.home_search_to}
-                              </h5>
-                              <select
-                                value={maxAge}
-                                onChange={(e) => setMaxAge(e.target.value)}
-                                style={{
-                                  backgroundColor: "#1a1d21",
-                                  color: "#f5f5f5",
-                                  border: "1px solid rgba(212, 175, 55, 0.3)",
-                                  borderRadius: "8px",
-                                  padding: "10px",
-                                  width: "100%",
-                                  outline: "none",
-                                  cursor: "pointer",
-                                  transition: "all 0.3s ease",
-                                  appearance: "none",
-                                  WebkitAppearance: "none",
-                                  boxShadow: "inset 0 2px 4px rgba(0,0,0,0.3)",
-                                }}
-                                onFocus={(e) =>
-                                  (e.target.style.borderColor = "#d4af37")
-                                }
-                                onBlur={(e) =>
-                                  (e.target.style.borderColor =
-                                    "rgba(212, 175, 55, 0.3)")
-                                }
-                              >
-                                <option
-                                  value=""
-                                  style={{
-                                    backgroundColor: "#1a1d21",
-                                    color: "#fff",
-                                  }}
-                                >
-                                  À
-                                </option>
-                                {ageOptions}
-                              </select>
-                            </div>
-                          </div>
-                        </div>
+      {/* SELECT : ÂGE MAXIMUM */}
+      <div className="custom-select-container" style={{ flex: 1, position: "relative" }}>
+        <label style={refinedLabelStyle}>{t.home_search_to}</label>
+        <div style={{ position: "relative" }}>
+          <select
+            value={maxAge}
+            onChange={(e) => setMaxAge(e.target.value)}
+            className="no-select-arrow"
+            style={refinedSelectStyle}
+          >
+            <option value="" style={refinedOptionStyle}>À</option>
+            {ageOptions}
+          </select>
+          <span style={refinedArrowStyle}>▾</span>
+        </div>
+      </div>
 
-                        <button
-                          type="submit"
-                          style={{
-                            // Utilisation du dégradé multi-points "Or Brossé"
-                            background:
-                              "linear-gradient(135deg, #8A6E2F 0%, #BF953F 25%, #FCF6BA 50%, #BF953F 75%, #8A6E2F 100%)",
-                            backgroundSize: "200% auto",
-                            borderRadius: "50px",
-                            padding: "12px 30px", // Légèrement plus haut pour le confort
-                            border: "none",
-                            color: "#1a1d21", // Texte sombre pour le contraste premium
-                            fontWeight: "700",
-                            width: "100%",
-                            marginTop: "20px",
-                            textTransform: "uppercase",
-                            letterSpacing: "2px",
-                            fontSize: "0.8rem",
-                            boxShadow:
-                              "0 10px 20px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3)",
-                            cursor: "pointer",
-                            transition:
-                              "all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
-                          }}
-                          onMouseOver={(e) => {
-                            e.currentTarget.style.transform =
-                              "translateY(-3px)";
-                            e.currentTarget.style.boxShadow =
-                              "0 15px 30px rgba(212, 175, 55, 0.4)";
-                            e.currentTarget.style.backgroundPosition =
-                              "right center";
-                          }}
-                          onMouseOut={(e) => {
-                            e.currentTarget.style.transform = "translateY(0)";
-                            e.currentTarget.style.boxShadow =
-                              "0 10px 20px rgba(0, 0, 0, 0.4)";
-                            e.currentTarget.style.backgroundPosition =
-                              "left center";
-                          }}
-                        >
-                          {t.home_btn_search}
-                        </button>
-                      </form>
+    </div>
+  </div>
+
+  <button
+    type="submit"
+    style={refinedButtonStyle}
+    onMouseOver={(e) => {
+      e.currentTarget.style.transform = "translateY(-3px) scale(1.02)";
+      e.currentTarget.style.boxShadow = "0 15px 30px rgba(212, 175, 55, 0.4)";
+      e.currentTarget.style.backgroundPosition = "right center";
+    }}
+    onMouseOut={(e) => {
+      e.currentTarget.style.transform = "translateY(0) scale(1)";
+      e.currentTarget.style.boxShadow = "0 10px 20px rgba(0, 0, 0, 0.4)";
+      e.currentTarget.style.backgroundPosition = "left center";
+    }}
+  >
+    {t.home_btn_search}
+  </button>
+</form>
                     </div>
                   </div>
                 </div>
@@ -1024,5 +933,65 @@ function HomePage() {
     </>
   );
 }
+
+const refinedLabelStyle = {
+  fontSize: "0.65rem",
+  color: "rgba(255,255,255,0.5)",
+  marginBottom: "8px",
+  display: "block",
+  textTransform: "uppercase",
+  letterSpacing: "1.5px",
+};
+
+const refinedSelectStyle = {
+  backgroundColor: "rgba(20, 20, 25, 0.9)",
+  backdropFilter: "blur(12px)",
+  color: "#f5f5f5",
+  border: "1px solid rgba(212, 175, 55, 0.3)",
+  borderRadius: "12px",
+  padding: "12px 15px",
+  width: "100%",
+  outline: "none",
+  cursor: "pointer",
+  fontSize: "0.95rem",
+  appearance: "none",
+  WebkitAppearance: "none",
+  MozAppearance: "none",
+  backgroundImage: "none",
+};
+
+const refinedOptionStyle = {
+  backgroundColor: "#0f1115", // Fond noir pour éviter le bleu
+  color: "#d4af37",           // Texte doré
+  padding: "10px",
+};
+
+const refinedArrowStyle = {
+  position: "absolute",
+  right: "12px",
+  top: "50%",
+  transform: "translateY(-50%)",
+  color: "#d4af37",
+  fontSize: "0.8rem",
+  pointerEvents: "none", // Pour cliquer à travers
+};
+
+const refinedButtonStyle = {
+  background: "linear-gradient(135deg, #8A6E2F 0%, #BF953F 25%, #FCF6BA 50%, #BF953F 75%, #8A6E2F 100%)",
+  backgroundSize: "200% auto",
+  borderRadius: "50px",
+  padding: "14px 30px",
+  border: "1px solid rgba(255, 255, 255, 0.1)",
+  color: "#1a1d21",
+  fontWeight: "800",
+  width: "100%",
+  marginTop: "25px",
+  textTransform: "uppercase",
+  letterSpacing: "2px",
+  fontSize: "0.75rem",
+  boxShadow: "0 10px 20px rgba(0, 0, 0, 0.4)",
+  cursor: "pointer",
+  transition: "all 0.5s cubic-bezier(0.23, 1, 0.32, 1)",
+};
 
 export default HomePage;
