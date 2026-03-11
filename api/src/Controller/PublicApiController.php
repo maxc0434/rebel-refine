@@ -16,14 +16,18 @@ final class PublicApiController extends AbstractController
     #[Route('/api/public/latest-members', name: 'api_public_latest', methods: ['GET'])]
 public function getLatestMembers(): JsonResponse
 {
-    // Récupère les 5 derniers utilisateurs
-    $members = $this->userRepository->findBy([], ['id' => 'DESC'], 5);
+    // Récupère les 5 dernières utilisatrices 
+    $members = $this->userRepository->findBy(
+        ['gender' => 'female'], 
+        ['id' => 'DESC'],
+        5
+    );
 
     $data = array_map(function($user) {
         // Récupère la collection d'images
         $images = $user->getUserImages();
         // On prend la première image
-        $firstImage = $images->first(); 
+        $firstImage = $images->first();
 
         return [
             'id' => $user->getId(),
