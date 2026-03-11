@@ -70,7 +70,7 @@
     border-radius: 15px;
     background: transparent;
     border: 1px solid #d4af37;
-    color: #d4af37;
+    color: #d4af37 !important;
     font-size: 0.85rem;
     font-weight: 600;
     transition: all 0.3s ease;
