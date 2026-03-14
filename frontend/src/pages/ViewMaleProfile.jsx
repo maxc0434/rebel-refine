@@ -1,10 +1,11 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { User, ArrowLeft, X } from "lucide-react";
+import { User, ArrowLeft, X, Flag } from "lucide-react";
 import "./ViewMaleProfile.css";
 import ChatModal from "../components/ChatModal";
 import { apiFetch } from "../api";
 import { useLanguage } from "../translations/hooks/useLanguage";
+import ReportModal from "../components/ReportModal";
 
 const ViewMaleProfile = () => {
   const { id } = useParams();
@@ -19,6 +20,7 @@ const ViewMaleProfile = () => {
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
   const userData = JSON.parse(localStorage.getItem("user"));
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
   const { t } = useLanguage();
 
@@ -204,6 +206,34 @@ const ViewMaleProfile = () => {
       }}
     >
       <div className="container">
+        {/* MARK: Report */}
+        <button
+          onClick={() => setIsReportModalOpen(true)}
+          style={{
+            background: "transparent",
+            border: "1px solid #d4af37",
+            color: "#d4af37",
+            padding: "8px 12px",
+            borderRadius: "10px",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            cursor: "pointer",
+            transition: "all 0.3s ease",
+            marginBottom: "10px",
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.background = "#d4af37";
+            e.currentTarget.style.color = "#12122d";
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.background = "transparent";
+            e.currentTarget.style.color = "#d4af37";
+          }}
+          title={t.report_user_tooltip}
+        >
+          <Flag size={20} />
+        </button>
         <button
           onClick={() => navigate(-1)}
           className="btn btn-outline-light mb-4 d-flex align-items-center"
@@ -368,7 +398,14 @@ const ViewMaleProfile = () => {
               </span>
             </button>
 
-            {/* MARK: Chat */}
+            {/* MARK: Report Modal */}
+            <ReportModal
+              reportedUserId={id}
+              isOpen={isReportModalOpen}
+              onClose={() => setIsReportModalOpen(false)}
+            />
+
+            {/* MARK: Chat Modal */}
             <ChatModal
               isOpen={isModalOpen}
               onClose={() => setIsModalOpen(false)}

@@ -1,0 +1,41 @@
+.report-modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85);
+    z-index: 3000;
+    display: flex; align-items: center; justify-content: center;
+}
+
+.report-modal-content {
+    background: #12122d;
+    border: 2px solid #d4af37;
+    border-radius: 20px;
+    padding: 30px;
+    width: 90%; max-width: 500px;
+    color: white;
+    position: relative;
+}
+
+.report-modal-content .close-btn {
+    position: absolute; top: 15px; right: 15px;
+    background: none; border: none; color: white; cursor: pointer;
+}
+
+.report-modal-content textarea, .report-modal-content select {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(212,175,55,0.3);
+    color: white;
+}
+
+select.report-select {
+    background-color: #12122d !important;
+    color: #d4af37 !important;
+    appearance: none;
+}
+
+/* Cela ne marche pas sur tous les navigateurs, mais c'est nécessaire pour certains */
+select.report-select option {
+    background-color: #12122d !important;
+    color: #d4af37 !important;
+    padding: 10px;
+}

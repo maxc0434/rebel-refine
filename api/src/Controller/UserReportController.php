@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Api;
+namespace App\Controller;
 
 use App\Entity\Report;
 use App\Entity\User;
@@ -12,33 +12,34 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Attribute\CurrentUser; 
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
-class ReportController extends AbstractController
+class UserReportController extends AbstractController
 {
-    #[Route('/api/reports', name: 'api_report_create', methods: ['POST'])]
-    public function create(
-        Request $request, 
-        EntityManagerInterface $em, 
-        UserRepository $userRepository, 
+    #[Route('/api/submit-report', name: 'api_submit_report', methods: ['POST'])]
+    public function submit(
+        Request $request,
+        EntityManagerInterface $em,
+        UserRepository $userRepository,
         MailerInterface $mailer,
-        #[CurrentUser] ?User $reporter // Injection explicite du CurrentUser
+        #[CurrentUser] ?User $reporter
     ): JsonResponse {
         
-        // 1. Vérification de la session
         if (!$reporter) {
             return new JsonResponse(['error' => 'Non authentifié'], 401);
         }
 
         $data = json_decode($request->getContent(), true);
 
-        // 2. Récupération de l'utilisateur visé
-        $reportedUser = $userRepository->find($data['reportedUserId'] ?? 0);
+        if (!isset($data['reportedUserId']) || !isset($data['reason'])) {
+            return new JsonResponse(['error' => 'Données incomplètes'], 400);
+        }
+
+        $reportedUser = $userRepository->find($data['reportedUserId']);
         if (!$reportedUser) {
             return new JsonResponse(['error' => 'Utilisateur non trouvé'], 404);
         }
 
-        // 3. Création du signalement
         $report = new Report();
         $report->setReporter($reporter);
         $report->setReportedUser($reportedUser);
@@ -48,11 +49,10 @@ class ReportController extends AbstractController
         $em->persist($report);
         $em->flush();
 
-        // 4. Envoi du mail
         $email = (new Email())
-            ->from('noreply@votre-site.fr')
-            ->to('admin@votre-site.fr')
-            ->subject('Nouveau signalement #' . $report->getId())
+            ->from('noreply@rebel-refine.com')
+            ->to('admin@admin.com')
+            ->subject('Signalement #' . $report->getId())
             ->text("L'utilisateur " . $reporter->getEmail() . " a signalé " . $reportedUser->getEmail() . ".");
         
         $mailer->send($email);
