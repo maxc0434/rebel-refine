@@ -18,6 +18,7 @@ function FemaleDashboardPage() {
   const [messages, setMessages] = useState([]);
   const [conversations, setConversations] = useState([]);
   const messagesEndRef = useRef(null);
+  const [selectedPhoto, setSelectedPhoto] = useState(null);
 
   const { t } = useLanguage();
   //#endregion
@@ -525,41 +526,41 @@ function FemaleDashboardPage() {
                 </div>
 
                 {/* Section : Ma Galerie Photo */}
-                <div style={{ marginTop: "30px", marginBottom: "30px" }}>
-                  <h3 className="section-title">{t.db_gallery}</h3>
+<div style={{ marginTop: "30px", marginBottom: "30px" }}>
+  <h3 className="section-title">{t.db_gallery}</h3>
 
-                  <div className="photo-gallery">
-                    {userData.photos && userData.photos.length > 0 ? (
-                      userData.photos.map((photo, index) => (
-                        <div key={index}>
-                          <img
-                            src={`http://localhost:8000/uploads/users/${photo.imageName}`}
-                            alt={`Photo ${index}`}
-                            className="gallery-image"
-                          />
-                        </div>
-                      ))
-                    ) : (
-                      <p
-                        style={{
-                          color: "rgba(255,255,255,0.5)",
-                          gridColumn: "1 / -1",
-                        }}
-                      >
-                        {t.db_no_photos}
-                      </p>
-                    )}
-                  </div>
-                </div>
-                <div
-                  style={{
-                    color: "rgba(255,255,255,0.5)",
-                    gridColumn: "1 / -1",
-                  }}
-                  className="mt-5 d-flex justify-content-center"
-                >
-                  <p className="subtitle col-5">{t.db_contact_admin}</p>
-                </div>
+  <div className="photo-gallery">
+    {userData.photos && userData.photos.length > 0 ? (
+      userData.photos.map((photo, index) => (
+        <div key={index} onClick={() => setSelectedPhoto(`http://localhost:8000/uploads/users/${photo.imageName}`)}>
+          <img
+            src={`http://localhost:8000/uploads/users/${photo.imageName}`}
+            alt={`Photo ${index}`}
+            className="gallery-image"
+            style={{ cursor: 'pointer' }} // Indique que c'est cliquable
+          />
+        </div>
+      ))
+    ) : (
+      <p>{t.db_no_photos}</p>
+    )}
+  </div>
+</div>
+
+{/* Modale d'agrandissement */}
+{selectedPhoto && (
+  <div 
+    onClick={() => setSelectedPhoto(null)} 
+    style={{
+      position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+      backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex',
+      justifyContent: 'center', alignItems: 'center', zIndex: 1000
+    }}
+  >
+    <img src={selectedPhoto} style={{ maxWidth: '90%', maxHeight: '90%' }} alt="Agrandie" />
+  </div>
+)}
+
               </div>
             )}
 
