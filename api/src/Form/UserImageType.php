@@ -20,7 +20,8 @@ class UserImageType extends AbstractType
             'label' => 'Photo',          // Le texte qui s'affichera à côté du bouton
             'required' => false,        // On n'est pas obligé d'ajouter une photo pour valider
             'allow_delete' => true,     // Ajoute une petite case à cocher "Supprimer" si la photo existe déjà
-            'download_uri' => false,    // On ne veut pas afficher le lien de téléchargement direct du fichier
+            'download_uri' => true,    // On afficher le lien de téléchargement direct du fichier
+            'image_uri' => true,        // On veut afficher l'image directement
             'constraints' => [
                 new File(
                     maxSize: '2M',
