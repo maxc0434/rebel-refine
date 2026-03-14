@@ -116,6 +116,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Transla
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $bannedAt = null;
 
+    /**
+     * @var Collection<int, Report>
+     */
+    #[ORM\OneToMany(targetEntity: Report::class, mappedBy: 'reporter')]
+    private Collection $reports;
+
+    /**
+     * @var Collection<int, Report>
+     */
+    #[ORM\OneToMany(targetEntity: Report::class, mappedBy: 'reportedUser')]
+    private Collection $reportsReceived;
+
     public function __construct()
     {
         $this->userImages = new ArrayCollection();
@@ -123,6 +135,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Transla
         $this->sentMessages = new ArrayCollection();
         $this->receivedMessages = new ArrayCollection();
         $this->transactions = new ArrayCollection();
+        $this->reports = new ArrayCollection();
+        $this->reportsReceived = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -482,6 +496,63 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Transla
         $this->bannedAt = $bannedAt;
         $this->isBanned = ($bannedAt !== null);
 
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Report>
+     */
+    public function getReports(): Collection
+    {
+        return $this->reports;
+    }
+
+    public function addReport(Report $report): static
+    {
+        if (!$this->reports->contains($report)) {
+            $this->reports->add($report);
+            $report->setReporter($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReport(Report $report): static
+    {
+        if ($this->reports->removeElement($report)) {
+            // set the owning side to null (unless already changed)
+            if ($report->getReporter() === $this) {
+                $report->setReporter(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Report>
+     */
+    public function getReportsReceived(): Collection
+    {
+        return $this->reportsReceived;
+    }
+
+    public function addReportReceived(Report $report): static
+    {
+        if (!$this->reportsReceived->contains($report)) {
+            $this->reportsReceived->add($report);
+            $report->setReportedUser($this);
+        }
+        return $this;
+    }
+
+    public function removeReportReceived(Report $report): static
+    {
+        if ($this->reportsReceived->removeElement($report)) {
+            if ($report->getReportedUser() === $this) {
+                $report->setReportedUser(null);
+            }
+        }
         return $this;
     }
 }
