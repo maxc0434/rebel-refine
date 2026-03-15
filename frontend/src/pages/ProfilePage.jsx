@@ -1,11 +1,12 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./ProfilePage.css";
-import { Heart, NotebookPen, Mail } from "lucide-react";
+import { Heart, NotebookPen, Mail, TriangleAlert } from "lucide-react";
 import Swal from "sweetalert2";
 import ChatModal from "../components/ChatModal";
 import { apiFetch } from "../api";
 import { useLanguage } from "../translations/hooks/useLanguage";
+import ReportModal from "../components/ReportModal";
 
 function ProfilePage() {
   //#region OUTILS & AUTHENTIFICATION
@@ -32,6 +33,7 @@ function ProfilePage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const messagesEndRef = useRef(null);
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
   //#endregion
 
@@ -566,9 +568,44 @@ function ProfilePage() {
                 </ul>
               </div>
             </div>
+            {/* MARK: Report BUTTON*/}
+            <button
+              onClick={() => setIsReportModalOpen(true)}
+              style={{
+                background: "transparent",
+                border: "1px solid #d4af37",
+                color: "#d4af37",
+                padding: "8px 12px",
+                borderRadius: "10px",
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                cursor: "pointer",
+                transition: "all 0.3s ease",
+                marginBottom: "10px",
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.background = "#d4af37";
+                e.currentTarget.style.color = "#12122d";
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.background = "transparent";
+                e.currentTarget.style.color = "#d4af37";
+              }}
+              title={t.report_user_tooltip}
+            >
+              <TriangleAlert size={30} />
+            </button>
           </div>
         </div>
       </div>
+
+      {/* MARK: Report Modal */}
+            <ReportModal
+              reportedUserId={id}
+              isOpen={isReportModalOpen}
+              onClose={() => setIsReportModalOpen(false)}
+            />
 
       {/* MARK: MODALE CARROUSEL */}
       {selectedImgIndex !== null && (
