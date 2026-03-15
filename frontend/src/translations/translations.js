@@ -633,6 +633,30 @@ export const translations = {
     contact_footer: "SERVICE CONCIERGERIE",
     //#endregion
   
+    //#region Reporting
+    report_title: "Signaler cet utilisateur",
+    report_select_reason: "Sélectionnez une raison",
+    report_placeholder: "Ajoutez des détails (max 255 caractères)...",
+    report_sending: "ENVOI EN COURS...",
+    report_confirm: "CONFIRMER LE SIGNALEMENT",
+    report_error_title: "Erreur",
+    report_error_reason: "Veuillez choisir une raison.",
+    report_success_title: "Signalement envoyé !",
+    report_success_text: "Merci, votre signalement a été transmis à nos modérateurs.",
+    // Reasons
+    reason_spam: "Spam / Publicité",
+    reason_harassment: "Harcèlement",
+    reason_racism: "Propos Raciste",
+    reason_sexual_content: "Contenu sexuel",
+    reason_violent_content: "Contenu Violent",
+    reason_hateful_content: "Contenu Haineux",
+    reason_inappropriate: "Contenu inapproprié",
+    reason_fake_profile: "Faux profil",
+    reason_other: "Autre",
+    //#endregion
+
+
+  
   },
 
   //#endregion FRANCAIS
@@ -1266,6 +1290,29 @@ export const translations = {
     contact_response_time: "Response within 12 Hours",
     contact_footer: "CONCIERGE SERVICE",
     //#endregion
+  
+  
+    //#region Reporting
+    report_title: "Report this user",
+    report_select_reason: "Select a reason",
+    report_placeholder: "Add details (max 255 characters)...",
+    report_sending: "SENDING...",
+    report_confirm: "CONFIRM REPORT",
+    report_error_title: "Error",
+    report_error_reason: "Please choose a reason.",
+    report_success_title: "Report sent!",
+    report_success_text: "Thank you, your report has been forwarded to our moderators.",
+    // Reasons
+    reason_spam: "Spam / Advertising",
+    reason_harassment: "Harassment",
+    reason_racism: "Racism",
+    reason_sexual_content: "Sexual content",
+    reason_violent_content: "Violent content",
+    reason_hateful_content: "Hateful content",
+    reason_inappropriate: "Inappropriate content",
+    reason_fake_profile: "Fake profile",
+    reason_other: "Other",
+    //#endregion
   },
 
   //#endregion ANGLAIS
@@ -1898,6 +1945,29 @@ export const translations = {
     contact_response_time: "Antwort innerhalb von 12 Stunden",
     contact_footer: "CONCIERGE-SERVICE",
     //#endregion
+  
+  
+    //#region REPORT
+    report_title: "Diesen Benutzer melden",
+    report_select_reason: "Grund auswählen",
+    report_placeholder: "Details hinzufügen (max. 255 Zeichen)...",
+    report_sending: "WIRD GESENDET...",
+    report_confirm: "MELDUNG BESTÄTIGEN",
+    report_error_title: "Fehler",
+    report_error_reason: "Bitte wählen Sie einen Grund aus.",
+    report_success_title: "Meldung gesendet!",
+    report_success_text: "Vielen Dank, Ihre Meldung wurde an unsere Moderatoren weitergeleitet.",
+    // Reasons
+    reason_spam: "Spam / Werbung",
+    reason_harassment: "Belästigung",
+    reason_racism: "Rassismus",
+    reason_sexual_content: "Sexuelle Inhalte",
+    reason_violent_content: "Gewalttätige Inhalte",
+    reason_hateful_content: "Hasserfüllte Inhalte",
+    reason_inappropriate: "Unangemessene Inhalte",
+    reason_fake_profile: "Gefälschtes Profil",
+    reason_other: "Andere",
+    //#endregion
   },
   //#endregion
 
@@ -2494,6 +2564,29 @@ export const translations = {
     contact_response_time: "12 小时内回复",
     contact_footer: "礼宾部",
     //#endregion
+  
+    //#region REPORT
+    report_title: "举报该用户",
+    report_select_reason: "选择原因",
+    report_placeholder: "添加详情（最多255个字符）...",
+    report_sending: "正在发送...",
+    report_confirm: "确认举报",
+    report_error_title: "错误",
+    report_error_reason: "请选择一个原因。",
+    report_success_title: "举报已发送！",
+    report_success_text: "谢谢，您的举报已提交给我们的管理员。",
+    // Reasons
+    reason_spam: "垃圾信息 / 广告",
+    reason_harassment: "骚扰",
+    reason_racism: "种族主义言论",
+    reason_sexual_content: "色情内容",
+    reason_violent_content: "暴力内容",
+    reason_hateful_content: "仇恨内容",
+    reason_inappropriate: "不当内容",
+    reason_fake_profile: "虚假资料",
+    reason_other: "其他",
+    //#endregion
+  
   },
 
   //#endregion
@@ -3122,6 +3215,29 @@ export const translations = {
     contact_response_time: "Risposta entro 12 Ore",
     contact_footer: "SERVIZIO CONCIERGERIE",
     //#endregion
+  
+  
+    //#region REPORT
+    report_title: "Segnala questo utente",
+    report_select_reason: "Seleziona un motivo",
+    report_placeholder: "Aggiungi dettagli (max 255 caratteri)...",
+    report_sending: "INVIO IN CORSO...",
+    report_confirm: "CONFERMA SEGNALAZIONE",
+    report_error_title: "Errore",
+    report_error_reason: "Per favore, scegli un motivo.",
+    report_success_title: "Segnalazione inviata!",
+    report_success_text: "Grazie, la tua segnalazione è stata inoltrata ai nostri moderatori.",
+    // Reasons
+    reason_spam: "Spam / Pubblicità",
+    reason_harassment: "Molestie",
+    reason_racism: "Razzismo",
+    reason_sexual_content: "Contenuto sessuale",
+    reason_violent_content: "Contenuto violento",
+    reason_hateful_content: "Contenuto d'odio",
+    reason_inappropriate: "Contenuto inappropriato",
+    reason_fake_profile: "Falso profilo",
+    reason_other: "Altro",
+    //#endregion
   },
 
   //#endregion
@@ -3742,6 +3858,29 @@ export const translations = {
     contact_card_mail_sub: "Личное и поддержка",
     contact_response_time: "Ответ в течение 12 часов",
     contact_footer: "КОНСЬЕРЖ-СЕРВИС",
+    //#endregion
+  
+  
+    //#region REPORT
+    report_title: "Пожаловаться на пользователя",
+    report_select_reason: "Выберите причину",
+    report_placeholder: "Добавьте детали (макс. 255 символов)...",
+    report_sending: "ОТПРАВКА...",
+    report_confirm: "ПОДТВЕРДИТЬ ЖАЛОБУ",
+    report_error_title: "Ошибка",
+    report_error_reason: "Пожалуйста, выберите причину.",
+    report_success_title: "Жалоба отправлена!",
+    report_success_text: "Спасибо, ваша жалоба передана модераторам.",
+    // Reasons
+    reason_spam: "Спам / Реклама",
+    reason_harassment: "Домогательство",
+    reason_racism: "Расизм",
+    reason_sexual_content: "Сексуальный контент",
+    reason_violent_content: "Жестокий контент",
+    reason_hateful_content: "Проявление ненависти",
+    reason_inappropriate: "Неподобающий контент",
+    reason_fake_profile: "Фейковый профиль",
+    reason_other: "Другое",
     //#endregion
   },
   //#endregion
@@ -4370,6 +4509,29 @@ export const translations = {
     contact_card_mail_sub: "Privado & Soporte",
     contact_response_time: "Respuesta en menos de 12 Horas",
     contact_footer: "SERVICIO DE CONSERJERÍA",
+    //#endregion
+ 
+  
+    //#region REPORT
+    report_title: "Reportar a este usuario",
+    report_select_reason: "Selecciona un motivo",
+    report_placeholder: "Añadir detalles (máx. 255 caracteres)...",
+    report_sending: "ENVIANDO...",
+    report_confirm: "CONFIRMAR REPORTE",
+    report_error_title: "Error",
+    report_error_reason: "Por favor, elige un motivo.",
+    report_success_title: "¡Reporte enviado!",
+    report_success_text: "Gracias, su reporte ha sido enviado a nuestros moderadores.",
+    // Reasons
+    reason_spam: "Spam / Publicidad",
+    reason_harassment: "Acoso",
+    reason_racism: "Racismo",
+    reason_sexual_content: "Contenido sexual",
+    reason_violent_content: "Contenido violento",
+    reason_hateful_content: "Contenido odioso",
+    reason_inappropriate: "Contenido inapropiado",
+    reason_fake_profile: "Perfil falso",
+    reason_other: "Otro",
     //#endregion
   },
   //#endregion

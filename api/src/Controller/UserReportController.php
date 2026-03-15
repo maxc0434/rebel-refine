@@ -52,8 +52,8 @@ class UserReportController extends AbstractController
         $email = (new Email())
             ->from('noreply@rebel-refine.com')
             ->to('admin@admin.com')
-            ->subject('Signalement #' . $report->getId())
-            ->text("L'utilisateur " . $reporter->getEmail() . " a signalé " . $reportedUser->getEmail() . ".");
+            ->subject('Reporting #' . $report->getId())
+            ->text("User " . $reporter->getEmail() . " has reported " . $reportedUser->getEmail() . ".");
         
         $mailer->send($email);
 

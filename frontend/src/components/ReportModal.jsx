@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { X } from "lucide-react";
 import Swal from "sweetalert2";
 import { apiFetch } from "../api";
+import { useLanguage } from "../translations/hooks/useLanguage";
+import "./ReportModal.css";
 
 const ReportModal = ({ reportedUserId, isOpen, onClose }) => {
   const [reason, setReason] = useState("");
@@ -9,41 +11,48 @@ const ReportModal = ({ reportedUserId, isOpen, onClose }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const MAX_CHAR = 255;
+  const { t } = useLanguage();
 
   const reasons = [
-    { value: "spam", label: "Spam / Publicité" },
-    { value: "harassment", label: "Harcèlement" },
-    { value: "racism", label: "Propos Raciste" },
-    { value: "sexual_content", label: "Contenu sexuel" },
-    { value: "violent_content", label: "Contenu Violent" },
-    { value: "hateful_content", label: "Contenu Haineux" },
-    { value: "inappropriate", label: "Contenu inapproprié" },
-    { value: "fake_profile", label: "Faux profil" },
-    { value: "other", label: "Autre" },
+    { value: "spam", label: t.reason_spam },
+    { value: "harassment", label: t.reason_harassment },
+    { value: "racism", label: t.reason_racism },
+    { value: "sexual_content", label: t.reason_sexual_content },
+    { value: "violent_content", label: t.reason_violent_content },
+    { value: "hateful_content", label: t.reason_hateful_content },
+    { value: "inappropriate", label: t.reason_inappropriate },
+    { value: "fake_profile", label: t.reason_fake_profile },
+    { value: "other", label: t.reason_other },
   ];
 
   if (!isOpen) return null;
 
   const handleConfirm = async () => {
     if (!reason)
-      return Swal.fire("Erreur", "Veuillez choisir une raison.", "error");
+      return Swal.fire({
+        title: t.report_error_title,
+        text: t.report_error_reason,
+        icon: "error",
+        customClass: {
+          container: "swal-high-zindex",
+        },
+      });
 
     setIsSubmitting(true);
 
     try {
-
       await apiFetch("/api/submit-report", {
         method: "POST",
         body: JSON.stringify({
           reportedUserId: reportedUserId,
           reason: reason,
-          comment: details, 
+          comment: details,
         }),
       });
 
       Swal.fire({
-        title: "Signalement envoyé !",
-        text: "Merci, votre signalement a été transmis à nos modérateurs.",
+        title: t.report_success_title,
+        text: t.report_success_text,
         icon: "success",
         confirmButtonColor: "#d4af37",
         background: "#12122d",
@@ -95,7 +104,7 @@ const ReportModal = ({ reportedUserId, isOpen, onClose }) => {
         </button>
 
         <h4 style={{ color: "#d4af37", marginBottom: "20px" }}>
-          Signaler cet utilisateur
+          {t.report_title}
         </h4>
 
         <div
@@ -114,7 +123,7 @@ const ReportModal = ({ reportedUserId, isOpen, onClose }) => {
           <div onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
             {reason
               ? reasons.find((r) => r.value === reason).label
-              : "Sélectionnez une raison"}
+              : t.report_select_reason}
           </div>
           {isDropdownOpen && (
             <ul
@@ -150,7 +159,7 @@ const ReportModal = ({ reportedUserId, isOpen, onClose }) => {
 
         <div style={{ position: "relative" }}>
           <textarea
-            placeholder="Ajoutez des détails (max 255 caractères)..."
+            placeholder={t.report_placeholder}
             value={details}
             maxLength={MAX_CHAR}
             onChange={(e) => setDetails(e.target.value)}
@@ -183,7 +192,7 @@ const ReportModal = ({ reportedUserId, isOpen, onClose }) => {
           disabled={isSubmitting}
           style={{ opacity: isSubmitting ? 0.7 : 1 }}
         >
-          {isSubmitting ? "ENVOI EN COURS..." : "CONFIRMER LE SIGNALEMENT"}
+          {isSubmitting ? t.report_sending : t.report_confirm}
         </button>
       </div>
     </div>
