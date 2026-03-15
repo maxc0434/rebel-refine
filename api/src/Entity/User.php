@@ -555,4 +555,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Transla
         }
         return $this;
     }
+
+
+    public function __toString(): string
+{
+    // On retourne l'email. Si l'email est vide, on retourne l'ID ou 'User'
+    return (string) ($this->email ?? 'User #' . $this->id);
+}
 }
