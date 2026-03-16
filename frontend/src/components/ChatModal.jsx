@@ -19,7 +19,7 @@ const ChatModal = ({
   const isMale = userGender === "male";
   const myId = userData?.id || userData?._id || userData?.userData?.id;
   const hasNoCredits =
-    isMale && (userData?.credits === null || userData?.credits <= 0); // On considère l'homme bloqué si credits est 0 ou null
+    isMale && (userData?.credits === null || userData?.credits <= 0); 
   const MAX_CHARS = 500;
 
   const { t } = useLanguage();
@@ -50,7 +50,7 @@ const ChatModal = ({
               right: 0,
               bottom: 0,
               zIndex: 2000,
-              backdropFilter: "blur(12px)", // Effet de flou prestige
+              backdropFilter: "blur(12px)",
               backgroundColor: "rgba(5, 5, 16, 0.85)",
               display: "flex",
               flexDirection: "column",

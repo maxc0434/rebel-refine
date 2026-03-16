@@ -13,10 +13,14 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\ExpressionLanguage\Expression;
+
 
 class UserReportController extends AbstractController
 {
     #[Route('/api/submit-report', name: 'api_submit_report', methods: ['POST'])]
+    #[IsGranted(new Expression("is_granted('ROLE_MALE') or is_granted('ROLE_FEMALE')"), message: 'Accès interdit')]
     public function submit(
         Request $request,
         EntityManagerInterface $em,

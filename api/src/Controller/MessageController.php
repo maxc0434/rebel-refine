@@ -238,6 +238,7 @@ class MessageController extends AbstractController
 
     // #region LISTE DES MESSAGES
     #[Route('/list/{receiverId}', name: 'app_message_list', methods: ['GET'])]
+    #[IsGranted(new Expression("is_granted('ROLE_MALE') or is_granted('ROLE_FEMALE')"), message: 'Accès interdit')]
     public function list(int $receiverId, EntityManagerInterface $entityManager, #[CurrentUser] ?User $currentUser): JsonResponse
     {
         if (!$currentUser) {
@@ -281,6 +282,7 @@ class MessageController extends AbstractController
     // #region CONVERSATIONS
     // Route pour obtenir la liste des conversations
     #[Route('/conversations', name: 'app_message_conversations', methods: ['GET'])]
+    #[IsGranted(new Expression("is_granted('ROLE_MALE') or is_granted('ROLE_FEMALE')"), message: 'Accès interdit')]
     public function getConversations(EntityManagerInterface $entityManager, #[CurrentUser] ?User $currentUser): JsonResponse
     {
         if (!$currentUser) {
@@ -333,6 +335,7 @@ class MessageController extends AbstractController
 
     // #region SUPPRIMER UNE CONVERSATION (VERSION MASQUAGE/ SOFT DELETE)
     #[Route('/conversation/{contactId}', name: 'app_message_delete_conversation', methods: ['DELETE'])]
+    #[IsGranted(new Expression("is_granted('ROLE_MALE') or is_granted('ROLE_FEMALE')"), message: 'Accès interdit')]
     public function deleteConversation(int $contactId, MessageRepository $messageRepo, EntityManagerInterface $em, #[CurrentUser] ?User $currentUser): JsonResponse
     {
         if (!$currentUser) {
