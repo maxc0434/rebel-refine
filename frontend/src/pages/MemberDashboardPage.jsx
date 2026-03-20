@@ -17,6 +17,8 @@ import { useCallback } from "react";
 import ChatModal from "../components/ChatModal";
 import { apiFetch } from "../api";
 import { useLanguage } from "../translations/hooks/useLanguage";
+import Loader from "../components/Loader";
+
 
 function MemberDashboardPage() {
   // #region STATES
@@ -528,14 +530,7 @@ function MemberDashboardPage() {
 
   // 1. On ne bloque l'affichage COMPLET que si on n'a vraiment AUCUNE donnée (premier chargement)
   if (loading && !userData) {
-    return (
-      <div className="prestige-loader-overlay">
-        <div className="gold-spinner"></div>
-        <div style={{ color: "white", marginTop: "20px" }}>
-          {t.db_loading_profile}
-        </div>
-      </div>
-    );
+     return <Loader fullscreen={true} />;
   }
 
   // 2. Sécurité si l'API échoue

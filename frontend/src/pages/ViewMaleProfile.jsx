@@ -6,6 +6,8 @@ import ChatModal from "../components/ChatModal";
 import { apiFetch } from "../api";
 import { useLanguage } from "../translations/hooks/useLanguage";
 import ReportModal from "../components/ReportModal";
+import Loader from "../components/Loader";
+
 
 const ViewMaleProfile = () => {
   const { id } = useParams();
@@ -171,23 +173,7 @@ const ViewMaleProfile = () => {
   //#region AFFICHAGE du LOADER
   // Affichage pendant le chargement
   if (loading || !profile) {
-    return (
-      <div
-        style={{
-          background: "#12122d",
-          minHeight: "100vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <div className="text-center gold-text" style={{ fontSize: "1.2rem" }}>
-          <div className="spinner-border mb-3" role="status"></div>
-          <br />
-          {t.view_profile_loading}
-        </div>
-      </div>
-    );
+     return <Loader fullscreen={true} />;
   }
   //#endregion
 

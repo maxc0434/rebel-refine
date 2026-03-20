@@ -26,42 +26,23 @@ function App() {
       <Navbar/>
       <div style={{ height: '110px' }}></div>
         <Routes>
-
           <Route path="/" element={<PresentationPage />} />
-
           <Route path="/login" element={<LoginPage />} />
-
           <Route path="/register" element={<RegisterPage/>} />
-          
           <Route path="/home" element={<HomePage/>} />
-          
           <Route path="/members/females" element={<MembersPage/>} />
-          
           <Route path="/profile/:id" element={<ProfilePage/>} />
-          
           <Route path="/reset-password/:token" element={<ResetPasswordPage/>} />
-
           <Route path="/dashboard" element={<MemberDashboardPage />} />
-
           <Route path="/search" element={<SearchPage />} />
-
           <Route path="/female-dashboard" element={<FemaleDashboardPage />} />
-          
           <Route path="/translator-dashboard" element={<TranslatorDashboard />} />
-
           <Route path="/view-male-profile/:id" element={<ViewMaleProfile />} />
-          
           <Route path="/credit-shop" element={<CreditShop />} />
-
           <Route path="/payment/success" element={<PaymentSuccess />} />
-
           <Route path="/privacy" element={<PrivacyPage />} />
-
           <Route path="/terms" element={<TermsPage />} />
-
           <Route path="/contact" element={<ContactPage />} />
-
-
         </Routes>
         <SafetyNotice />
       <Footer/>

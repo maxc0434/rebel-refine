@@ -6,6 +6,7 @@ import "./FemaleDashboardPage.css";
 import ChatModal from "../components/ChatModal";
 import { apiFetch } from "../api";
 import { useLanguage } from "../translations/hooks/useLanguage";
+import Loader from "../components/Loader";
 
 //#region STATES
 function FemaleDashboardPage() {
@@ -296,18 +297,7 @@ function FemaleDashboardPage() {
 
   //#region LOADER
   if (loading) {
-    return (
-      <div
-        style={{
-          color: "white",
-          textAlign: "center",
-          marginTop: "50px",
-          fontSize: "1.5rem",
-        }}
-      >
-        {t.loading_universe}
-      </div>
-    );
+    return <Loader fullscreen={true} />;
   }
   //#endregion
 
@@ -526,41 +516,58 @@ function FemaleDashboardPage() {
                 </div>
 
                 {/* Section : Ma Galerie Photo */}
-<div style={{ marginTop: "30px", marginBottom: "30px" }}>
-  <h3 className="section-title">{t.db_gallery}</h3>
+                <div style={{ marginTop: "30px", marginBottom: "30px" }}>
+                  <h3 className="section-title">{t.db_gallery}</h3>
 
-  <div className="photo-gallery">
-    {userData.photos && userData.photos.length > 0 ? (
-      userData.photos.map((photo, index) => (
-        <div key={index} onClick={() => setSelectedPhoto(`http://localhost:8000/uploads/users/${photo.imageName}`)}>
-          <img
-            src={`http://localhost:8000/uploads/users/${photo.imageName}`}
-            alt={`Photo ${index}`}
-            className="gallery-image"
-            style={{ cursor: 'pointer' }} // Indique que c'est cliquable
-          />
-        </div>
-      ))
-    ) : (
-      <p>{t.db_no_photos}</p>
-    )}
-  </div>
-</div>
+                  <div className="photo-gallery">
+                    {userData.photos && userData.photos.length > 0 ? (
+                      userData.photos.map((photo, index) => (
+                        <div
+                          key={index}
+                          onClick={() =>
+                            setSelectedPhoto(
+                              `http://localhost:8000/uploads/users/${photo.imageName}`,
+                            )
+                          }
+                        >
+                          <img
+                            src={`http://localhost:8000/uploads/users/${photo.imageName}`}
+                            alt={`Photo ${index}`}
+                            className="gallery-image"
+                            style={{ cursor: "pointer" }} // Indique que c'est cliquable
+                          />
+                        </div>
+                      ))
+                    ) : (
+                      <p>{t.db_no_photos}</p>
+                    )}
+                  </div>
+                </div>
 
-{/* Modale d'agrandissement */}
-{selectedPhoto && (
-  <div 
-    onClick={() => setSelectedPhoto(null)} 
-    style={{
-      position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
-      backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex',
-      justifyContent: 'center', alignItems: 'center', zIndex: 1000
-    }}
-  >
-    <img src={selectedPhoto} style={{ maxWidth: '90%', maxHeight: '90%' }} alt="Agrandie" />
-  </div>
-)}
-
+                {/* Modale d'agrandissement */}
+                {selectedPhoto && (
+                  <div
+                    onClick={() => setSelectedPhoto(null)}
+                    style={{
+                      position: "fixed",
+                      top: 0,
+                      left: 0,
+                      width: "100%",
+                      height: "100%",
+                      backgroundColor: "rgba(0,0,0,0.8)",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      zIndex: 1000,
+                    }}
+                  >
+                    <img
+                      src={selectedPhoto}
+                      style={{ maxWidth: "90%", maxHeight: "90%" }}
+                      alt="Agrandie"
+                    />
+                  </div>
+                )}
               </div>
             )}
 
@@ -675,7 +682,7 @@ function FemaleDashboardPage() {
                       fontSize: "0.9rem",
                     }}
                   >
-                    {t.sec_delete_title }
+                    {t.sec_delete_title}
                   </h4>
                   <p
                     style={{

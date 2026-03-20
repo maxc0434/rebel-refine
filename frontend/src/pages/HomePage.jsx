@@ -4,6 +4,8 @@ import CountUp from "react-countup";
 import { Heart } from "lucide-react";
 import { useLanguage } from "../translations/hooks/useLanguage";
 import { apiFetch } from "../api";
+import Loader from "../components/Loader";
+
 
 function HomePage() {
   const navigate = useNavigate();
@@ -95,16 +97,7 @@ function HomePage() {
   // --- ÉTAPE 5 : Affichage du Loader ---
   // Si loading est vrai, on affiche le preloader et on arrête le rendu ici
   if (loading) {
-    return (
-      <div className="preloader">
-        <div className="preloader-inner">
-          <div className="preloader-icon">
-            <span></span>
-            <span></span>
-          </div>
-        </div>
-      </div>
-    );
+    return <Loader fullscreen={true} />;
   }
   //#endregion
 

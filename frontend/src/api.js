@@ -8,8 +8,7 @@ export const apiFetch = async (endpoint, options = {}) => {
         ...options.headers,
     };
 
-    // Condition intelligente pour le Content-Type : 
-    // On ne l'ajoute que si ce n'est pas du FormData (upload fichier)
+    // On n'ajoute Content-Type que si ce n'est pas du FormData
     if (!(options.body instanceof FormData)) {
         headers['Content-Type'] = 'application/json';
     }
@@ -18,7 +17,8 @@ export const apiFetch = async (endpoint, options = {}) => {
     if (token) {
         headers['Authorization'] = `Bearer ${token}`;
     }
-
+    
+    // Envoi de la requête
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         ...options,
         headers,
@@ -26,18 +26,14 @@ export const apiFetch = async (endpoint, options = {}) => {
 
     // Gestion des erreurs
     if (!response.ok) {
-        // On tente de récupérer le message d'erreur du backend (certains endpoints
-        // renvoient `error` au lieu de `message`, comme le fait json_login).
+        // Tentative de recupération du message d'erreur du backend en JSON
         const errorData = await response.json().catch(() => ({}));
-        // Prioritise le champ `error` puis `message`.
         throw new Error(errorData.error || errorData.message || `Erreur ${response.status}`);
     }
-
     // Gestion du succès sans contenu (ex: suppression ou mise à jour réussie sans retour)
     if (response.status === 204) {
         return null;
     }
-
     // Renvoie le JSON directement
     return await response.json();
 };

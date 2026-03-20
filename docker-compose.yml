@@ -1,5 +1,5 @@
 services:
-  # --- LE CERVEAU (PHP 8.4 + Symfony) ---
+  # --- LE BACKEND (PHP 8.4 + Symfony) ---
   app:
     build:
       context: ./api
@@ -30,7 +30,6 @@ services:
       - ./frontend:/app:rw
     ports:
       - "3000:3000"
-    # Note : npm install peut être long la première fois
     command: sh -c "npm install && npm run dev"
     depends_on:
       - app

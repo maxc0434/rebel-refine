@@ -7,6 +7,7 @@ import ChatModal from "../components/ChatModal";
 import { apiFetch } from "../api";
 import { useLanguage } from "../translations/hooks/useLanguage";
 import ReportModal from "../components/ReportModal";
+import Loader from "../components/Loader";
 
 function ProfilePage() {
   //#region OUTILS & AUTHENTIFICATION
@@ -25,7 +26,7 @@ function ProfilePage() {
   //#region STATES
   // --- LES ÉTATS ---
   const [user, setUser] = useState(null); // Les infos du profil qu'on visite (nom, bio, photos...)
-  const [loading, setLoading] = useState(true); // État du chargement
+  const [loading, setLoading] = useState(true);
   const [selectedImgIndex, setSelectedImgIndex] = useState(null); // Gère l'ouverture de la photo en grand (null = fermé)
   const [memo, setMemo] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -37,12 +38,13 @@ function ProfilePage() {
 
   //#endregion
 
-  // #region SYNC USER
+  // #region SYNC USER pour éviter les problèmes de token expiré
+  // ou de données obsolètes après une mise à jour du profil ou des crédits
   useEffect(() => {
+    
     if (token) {
       apiFetch("/api/member/dashboard")
         .then((data) => {
-          // data est déjà le JSON parsé grâce à ton apiFetch
           if (data && data.userData) {
             setCurrentUser(data.userData);
             localStorage.setItem("user", JSON.stringify(data.userData));
@@ -55,11 +57,11 @@ function ProfilePage() {
 
   //#region MONTAGE DU COMPOSANT et CHARGEMENT DES DONNÉES
   useEffect(() => {
+    
     if (!token || !id) {
       navigate("/");
       return;
     }
-
     setLoading(true);
 
     // 1. Récupération du Profil
@@ -76,17 +78,13 @@ function ProfilePage() {
     // 2. Récupération du Mémo
     apiFetch(`/api/member/memo/${id}`)
       .then((data) => {
-        // Si data.content existe, on le met, sinon vide
         setMemo(data?.content || "");
       })
       .catch((err) => {
-        // En cas d'erreur (404, 500), on initialise le mémo à vide sans bloquer l'affichage
-        console.warn(
-          "Mémo introuvable ou erreur serveur, initialisation à vide.",
-        );
+        console.warn("Mémo introuvable");
         setMemo("");
       });
-  }, [id, navigate]); // On retire 'token' des dépendances, apiFetch le gère
+  }, [id, navigate]);
   //#endregion
 
   //#region CARROUSEL
@@ -324,17 +322,9 @@ function ProfilePage() {
 
   //#region LOADER
   // --- 8. AFFICHAGE DU LOADER ---
-  if (loading)
-    return (
-      <div className="preloader">
-        <div className="preloader-inner">
-          <div className="preloader-icon">
-            <span></span>
-            <span></span>
-          </div>
-        </div>
-      </div>
-    );
+  if (loading) {
+    return <Loader fullscreen={true} />;
+  }
   //#endregion
 
   //#region AFFICHAGE DU COMPOSANT
@@ -601,11 +591,11 @@ function ProfilePage() {
       </div>
 
       {/* MARK: Report Modal */}
-            <ReportModal
-              reportedUserId={id}
-              isOpen={isReportModalOpen}
-              onClose={() => setIsReportModalOpen(false)}
-            />
+      <ReportModal
+        reportedUserId={id}
+        isOpen={isReportModalOpen}
+        onClose={() => setIsReportModalOpen(false)}
+      />
 
       {/* MARK: MODALE CARROUSEL */}
       {selectedImgIndex !== null && (
