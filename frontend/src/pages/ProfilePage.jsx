@@ -10,24 +10,23 @@ import ReportModal from "../components/ReportModal";
 import Loader from "../components/Loader";
 
 function ProfilePage() {
-  //#region OUTILS & AUTHENTIFICATION
-  // --- PRÉPARATION ---
-  const { id } = useParams(); // On récupère l'ID du membre dans l'adresse (ex: /profile/42)
-  const navigate = useNavigate(); // Pour rediriger si besoin
+  //#region STATES, OUTILS & AUTHENTIFICATION
+  // --- OUTILS DE ROUTAGE ---
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  // --- AUTHENTIFICATION & USER SYNC ---
   const token = localStorage.getItem("token");
   const [currentUser, setCurrentUser] = useState(() => {
     return JSON.parse(localStorage.getItem("user")) || null;
   });
-
+  // --- TRADUCTION ---
   const { t } = useLanguage();
 
-  //#endregion
-
-  //#region STATES
-  // --- LES ÉTATS ---
-  const [user, setUser] = useState(null); // Les infos du profil qu'on visite (nom, bio, photos...)
+  // --- STATES ---
+  const [user, setUser] = useState(null); 
   const [loading, setLoading] = useState(true);
-  const [selectedImgIndex, setSelectedImgIndex] = useState(null); // Gère l'ouverture de la photo en grand (null = fermé)
+  const [selectedImgIndex, setSelectedImgIndex] = useState(null);
   const [memo, setMemo] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [selectedContact, setSelectedContact] = useState(null);
@@ -35,7 +34,6 @@ function ProfilePage() {
   const [messages, setMessages] = useState([]);
   const messagesEndRef = useRef(null);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
-
   //#endregion
 
   // #region SYNC USER pour éviter les problèmes de token expiré
@@ -241,11 +239,9 @@ function ProfilePage() {
   // #region ENVOI MSG
   const handleSendMessage = async (receiverId, content) => {
     if (!content.trim()) return false;
-
     const shouldConfirm = currentUser?.confirmMessageSend !== false;
-
     let isConfirmed = true;
-
+    
     if (shouldConfirm) {
       const result = await Swal.fire({
         title: t.profile_msg_confirm_title,
@@ -260,19 +256,14 @@ function ProfilePage() {
       });
       isConfirmed = result.isConfirmed;
     }
-
     if (!isConfirmed) return false;
 
     try {
-      // apiFetch gère l'URL, le token, le Content-Type et le .json()
       const data = await apiFetch("/api/messages/send", {
         method: "POST",
         body: JSON.stringify({ content, receiverId }),
       });
-
-      // Si on est ici, c'est que la réponse est ok (status 200)
       if (data.remainingCredits !== undefined) {
-        // MISE À JOUR DU STATE
         setCurrentUser((prev) => {
           const updated = { ...prev, credits: data.remainingCredits };
           localStorage.setItem("user", JSON.stringify(updated));
@@ -291,11 +282,9 @@ function ProfilePage() {
         color: "#fff",
         confirmButtonColor: "#d4af37",
       });
-
       fetchMessages(receiverId);
       return true;
     } catch (error) {
-      // apiFetch a déjà extrait le message d'erreur du serveur s'il y en avait un
       Swal.fire({
         icon: "error",
         title: t.error,

@@ -26,7 +26,7 @@ const ChatModal = ({
 
   const hasConsent = localStorage.getItem("rebel_safety_check") === "accepted";
 
-  // Gestion du défilement des messages vers le bas automatiquement
+  // Gestion du scroll-down automatique 
   useEffect(() => {
     if (isOpen && messagesEndRef.current) {
       setTimeout(() => {
@@ -40,7 +40,7 @@ const ChatModal = ({
   return (
     <div className="chat-modal-overlay">
       <div className="chat-modal-container">
-        {/* 2. OVERLAY DE BLOCAGE (Si pas de consentement) */}
+        {/* OVERLAY DE BLOCAGE (Si pas de consentement) */}
         {!hasConsent && (
           <div
             style={{
@@ -203,7 +203,7 @@ const ChatModal = ({
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Footer / Input */}
+        {/* Input */}
         <div className="chat-footer" style={{ flexDirection: "column" }}>
           {/* CAS 1 : L'INTERLOCUTEUR A SUPPRIMÉ SON COMPTE ou banni*/}
           {selectedContact?.isDeleted || selectedContact?.isBanned ? (
@@ -241,7 +241,7 @@ const ChatModal = ({
                 maxLength={MAX_CHARS}
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
-                disabled={hasNoCredits} // Désactive le champ si plus de crédits
+                disabled={hasNoCredits}
                 style={
                   hasNoCredits ? { opacity: 0.6, cursor: "not-allowed" } : {}
                 }
@@ -252,7 +252,7 @@ const ChatModal = ({
                 style={{
                   alignSelf: "flex-end",
                   padding: "8px 25px",
-                  backgroundColor: hasNoCredits ? "#666" : "", // Gris si bloqué
+                  backgroundColor: hasNoCredits ? "#666" : "",
                   cursor: hasNoCredits ? "not-allowed" : "pointer",
                 }}
                 disabled={hasNoCredits || !newMessage.trim()}
