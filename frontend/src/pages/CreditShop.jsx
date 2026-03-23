@@ -19,7 +19,7 @@ const CreditShop = () => {
     price: 30,
     icon: <Zap size={32} />, 
     color: "#e2e8f0",
-    tier: t.shop_tier_essential // Dynamique
+    tier: t.shop_tier_essential
   },
   {
     id: "pack_80",
@@ -28,7 +28,7 @@ const CreditShop = () => {
     price: 50,
     icon: <Gem size={32} />,
     color: "#d4af37",
-    tier: t.shop_tier_popular, // Dynamique
+    tier: t.shop_tier_popular,
     featured: true 
   },
   {
@@ -38,7 +38,7 @@ const CreditShop = () => {
     price: 70,
     icon: <Crown size={32} />,
     color: "#FCF6BA",
-    tier: t.shop_tier_prestige // Dynamique
+    tier: t.shop_tier_prestige
   },
 ];
 

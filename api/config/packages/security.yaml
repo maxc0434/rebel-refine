@@ -38,6 +38,7 @@ security:
             
             logout:
                 path: app_logout
+                target: /login
 
         
 
