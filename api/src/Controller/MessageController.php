@@ -36,6 +36,7 @@ class MessageController extends AbstractController
         }
 
         // --- 1. RÉCUPÉRATION DU DESTINATAIRE ---
+
         $receiver = $entityManager->getRepository(User::class)->find($data['receiverId']);
         if (!$receiver || $receiver->isBanned()) {
             return new JsonResponse(['error' => 'Destinataire introuvable'], 404);
@@ -86,10 +87,10 @@ class MessageController extends AbstractController
 
         // On assemble la direction. strtoupper (affiche juste en MAJ sur le rendu)
         $direction = sprintf(
-            '%s %s ➔ %s %s', 
-            $flagFrom, 
-            strtoupper($rawSenderCountry), 
-            $flagTo, 
+            '%s %s ➔ %s %s',
+            $flagFrom,
+            strtoupper($rawSenderCountry),
+            $flagTo,
             strtoupper($rawReceiverCountry)
         );
         $message->setDirection($direction);
@@ -105,53 +106,54 @@ class MessageController extends AbstractController
     // #endregion
 
     // #region TRADUCTION
-    #[Route('/pending', name: 'app_message_pending', methods: ['GET'])]
-    #[IsGranted('ROLE_TRANSLATOR', message: 'Réservé aux traducteurs')]
+
+   #[Route('/pending', name: 'app_message_pending', methods: ['GET'])]
+    #[IsGranted('ROLE_TRANSLATOR')]
     public function getPendingMessages(
-        EntityManagerInterface $entityManager,
+        EntityManagerInterface $entityManager, 
         #[CurrentUser] ?User $user
-    ): JsonResponse {
-        
+        ): JsonResponse {
+            
         if (!$user) {
             return new JsonResponse(['error' => 'Non autorisé'], 401);
         }
 
-        $pendingMessages = $entityManager->getRepository(Message::class)->findBy(['status' => MessageStatus::Pending]);
+        $entityManager->getFilters()->disable('softdeleteable');
+
+        $pendingMessages = $entityManager->getRepository(Message::class)
+                                         ->findBy(['status' => MessageStatus::Pending]);
 
         $data = [];
         foreach ($pendingMessages as $msg) {
-            try {
-                // On récupère l'expéditeur de manière sécurisée
-                $sender = $msg->getSender();
-                $nickname = ($sender) ? $sender->getNickname() : 'Utilisateur supprimé';
-                
-                $data[] = [
-                    'id' => $msg->getId(),
-                    'original' => $msg->getContentOriginal(),
-                    'from' => $nickname,
-                    'direction' => $msg->getDirection() ?? 'Inconnue',
-                ];
-            } catch (\Doctrine\ORM\EntityNotFoundException $e) {
-                // Gestion du cas où l'utilisateur (ex: ID 166) n'existe plus en BDD
-                $data[] = [
-                    'id' => $msg->getId(),
-                    'original' => $msg->getContentOriginal(),
-                    'from' => 'Compte supprimé',
-                    'direction' => $msg->getDirection() ?? 'Inconnue',
-                ];
-            }
+            $sender = $msg->getSender();
+            $isDeleted = !$sender || ($sender->getDeletedAt() !== null);
+            $nickname = $isDeleted ? 'Compte supprimé' : $sender->getNickname();
+
+            $data[] = [
+                'id' => $msg->getId(),
+                'original' => $msg->getContentOriginal(),
+                'from' => $nickname,
+                'direction' => $msg->getDirection() ?? 'Inconnue',
+            ];
         }
+
+        $entityManager->getFilters()->enable('softdeleteable');
 
         return new JsonResponse($data);
     }
+
     // #endregion
 
 
-    //#region VALIDER UNE TRADUCTION
+    // #region VALIDER UNE TRADUCTION
+
     #[Route('/{id}/validate', name: 'app_message_validate', methods: ['PUT'])]
     #[IsGranted('ROLE_TRANSLATOR', message: 'Réservé aux traducteurs')]
-    public function validateTranslation(int $id, Request $request, EntityManagerInterface $entityManager, MailerInterface $mailer): JsonResponse
-    {
+    public function validateTranslation(
+        int $id, Request $request, 
+        EntityManagerInterface $entityManager, MailerInterface $mailer
+        ): JsonResponse{
+
         $message = $entityManager->getRepository(Message::class)->find($id);
         $data = json_decode($request->getContent(), true);
 
@@ -167,23 +169,42 @@ class MessageController extends AbstractController
         $receiver = $message->getReceiver();
 
         $email = (new TemplatedEmail())
-        ->from('no-reply@rebel-refine.com')
-        ->to($receiver->getEmail())
-        ->subject('Vous avez reçu un nouveau message')
-        ->htmlTemplate('emails/new_message.html.twig')
-        ->context([
-            'receiver' => $receiver,
-            'sender' => $sender,
-            'messageContent' => $message->getContentTranslated(),
-            'frontendUrl' => $this->getParameter('app.frontend_url'), // same param used for reset password
-        ]);
-
-    $mailer->send($email);
-
+            ->from('no-reply@rebel-refine.com')
+            ->to($receiver->getEmail())
+            ->subject('Vous avez reçu un nouveau message')
+            ->htmlTemplate('emails/new_message.html.twig')
+            ->context([
+                'receiver' => $receiver,
+                'sender' => $sender,
+                'messageContent' => $message->getContentTranslated(),
+                'frontendUrl' => $this->getParameter('app.frontend_url'),
+            ]);
+        $mailer->send($email);
 
         return new JsonResponse(['status' => 'Message traduit et envoyé au destinataire']);
     }
     // #endregion
+
+
+    // #region REJETER UN MESSAGE
+    #[Route('/{id}/reject', name: 'app_message_reject', methods: ['DELETE'])]
+    #[IsGranted('ROLE_TRANSLATOR', message: 'Réservé aux traducteurs')]
+    public function rejectMessage(int $id, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $message = $entityManager->getRepository(Message::class)->find($id);
+
+        if (!$message) {
+            return new JsonResponse(['error' => 'Message introuvable'], 404);
+        }
+
+        // On change le statut pour le sortir de la file d'attente "Pending"
+        $message->setStatus(MessageStatus::Rejected);
+        $entityManager->flush();
+
+        return new JsonResponse(['status' => 'Message rejeté et retiré de la file']);
+    }
+    // #endregion
+
 
     // #region LISTE DES CONTACTS
     #[Route('/contacts', name: 'app_message_contacts', methods: ['GET'])]
@@ -235,11 +256,16 @@ class MessageController extends AbstractController
     }
     // #endregion
 
+
+
     // #region LISTE DES MESSAGES
+
     #[Route('/list/{receiverId}', name: 'app_message_list', methods: ['GET'])]
     #[IsGranted(new Expression("is_granted('ROLE_MALE') or is_granted('ROLE_FEMALE')"), message: 'Accès interdit')]
-    public function list(int $receiverId, EntityManagerInterface $entityManager, #[CurrentUser] ?User $currentUser): JsonResponse
-    {
+    public function list(
+        int $receiverId, EntityManagerInterface $entityManager,
+         #[CurrentUser] ?User $currentUser
+         ): JsonResponse{
         if (!$currentUser) {
             return new JsonResponse(['error' => 'Vous devez vous authentifier'], 401);
         }
@@ -247,7 +273,6 @@ class MessageController extends AbstractController
         $entityManager->getFilters()->disable('softdeleteable');
 
         $messages = $entityManager->getRepository(Message::class)->createQueryBuilder('m')
-            // On récupère les messages entre les deux personnes
             ->where('(m.sender = :user AND m.receiver = :contact AND m.deletedBySender = false)')
             ->orWhere('(m.sender = :contact AND m.receiver = :user AND m.deletedByReceiver = false)')
             ->setParameter('user', $currentUser)
@@ -265,8 +290,8 @@ class MessageController extends AbstractController
         foreach ($messages as $msg) {
             $data[] = [
                 'id' => $msg->getId(),
-                'content' => $msg->getContentOriginal(), // Le Français verra ça
-                'contentTranslated' => $msg->getContentTranslated(), // La Chinoise verra ça
+                'content' => $msg->getContentOriginal(),
+                'contentTranslated' => $msg->getContentTranslated(),
                 'status' => $msg->getStatus(),
                 'senderId' => $msg->getSender()->getId(),
                 'createdAt' => $msg->getCreatedAt()->format('c'),
@@ -276,6 +301,7 @@ class MessageController extends AbstractController
 
         return new JsonResponse($data);
     }
+
     // #endregion
 
     // #region CONVERSATIONS

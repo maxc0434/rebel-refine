@@ -159,3 +159,85 @@
     background: #3d444d;
     border-radius: 10px;
 }
+
+.sender-info {
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+  color: #a0a0a0;
+}
+
+.sender-label {
+  margin-right: 5px;
+  font-weight: bold;
+}
+
+.sender-name {
+  color: #e1e1e1;
+}
+
+.sender-name.deleted {
+  color: #ff6b6b; /* Rouge clair pour signaler la suppression */
+  font-style: italic;
+}
+
+
+/* La carte change de bordure si le compte est supprimé */
+.message-card.is-deleted {
+  border: 2px solid #ff6b6b;
+  background-color: rgba(255, 107, 107, 0.05);
+}
+
+/* Indication "Compte supprimé" très visible */
+.sender-name.deleted {
+  background-color: #ff6b6b;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+
+/* Groupe de boutons */
+.button-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.btn-validate {
+  flex: 1;
+  background-color: #6c8e84;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-validate:disabled {
+  background-color: #3d444d; /* Couleur "éteinte" */
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Bouton Poubelle plus joli */
+.btn-reject {
+  width: 45px;
+  background-color: #2a2e35;
+  border: 1px solid #ff6b6b;
+  color: #ff6b6b;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+.btn-reject:hover {
+  background-color: #ff6b6b;
+  color: white;
+}

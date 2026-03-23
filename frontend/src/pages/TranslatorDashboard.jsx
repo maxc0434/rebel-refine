@@ -85,6 +85,49 @@ const TranslatorDashboard = () => {
     }
   };
 
+  const handleReject = async (id) => {
+    const result = await Swal.fire({
+      title: "Rejeter ce message ?",
+      text: "Ce message sera marqué comme rejeté et retiré de votre liste.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#ff6b6b",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Oui, rejeter",
+      background: "#24282e",
+      color: "#fff",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await apiFetch(`/api/messages/${id}/reject`, {
+          method: "DELETE",
+        });
+
+        // On retire le message de l'affichage
+        setPending((prev) => prev.filter((msg) => msg.id !== id));
+
+        Swal.fire({
+          title: "Rejeté !",
+          text: "Le message a été retiré.",
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false,
+          background: "#24282e",
+          color: "#fff",
+        });
+      } catch (err) {
+        Swal.fire({
+          icon: "error",
+          title: "Erreur",
+          text: "Impossible de rejeter le message : " + err.message,
+          background: "#24282e",
+          color: "#fff",
+        });
+      }
+    }
+  };
+
   return (
     <div className="translator-container">
       <h1 className="translator-title">
@@ -97,13 +140,15 @@ const TranslatorDashboard = () => {
             <p>{t.translator_empty_state} ☕</p>
           </div>
         ) : (
-          pending.map((msg) => (
-            <div key={msg.id} className="message-card">
-              <div className="direction-badge">
-                {msg.direction
-                  ? msg.direction
-                      .split(/➔|->|to/i)
-                      .map((part, index) => {
+          pending.map((msg) => {
+            // ÉTAPE 1 : Définir si le compte est supprimé
+            const isDeleted = msg.from === "Compte supprimé";
+
+            return (
+              <div key={msg.id} className={`message-card ${isDeleted ? "is-deleted" : ""}`}>
+                <div className="direction-badge">
+                  {msg.direction
+                    ? msg.direction.split(/➔|->|to/i).map((part, index) => {
                         const cleanKey = part
                           .replace(/[^a-zA-Z]/g, "")
                           .toLowerCase()
@@ -117,29 +162,52 @@ const TranslatorDashboard = () => {
                           </span>
                         );
                       })
-                  : "🌐"}
+                    : "🌐"}
+                </div>
+
+                <div className="sender-info">
+                  <span className="sender-label">Expéditeur :</span>
+                  {/* ÉTAPE 2 : Classe dynamique pour le badge rouge */}
+                  <span className={`sender-name ${isDeleted ? "deleted" : ""}`}>
+                    {msg.from}
+                  </span>
+                </div>
+
+                <div className="label">{t.translator_label_source}</div>
+                <div className="original-text-box">{msg.original}</div>
+
+                <div className="label">{t.translator_label_translation}</div>
+                <textarea
+                  className="translation-area"
+                  value={translations[msg.id] || ""}
+                  onChange={(e) => handleInputChange(msg.id, e.target.value)}
+                  // ÉTAPE 3 : Placeholder informatif et blocage si supprimé
+                  placeholder={isDeleted ? "Action impossible : compte supprimé" : t.translator_placeholder}
+                  disabled={isDeleted}
+                />
+
+                {/* ÉTAPE 4 : Groupe de boutons avec sécurité */}
+                <div className="button-group">
+                  <button
+                    className="btn-validate"
+                    // Désactivation si vide OU si compte supprimé pour éviter l'erreur 500
+                    disabled={!translations[msg.id]?.trim() || isDeleted}
+                    onClick={() => handleValidate(msg.id)}
+                  >
+                    {isDeleted ? "Envoi bloqué" : t.translator_btn_send}
+                  </button>
+
+                  <button
+                    className="btn-reject"
+                    onClick={() => handleReject(msg.id)}
+                    title="Rejeter ce message"
+                  >
+                    🗑️
+                  </button>
+                </div>
               </div>
-
-              <div className="label">{t.translator_label_source}</div>
-              <div className="original-text-box">{msg.original}</div>
-
-              <div className="label">{t.translator_label_translation}</div>
-              <textarea
-                className="translation-area"
-                value={translations[msg.id] || ""}
-                onChange={(e) => handleInputChange(msg.id, e.target.value)}
-                placeholder={t.translator_placeholder}
-              />
-
-              <button
-                className="btn-validate"
-                disabled={!translations[msg.id]?.trim()}
-                onClick={() => handleValidate(msg.id)}
-              >
-                {t.translator_btn_send}
-              </button>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     </div>

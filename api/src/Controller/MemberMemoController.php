@@ -33,6 +33,7 @@ class MemberMemoController extends AbstractController
 
         // 2. On décode le "colis" JSON reçu de React
         $data = json_decode($request->getContent(), true);
+
         $targetId = $data['targetId'] ?? null;
         $content = $data['content'] ?? '';
 
