@@ -39,6 +39,8 @@ final class ProfileController extends AbstractController
             'religion' => $user->getReligion(),
             'interests' => $user->getInterests(),
             'photos' => $photos,
+            'isBanned' => $user->isBanned(), // Assure-toi que cette méthode existe dans ton entité User
+            'isDeleted' => $user->isDeleted(),
             'isFavorite' => $currentUser ? $currentUser->getFavorites()->contains($user) : false,
         ];
 
@@ -73,7 +75,9 @@ final class ProfileController extends AbstractController
             'marital' => $male->getMarital(),
             'children' => $male->getChildren(),
             'religion' => $male->getReligion(),
-            'photos' => array_map(fn ($img) => $img->getImageName(), $male->getUserImages()->toArray()),
+            'isBanned' => $male->isBanned(),
+            'isDeleted' => $male->isDeleted(),
+            'photos' => array_map(fn($img) => $img->getImageName(), $male->getUserImages()->toArray()),
         ]);
     }
 }

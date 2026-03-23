@@ -81,13 +81,12 @@ class RegistrationController extends AbstractController
     // --- LOGIQUE DE VÉRIFICATION D'EMAIL ---
     #[Route('/verify/email', name: 'api_verify_email', methods: ['GET'])]
     public function verifyEmail(
-        Request $request,
-        UserRepository $userRepository,
-    ): RedirectResponse {
+        Request $request, UserRepository $userRepository): RedirectResponse {
+
         // ÉTAPE 1 : Identification de l'utilisateur via l'ID dans l'URL
         $id = $request->query->get('id');
         $user = $userRepository->find($id);
-
+        
         if (!$user) {
             return $this->redirect('http://localhost:3000/?error=utilisateur introuvable');
         }
@@ -95,7 +94,8 @@ class RegistrationController extends AbstractController
         // ÉTAPE 2 : Tentative de validation de la signature du lien
         try {
             $this->emailVerifier->handleEmailConfirmation($request, $user);
-        } catch (VerifyEmailExceptionInterface $e) {
+        } catch (VerifyEmailExceptionInterface) {
+            
             // ÉTAPE 3 : Gestion de l'erreur (lien expiré ou modifié)
             return $this->redirect('http://localhost:3000/?error=lien expiré ou modifié');
         }

@@ -25,6 +25,7 @@ class MessageController extends AbstractController
     #[IsGranted(new Expression("is_granted('ROLE_MALE') or is_granted('ROLE_FEMALE')"), message: 'Accès interdit')]
     public function send(Request $request, EntityManagerInterface $entityManager, #[CurrentUser] ?User $sender): JsonResponse
     {
+        // --- 0. VALIDATION DES DONNÉES ---
         $data = json_decode($request->getContent(), true);
         if (!$data || !isset($data['content'], $data['receiverId'])) {
             return new JsonResponse(['error' => 'Données incomplètes'], 400);
@@ -36,7 +37,7 @@ class MessageController extends AbstractController
 
         // --- 1. RÉCUPÉRATION DU DESTINATAIRE ---
         $receiver = $entityManager->getRepository(User::class)->find($data['receiverId']);
-        if (!$receiver) {
+        if (!$receiver || $receiver->isBanned()) {
             return new JsonResponse(['error' => 'Destinataire introuvable'], 404);
         }
 
@@ -104,7 +105,6 @@ class MessageController extends AbstractController
     // #endregion
 
     // #region TRADUCTION
-    // Route pour obtenir les messages en attente de traduction
     #[Route('/pending', name: 'app_message_pending', methods: ['GET'])]
     #[IsGranted('ROLE_TRANSLATOR', message: 'Réservé aux traducteurs')]
     public function getPendingMessages(
@@ -148,7 +148,6 @@ class MessageController extends AbstractController
 
 
     //#region VALIDER UNE TRADUCTION
-    // Route pour valider la traduction d'un message
     #[Route('/{id}/validate', name: 'app_message_validate', methods: ['PUT'])]
     #[IsGranted('ROLE_TRANSLATOR', message: 'Réservé aux traducteurs')]
     public function validateTranslation(int $id, Request $request, EntityManagerInterface $entityManager, MailerInterface $mailer): JsonResponse

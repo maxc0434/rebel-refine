@@ -48,9 +48,11 @@ security:
             # switch_user: true
 
     # Note: Only the *first* matching rule is applied
+    
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/api/messages, roles: IS_AUTHENTICATED_FULLY }
+
         # - { path: ^/profile, roles: ROLE_USER }
 
 when@test:

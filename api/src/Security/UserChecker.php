@@ -12,16 +12,17 @@ class UserChecker implements UserCheckerInterface
 {
     public function checkPreAuth(UserInterface $user): void
     {
-        
+
         if (!$user instanceof User || !$user->isBanned()) {
             return;
         }
 
-        throw new CustomUserMessageAuthenticationException("Compte banni. Veuillez contacter le support || Account banned. Please contact support.");
+        throw new CustomUserMessageAuthenticationException(
+            "Compte banni. Veuillez contacter le support 
+            || 
+            Account banned. Please contact support."
+        );
     }
 
-    public function checkPostAuth(UserInterface $user, ?TokenInterface $token = null): void
-    {
-        
-    }
+    public function checkPostAuth(UserInterface $user, ?TokenInterface $token = null): void {}
 }

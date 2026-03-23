@@ -212,7 +212,7 @@ const ChatModal = ({
               style={{
                 padding: "20px",
                 textAlign: "center",
-                background: "rgba(246, 114, 128, 0.05)", // Rouge très léger
+                background: "rgba(246, 114, 128, 0.05)", 
                 border: "1px dashed #f67280",
                 borderRadius: "12px",
                 color: "#f67280",

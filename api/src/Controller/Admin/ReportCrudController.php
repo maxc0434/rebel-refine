@@ -36,10 +36,10 @@ public function configureFields(string $pageName): iterable
                     'Rejeté' => ReportStatus::REJECTED,
                 ])
                 ->renderAsBadges([
-                    ReportStatus::PENDING->value => 'warning',   // Jaune
-                    ReportStatus::PROCESSING->value => 'info',   // Bleu
-                    ReportStatus::RESOLVED->value => 'success', // Vert
-                    ReportStatus::REJECTED->value => 'danger',  // Rouge
+                    ReportStatus::PENDING->value => 'warning',   
+                    ReportStatus::PROCESSING->value => 'info',   
+                    ReportStatus::RESOLVED->value => 'success', 
+                    ReportStatus::REJECTED->value => 'danger',  
                 ]),
 
             TextField::new('reason', 'Motif'),

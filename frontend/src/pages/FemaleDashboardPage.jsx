@@ -57,7 +57,6 @@ function FemaleDashboardPage() {
     }
 
     try {
-      // UTILISATION DE APIFETCH ICI AUSSI
       await apiFetch("/api/auth/update-password", {
         method: "POST",
         body: JSON.stringify({
