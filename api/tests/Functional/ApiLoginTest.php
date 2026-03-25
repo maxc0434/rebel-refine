@@ -17,7 +17,6 @@ class ApiLoginTest extends WebTestCase
         $this->client = static::createClient();
 
         $container = static::getContainer();
-
         $this->userRepository = $container->get(UserRepository::class);
         $this->entityManager = $container->get(EntityManagerInterface::class);
     }
@@ -27,24 +26,19 @@ class ApiLoginTest extends WebTestCase
         $testUser = $this->userRepository->findOneBy([
             'email' => 'test@example.com'
         ]);
-
         $this->assertNotNull($testUser);
 
-        // force l'utilisateur vérifié
         $testUser->setIsVerified(true);
         $this->entityManager->flush();
 
         $this->client->loginUser($testUser);
-
         $this->client->request('POST', '/api/login');
-
         $this->assertResponseIsSuccessful();
 
         $content = $this->client->getResponse()->getContent();
         $this->assertJson($content);
 
         $data = json_decode($content, true);
-
         $this->assertArrayHasKey('token', $data);
         $this->assertEquals('test@example.com', $data['email']);
     }
@@ -78,16 +72,13 @@ class ApiLoginTest extends WebTestCase
         $this->entityManager->flush();
 
         $this->client->loginUser($testUser);
-
         $this->client->request('POST', '/api/login');
-
         $this->assertResponseStatusCodeSame(403);
 
         $content = $this->client->getResponse()->getContent();
         $this->assertJson($content);
 
         $data = json_decode($content, true);
-
         $this->assertFalse($data['isVerified']);
     }
 }
