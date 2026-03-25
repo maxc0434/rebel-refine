@@ -132,7 +132,8 @@ class UserCrudController extends AbstractCrudController
             CollectionField::new('userImages', 'Galerie Photos')
                 ->setEntryType(UserImageType::class)
                 ->setFormTypeOption('by_reference', false)
-                ->onlyOnForms(),
+                ->onlyOnForms()
+                ->addCssClass('user-photo-gallery'),
 
             ChoiceField::new('gender', 'Genre')
                 ->setChoices(['♂️ Homme' => 'male', '♀️ Femme' => 'female']),
