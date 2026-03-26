@@ -544,6 +544,15 @@ function ProfilePage() {
                         user.religion}
                     </span>
                   </li>
+
+                  {/* children */}
+                  <li className="d-flex justify-content-between py-2">
+                    <span className="text-white-50">{t.profile_children}</span>
+                    <span>
+                      {t.database?.[user.children?.replaceAll("-", "_")] ||
+                        user.children}
+                    </span>
+                  </li>
                 </ul>
               </div>
             </div>

@@ -16,6 +16,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
+#[ORM\Index(columns: ['country'], name: 'idx_user_country')]
+#[ORM\Index(columns: ['marital'], name: 'idx_user_marital')]
+#[ORM\Index(columns: ['children'], name: 'idx_user_children')]
 #[UniqueEntity(fields: ['email'], message: 'Il existe déjà un compte avec cet email')]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface, Translatable
