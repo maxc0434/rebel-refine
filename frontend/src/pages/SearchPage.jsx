@@ -12,6 +12,7 @@ const SearchPage = () => {
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [totalMembers, setTotalMembers] = useState(0);
     const { t } = useLanguage();
 
     useEffect(() => {
@@ -23,6 +24,7 @@ const SearchPage = () => {
             const max = searchParams.get("max") || 60;
             const country = searchParams.get("country") || "";
             const marital = searchParams.get("marital") || "";
+            const children = searchParams.get("children") || "";
 
             try {
                 // 2. On construit l'URL avec tous les filtres pour ton apiFetch
@@ -31,11 +33,13 @@ const SearchPage = () => {
                 
                 if (country) url += `&country=${country}`;
                 if (marital) url += `&marital=${marital}`;
+                if (children !== "") url += `&children=${children}`;
 
                 const response = await apiFetch(url);
                 
                 setMembers(response.data);
                 setTotalPages(response.meta.pagesCount);
+                setTotalMembers(response.meta.totalItems);
             } catch (error) {
                 console.error("Erreur:", error.message);
                 setMembers([]);
@@ -60,7 +64,7 @@ const SearchPage = () => {
                         </h2>
                     </div>
                     <div className="text-end">
-                        <span className="h4 fw-bold search-accent">{members.length}</span>
+                        <span className="h4 fw-bold search-accent">{totalMembers}</span>
                         <span className="ms-2 text-uppercase small opacity-50 fw-bold">{t.members_unit}</span>
                     </div>
                 </div>

@@ -13,11 +13,12 @@ export const translations = {
       female: "Femme",
 
       // État civil (Clés = slugs envoyés par le select)
+      marital: "Situation matrimoniale",
       single: "Célibataire",
       divorced: "Divorcé(e)",
       widowed: "Veuf(ve)",
       free_couple: "Couple libre",
-
+      
       // Religion
       aucune: "Aucune",
       catholique: "Catholique",
@@ -30,8 +31,9 @@ export const translations = {
       atheist: "Athée",
       spiritual_but_not_religious: "Spirituel(le) mais non religieux",
       other: "Autre",
-
+      
       // Pays
+      country: "Pays",
       france: "🇫🇷 France",
       germany: "🇩🇪 Allemagne",
       italy: "🇮🇹 Italie",
@@ -44,6 +46,11 @@ export const translations = {
       russia: "🇷🇺 Russie",
       thailand: "🇹🇭 Thaïlande",
       vietnam: "🇻🇳 Vietnam",
+
+      // Enfants
+      children_title: "Enfants",
+      no_children: "Sans enfant",
+      has_children: "Avec enfant(s)",
     },
     //#endregion
 
@@ -675,6 +682,7 @@ export const translations = {
       female: "Female",
 
       // État civil
+      marital: "Marital status",
       single: "Single",
       divorced: "Divorced",
       widowed: "Widowed",
@@ -694,6 +702,7 @@ export const translations = {
       other: "Other",
 
       // Pays
+      country: "Country",
       france: "🇫🇷 France",
       germany: "🇩🇪 Germany",
       italy: "🇮🇹 Italy",
@@ -706,6 +715,11 @@ export const translations = {
       russia: "🇷🇺 Russia",
       thailand: "🇹🇭 Thailand",
       vietnam: "🇻🇳 Vietnam",
+
+      // Enfant
+      children_title: "Children",
+      no_children: "No children",
+      has_children: "With children",
     },
     //#endregion
 
@@ -1330,6 +1344,7 @@ export const translations = {
       female: "Frau",
 
       // État civil
+      marital: "Familienstand",
       single: "Ledig",
       divorced: "Geschieden",
       widowed: "Verwitwet",
@@ -1349,6 +1364,7 @@ export const translations = {
       other: "Andere",
 
       // Pays
+      country: "Land",
       france: "🇫🇷 Frankreich",
       germany: "🇩🇪 Deutschland",
       italy: "🇮🇹 Italien",
@@ -1361,6 +1377,11 @@ export const translations = {
       russia: "🇷🇺 Russland",
       thailand: "🇹🇭 Thailand",
       vietnam: "🇻🇳 Vietnam",
+
+      // Enfants
+      children_title: "Kinder",
+      no_children: "Keine Kinder",
+      has_children: "Mit Kindern",
     },
     //#endregion
 
@@ -1984,6 +2005,7 @@ export const translations = {
       female: "女士",
 
       // État civil
+      marital: "婚姻状况",
       single: "单身",
       divorced: "离异",
       widowed: "丧偶",
@@ -2003,6 +2025,7 @@ export const translations = {
       other: "其他",
 
       // Pays
+      country: "国家",
       france: "🇫🇷 法国",
       germany: "🇩🇪 德国",
       italy: "🇮🇹 意大利",
@@ -2015,6 +2038,11 @@ export const translations = {
       russia: "🇷🇺 俄罗斯",
       thailand: "🇹🇭 泰国",
       vietnam: "🇻🇳 越南",
+
+      // Enfants
+      children_title: "子女",
+      no_children: "无子女",
+      has_children: "有子女",
     },
     //#endregion
 
@@ -2604,6 +2632,7 @@ export const translations = {
       female: "Donna",
 
       // État civil
+      marital: "Stato civile",
       single: "Celibe/Nubile",
       divorced: "Divorziato/a",
       widowed: "Vedovo/a",
@@ -2623,6 +2652,7 @@ export const translations = {
       other: "Altro",
 
       // Pays
+      country: "Paese",
       france: "🇫🇷 Francia",
       germany: "🇩🇪 Germania",
       italy: "🇮🇹 Italia",
@@ -2635,6 +2665,11 @@ export const translations = {
       russia: "🇷🇺 Russia",
       thailand: "🇹🇭 Thailandia",
       vietnam: "🇻🇳 Vietnam",
+
+      // Enfants
+      children_title: "Figli",
+      no_children: "Senza figli",
+      has_children: "Con figli",
     },
     //#endregion
 
@@ -3255,6 +3290,7 @@ export const translations = {
       female: "Женщина",
 
       // État civil
+      marital: "Семейное положение",
       single: "Холост / Не замужем",
       divorced: "Разведен(а)",
       widowed: "Вдовец / Вдова",
@@ -3274,6 +3310,7 @@ export const translations = {
       other: "Другое",
 
       // Pays
+      country: "Страна",
       france: "🇫🇷 Франция",
       germany: "🇩🇪 Германия",
       italy: "🇮🇹 Италия",
@@ -3286,6 +3323,11 @@ export const translations = {
       russia: "🇷🇺 Россия",
       thailand: "🇹🇭 Таиланд",
       vietnam: "🇻🇳 Вьетнам",
+
+      // Enfants
+      children_title: "Figli",
+      no_children: "Senza figli",
+      has_children: "Con figli",
     },
     //#endregion
 
@@ -3898,6 +3940,7 @@ export const translations = {
       female: "Mujer",
 
       // État civil
+      marital: "Estado civil",
       single: "Soltero/a",
       divorced: "Divorciado/a",
       widowed: "Viudo/a",
@@ -3917,6 +3960,7 @@ export const translations = {
       other: "Otro",
 
       // Pays
+      country: "País",
       france: "🇫🇷 Francia",
       germany: "🇩🇪 Alemania",
       italy: "🇮🇹 Italia",
@@ -3929,6 +3973,11 @@ export const translations = {
       russia: "🇷🇺 Rusia",
       thailand: "🇹🇭 Tailandia",
       vietnam: "🇻🇳 Vietnam",
+
+      // Enfants
+      children_title: "Hijos",
+      no_children: "Sin hijos",
+      has_children: "Con hijos",
     },
     //#endregion
 

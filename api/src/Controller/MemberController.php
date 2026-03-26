@@ -33,6 +33,7 @@ final class MemberController extends AbstractController
         $maxAge = $request->query->getInt('max', 99);
         $country = $request->query->get('country');
         $marital = $request->query->get('marital');
+        $children = $request->query->get('children');
 
         /**
          * ÉTAPE 3 : Requête en Base de Données avec Paginator
@@ -45,20 +46,33 @@ final class MemberController extends AbstractController
         $dateMax = (new \DateTime())->modify("-$minAge years");
         $dateMin = (new \DateTime())->modify("-" . ($maxAge + 1) . " years");
         $queryBuilder->andWhere('u.birthdate BETWEEN :dateMin AND :dateMax')
-                     ->setParameter('dateMin', $dateMin)
-                     ->setParameter('dateMax', $dateMax);
+            ->setParameter('dateMin', $dateMin)
+            ->setParameter('dateMax', $dateMax);
 
-        // --- FILTRE PAYS (Adapté aux minuscules et tirets de ta BDD) ---
+        // --- FILTRE PAYS  ---
         if ($country && $country !== '') {
-            // On utilise strtolower pour garantir la correspondance avec ta colonne 'character varying'
+            // On utilise strtolower pour garantir la correspondance 
             $queryBuilder->andWhere('u.country = :country')
-                         ->setParameter('country', strtolower(trim($country)));
+                ->setParameter('country', strtolower(trim($country)));
         }
 
         // --- FILTRE SITUATION ---
         if ($marital && $marital !== '') {
             $queryBuilder->andWhere('u.marital = :marital')
-                         ->setParameter('marital', $marital);
+                ->setParameter('marital', $marital);
+        }
+
+        // --- FILTRE ENFANTS ---
+        if ($children !== null && $children !== '') {
+            if ($children === '0') {
+                // "Sans enfant" : On cherche '0' ou NULL en format texte
+                $queryBuilder->andWhere('u.children = :valZero OR u.children IS NULL')
+                    ->setParameter('valZero', '0');
+            } else {
+                // "Avec enfant(s)" : On cherche tout ce qui n'est pas '0' et pas NULL
+                $queryBuilder->andWhere('u.children != :valZero AND u.children IS NOT NULL')
+                    ->setParameter('valZero', '0');
+            }
         }
 
         $queryBuilder->orderBy('u.id', 'DESC')
