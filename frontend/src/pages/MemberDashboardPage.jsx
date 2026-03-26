@@ -19,7 +19,6 @@ import { apiFetch } from "../api";
 import { useLanguage } from "../translations/hooks/useLanguage";
 import Loader from "../components/Loader";
 
-
 function MemberDashboardPage() {
   // #region STATES
   // --- LES STATES ---
@@ -422,7 +421,6 @@ function MemberDashboardPage() {
         confirmButtonColor: "#d4af37",
         color: "#fff",
         timer: 1500,
-
       });
 
       fetchMessages(receiverId);
@@ -530,7 +528,7 @@ function MemberDashboardPage() {
 
   // 1. On ne bloque l'affichage COMPLET que si on n'a vraiment AUCUNE donnée (premier chargement)
   if (loading && !userData) {
-     return <Loader fullscreen={true} />;
+    return <Loader fullscreen={true} />;
   }
 
   // 2. Sécurité si l'API échoue
@@ -1179,9 +1177,8 @@ function MemberDashboardPage() {
                             handleMarkAsRead(contact.id);
                           }
                         }}
-                        className={`conversation-card ${
-                          contact.hasNewMessages ? "new-message" : ""
-                        }`}
+                        className={`conversation-card ${contact.hasNewMessages ? "new-messages" : 
+                          ""} ${contact.nickname === "Utilisateur supprimé" ? "deleted-user-card" : ""}`}
                       >
                         {/* Bloc gauche */}
                         <div className="conversation-left">

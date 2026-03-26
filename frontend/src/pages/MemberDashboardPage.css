@@ -466,3 +466,14 @@ select.dashboard-input:focus {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+/* Le cadre devient rouge si l'utilisateur est supprimé */
+.conversation-card.deleted-user-card {
+  border: 1px solid #ff4d4d !important;
+  background: rgba(255, 77, 77, 0.05); /* Un léger fond rouge transparent */
+  cursor: not-allowed; /* Change le curseur pour indiquer qu'on ne peut plus interagir normalement */
+}
+
+/* Optionnel : changer la couleur du nom en rouge aussi */
+.deleted-user-card .conversation-name {
+  color: #ff4d4d;
+}

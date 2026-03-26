@@ -389,7 +389,7 @@ function FemaleDashboardPage() {
                     {conversations.map((contact) => (
                       <div
                         key={contact.id}
-                        className={`conversation-card ${contact.hasNewMessages ? "new-messages" : ""}`}
+                        className={`conversation-card ${contact.hasNewMessages ? "new-messages" : ""} ${contact.nickname === "Utilisateur supprimé" ? "deleted-user-card" : ""}`}
                         onClick={() => {
                           setSelectedContact(contact);
                           setIsModalOpen(true);
