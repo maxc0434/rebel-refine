@@ -91,6 +91,7 @@ const Searcher = ({ nickname }) => {
                 <option value="single" style={optionStyle}>{t.database.single}</option>
                 <option value="divorced" style={optionStyle}>{t.database.divorced}</option>
                 <option value="widowed" style={optionStyle}>{t.database.widowed}</option>
+                <option value="free_couple" style={optionStyle}>{t.database.free_couple}</option>
               </select>
             </div>
 

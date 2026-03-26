@@ -143,7 +143,7 @@ class UserCrudController extends AbstractCrudController
                     'divorcé(e)' => 'divorced',
                     'veuf(ve)' => 'widowed',
                     'célibataire' => 'single',
-                    'couple libre' => 'free couple',
+                    'couple libre' => 'free_couple',
                 ]),
 
             ChoiceField::new('children', 'Enfants')
