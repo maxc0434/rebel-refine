@@ -24,7 +24,7 @@ function ProfilePage() {
   const { t } = useLanguage();
 
   // --- STATES ---
-  const [user, setUser] = useState(null); 
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedImgIndex, setSelectedImgIndex] = useState(null);
   const [memo, setMemo] = useState("");
@@ -34,12 +34,12 @@ function ProfilePage() {
   const [messages, setMessages] = useState([]);
   const messagesEndRef = useRef(null);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [notFound, setNotFound] = useState(false);
   //#endregion
 
   // #region SYNC USER pour éviter les problèmes de token expiré
   // ou de données obsolètes après une mise à jour du profil ou des crédits
   useEffect(() => {
-    
     if (token) {
       apiFetch("/api/member/dashboard")
         .then((data) => {
@@ -55,34 +55,51 @@ function ProfilePage() {
 
   //#region MONTAGE DU COMPOSANT et CHARGEMENT DES DONNÉES
   useEffect(() => {
-    
     if (!token || !id) {
       navigate("/");
       return;
     }
+
     setLoading(true);
+    setNotFound(false); // Réinitialise l'état si l'ID change
 
     // 1. Récupération du Profil
     apiFetch(`/api/profile/${id}`)
       .then((data) => {
-        setUser(data);
+        if (!data || Object.keys(data).length === 0) {
+          setNotFound(true);
+          setLoading(false);
+          return;
+        }
+
+        // --- 2. Vérification des genres ---
+        // On autorise l'accès seulement si le genre visité est différent du genre de l'utilisateur
+        const isAccessAllowed = currentUser?.gender !== data.gender;
+
+        if (!isAccessAllowed) {
+          console.warn("Tentative d'accès à un profil du même genre bloquée.");
+          setNotFound(true);
+        } else {
+          setUser(data);
+
+          // 3. Récupération du Mémo (Uniquement si le profil est autorisé)
+          apiFetch(`/api/member/memo/${id}`)
+            .then((memoData) => {
+              setMemo(memoData?.content || "");
+            })
+            .catch(() => {
+              console.warn("Mémo introuvable");
+              setMemo("");
+            });
+        }
         setLoading(false);
       })
       .catch((err) => {
         console.error("Erreur API Profil:", err.message);
+        setNotFound(true);
         setLoading(false);
       });
-
-    // 2. Récupération du Mémo
-    apiFetch(`/api/member/memo/${id}`)
-      .then((data) => {
-        setMemo(data?.content || "");
-      })
-      .catch((err) => {
-        console.warn("Mémo introuvable");
-        setMemo("");
-      });
-  }, [id, navigate]);
+  }, [id, navigate, token, currentUser?.gender]);
   //#endregion
 
   //#region CARROUSEL
@@ -241,7 +258,7 @@ function ProfilePage() {
     if (!content.trim()) return false;
     const shouldConfirm = currentUser?.confirmMessageSend !== false;
     let isConfirmed = true;
-    
+
     if (shouldConfirm) {
       const result = await Swal.fire({
         title: t.profile_msg_confirm_title,
@@ -315,6 +332,58 @@ function ProfilePage() {
     return <Loader fullscreen={true} />;
   }
   //#endregion
+
+  if (notFound) {
+    return (
+      <section
+        className="profile-section padding-tb d-flex align-items-center"
+        style={{ minHeight: "80vh" }}
+      >
+        <div className="container text-center">
+          <div
+            className="info-card p-5"
+            style={{
+              backgroundColor: "rgba(30, 30, 60, 0.4)",
+              border: "1px solid rgba(212, 175, 55, 0.2)",
+              borderRadius: "15px",
+              maxWidth: "600px",
+              margin: "0 auto",
+            }}
+          >
+            <TriangleAlert size={60} color="#d4af37" className="mb-4" />
+            <h2 style={{ color: "#fff", marginBottom: "15px" }}>
+              Profil Introuvable
+            </h2>
+            <p style={{ color: "rgba(255,255,255,0.7)", marginBottom: "30px" }}>
+              Désolé, ce compte n'existe plus ou a été supprimé par son
+              utilisateur.
+            </p>
+            <button
+              onClick={() => navigate("/")}
+              style={{
+                backgroundColor: "#d4af37",
+                color: "#1e2235",
+                border: "none",
+                padding: "12px 30px",
+                borderRadius: "50px",
+                fontWeight: "bold",
+                cursor: "pointer",
+                transition: "transform 0.2s",
+              }}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.transform = "scale(1.05)")
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.transform = "scale(1)")
+              }
+            >
+              Retour à l'accueil
+            </button>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   //#region AFFICHAGE DU COMPOSANT
   return (

@@ -41,7 +41,7 @@ const ChatModal = ({
     <div className="chat-modal-overlay">
       <div className="chat-modal-container">
         {/* OVERLAY DE BLOCAGE (Si pas de consentement) */}
-        {!hasConsent && (
+        {/* {!hasConsent && (
           <div
             style={{
               position: "absolute",
@@ -122,7 +122,7 @@ const ChatModal = ({
               {t.chat_later}
             </button>
           </div>
-        )}
+        )} */}
 
         {/* Header */}
         <div className="chat-header">
