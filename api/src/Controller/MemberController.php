@@ -16,28 +16,52 @@ final class MemberController extends AbstractController
 {
     /**
      * ÉTAPE 1 : Définition de la Route API
-     * On expose l'URL /api/members/females accessible uniquement en GET.
      */
     #[Route('/api/members/females', name: 'app_members_females', methods: ['GET'])]
     #[IsGranted('ROLE_MALE', message: 'Accès interdit')]
     public function getFemales(Request $request, UserRepository $userRepository, #[CurrentUser] ?User $currentUser): JsonResponse
     {
         /**
-         * ÉTAPE 2 : Paramétrage de la pagination
-         * On récupère la page actuelle et on définit une limite par page.
+         * ÉTAPE 2 : Paramétrage de la pagination et des filtres
          */
         $page = max(1, $request->query->getInt('page', 1));
         $limit = 8;
         $offset = ($page - 1) * $limit;
 
+        // Récupération des paramètres de recherche depuis l'URL
+        $minAge = $request->query->getInt('min', 18);
+        $maxAge = $request->query->getInt('max', 99);
+        $country = $request->query->get('country');
+        $marital = $request->query->get('marital');
+
         /**
          * ÉTAPE 3 : Requête en Base de Données avec Paginator
-         * On crée une requête paginée pour ne charger que le nécessaire.
          */
         $queryBuilder = $userRepository->createQueryBuilder('u')
             ->where('u.gender = :gender')
-            ->setParameter('gender', 'female')
-            ->orderBy('u.id', 'DESC')
+            ->setParameter('gender', 'female');
+
+        // --- FILTRE ÂGE (Logique SQL BETWEEN) ---
+        $dateMax = (new \DateTime())->modify("-$minAge years");
+        $dateMin = (new \DateTime())->modify("-" . ($maxAge + 1) . " years");
+        $queryBuilder->andWhere('u.birthdate BETWEEN :dateMin AND :dateMax')
+                     ->setParameter('dateMin', $dateMin)
+                     ->setParameter('dateMax', $dateMax);
+
+        // --- FILTRE PAYS (Adapté aux minuscules et tirets de ta BDD) ---
+        if ($country && $country !== '') {
+            // On utilise strtolower pour garantir la correspondance avec ta colonne 'character varying'
+            $queryBuilder->andWhere('u.country = :country')
+                         ->setParameter('country', strtolower(trim($country)));
+        }
+
+        // --- FILTRE SITUATION ---
+        if ($marital && $marital !== '') {
+            $queryBuilder->andWhere('u.marital = :marital')
+                         ->setParameter('marital', $marital);
+        }
+
+        $queryBuilder->orderBy('u.id', 'DESC')
             ->setFirstResult($offset)
             ->setMaxResults($limit);
 
@@ -47,15 +71,12 @@ final class MemberController extends AbstractController
 
         /**
          * ÉTAPE 4 : Initialisation des variables de calcul
-         * $results accueillera les données formatées pour React.
-         * $today sert de point de référence pour calculer l'âge par rapport à aujourd'hui.
          */
         $results = [];
         $today = new \DateTime();
 
         /**
          * ÉTAPE 5 : Boucle de traitement des données
-         * On parcourt chaque utilisateur paginé pour le transformer en tableau simple.
          */
         foreach ($paginator as $female) {
             $age = null;
@@ -72,13 +93,14 @@ final class MemberController extends AbstractController
 
             /**
              * ÉTAPE 6 : Construction du tableau de réponse
-             * On ajoute les données de l'utilisateur.
              */
             $results[] = [
                 'id' => $female->getId(),
                 'nickname' => $female->getNickname(),
                 'gender' => $female->getGender(),
                 'age' => $age,
+                'country' => $female->getCountry(),
+                'marital' => $female->getMarital(),
                 'photos' => $photos,
                 'isFavorite' => $currentUser?->getFavorites()->contains($female) ?? false,
             ];
@@ -86,7 +108,6 @@ final class MemberController extends AbstractController
 
         /**
          * ÉTAPE 7 : Envoi de la réponse JSON avec Meta-données
-         * On retourne les résultats ainsi que les infos pour la pagination côté front.
          */
         return $this->json([
             'data' => $results,

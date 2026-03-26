@@ -17,11 +17,23 @@ const SearchPage = () => {
     useEffect(() => {
         const performSearch = async () => {
             setLoading(true);
+            
+            // 1. On récupère TOUS les critères depuis les searchParams
             const min = searchParams.get("min") || 18;
             const max = searchParams.get("max") || 60;
+            const country = searchParams.get("country") || "";
+            const marital = searchParams.get("marital") || "";
 
             try {
-                const response = await apiFetch(`/api/members/search?min=${min}&max=${max}&page=${currentPage}`);
+                // 2. On construit l'URL avec tous les filtres pour ton apiFetch
+                // J'utilise /api/members/females pour correspondre au contrôleur PHP qu'on a créé
+                let url = `/api/members/females?min=${min}&max=${max}&page=${currentPage}`;
+                
+                if (country) url += `&country=${country}`;
+                if (marital) url += `&marital=${marital}`;
+
+                const response = await apiFetch(url);
+                
                 setMembers(response.data);
                 setTotalPages(response.meta.pagesCount);
             } catch (error) {
@@ -53,7 +65,7 @@ const SearchPage = () => {
                     </div>
                 </div>
 
-                {/* Barre de recherche */}
+                {/* Barre de recherche (garde les filtres en mémoire) */}
                 <Searcher />
 
                 {/* Grille de résultats */}
@@ -63,7 +75,14 @@ const SearchPage = () => {
                             <div key={member.id} className="col-12 col-sm-6 col-md-4 col-lg-3">
                                 <div className="card border-0 shadow-lg custom-card">
                                     <div className="card-img-container">
-                                        {member.photo ? (
+                                        {/* Correction pour supporter le tableau de photos ou la photo unique */}
+                                        {member.photos && member.photos.length > 0 ? (
+                                            <img 
+                                                src={`http://localhost:8000/uploads/users/${member.photos[0]}`} 
+                                                className="member-photo" 
+                                                alt={member.nickname} 
+                                            />
+                                        ) : member.photo ? (
                                             <img 
                                                 src={`http://localhost:8000/uploads/users/${member.photo}`} 
                                                 className="member-photo" 
@@ -96,7 +115,7 @@ const SearchPage = () => {
                     )}
                 </div>
 
-                {/* Pagination Style Luxe */}
+                {/* Pagination */}
                 {totalPages > 1 && (
                     <div className="pagination-wrapper">
                         <button 
