@@ -72,7 +72,14 @@ const Searcher = ({ nickname }) => {
                 <option value="france" style={optionStyle}>{t.database.france}</option>
                 <option value="belgium" style={optionStyle}>{t.database.belgium}</option>
                 <option value="switzerland" style={optionStyle}>{t.database.switzerland}</option>
+                <option value="china" style={optionStyle}>{t.database.china}</option>
                 <option value="germany" style={optionStyle}>{t.database.germany}</option>
+                <option value="italy" style={optionStyle}>{t.database.italy}</option>
+                <option value="spain" style={optionStyle}>{t.database.spain}</option>
+                <option value="russia" style={optionStyle}>{t.database.russia}</option>
+                <option value="japan" style={optionStyle}>{t.database.japan}</option>
+                <option value="thailand" style={optionStyle}>{t.database.thailand}</option>
+                <option value="vietnam" style={optionStyle}>{t.database.vietnam}</option>
                 <option value="united-kingdom" style={optionStyle}>{t.database.united_kingdom}</option>
               </select>
             </div>

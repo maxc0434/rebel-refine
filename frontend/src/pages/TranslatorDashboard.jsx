@@ -87,13 +87,14 @@ const TranslatorDashboard = () => {
 
   const handleReject = async (id) => {
     const result = await Swal.fire({
-      title: "Rejeter ce message ?",
-      text: "Ce message sera marqué comme rejeté et retiré de votre liste.",
+      title: t.reject_title,
+      text: t.reject_text,
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#ff6b6b",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Oui, rejeter",
+      confirmButtonColor: "#0e6210",
+      cancelButtonColor: "#f12222",
+      confirmButtonText: t.reject_confirm,
+      cancelButtonText: t.cancel,
       background: "#24282e",
       color: "#fff",
     });
@@ -111,7 +112,7 @@ const TranslatorDashboard = () => {
           title: "Rejeté !",
           text: "Le message a été retiré.",
           icon: "success",
-          timer: 1500,
+          timer: 1000,
           showConfirmButton: false,
           background: "#24282e",
           color: "#fff",

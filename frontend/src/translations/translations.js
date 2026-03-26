@@ -355,6 +355,11 @@ export const translations = {
     translator_success_title: "Traduction validée",
     translator_success_msg: "Le message a été envoyé avec succès.",
     translator_error_empty: "Veuillez saisir une traduction avant de valider.",
+    reject_title: "Rejeter ce message ?",
+    reject_text: "Ce message sera marqué comme rejeté et retiré de votre liste.",
+    reject_confirm: "Oui, rejeter",
+    cancel: "Annuler",
+
     //#endregion
 
     //#region DASHBOARD
@@ -1010,7 +1015,7 @@ export const translations = {
     payment_processing_title: "Processing your order...",
     //#endregion
 
-    //#region TRANSLATOR DASHBOARD EN
+    //#region TRANSLATORDASHBOARD EN
     translator_main_title: "Moderation & Translation Space",
     translator_empty_state: "No pending messages. Everything is up to date!",
     translator_label_source: "Source message",
@@ -1020,6 +1025,10 @@ export const translations = {
     translator_success_title: "Translation validated",
     translator_success_msg: "The message has been sent successfully.",
     translator_error_empty: "Please enter a translation before validating.",
+    reject_title: "Reject this message?",
+    reject_text: "This message will be marked as rejected and removed from your list.",
+    reject_confirm: "Yes, reject it",
+    cancel: "Cancel",
     //#endregion
 
     //#region DASHBOARD EN
@@ -1688,6 +1697,10 @@ export const translations = {
     translator_success_msg: "Die Nachricht wurde erfolgreich gesendet.",
     translator_error_empty:
       "Bitte geben Sie eine Übersetzung ein, bevor Sie bestätigen.",
+    reject_title: "Nachricht ablehnen?",
+    reject_text: "Diese Nachricht wird als abgelehnt markiert und de aus deiner Liste entfernt.",
+    reject_confirm: "Ja, ablehnen",
+    cancel: "Abbrechen",
     //#endregion
 
     //#region DASHBOARD
@@ -2333,6 +2346,10 @@ export const translations = {
     translator_success_title: "翻译已确认",
     translator_success_msg: "消息已成功发送。",
     translator_error_empty: "请在确认前输入翻译。",
+    reject_title: "拒绝这条消息？",
+    reject_text: "该消息将被标记为已拒绝，并从您的列表中移除。",
+    reject_confirm: "是的，拒绝",
+    cancel: "取消",
     //#endregion
 
     //#region DASHBOARD
@@ -2973,6 +2990,10 @@ export const translations = {
     translator_success_title: "Traduzione convalidata",
     translator_success_msg: "Il messaggio è stato inviato con successo.",
     translator_error_empty: "Inserisci una traduzione prima di convalidare.",
+    reject_title: "Rifiutare questo messaggio?",
+    reject_text: "Questo messaggio sarà contrassegnato come rifiutato e rimosso dalla tua lista.",
+    reject_confirm: "Sì, rifiuta",
+    cancel: "Annulla",
     //#endregion
 
     //#region DASHBOARD
@@ -3630,6 +3651,10 @@ export const translations = {
     translator_success_title: "Перевод подтвержден",
     translator_success_msg: "Сообщение успешно отправлено.",
     translator_error_empty: "Пожалуйста, введите перевод перед подтверждением.",
+    reject_title: "Отклонить это сообщение?",
+    reject_text: "Это сообщение будет помечено как отклоненное и удалено из вашего списка.",
+    reject_confirm: "Да, отклонить",
+    cancel: "Отмена",
     //#endregion
 
     //#region DASHBOARD
@@ -4282,6 +4307,10 @@ export const translations = {
     translator_success_msg: "El mensaje ha sido enviado con éxito.",
     translator_error_empty:
       "Por favor, introduce una traducción antes de validar.",
+    reject_title: "¿Rechazar este mensaje?",
+    reject_text: "Este mensaje será marcado como rechazado y eliminado de tu lista.",
+    reject_confirm: "Sí, rechazar",
+    cancel: "Cancelar",
     //#endregion
 
     //#region DASHBOARD

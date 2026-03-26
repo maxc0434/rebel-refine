@@ -28,7 +28,6 @@ const SearchPage = () => {
 
             try {
                 // 2. On construit l'URL avec tous les filtres pour ton apiFetch
-                // J'utilise /api/members/females pour correspondre au contrôleur PHP qu'on a créé
                 let url = `/api/members/females?min=${min}&max=${max}&page=${currentPage}`;
                 
                 if (country) url += `&country=${country}`;
@@ -69,7 +68,7 @@ const SearchPage = () => {
                     </div>
                 </div>
 
-                {/* Barre de recherche (garde les filtres en mémoire) */}
+                {/* Barre de recherche  */}
                 <Searcher />
 
                 {/* Grille de résultats */}
@@ -79,7 +78,6 @@ const SearchPage = () => {
                             <div key={member.id} className="col-12 col-sm-6 col-md-4 col-lg-3">
                                 <div className="card border-0 shadow-lg custom-card">
                                     <div className="card-img-container">
-                                        {/* Correction pour supporter le tableau de photos ou la photo unique */}
                                         {member.photos && member.photos.length > 0 ? (
                                             <img 
                                                 src={`http://localhost:8000/uploads/users/${member.photos[0]}`} 
