@@ -1344,7 +1344,7 @@ function MemberDashboardPage() {
                             fontSize: "0.9rem",
                           }}
                         >
-                          {fav.age} {t.age_suffix} • {fav.marital}
+                          {fav.age} {t.age_suffix} • {t.database[fav.marital] || fav.marital}
                         </p>
                         <button
                           onClick={() => navigate(`/profile/${fav.id}`)}
