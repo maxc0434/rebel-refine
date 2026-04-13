@@ -24,8 +24,10 @@ final class SearchController extends AbstractController
         $offset = ($page - 1) * $limit;
 
         /**
-         * ÉTAPE 2 : Calcul des dates limites pour l'SQL
-         * Pour avoir 20 ans aujourd'hui, il faut être né entre il y a 21 ans et il y a 20 ans.
+         * ÉTAPE 2 : Calcul des dates limites de recherche en fonction des filtres d'âge min et max
+         * La recherche est effectuée sur la date de naissance de l'utilisateur et non sur l'anniversaire du jour
+         * Pour cela, on modifie les dates de recherche en fonction des filtres d'âge
+         * Par exemple, si on cherche des femmes de 25 ans et plus, on recherche des femmes nées avant 1995
          */
         $dateMin = (new \DateTime())->modify("-$maxAge years -1 year");
         $dateMax = (new \DateTime())->modify("-$minAge years");
@@ -67,7 +69,6 @@ final class SearchController extends AbstractController
                 'photo' => !$userImages->isEmpty() ? $userImages->first()->getImageName() : null,
             ];
         }
-
         /**
          * ÉTAPE 6 : Réponse JSON structurée
          */

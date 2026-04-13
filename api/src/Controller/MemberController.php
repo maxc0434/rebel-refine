@@ -79,6 +79,7 @@ final class MemberController extends AbstractController
             ->setFirstResult($offset)
             ->setMaxResults($limit);
 
+        // --- PAGINATION ---
         $paginator = new Paginator($queryBuilder);
         $totalItems = count($paginator);
         $pagesCount = ceil($totalItems / $limit);

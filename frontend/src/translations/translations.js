@@ -599,8 +599,7 @@ export const translations = {
     terms_sec3_text:
       "Rebel Refine agit en tant qu'intermédiaire technique. Nous déclinons toute responsabilité quant aux agissements des membres lors de rencontres physiques privées.",
     terms_sec4_title: "4. Crédits",
-    terms_sec4_text:
-      "Les crédits acquis sont personnels. Aucun remboursement ne pourra être exigé pour des services déjà consommés ou en cas de bannissement pour faute grave.",
+    terms_sec4_text: "Le règlement des transactions s\’effectue via la solution de paiement sécurisée Stripe, prestataire tiers certifié PCI-DSS. À ce titre, Rebel-Refine ne collecte, ne stocke, ni ne traite aucune donnée bancaire sensible (numéro de carte, code de sécurité). L\’intégralité du processus de paiement est gérée par Stripe, qui assure la sécurité et la confidentialité des informations de facturation.En conséquence, Rebel-Refine décline toute responsabilité en cas de litige relatif à l\’exécution du paiement, d\’interruption de service du prestataire de paiement ou de faille de sécurité survenant sur l\’infrastructure de Stripe.",
     terms_sec5_title: "5. Suspension & Bannissement",
     terms_sec5_text:
       "Toute infraction grave à notre charte de conduite pourra entraîner la fermeture immédiate de votre compte. Rebel Refine se réserve le droit de protéger sa communauté sans préavis.",

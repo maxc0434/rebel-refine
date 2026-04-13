@@ -27,7 +27,7 @@ const SearchPage = () => {
             const children = searchParams.get("children") || "";
 
             try {
-                // 2. On construit l'URL avec tous les filtres pour ton apiFetch
+                // 2. On construit l'URL avec tous les filtres pour la requête apiFetch
                 let url = `/api/members/females?min=${min}&max=${max}&page=${currentPage}`;
                 
                 if (country) url += `&country=${country}`;

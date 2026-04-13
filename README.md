@@ -1,4 +1,3 @@
-
 <div align="center">
 
 <img src="https://img.shields.io/badge/version-1.0.0--MVP-D4AF37?style=for-the-badge&labelColor=1B2A4A" alt="version"/>
@@ -10,18 +9,18 @@
 ```
 ██████╗ ███████╗██████╗ ███████╗██╗      ██████╗ ███████╗███████╗██╗███╗   ██╗███████╗
 ██╔══██╗██╔════╝██╔══██╗██╔════╝██║     ██╔══██╗██╔════╝██╔════╝██║████╗  ██║██╔════╝
-██████╔╝█████╗  ██████╔╝█████╗  ██║     ██████╔╝█████╗  █████╗  ██║██╔██╗ ██║█████╗  
-██╔══██╗██╔══╝  ██╔══██╗██╔══╝  ██║     ██╔══██╗██╔══╝  ██╔══╝  ██║██║╚██╗██║██╔══╝  
+██████╔╝█████╗  ██████╔╝█████╗  ██║     ██████╔╝█████╗  █████╗  ██║██╔██╗ ██║█████╗
+██╔══██╗██╔══╝  ██╔══██╗██╔══╝  ██║     ██╔══██╗██╔══╝  ██╔══╝  ██║██║╚██╗██║██╔══╝
 ██║  ██║███████╗██████╔╝███████╗███████╗██║  ██║███████╗██║     ██║██║ ╚████║███████╗
 ╚═╝  ╚═╝╚══════╝╚═════╝ ╚══════╝╚══════╝╚═╝  ╚═╝╚══════╝╚═╝     ╚═╝╚═╝  ╚═══╝╚══════╝
 ```
 
-### *"L'audace a un nom. L'exception a une adresse."*
+### _"L'audace a un nom. L'exception a une adresse."_
 
 <br/>
 
 **Plateforme de rencontre internationale interculturelle**  
-*Orient × Occident — sans barrières conventionnelles*
+_Orient × Occident — sans barrières conventionnelles_
 
 <br/>
 
@@ -63,14 +62,14 @@
 
 ### Ce qui rend Rebel-Refine unique
 
-| Caractéristique | Description |
-|---|---|
-| 🌐 **Multilingue natif** | Interface i18n (FR, EN, ZH) + traduction humaine des messages |
-| 🔐 **Sécurité multicouche** | 5 niveaux de protection (email, UserChecker, JWT, RBAC, IsGranted) |
-| 💬 **Messagerie avec traducteur** | Messages validés par un traducteur certifié avant livraison |
-| 💳 **Monétisation Stripe** | Système de crédits pour la messagerie (hommes), accès libre (femmes) |
-| 🛡️ **Conformité RGPD** | Soft-Delete, minimisation des données, consentement cookies |
-| ⚡ **Architecture scalable** | API REST découplée — prête pour une future app mobile |
+| Caractéristique                   | Description                                                          |
+| --------------------------------- | -------------------------------------------------------------------- |
+| 🌐 **Multilingue natif**          | Interface i18n (FR, EN, ZH) + traduction humaine des messages        |
+| 🔐 **Sécurité multicouche**       | 5 niveaux de protection (email, UserChecker, JWT, RBAC, IsGranted)   |
+| 💬 **Messagerie avec traducteur** | Messages validés par un traducteur certifié avant livraison          |
+| 💳 **Monétisation Stripe**        | Système de crédits pour la messagerie (hommes), accès libre (femmes) |
+| 🛡️ **Conformité RGPD**            | Soft-Delete, minimisation des données, consentement cookies          |
+| ⚡ **Architecture scalable**      | API REST découplée — prête pour une future app mobile                |
 
 ---
 
@@ -169,8 +168,7 @@ Rebel-Refine repose sur une **architecture fullstack découplée** :
 ### Containerisation Docker
 
 ```yaml
-Services exposés :
-  ├── app          → PHP 8.4 + Symfony    :8000
+Services exposés: ├── app          → PHP 8.4 + Symfony    :8000
   ├── frontend     → React + Vite         :3000
   ├── database     → PostgreSQL 16        :5432
   ├── redis        → Cache                :6379
@@ -184,41 +182,41 @@ Services exposés :
 
 ### Backend
 
-| Technologie | Version | Usage |
-|---|---|---|
-| PHP | 8.4 | Langage principal (Property Hooks, typage strict) |
-| Symfony | 7 | Framework API REST |
-| Doctrine ORM | Latest | Gestion BDD + Migrations |
-| LexikJWT | Latest | Authentification stateless |
-| NelmioCors | Latest | Communication cross-origin React ↔ API |
-| EasyAdminBundle | Latest | Interface d'administration |
-| Stripe PHP | Latest | Tunnel de paiement sécurisé |
-| Stichoza/Google Translate | Latest | Traduction automatique des biographies |
-| PHPStan | Niveau 7 | Analyse statique du code |
-| PHPUnit | 12 | Tests unitaires & fonctionnels |
+| Technologie               | Version  | Usage                                             |
+| ------------------------- | -------- | ------------------------------------------------- |
+| PHP                       | 8.4      | Langage principal (Property Hooks, typage strict) |
+| Symfony                   | 7        | Framework API REST                                |
+| Doctrine ORM              | Latest   | Gestion BDD + Migrations                          |
+| LexikJWT                  | Latest   | Authentification stateless                        |
+| NelmioCors                | Latest   | Communication cross-origin React ↔ API            |
+| EasyAdminBundle           | Latest   | Interface d'administration                        |
+| Stripe PHP                | Latest   | Tunnel de paiement sécurisé                       |
+| Stichoza/Google Translate | Latest   | Traduction automatique des biographies            |
+| PHPStan                   | Niveau 7 | Analyse statique du code                          |
+| PHPUnit                   | 12       | Tests unitaires & fonctionnels                    |
 
 ### Frontend
 
-| Technologie | Version | Usage |
-|---|---|---|
-| React | 18 | Framework UI |
-| Vite | Latest | Build tool ultra-rapide |
-| React Router Dom | Latest | Navigation SPA |
-| Bootstrap | 5 | Framework CSS |
-| Lucide React | Latest | Bibliothèque d'icônes |
-| SweetAlert2 | Latest | Modales et alertes utilisateur |
-| i18n custom | — | Traduction statique de l'interface |
+| Technologie      | Version | Usage                              |
+| ---------------- | ------- | ---------------------------------- |
+| React            | 18      | Framework UI                       |
+| Vite             | Latest  | Build tool ultra-rapide            |
+| React Router Dom | Latest  | Navigation SPA                     |
+| Bootstrap        | 5       | Framework CSS                      |
+| Lucide React     | Latest  | Bibliothèque d'icônes              |
+| SweetAlert2      | Latest  | Modales et alertes utilisateur     |
+| i18n custom      | —       | Traduction statique de l'interface |
 
 ### Infrastructure
 
-| Outil | Usage |
-|---|---|
-| Docker & Docker Compose | Containerisation multi-services |
-| WSL2 Ubuntu | Optimisation des performances (×8 vs Windows natif) |
-| GitHub | Versioning du code |
-| Redis | Cache (configuré, prêt pour production) |
-| Mailhog | Interception des emails en développement |
-| PGAdmin 4 | Administration graphique PostgreSQL |
+| Outil                   | Usage                                               |
+| ----------------------- | --------------------------------------------------- |
+| Docker & Docker Compose | Containerisation multi-services                     |
+| WSL2 Ubuntu             | Optimisation des performances (×8 vs Windows natif) |
+| GitHub                  | Versioning du code                                  |
+| Redis                   | Cache (configuré, prêt pour production)             |
+| Mailhog                 | Interception des emails en développement            |
+| PGAdmin 4               | Administration graphique PostgreSQL                 |
 
 ---
 
@@ -282,12 +280,12 @@ docker-compose exec app php bin/console doctrine:fixtures:load
 
 ### 8. Accéder à l'application
 
-| Service | URL |
-|---|---|
+| Service        | URL                   |
+| -------------- | --------------------- |
 | Frontend React | http://localhost:3000 |
-| API Symfony | http://localhost:8000 |
-| PGAdmin | http://localhost:8080 |
-| Mailhog | http://localhost:8025 |
+| API Symfony    | http://localhost:8000 |
+| PGAdmin        | http://localhost:8080 |
+| Mailhog        | http://localhost:8025 |
 
 ---
 
@@ -323,10 +321,10 @@ APP_SECRET=votre_secret_app
 
 ### Comptes de test après fixtures
 
-| Rôle | Email | Mot de passe |
-|---|---|---|
-| Super Admin | admin@admin.admin | admin |
-| Traducteur | translator@translate.translator | translator |
+| Rôle        | Email                           | Mot de passe |
+| ----------- | ------------------------------- | ------------ |
+| Super Admin | admin@admin.admin               | admin        |
+| Traducteur  | translator@translate.translator | translator   |
 
 > ⚠️ Ne jamais utiliser ces identifiants en production.
 
@@ -474,6 +472,7 @@ docker-compose exec app php vendor/bin/phpunit tests/Functional/ApiLoginTest.php
 ```
 
 Scénarios testés :
+
 - ✅ Login réussi → JWT valide retourné
 - ✅ Mauvais identifiants → 403
 - ✅ Compte non vérifié → 403
@@ -517,12 +516,12 @@ docker-compose exec app php bin/console cache:clear --env=prod
 
 ### Infrastructure minimale recommandée
 
-| Élément | Recommandation |
-|---|---|
-| Serveur web | Nginx ou Apache avec HTTPS (Let's Encrypt) |
-| Hébergement | PlanetHoster, OVH, ou tout VPS Docker-compatible |
-| BDD | PostgreSQL managé ou conteneurisé avec sauvegardes automatiques |
-| SSL | Certificat TLS obligatoire (JWT + données personnelles) |
+| Élément     | Recommandation                                                  |
+| ----------- | --------------------------------------------------------------- |
+| Serveur web | Nginx ou Apache avec HTTPS (Let's Encrypt)                      |
+| Hébergement | PlanetHoster, OVH, ou tout VPS Docker-compatible                |
+| BDD         | PostgreSQL managé ou conteneurisé avec sauvegardes automatiques |
+| SSL         | Certificat TLS obligatoire (JWT + données personnelles)         |
 
 ### Checklist post-déploiement
 
@@ -537,15 +536,15 @@ docker-compose exec app php bin/console cache:clear --env=prod
 
 ## 🔭 Perspectives d'évolution
 
-| Priorité | Fonctionnalité | Description |
-|---|---|---|
-| 🔴 Haute | **App Mobile** | React Native — réutilise l'API Symfony existante |
-| 🔴 Haute | **Traduction IA** | Remplacement/assistance à la traduction humaine (latence réduite) |
-| 🟡 Moyenne | **Matching intelligent** | Algorithme IA basé sur les affinités et l'historique |
-| 🟡 Moyenne | **Visioconférence** | WebRTC ou service tiers — rencontre vidéo complète |
-| 🟡 Moyenne | **Analytics avancés** | Tableau de bord statistiques pour l'admin |
-| 🟢 Basse | **Modération IA** | Détection automatique de contenus inappropriés |
-| 🟢 Basse | **PWA** | Progressive Web App pour une expérience mobile améliorée |
+| Priorité   | Fonctionnalité           | Description                                                       |
+| ---------- | ------------------------ | ----------------------------------------------------------------- |
+| 🔴 Haute   | **App Mobile**           | React Native — réutilise l'API Symfony existante                  |
+| 🔴 Haute   | **Traduction IA**        | Remplacement/assistance à la traduction humaine (latence réduite) |
+| 🟡 Moyenne | **Matching intelligent** | Algorithme IA basé sur les affinités et l'historique              |
+| 🟡 Moyenne | **Visioconférence**      | WebRTC ou service tiers — rencontre vidéo complète                |
+| 🟡 Moyenne | **Analytics avancés**    | Tableau de bord statistiques pour l'admin                         |
+| 🟢 Basse   | **Modération IA**        | Détection automatique de contenus inappropriés                    |
+| 🟢 Basse   | **PWA**                  | Progressive Web App pour une expérience mobile améliorée          |
 
 ---
 
@@ -560,14 +559,14 @@ Ce projet est sous licence MIT. Voir le fichier [LICENSE](./LICENSE) pour plus d
 <div align="center">
 
 **COUILLET Maxime**  
-*Concepteur Développeur d'Applications*
+_Concepteur Développeur d'Applications_
 
 Formation CDA · 16/06/2025 → 07/05/2026
 
 ---
 
-*"Confronté à la roche, le ruisseau l'emporte toujours,*  
-*non pas par la force, mais par la persévérance."*  
+_"Confronté à la roche, le ruisseau l'emporte toujours,_  
+_non pas par la force, mais par la persévérance."_  
 — Confucius
 
 </div>

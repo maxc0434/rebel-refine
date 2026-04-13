@@ -37,3 +37,5 @@ export const apiFetch = async (endpoint, options = {}) => {
     // Renvoie le JSON directement
     return await response.json();
 };
+
+
