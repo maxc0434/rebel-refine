@@ -422,6 +422,7 @@ function ProfilePage() {
                     setIsModalOpen(true);
                     fetchMessages(user.id);
                   }}
+                  
                   style={{
                     backgroundColor: "transparent",
                     position: "absolute",

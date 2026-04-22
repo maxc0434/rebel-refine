@@ -15,13 +15,12 @@ use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/api')]
 class RegistrationController extends AbstractController
 {
-    public function __construct(private EmailVerifier $emailVerifier)
-    {
-    }
+    public function __construct(private EmailVerifier $emailVerifier) {}
 
     // --- LOGIQUE D'INSCRIPTION ---
     #[Route('/register', name: 'api_register', methods: ['POST'])]
@@ -29,6 +28,7 @@ class RegistrationController extends AbstractController
         Request $request,
         EntityManagerInterface $em,
         UserPasswordHasherInterface $passwordHasher,
+        ValidatorInterface $validator,
     ): JsonResponse {
         // ÉTAPE 1 : Récupération et décodage des données envoyées par React
         $data = json_decode($request->getContent(), true);
@@ -52,6 +52,15 @@ class RegistrationController extends AbstractController
         $user->setGender('male');
         $user->setRoles(['ROLE_MALE']);
         $user->setCredits(5);
+
+        $errors = $validator->validate($user);
+        if (count($errors) > 0) {
+            $errorMessages = [];
+            foreach ($errors as $error) {
+                $errorMessages[$error->getPropertyPath()] = $error->getMessage();
+            }
+            return $this->json(['errors' => $errorMessages], 400);
+        }
 
         // ÉTAPE 4 : Sécurisation du mot de passe
         $hashedPassword = $passwordHasher->hashPassword($user, (string)$data['password']);
@@ -81,12 +90,14 @@ class RegistrationController extends AbstractController
     // --- LOGIQUE DE VÉRIFICATION D'EMAIL ---
     #[Route('/verify/email', name: 'api_verify_email', methods: ['GET'])]
     public function verifyEmail(
-        Request $request, UserRepository $userRepository): RedirectResponse {
+        Request $request,
+        UserRepository $userRepository
+    ): RedirectResponse {
 
         // ÉTAPE 1 : Identification de l'utilisateur via l'ID dans l'URL
         $id = $request->query->get('id');
         $user = $userRepository->find($id);
-        
+
         if (!$user) {
             return $this->redirect('http://localhost:3000/?error=utilisateur introuvable');
         }
@@ -95,7 +106,7 @@ class RegistrationController extends AbstractController
         try {
             $this->emailVerifier->handleEmailConfirmation($request, $user);
         } catch (VerifyEmailExceptionInterface) {
-            
+
             // ÉTAPE 3 : Gestion de l'erreur (lien expiré ou modifié)
             return $this->redirect('http://localhost:3000/?error=lien expiré ou modifié');
         }

@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Translatable\Translatable;
@@ -43,6 +44,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Transla
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Assert\NotBlank(message: "L'email est obligatoire")]
+    #[Assert\Email(message: "Le format de l'email est invalide")]
     private ?string $email = null;
 
     #[ORM\Column]
@@ -52,6 +55,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Transla
     private array $roles = [];
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 3, max: 20, minMessage: "Le pseudo est trop court", maxMessage: "Le pseudo est trop long")]
     private ?string $nickname = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]

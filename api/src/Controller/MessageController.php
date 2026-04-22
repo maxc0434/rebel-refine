@@ -319,8 +319,8 @@ class MessageController extends AbstractController
 
         // On récupère tous les messages où l'utilisateur est impliqué
         $messages = $entityManager->getRepository(Message::class)->createQueryBuilder('m')
-            ->where('(m.sender = :user AND m.deletedBySender = false)') // Ne pas voir si j'ai supprimé
-            ->orWhere('(m.receiver = :user AND m.deletedByReceiver = false)') // Ne pas voir si j'ai supprimé en recevant
+            ->where('(m.sender = :user AND m.deletedBySender = false)') // Ne pas voir si j'ai supprimé en envoyant
+            ->orWhere('(m.receiver = :user AND m.deletedByReceiver = false)') // Ne pas voir si j'ai supprimé en recevant 
             ->setParameter('user', $currentUser)
             ->orderBy('m.createdAt', 'DESC')
             ->getQuery()
